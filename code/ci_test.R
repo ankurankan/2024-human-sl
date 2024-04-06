@@ -95,32 +95,51 @@ residual.test <- function(x, y, x_parents, y_parents, predictor, test) {
     x_prob <- FALSE
   }
 
-  if (predictor == 'rf'){
-      forest.x <- ranger::ranger(as.formula(paste("x ~", paste(colnames(z), collapse = "+"))),
-        data.frame(x, x_parents),
-        num.trees = 50,
-        probability = x_prob
-      )
-      predict.x <- predict(forest.x, data = data.frame(x_parents))$predictions
+  if (length(x_parents) == 0){
+	  Rx <- x
   }
-  else if (predictor == 'glm'){
-      if (x_type == 'cont'){
-	      lm.x <- lm(as.formula(paste("x ~", paste(colnames(x_parents), collapse = "+"))), data=data.frame(x, z))
-	      predict.x <- predict(lm.x, data.frame(x_parents))
-      }
-      else if (x_type == 'ord'){
-	      # prop.x <- VGAM::vglm(as.formula(paste("x ~", paste(colnames(z), collapse="+"))), data=data.frame(x, z), family=VGAM::propodds, model=TRUE)
-    	      # predict.x <- as.data.frame(predict(prop.x, newdata=data.frame(z), type='response'))
-	      prop.x <- ordinal::clm(as.formula(paste("x ~", paste(colnames(x_parents), collapse="+"))), data=data.frame(x, x_parents))
-	      predict.x <- predict(prop.x, data.frame(x_parents))$fit
-      }
-      else{
-      	      glm.x <- nnet::multinom(as.formula(paste("x ~", paste(colnames(x_parents), collapse="+"))), data=data.frame(x, x_parents), trace=F)
-      	      predict.x <- as.data.frame(predict(glm.x, data.frame(x_parents), type='probs'))
-      	      if (ncol(predict.x) == 1){
-      	              predict.x = 1-predict.x
-      	      }
-      }
+  else{
+  	if (predictor == 'rf'){
+  	    forest.x <- ranger::ranger(as.formula(paste("x ~", paste(colnames(z), collapse = "+"))),
+  	      data.frame(x, x_parents),
+  	      num.trees = 50,
+  	      probability = x_prob
+  	    )
+  	    predict.x <- predict(forest.x, data = data.frame(x_parents))$predictions
+  	}
+  	else if (predictor == 'glm'){
+  	    if (x_type == 'cont'){
+  	            lm.x <- lm(as.formula(paste("x ~", paste(colnames(x_parents), collapse = "+"))), data=data.frame(x, z))
+  	            predict.x <- predict(lm.x, data.frame(x_parents))
+  	    }
+  	    else if (x_type == 'ord'){
+  	            # prop.x <- VGAM::vglm(as.formula(paste("x ~", paste(colnames(z), collapse="+"))), data=data.frame(x, z), family=VGAM::propodds, model=TRUE)
+  	  	      # predict.x <- as.data.frame(predict(prop.x, newdata=data.frame(z), type='response'))
+  	            prop.x <- ordinal::clm(as.formula(paste("x ~", paste(colnames(x_parents), collapse="+"))), data=data.frame(x, x_parents))
+  	            predict.x <- predict(prop.x, data.frame(x_parents))$fit
+  	    }
+  	    else{
+  	    	      glm.x <- nnet::multinom(as.formula(paste("x ~", paste(colnames(x_parents), collapse="+"))), data=data.frame(x, x_parents), trace=F)
+  	    	      predict.x <- as.data.frame(predict(glm.x, data.frame(x_parents), type='probs'))
+  	    	      if (ncol(predict.x) == 1){
+  	    	              predict.x = 1-predict.x
+  	    	      }
+  	    }
+  	}
+
+  	# Step 5: Compute the residuals.
+  	if (x_type == 'cont'){
+  	      Rx <- as.matrix(x) - as.matrix(predict.x)
+  	}
+  	else if (x_type == 'ord'){
+  	      Rx <- as.matrix(p2r(x, predict.x))
+  	}
+  	else if (x_type == 'cat'){
+  		Rx <- matrix(0, nrow=n, ncol = (k-1))
+  		for (i in 1:(k-1)){
+  		      Rx[, i] <- (tx[, i] - predict.x[, i])
+  		}
+  	}
   }
 
   # Step 4: Train an estimator y~z
@@ -131,58 +150,50 @@ residual.test <- function(x, y, x_parents, y_parents, predictor, test) {
     y_prob <- FALSE
   }
 
-  if (predictor == 'rf'){
-      # predict.y <- matrix(0, ncol = k, nrow = n, dimnames = list(NULL, levels(x)))
-      forest.y <- ranger::ranger(as.formula(paste("y ~", paste(colnames(y_parents), collapse = "+"))),
-        data.frame(y, y_parents),
-        num.trees = 50, probability = y_prob
-      )
-      predict.y <- predict(forest.y, data = data.frame(y_parents))$predictions
+  if (length(y_parents) == 0){
+	  Ry <- y
+  }
+  else{
+  	if (predictor == 'rf'){
+  	    # predict.y <- matrix(0, ncol = k, nrow = n, dimnames = list(NULL, levels(x)))
+  	    forest.y <- ranger::ranger(as.formula(paste("y ~", paste(colnames(y_parents), collapse = "+"))),
+  	      data.frame(y, y_parents),
+  	      num.trees = 50, probability = y_prob
+  	    )
+  	    predict.y <- predict(forest.y, data = data.frame(y_parents))$predictions
 
-  }
-  else if (predictor == 'glm'){
-      if (y_type == 'cont'){
-	      lm.y <- lm(as.formula(paste("y ~", paste(colnames(y_parents), collapse = "+"))), data=data.frame(y, y_parents))
-	      predict.y <- predict(lm.y, data.frame(y_parents))
-      }
-      else if (y_type == 'ord'){
-	      prop.y <- ordinal::clm(as.formula(paste("y ~", paste(colnames(y_parents), collapse="+"))), data=data.frame(y, y_parents))
-	      predict.y <- predict(prop.y, data.frame(y_parents))$fit
-	      # prop.y <- VGAM::vglm(as.formula(paste("y ~", paste(colnames(z), collapse="+"))), data=data.frame(y, z), family=VGAM::propodds, model=TRUE)
-    	      # predict.y <- as.data.frame(predict(prop.y, newdata=data.frame(z), type='response'))
-      }
-      else{
-      	      glm.y <- nnet::multinom(as.formula(paste("y ~", paste(colnames(y_parents), collapse="+"))), data=data.frame(y, y_parents), trace=F)
-      	      predict.y <- as.data.frame(predict(glm.y, data.frame(y_parents), type='probs'))
-      	      if (ncol(predict.y) == 1){
-      	              predict.y = 1-predict.y
-      	      }
-      }
-  }
-
-  # Step 5: Compute the residuals.
-  if (x_type == 'cont'){
-	Rx <- as.matrix(x) - as.matrix(predict.x)
-  }
-  else if (x_type == 'ord'){
-	Rx <- as.matrix(p2r(x, predict.x))
-  }
-  else if (x_type == 'cat'){
-  	Rx <- matrix(0, nrow=n, ncol = (k-1))
-  	for (i in 1:(k-1)){
-  	      Rx[, i] <- (tx[, i] - predict.x[, i])
   	}
-  }
-  if (y_type == 'cont'){
-	Ry <- as.matrix(y) - as.matrix(predict.y)
-  }
-  else if(y_type == 'ord'){
-	Ry <- as.matrix(p2r(y, predict.y))
-  }
-  else if (y_type == 'cat'){
-  	Ry <- matrix(0, nrow=n, ncol = (r-1))
-  	for (i in 1:(r-1)){
-  		Ry[, i] <- (ty[, i] - predict.y[, i])
+  	else if (predictor == 'glm'){
+  	    if (y_type == 'cont'){
+  	            lm.y <- lm(as.formula(paste("y ~", paste(colnames(y_parents), collapse = "+"))), data=data.frame(y, y_parents))
+  	            predict.y <- predict(lm.y, data.frame(y_parents))
+  	    }
+  	    else if (y_type == 'ord'){
+  	            prop.y <- ordinal::clm(as.formula(paste("y ~", paste(colnames(y_parents), collapse="+"))), data=data.frame(y, y_parents))
+  	            predict.y <- predict(prop.y, data.frame(y_parents))$fit
+  	            # prop.y <- VGAM::vglm(as.formula(paste("y ~", paste(colnames(z), collapse="+"))), data=data.frame(y, z), family=VGAM::propodds, model=TRUE)
+  	  	      # predict.y <- as.data.frame(predict(prop.y, newdata=data.frame(z), type='response'))
+  	    }
+  	    else{
+  	    	      glm.y <- nnet::multinom(as.formula(paste("y ~", paste(colnames(y_parents), collapse="+"))), data=data.frame(y, y_parents), trace=F)
+  	    	      predict.y <- as.data.frame(predict(glm.y, data.frame(y_parents), type='probs'))
+  	    	      if (ncol(predict.y) == 1){
+  	    	              predict.y = 1-predict.y
+  	    	      }
+  	    }
+  	}
+
+  	if (y_type == 'cont'){
+  	      Ry <- as.matrix(y) - as.matrix(predict.y)
+  	}
+  	else if(y_type == 'ord'){
+  	      Ry <- as.matrix(p2r(y, predict.y))
+  	}
+  	else if (y_type == 'cat'){
+  		Ry <- matrix(0, nrow=n, ncol = (r-1))
+  		for (i in 1:(r-1)){
+  			Ry[, i] <- (ty[, i] - predict.y[, i])
+  		}
   	}
   }
 
@@ -255,6 +266,6 @@ ci.test <- function(x, y, z, d, test){
 	}
 }
 
-cond_effects <- function(x, y, z, d){
-	return(residual.test(d[, x], d[, y], d[z], 'glm', 'pillai'))
+cond_effects <- function(x, y, x_parents, y_parents, d){
+	return(residual.test(d[, x], d[, y], x_parents, y_parents, 'glm', 'pillai'))
 }

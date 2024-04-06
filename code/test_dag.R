@@ -16,6 +16,7 @@ is_edge_present <- function(u, v, present_edges){
 # If edge not present between X and Y, computes the effect between R_{X | pa(X)} and R_{Y | pa(Y)}
 compute_effects <- function(dag, data){
 	all_possible_edges <- t(combn(names(dag), 2))
+
 	present_edges <- edges(dag)[, c('v', 'w')]
 
 	effects <- c()
@@ -32,10 +33,11 @@ compute_effects <- function(dag, data){
 				effects <- round(c(effects, cancor(data[, u], data[, v])$cor), digits=4)
 			}
 			else{
-				effects <- c(effects, cond_effects(u, v, common_parents, data))
+				effects <- c(effects, cond_effects(u, v, common_parents, common_parents, data))
 			}
 		}
 		else{
+			effects <- c(effects, cond_effects(u, v, u_parents, v_parents, data))
 		}
 	}
 	all_possible_edges <- cbind(all_possible_edges, effects)
@@ -50,8 +52,8 @@ nodes <- names(dag)
 edges <- edges(dag)[, c('v', 'w')]
 
 # No edge
-no_edge_effects <- compute_effects(dag=dagitty('dag{ X Y Z}'), data=cont_data)
-print(no_edge_effects)
+# no_edge_effects <- compute_effects(dag=dagitty('dag{ X Y Z}'), data=cont_data)
+# print(no_edge_effects)
 
 # X -> Z edge
 edge_effects <- compute_effects(dag=dagitty('dag{ X Y -> Z}'), data=cont_data)
