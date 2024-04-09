@@ -27,28 +27,31 @@ compute_effects <- function(dag, data){
 
 		u_parents <- parents(dag, u)
 		v_parents <- parents(dag, v)
-		if (is_edge_present(u, v, present_edges)){
-			common_parents <- intersect(u_parents, v_parents)
+		# if (is_edge_present(u, v, present_edges)){
+		# 	common_parents <- intersect(u_parents, v_parents)
 
-			if (length(common_parents) == 0){
-				effects <- c(effects, round(cancor(data[, u], data[, v])$cor, digits=4))
-			}
-			else{
-				effects <- c(effects, round(cond_effects(u, v, common_parents, common_parents, data), digits=4))
-			}
-		}
-		else{
-			effects <- c(effects, round(cond_effects(u, v, u_parents, v_parents, data), digits=4))
-		}
+		# 	if (length(common_parents) == 0){
+		# 		effects <- c(effects, round(cancor(data[, u], data[, v])$cor, digits=4))
+		# 	}
+		# 	else{
+		# 		effects <- c(effects, round(cond_effects(u, v, common_parents, common_parents, data), digits=4))
+		# 	}
+		# }
+		effects <- c(effects, round(cond_effects(u, v, u_parents, v_parents, data), digits=4))
 		edge_present <- c(edge_present, is_edge_present(u, v, present_edges))
 	}
 	all_possible_edges <- cbind(all_possible_edges, effects, edge_present)
+	colnames(all_possible_edges) <- c('u', 'v', 'Effect', 'Edge Present?')
 	return(all_possible_edges)
 }
 
 # DAG 1
 dag <- dagitty("dag{ X -> Z <- Y }")
 cont_data <- mixed_data_gen_multinom(dag=dag, var_types=list(X='cont', Y='cont', Z='cont'))$d
+
+# No edges
+# edge_effects <- compute_effects(dag=dagitty('dag{ X Y Z}'), data=cont_data)
+# print(edge_effects)
 
 # X -> Z edge
 edge_effects <- compute_effects(dag=dagitty('dag{ X Y -> Z}'), data=cont_data)
