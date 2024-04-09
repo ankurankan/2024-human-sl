@@ -4,6 +4,9 @@ source('ci_test.R')
 
 # Test whether u -> v or u <- v is present in present_edges.
 is_edge_present <- function(u, v, present_edges){
+	if (nrow(present_edges) == 0){
+		return(FALSE)
+	}
 	if (any((u == present_edges['v']) & (v == present_edges['w'])) | any((u == present_edges['w']) & (v == present_edges['v']))){
 		return(TRUE)
 	}
@@ -17,7 +20,10 @@ is_edge_present <- function(u, v, present_edges){
 compute_effects <- function(dag, data){
 	all_possible_edges <- t(combn(names(dag), 2))
 
-	present_edges <- edges(dag)[, c('v', 'w')]
+	present_edges <- edges(dag)
+	if (nrow(present_edges) > 0){
+		present_edges <- present_edges[, c('v', 'w')]
+	}
 
 	effects <- c()
 	edge_present <- c()
@@ -50,8 +56,8 @@ dag <- dagitty("dag{ X -> Z <- Y }")
 cont_data <- mixed_data_gen_multinom(dag=dag, var_types=list(X='cont', Y='cont', Z='cont'))$d
 
 # No edges
-# edge_effects <- compute_effects(dag=dagitty('dag{ X Y Z}'), data=cont_data)
-# print(edge_effects)
+edge_effects <- compute_effects(dag=dagitty('dag{ X Y Z}'), data=cont_data)
+print(edge_effects)
 
 # X -> Z edge
 edge_effects <- compute_effects(dag=dagitty('dag{ X Y -> Z}'), data=cont_data)
