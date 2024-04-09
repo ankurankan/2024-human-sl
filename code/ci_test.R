@@ -109,7 +109,7 @@ residual.test <- function(x, y, x_parents, y_parents, predictor, test) {
   	}
   	else if (predictor == 'glm'){
   	    if (x_type == 'cont'){
-  	            lm.x <- lm(as.formula(paste("x ~", paste(colnames(x_parents), collapse = "+"))), data=data.frame(x, z))
+  	            lm.x <- lm(as.formula(paste("x ~", paste(colnames(x_parents), collapse = "+"))), data=data.frame(x, x_parents))
   	            predict.x <- predict(lm.x, data.frame(x_parents))
   	    }
   	    else if (x_type == 'ord'){
@@ -267,5 +267,5 @@ ci.test <- function(x, y, z, d, test){
 }
 
 cond_effects <- function(x, y, x_parents, y_parents, d){
-	return(residual.test(d[, x], d[, y], x_parents, y_parents, 'glm', 'pillai'))
+	return(residual.test(d[, x], d[, y], d[x_parents], d[y_parents], 'glm', 'pillai'))
 }
