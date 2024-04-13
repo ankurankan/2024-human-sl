@@ -90,3 +90,10 @@ print(edge_effects)
 
 edge_effects <- compute_effects(dag=dagitty('dag{ Y -> Z <- X <- A}'), data=cont_data)
 print(edge_effects)
+
+# DAG 3 
+dag <- dagitty("dag{ {x1 x2} -> a -> b -> {x4 x5} x1 -> x4}")
+cont_data <- simulateSEM(dag, empirical=T)
+
+edge_effects1 <- compute_effects(dag=dagitty('dag{ {x1 x2} -> a  b -> {x4 x5} }'), data=cont_data)
+edge_effects2 <- compute_effects(dag=dagitty('dag{ {x1 x2} -> a -> b -> {x4 x5} }'), data=cont_data)
