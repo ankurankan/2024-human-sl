@@ -1,0 +1,20 @@
+<html>
+
+<script src="http://www.dagitty.net/lib/dagitty-3.0.js"></script>
+<div class="dagitty" data-mutable="true" style="width:20em; height:20em">
+  dag {
+    I [pos="1,0"]
+    X [exposure,pos="0,2"]
+    Y [outcome,pos="2,2"]
+    X -> { I -> Y }
+  }
+</div>
+
+<form action="http://localhost:8000/upload" method="POST" enctype="multipart/form-data">
+      <input type="file" name="txt" id="fileToUpload" accept="text/*">
+      <input type="submit" value="upload">
+</form>
+
+<body onload="DAGitty.setup()">
+
+</html>
