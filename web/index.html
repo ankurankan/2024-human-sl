@@ -10,9 +10,13 @@
   }
 </div>
 
-<form action="http://localhost:8000/upload" method="POST" enctype="multipart/form-data">
-      <input type="file" name="txt" id="fileToUpload" accept="text/*">
-      <input type="submit" value="upload">
+<form action="http://127.0.0.1:4920/upload">
+</form>
+
+<form action="http://localhost:8000/marginals">
+	<label for="myfile">Select a file:</label>
+  	<input type="file" id="myfile" name="myfile"><br><br>
+  	<input type="submit">
 </form>
 
 <body onload="DAGitty.setup()">
