@@ -17,7 +17,7 @@ is_edge_present <- function(u, v, present_edges){
 # Iterates over each possible combination of variables in dag. 
 # If edge present between X and Y, computes the effect of X _|_ Y | pa(X, Y)
 # If edge not present between X and Y, computes the effect between R_{X | pa(X)} and R_{Y | pa(Y)}
-compute_effects <- function(dag, data){
+compute_effects_cond <- function(dag, data){
 	all_possible_edges <- t(combn(names(dag), 2))
 
 	present_edges <- edges(dag)
@@ -51,49 +51,54 @@ compute_effects <- function(dag, data){
 	return(all_possible_edges)
 }
 
-# DAG 1
-dag <- dagitty("dag{ X -> Z <- Y }")
-cont_data <- mixed_data_gen_multinom(dag=dag, var_types=list(X='cont', Y='cont', Z='cont'))$d
+# Iterates over each possible combination of variables in dag and computes their marginal canonical correlation.
+compute_effects_marg <- function(dag, data){
+	all_possible_edges <- t(combn(names(dag), 2))
 
-# No edges
-edge_effects <- compute_effects(dag=dagitty('dag{ X Y Z}'), data=cont_data)
-print(edge_effects)
+	present_edges <- edges(dag)
+	if (nrow(present_edges) > 0){
+		present_edges <- present_edges[, c('v', 'w')]
+	}
 
-# X -> Z edge
-edge_effects <- compute_effects(dag=dagitty('dag{ X Y -> Z}'), data=cont_data)
-print(edge_effects)
+	effects <- c()
+	edge_present <- c()
+	for (edge_index in 1:nrow(all_possible_edges)){
+		u <- all_possible_edges[edge_index, ][1]
+		v <- all_possible_edges[edge_index, ][2]
 
-# X -> Z <- Y edge
-edge_effects <- compute_effects(dag=dagitty('dag{ X -> Z <- Y}'), data=cont_data)
-print(edge_effects)
+		effects <- c(effects, cancor(data[, u], data[, v])$cor)
+		edge_present <- c(edge_present, is_edge_present(u, v, present_edges))
+	}
+	all_possible_edges <- cbind(all_possible_edges, effects, edge_present)
+	colnames(all_possible_edges) <- c('u', 'v', 'Effect', 'Edge Present?')
+	return(all_possible_edges)	
+}
 
-# X -> Z <- Y  X-> Y
-edge_effects <- compute_effects(dag=dagitty('dag{ X -> Z <- Y  X -> Y}'), data=cont_data)
-print(edge_effects)
+test_dag <- function(true_dag, dag, effect_type){
+	sim_data <- simulateSEM(true_dag, empirical=T)
+	if (effect_type == 'marg'){
+		return(compute_effects_marg(dag=dag, data=sim_data))
+	}
+	else if (effect_type == 'cond'){
+		return(compute_effects_cond(dag=dag, data=sim_data))
+	}
+}
 
-# X -> Y edge
-edge_effects <- compute_effects(dag=dagitty('dag{ X -> Y Z}'), data=cont_data)
-print(edge_effects)
+# DAG 1: Collider  Structure
+dag1 <- dagitty("dag{ X -> Z <- Y }")
 
-# DAG 2
-dag <- dagitty("dag{ A -> X -> Z <- Y A -> Y }")
-cont_data <- mixed_data_gen_multinom(dag=dag, var_types=list(X='cont', Y='cont', Z='cont', A='cont'))$d
+# DAG 2: Mediator
+dag2 <- dagitty("dag{X -> M -> Y}")
 
-edge_effects <- compute_effects(dag=dagitty('dag{ A X Y -> Z}'), data=cont_data)
-print(edge_effects)
+# DAG 3: Mediator with direct effect
+dag3 <- dagitty("dag{X -> M -> Y X -> Y}")
 
-edge_effects <- compute_effects(dag=dagitty('dag{ X Y -> Z <- A}'), data=cont_data)
-print(edge_effects)
+# DAG 4: Additional path between X and Y
+dag4 <- dagitty("dag{ A -> X -> Z <- Y A -> Y }")
 
-edge_effects <- compute_effects(dag=dagitty('dag{ X Y -> Z <- X A}'), data=cont_data)
-print(edge_effects)
+# DAG 5:
+dag5 <- dagitty("dag{ {x1 x2} -> a -> b -> {x4 x5} x1 -> x4}")
 
-edge_effects <- compute_effects(dag=dagitty('dag{ Y -> Z <- X <- A}'), data=cont_data)
-print(edge_effects)
 
-# DAG 3 
-dag <- dagitty("dag{ {x1 x2} -> a -> b -> {x4 x5} x1 -> x4}")
-cont_data <- simulateSEM(dag, empirical=T)
-
-edge_effects1 <- compute_effects(dag=dagitty('dag{ {x1 x2} -> a  b -> {x4 x5} }'), data=cont_data)
-edge_effects2 <- compute_effects(dag=dagitty('dag{ {x1 x2} -> a -> b -> {x4 x5} }'), data=cont_data)
+print(test_dag(true_dag=dag3, dag=dagitty('dag{X M -> Y}'), effect_type='marg'))
+print(test_dag(true_dag=dag3, dag=dagitty('dag{X M -> Y}'), effect_type='cond'))
