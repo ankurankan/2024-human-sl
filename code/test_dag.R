@@ -75,7 +75,7 @@ compute_effects_marg <- function(dag, data){
 }
 
 test_dag <- function(true_dag, dag, effect_type){
-	sim_data <- simulateSEM(true_dag, empirical=T)
+	sim_data <- simulateSEM(true_dag, b.default=0.3, empirical=T)
 	if (effect_type == 'marg'){
 		return(compute_effects_marg(dag=dag, data=sim_data))
 	}
@@ -100,5 +100,7 @@ dag4 <- dagitty("dag{ A -> X -> Z <- Y A -> Y }")
 dag5 <- dagitty("dag{ {x1 x2} -> a -> b -> {x4 x5} x1 -> x4}")
 
 
-print(test_dag(true_dag=dag3, dag=dagitty('dag{X M -> Y}'), effect_type='marg'))
-print(test_dag(true_dag=dag3, dag=dagitty('dag{X M -> Y}'), effect_type='cond'))
+# print(test_dag(true_dag=dag3, dag=dagitty('dag{X M -> Y}'), effect_type='marg'))
+# print(test_dag(true_dag=dag3, dag=dagitty('dag{X M -> Y}'), effect_type='cond'))
+print(test_dag(true_dag=dag5, dag=dagitty('dag{{x1 x2} -> a b -> {x4 x5} x1 -> x4}'), effect_type='marg'))
+print(test_dag(true_dag=dag5, dag=dagitty('dag{{x1 x2} -> a b -> {x4 x5} x1 -> x4}'), effect_type='cond'))
