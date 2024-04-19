@@ -1,10 +1,138 @@
 \documentclass[letterpaper]{article}
 
 \usepackage{tikz}
+\usepackage{subcaption}
 
 
 \begin{document}
-Mediator with direct effect:
+\textbf{Examples of Structure Leaning comparing the conditional and marginal effects}
+
+\textbf{Mediator model ($ X \rightarrow M \rightarrow Y $):} All effects = $ 0.3 $
+
+\begin{figure}
+	\centering
+	\begin{subfigure}{0.5 \textwidth}
+		\begin{tikzpicture}[scale=2]
+				\tikzstyle{every node}=[inner sep=1pt, align=center]
+				\node (X) at (0, 0) {$ X $};
+				\node (M) at (1, 1) {$ M $};
+				\node (Y) at (2, 0) {$ Y $};
+				\draw [dashed] (X) -- (M) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (M) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (X) -- (Y) node[midway, above, sloped] {$0.09$};
+		\end{tikzpicture}
+	\end{subfigure}
+	\begin{subfigure}{0.5 \textwidth}
+		\begin{tikzpicture}[scale=2]
+				\tikzstyle{every node}=[inner sep=1pt, align=center]
+				\node (X) at (0, 0) {$ X $};
+				\node (M) at (1, 1) {$ M $};
+				\node (Y) at (2, 0) {$ Y $};
+				\draw [dashed] (X) -- (M) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (M) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (X) -- (Y) node[midway, above, sloped] {$0.09$};
+		\end{tikzpicture}
+	\end{subfigure}
+\end{figure}
+
+Add edge $ M \rightarrow Y $:
+
+\begin{figure}
+	\centering
+	\begin{subfigure}{0.5 \textwidth}
+		\begin{tikzpicture}[scale=2]
+				\tikzstyle{every node}=[inner sep=1pt, align=center]
+				\node (X) at (0, 0) {$ X $};
+				\node (M) at (1, 1) {$ M $};
+				\node (Y) at (2, 0) {$ Y $};
+				\draw [dashed] (X) -- (M) node[midway, above, sloped] {$0.3$};
+				\draw [->] (M) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (X) -- (Y) node[midway, above, sloped] {$0.09$};
+		\end{tikzpicture}
+	\end{subfigure}
+	\begin{subfigure}{0.5 \textwidth}
+		\begin{tikzpicture}[scale=2]
+				\tikzstyle{every node}=[inner sep=1pt, align=center]
+				\node (X) at (0, 0) {$ X $};
+				\node (M) at (1, 1) {$ M $};
+				\node (Y) at (2, 0) {$ Y $};
+				\draw [dashed] (X) -- (M) node[midway, above, sloped] {$0.3$};
+				\draw [->] (M) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (X) -- (Y) node[midway, above, sloped] {$0$};
+		\end{tikzpicture}
+	\end{subfigure}
+\end{figure}
+
+Add edge $ X \rightarrow M $:
+
+\begin{figure}
+	\centering
+	\begin{subfigure}{0.5 \textwidth}
+		\begin{tikzpicture}[scale=2]
+				\tikzstyle{every node}=[inner sep=1pt, align=center]
+				\node (X) at (0, 0) {$ X $};
+				\node (M) at (1, 1) {$ M $};
+				\node (Y) at (2, 0) {$ Y $};
+				\draw [->] (X) -- (M) node[midway, above, sloped] {$0.3$};
+				\draw [->] (M) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (X) -- (Y) node[midway, above, sloped] {$0.09$};
+		\end{tikzpicture}
+	\end{subfigure}
+	\begin{subfigure}{0.5 \textwidth}
+		\begin{tikzpicture}[scale=2]
+				\tikzstyle{every node}=[inner sep=1pt, align=center]
+				\node (X) at (0, 0) {$ X $};
+				\node (M) at (1, 1) {$ M $};
+				\node (Y) at (2, 0) {$ Y $};
+				\draw [->] (X) -- (M) node[midway, above, sloped] {$0.3$};
+				\draw [->] (M) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (X) -- (Y) node[midway, above, sloped] {$0$};
+		\end{tikzpicture}
+	\end{subfigure}
+\end{figure}
+
+Add edge $ X \rightarrow Y $ in the marginal case:
+
+\begin{figure}
+	\centering
+	\begin{subfigure}{0.5 \textwidth}
+		\begin{tikzpicture}[scale=2]
+				\tikzstyle{every node}=[inner sep=1pt, align=center]
+				\node (X) at (0, 0) {$ X $};
+				\node (M) at (1, 1) {$ M $};
+				\node (Y) at (2, 0) {$ Y $};
+				\draw [->] (X) -- (M) node[midway, above, sloped] {$0.3$};
+				\draw [->] (M) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [->] (X) -- (Y) node[midway, above, sloped] {$0$};
+		\end{tikzpicture}
+	\end{subfigure}
+	\begin{subfigure}{0.5 \textwidth}
+		\begin{tikzpicture}[scale=2]
+				\tikzstyle{every node}=[inner sep=1pt, align=center]
+				\node (X) at (0, 0) {$ X $};
+				\node (M) at (1, 1) {$ M $};
+				\node (Y) at (2, 0) {$ Y $};
+				\draw [->] (X) -- (M) node[midway, above, sloped] {$0.3$};
+				\draw [->] (M) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (X) -- (Y) node[midway, above, sloped] {$0$};
+		\end{tikzpicture}
+	\end{subfigure}
+\end{figure}
+
+
+	
+	\begin{tikzpicture}[scale=2]
+			\tikzstyle{every node}=[inner sep=1pt, align=center]
+			\node (X) at (0, 0) {$ X $};
+			\node (M) at (1, 1) {$ M $};
+			\node (Y) at (2, 0) {$ Y $};
+			\draw [->] (X) -- (M) node[midway, above, sloped] {$0.3$};
+			\draw [->] (M) -- (Y) node[midway, above, sloped] {$0.3$};
+			\draw [->] (X) -- (Y) node[midway, above, sloped] {$0.3$};
+	\end{tikzpicture}
+
+
+
 \vspace{1em}
 
 	\begin{tikzpicture}[scale=2]
@@ -44,5 +172,10 @@ Conditional:
 			\draw [->] (M) -- (Y) node[midway, above, sloped] {$0.3$};
 			\draw [dashed] (X) -- (Y) node[midway, above, sloped] {$0.3$};
 	\end{tikzpicture}
+
+Drawbacks of marginal approach:
+\begin{enumerate}
+	\item After drawing an edge, the parameter value needs to be readjusted.
+\end{enumerate}
 
 \end{document}
