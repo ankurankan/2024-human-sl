@@ -89,9 +89,9 @@ for (oracle_acc in oracle_accs){
 	for (edge_prob in edge_probs){
 		shd <- future_replicate(1000, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc), future.chunk.size=10)
 		mean_shd <- mean(shd)
-		results <- rbind(results, c(oracle_acc, edge_prob, mean(shd)))
+		results <- rbind(results, c(oracle_acc, edge_prob, mean(shd), sd(shd)/sqrt(1000)))
 		pb$tick()
 	}
 }
-colnames(results) <- c('oracle_acc', 'edge_prob', 'mean_shd')
+colnames(results) <- c('oracle_acc', 'edge_prob', 'mean_shd', 'std_error')
 write.csv(results, 'sl_results.csv')
