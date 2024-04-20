@@ -203,4 +203,22 @@ Remarks:
 	\item In the marginal case, all paths between variables with effect get added and later need to be pruned. Pruning is required in the conditional case as well.
 \end{enumerate}
 
+\section{Empirical Analysis}
+
+Method:
+\begin{enumerate}
+	\item Start with a random DAG on $ 10 $ nodes.
+	\item Simulate data from it, $ N = 500 $.
+	\item Apply a threshold of $ 0.05 $ on correlations.
+	\item Add edges for remaining correlations. Use an oracle for determining the direction. Based on the accuracy value, oracle either returns the true direction or randomly chooses the direction or don't know.
+	\item Compare the Structural Hamming Distance between true and learned model.
+\end{enumerate}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{../code/plots/shd.pdf}
+	\caption{Mean SHD with varying edge probabilities and oracle accuracy.}
+\end{figure}
+
+
 \end{document}

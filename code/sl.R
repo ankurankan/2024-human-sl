@@ -79,7 +79,7 @@ run.sim <- function(n_nodes, edge_prob, oracle_acc){
 }
 
 edge_probs <- seq(0.1, 0.9, 0.2)
-oracle_accs <- seq(0.1, 0.9, 0.2)
+oracle_accs <- seq(0.1, 0.9, 0.1)
 n_nodes <- 10
 
 results <- data.frame()
@@ -94,4 +94,4 @@ for (oracle_acc in oracle_accs){
 	}
 }
 colnames(results) <- c('oracle_acc', 'edge_prob', 'mean_shd', 'std_error')
-write.csv(results, 'sl_results.csv')
+write.csv(results, 'results/sl_results.csv')
