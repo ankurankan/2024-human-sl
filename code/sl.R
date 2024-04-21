@@ -60,6 +60,11 @@ run.sim <- function(n_nodes, edge_prob, oracle_acc, prune_dags=T){
 			break
 		}
 	}
+	true_adj <- dag_to_adjmatrix(dag)
+
+	# Step 2: Learn the model using Hill-Climb Search
+	hc_dag <- bnlearn::hc(sim_data)
+	hc_adj <- bnlearn::amat(hc_dag)
 
 	# Step 2: Compute marginal correlation between all variable pairs.
 	marg_cor <- compute_effects_marg(dag, sim_data)[, c('u', 'v', 'cor')]
@@ -67,11 +72,9 @@ run.sim <- function(n_nodes, edge_prob, oracle_acc, prune_dags=T){
 	marg_cor_thresh_sorted <- marg_cor_thresh %>% arrange(desc(marg_cor_thresh$cor))
 
 	# Step 3: Modify graph depending on correlation i.e. simulate a human.
-
 	# Step 3.1: Check if no significant correlation, return empty graph.
 	if (nrow(marg_cor_thresh_sorted) == 0){
-		true_adj <- dag_to_adjmatrix(dag)
-		return (sum(true_adj))
+		learned_adj <- matrix(0, nrow=10, ncol=10)
 	}
 	# Step 3.2: Otherwise iterate over pairs, and use oracle to add edges.
 	else{
@@ -109,16 +112,17 @@ run.sim <- function(n_nodes, edge_prob, oracle_acc, prune_dags=T){
 			}
 		}
 		learned_dag <- edgelist_to_dagitty(edgelist=learned_edges, all_vars=names(dag))
-		# Step 4: Compare the learned graph with the true graph.
-		true_adj <- dag_to_adjmatrix(dag)
 		learned_adj <- dag_to_adjmatrix(learned_dag)
-		dist <- sum(abs(true_adj - learned_adj))
-		return(dist)
 	}
+
+	# Step 4: Compare the learned graph with the true graph.
+	human_dist <- sum(abs(true_adj - learned_adj))
+	hc_dist <- sum(abs(true_adj - hc_adj))
+	return (c(human_dist, hc_dist))
 }
 
-edge_probs <- seq(0.1, 0.9, 0.2)
-oracle_accs <- seq(0.1, 0.9, 0.1)
+edge_probs <- seq(0.1, 0.9, 0.3)
+oracle_accs <- seq(0.1, 0.9, 0.3)
 n_nodes <- 10
 R <- 3
 
@@ -128,16 +132,20 @@ results_pruned <- data.frame()
 pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
 for (oracle_acc in oracle_accs){
 	for (edge_prob in edge_probs){
-		shd <- future_replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=F), future.chunk.size=10)
-		mean_shd <- mean(shd)
-		results <- rbind(results, c(oracle_acc, edge_prob, mean(shd), sd(shd)/sqrt(R)))
+		shd <- t(future_replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=F), future.chunk.size=10))
+		# shd <- t(replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=F)))
+		mean_shd <- apply(shd, mean, MARGIN=2)
+		sd_shd <- apply(shd, sd, MARGIN=2)/sqrt(R)
+		results <- rbind(results, c(oracle_acc, edge_prob, mean_shd, sd_shd))
 
-		shd_pruned <- future_replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=T), future.chunk.size=10)
-		mean_shd <- mean(shd_pruned)
-		results_pruned <- rbind(results_pruned, c(oracle_acc, edge_prob, mean(shd_pruned), sd(shd_pruned)/sqrt(R)))
+		shd_pruned <- t(future_replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=T), future.chunk.size=10))
+		mean_shd <- apply(shd_pruned, mean, MARGIN=2)
+		sd_shd <- apply(shd_pruned, sd, MARGIN=2)/sqrt(R)
+		results_pruned <- rbind(results_pruned, c(oracle_acc, edge_prob, mean_shd, sd_shd))
 		pb$tick()
 	}
 }
-colnames(results) <- c('oracle_acc', 'edge_prob', 'mean_shd', 'std_error')
+colnames(results) <- c('oracle_acc', 'edge_prob', 'mean_shd_human', 'mean_shd_hc', 'std_error_human', 'std_error_hc')
+colnames(results_pruned) <- c('oracle_acc', 'edge_prob', 'mean_shd_human', 'mean_shd_hc', 'std_error_human', 'std_error_hc')
 write.csv(results, 'results/sl_results.csv')
-write.csv(results, 'results/sl_results_pruned.csv')
+write.csv(results_pruned, 'results/sl_results_pruned.csv')
