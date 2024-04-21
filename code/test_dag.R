@@ -66,7 +66,25 @@ compute_effects_marg <- function(dag, data){
 		u <- all_possible_edges[edge_index, ][1]
 		v <- all_possible_edges[edge_index, ][2]
 
-		effects <- c(effects, cancor(data[, u], data[, v])$cor)
+		# If edge is present, compute the edge coefficient.
+		if (is_edge_present(u, v, present_edges)){
+			if (u %in% parents(dag, v)){
+				# u -> v edge
+				edge_head <- v
+				edge_tail <- u
+			}
+			else{
+				# v -> u edge
+				edge_head <- u
+				edge_tail <- v
+			}
+			coefs <- lm(paste0(edge_head, ' ~ ', paste0(parents(dag, edge_head), collapse=' + ')), data)
+			effects <- c(effects, as.vector(coefs$coef[edge_tail]))
+
+		}
+		else{
+			effects <- c(effects, cancor(data[, u], data[, v])$cor)
+		}
 		edge_present <- c(edge_present, is_edge_present(u, v, present_edges))
 	}
 	all_possible_edges <- cbind(all_possible_edges, effects, edge_present)
@@ -102,8 +120,8 @@ dag5 <- dagitty("dag{ x1 -> a -> b -> x2 x1 -> x2}")
 # print(test_dag(true_dag=dag2, dag=dagitty('dag{X -> M -> Y}'), effect_type='marg'))
 # print(test_dag(true_dag=dag2, dag=dagitty('dag{X -> M -> Y}'), effect_type='cond'))
 
-# print(test_dag(true_dag=dag3, dag=dagitty('dag{X M -> Y X -> Y}'), effect_type='marg'))
-# print(test_dag(true_dag=dag3, dag=dagitty('dag{X M -> Y X -> Y}'), effect_type='cond'))
+print(test_dag(true_dag=dag3, dag=dagitty('dag{X -> M -> Y X -> Y}'), effect_type='marg'))
+print(test_dag(true_dag=dag3, dag=dagitty('dag{X -> M -> Y X -> Y}'), effect_type='cond'))
 
 # print(test_dag(true_dag=dag5, dag=dagitty('dag{ x1 -> a b -> x2 x1 -> b}'), effect_type='marg'))
 # print(test_dag(true_dag=dag5, dag=dagitty('dag{ x1 -> a b -> x2 x1 -> b}'), effect_type='cond'))
