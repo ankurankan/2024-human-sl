@@ -47,7 +47,7 @@ compute_effects_cond <- function(dag, data){
 		edge_present <- c(edge_present, is_edge_present(u, v, present_edges))
 	}
 	all_possible_edges <- cbind(all_possible_edges, effects, edge_present)
-	colnames(all_possible_edges) <- c('u', 'v', 'unexplain_cor', 'edge')
+	colnames(all_possible_edges) <- c('u', 'v', 'cor', 'edge')
 	return(as.data.frame(all_possible_edges))
 }
 
@@ -88,7 +88,7 @@ compute_effects_marg <- function(dag, data){
 		edge_present <- c(edge_present, is_edge_present(u, v, present_edges))
 	}
 	all_possible_edges <- cbind(all_possible_edges, effects, edge_present)
-	colnames(all_possible_edges) <- c('u', 'v', 'edge_coef/cor', 'edge')
+	colnames(all_possible_edges) <- c('u', 'v', 'cor', 'edge')
 	return(as.data.frame(all_possible_edges))
 }
 
