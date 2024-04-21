@@ -4,7 +4,7 @@ source('test_dag.R')
 library(future.apply)
 library(tidyverse)
 library(progress)
-plan(multisession)
+plan(multisession, workers=32)
 
 # Oracle function. Returns either true or (random or don't know) direction of the edge.
 oracle <- function(u, v, true_dag, accuracy=0.9){
@@ -121,8 +121,8 @@ run.sim <- function(n_nodes, edge_prob, oracle_acc, prune_dags=T){
 	return (c(human_dist, hc_dist))
 }
 
-edge_probs <- seq(0.1, 0.9, 0.3)
-oracle_accs <- seq(0.1, 0.9, 0.3)
+edge_probs <- seq(0.1, 0.9, 0.2)
+oracle_accs <- seq(0.1, 0.9, 0.1)
 n_nodes <- 10
 R <- 100
 
@@ -132,13 +132,13 @@ results_pruned <- data.frame()
 pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
 for (oracle_acc in oracle_accs){
 	for (edge_prob in edge_probs){
-		shd <- t(future_replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=F), future.chunk.size=10))
+		shd <- t(future_replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=F), future.chunk.size=3))
 		# shd <- t(replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=F)))
 		mean_shd <- apply(shd, mean, MARGIN=2)
 		sd_shd <- apply(shd, sd, MARGIN=2)/sqrt(R)
 		results <- rbind(results, c(oracle_acc, edge_prob, mean_shd, sd_shd))
 
-		shd_pruned <- t(future_replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=T), future.chunk.size=10))
+		shd_pruned <- t(future_replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=T), future.chunk.size=3))
 		mean_shd <- apply(shd_pruned, mean, MARGIN=2)
 		sd_shd <- apply(shd_pruned, sd, MARGIN=2)/sqrt(R)
 		results_pruned <- rbind(results_pruned, c(oracle_acc, edge_prob, mean_shd, sd_shd))
