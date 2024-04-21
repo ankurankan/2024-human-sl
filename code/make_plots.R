@@ -2,7 +2,7 @@ library(ggplot2)
 library(dplyr)
 
 
-make_shd_plot <- function(filename='results/sl_results.csv'){
+make_shd_plot <- function(filename='results/sl_results.csv', plot_filename='plots/shd.pdf'){
 	d <- read.csv(filename, row.names=1)
 	d$edge_prob <- sapply(d$edge_prob, as.character)
 
@@ -16,7 +16,8 @@ make_shd_plot <- function(filename='results/sl_results.csv'){
 		labs(y = "Mean SHD") + 
 		labs(color = "Edge Probability")
 
-	ggsave('plots/shd.pdf', p)
+	ggsave(plot_filename, p)
 }
 
-make_shd_plot()
+make_shd_plot(filename='results/sl_results.csv', plot_filename='plots/shd.pdf')
+make_shd_plot(filename='results/sl_results_pruned.csv', plot_filename='plots/shd_pruned.pdf')
