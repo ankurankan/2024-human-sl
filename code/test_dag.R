@@ -97,12 +97,13 @@ dag3 <- dagitty("dag{X -> M -> Y X -> Y}")
 dag4 <- dagitty("dag{ A -> X -> Z <- Y A -> Y }")
 
 # DAG 5:
-dag5 <- dagitty("dag{ {x1 x2} -> a -> b -> {x4 x5} x1 -> x4}")
+dag5 <- dagitty("dag{ x1 -> a -> b -> x2 x1 -> x2}")
 
 # print(test_dag(true_dag=dag2, dag=dagitty('dag{X -> M -> Y}'), effect_type='marg'))
 # print(test_dag(true_dag=dag2, dag=dagitty('dag{X -> M -> Y}'), effect_type='cond'))
 
 # print(test_dag(true_dag=dag3, dag=dagitty('dag{X M -> Y X -> Y}'), effect_type='marg'))
 # print(test_dag(true_dag=dag3, dag=dagitty('dag{X M -> Y X -> Y}'), effect_type='cond'))
-# print(test_dag(true_dag=dag5, dag=dagitty('dag{{x1 x2} -> a b -> {x4 x5} x1 -> x4}'), effect_type='marg'))
-# print(test_dag(true_dag=dag5, dag=dagitty('dag{{x1 x2} -> a b -> {x4 x5} x1 -> x4}'), effect_type='cond'))
+
+print(test_dag(true_dag=dag5, dag=dagitty('dag{ x1 -> a b -> x2 x1 -> b}'), effect_type='marg'))
+print(test_dag(true_dag=dag5, dag=dagitty('dag{ x1 -> a b -> x2 x1 -> b}'), effect_type='cond'))
