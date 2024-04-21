@@ -47,7 +47,7 @@ compute_effects_cond <- function(dag, data){
 		edge_present <- c(edge_present, is_edge_present(u, v, present_edges))
 	}
 	all_possible_edges <- cbind(all_possible_edges, effects, edge_present)
-	colnames(all_possible_edges) <- c('u', 'v', 'cor', 'edge')
+	colnames(all_possible_edges) <- c('u', 'v', 'unexplain_cor', 'edge')
 	return(as.data.frame(all_possible_edges))
 }
 
@@ -88,7 +88,7 @@ compute_effects_marg <- function(dag, data){
 		edge_present <- c(edge_present, is_edge_present(u, v, present_edges))
 	}
 	all_possible_edges <- cbind(all_possible_edges, effects, edge_present)
-	colnames(all_possible_edges) <- c('u', 'v', 'cor', 'edge')
+	colnames(all_possible_edges) <- c('u', 'v', 'edge_coef/cor', 'edge')
 	return(as.data.frame(all_possible_edges))
 }
 
@@ -117,11 +117,11 @@ dag4 <- dagitty("dag{ A -> X -> Z <- Y A -> Y }")
 # DAG 5:
 dag5 <- dagitty("dag{ x1 -> a -> b -> x2 x1 -> x2}")
 
-# print(test_dag(true_dag=dag2, dag=dagitty('dag{X -> M -> Y}'), effect_type='marg'))
-# print(test_dag(true_dag=dag2, dag=dagitty('dag{X -> M -> Y}'), effect_type='cond'))
+# print(test_dag(true_dag=dag2, dag=dagitty('dag{X M -> Y X -> Y}'), effect_type='marg'))
+# print(test_dag(true_dag=dag2, dag=dagitty('dag{X M -> Y X -> Y}'), effect_type='cond'))
 
-print(test_dag(true_dag=dag3, dag=dagitty('dag{X -> M -> Y X -> Y}'), effect_type='marg'))
-print(test_dag(true_dag=dag3, dag=dagitty('dag{X -> M -> Y X -> Y}'), effect_type='cond'))
+# print(test_dag(true_dag=dag3, dag=dagitty('dag{X -> M -> Y }'), effect_type='marg'))
+# print(test_dag(true_dag=dag3, dag=dagitty('dag{X -> M -> Y }'), effect_type='cond'))
 
 # print(test_dag(true_dag=dag5, dag=dagitty('dag{ x1 -> a b -> x2 x1 -> b}'), effect_type='marg'))
 # print(test_dag(true_dag=dag5, dag=dagitty('dag{ x1 -> a b -> x2 x1 -> b}'), effect_type='cond'))
