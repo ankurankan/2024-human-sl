@@ -124,7 +124,7 @@ run.sim <- function(n_nodes, edge_prob, oracle_acc, prune_dags=T){
 edge_probs <- seq(0.1, 0.9, 0.3)
 oracle_accs <- seq(0.1, 0.9, 0.3)
 n_nodes <- 10
-R <- 3
+R <- 100
 
 results <- data.frame()
 results_pruned <- data.frame()
