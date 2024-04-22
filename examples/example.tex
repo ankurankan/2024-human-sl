@@ -95,7 +95,6 @@ Add edge $ X \rightarrow M $:
 Add edge $ X \rightarrow Y $ in the marginal case:
 
 \begin{figure}[H]
-	\centering
 	\begin{subfigure}{0.5 \textwidth}
 		\begin{tikzpicture}[scale=2]
 				\tikzstyle{every node}=[inner sep=1pt, align=center]
@@ -195,6 +194,63 @@ Add edge $ X \rightarrow M $:
 				\draw [->] (X) -- (Y) node[midway, above, sloped] {$0.3$};
 		\end{tikzpicture}
 	\end{subfigure}
+\end{figure}
+
+\subsection{Example 3}
+\begin{figure}[H]
+	\begin{subfigure}{0.5 \textwidth}
+		\begin{tikzpicture}[scale=2]
+				\tikzstyle{every node}=[inner sep=1pt, align=center]
+				\node (X) at (0, 0) {$ X $};
+				\node (x3) at (1, -0.5) {$ x1 $};
+				\node (x2) at (1, 0) {$ x2 $};
+				\node (x1) at (1, 0.5) {$ x3 $};
+				\node (Y) at (2, 0) {$ Y $};
+				\draw [->] (x1) -- (X) node[midway, above, sloped] {$0.3$};
+				\draw [->] (x2) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [->] (x3) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [->] (X) -- (x2) node[midway, above, sloped] {$0.3$};
+				\draw [->] (X) -- (x3) node[midway, above, sloped] {$0.3$};
+		\end{tikzpicture}
+	\end{subfigure}%
+	\begin{subfigure}{0.5 \textwidth}
+	\end{subfigure}
+	\caption{True Model}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{subfigure}{0.5 \textwidth}
+		\begin{tikzpicture}[scale=2]
+				\tikzstyle{every node}=[inner sep=1pt, align=center]
+				\node (X) at (0, 0) {$ X $};
+				\node (x3) at (1, -0.5) {$ x1 $};
+				\node (x2) at (1, 0) {$ x2 $};
+				\node (x1) at (1, 0.5) {$ x3 $};
+				\node (Y) at (2, 0) {$ Y $};
+				\draw [->] (x1) -- (X) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (x2) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (x3) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (X) -- (Y) node[midway, above, sloped] {$0.18$};
+				\draw [->] (X) -- (x2) node[midway, above, sloped] {$0.3$};
+				\draw [->] (X) -- (x3) node[midway, above, sloped] {$0.3$};
+		\end{tikzpicture}
+	\end{subfigure}%
+	\begin{subfigure}{0.5 \textwidth}
+		\begin{tikzpicture}[scale=2]
+				\tikzstyle{every node}=[inner sep=1pt, align=center]
+				\node (X) at (0, 0) {$ X $};
+				\node (x3) at (1, -0.5) {$ x1 $};
+				\node (x2) at (1, 0) {$ x2 $};
+				\node (x1) at (1, 0.5) {$ x3 $};
+				\node (Y) at (2, 0) {$ Y $};
+				\draw [->] (x1) -- (X) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (x2) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [dashed] (x3) -- (Y) node[midway, above, sloped] {$0.3$};
+				\draw [->] (X) -- (x2) node[midway, above, sloped] {$0.3$};
+				\draw [->] (X) -- (x3) node[midway, above, sloped] {$0.3$};
+		\end{tikzpicture}
+	\end{subfigure}
+	\caption{(Left) Marginal (Right) Conditional}
 \end{figure}
 
 
