@@ -232,11 +232,11 @@ Add edge $ X \rightarrow M $:
 				\draw [->] (x2) -- (Y) node[midway, above, sloped] {$0.3$};
 				\draw [->] (X) -- (x1) node[midway, above, sloped] {$0.3$};
 				\draw [->] (X) -- (x2) node[midway, above, sloped] {$0.3$};
-				\draw [dashed](X) -- (Y) node[midway, above, sloped] {$0.18$};
-				\draw [dashed](x1) -- (x2) node[midway, above, sloped] {$0.09$};
-				\draw [dashed](x1) -- (x3) node[midway, above, sloped] {$0.09$};
-				\draw [dashed](x2) -- (x3) node[midway, above, sloped] {$0.09$};
-				\draw [dashed](x3) -- (Y) node[midway, above, sloped] {$0.054$};
+				\draw [dashed](X) to [bend left=15] (Y);
+				\draw [dashed](x1) to [bend left=15] (x2);
+				\draw [dashed](x1) to [bend right=25] (x3);
+				\draw [dashed](x2) to [bend left=15] (x3);
+				\draw [dashed](x3) -- (Y);
 		\end{tikzpicture}
 	\end{subfigure}%
 	\begin{subfigure}{0.5 \textwidth}
@@ -252,8 +252,8 @@ Add edge $ X \rightarrow M $:
 				\draw [->] (x2) -- (Y) node[midway, above, sloped] {$0.3$};
 				\draw [->] (X) -- (x1) node[midway, above, sloped] {$0.3$};
 				\draw [->] (X) -- (x2) node[midway, above, sloped] {$0.3$};
-				\draw [dashed](x1) -- (x3) node[midway, above, sloped] {$0.09$};
-				\draw [dashed](x2) -- (x3) node[midway, above, sloped] {$0.09$};
+				\draw [dashed](x1) to [bend right=25] (x3);
+				\draw [dashed](x2) to [bend left=15] (x3);
 		\end{tikzpicture}
 	\end{subfigure}
 	\caption{(Left) Marginal (Right) Conditional}
