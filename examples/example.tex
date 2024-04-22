@@ -206,6 +206,7 @@ Method:
 	\item Simulate data from it, $ N = 500 $.
 	\item Apply a threshold of $ 0.05 $ on correlations.
 	\item Add edges for remaining correlations. Use an oracle for determining the direction. Based on the accuracy value, oracle either returns the true direction or randomly chooses the direction or don't know.
+	\item If pruning, after each added edge remove any edge with coefficient = 0.
 	\item Compare the Structural Hamming Distance between true and learned model.
 \end{enumerate}
 
