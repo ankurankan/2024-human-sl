@@ -281,8 +281,9 @@ Method:
 Remarks:
 \begin{enumerate}
 	\item After drawing an edge, the parameter values can change.
-	\item In the marginal case, all paths between variables with effect get added and later need to be pruned. Pruning is required in the conditional case as well.
-	\item No huge difference between pruned vs not pruned.
+	\item Pruning is needed in both marginal and conditional cases.
+	\item In the marginal case, the ``suggested'' graph is more dense.
+	\item Results with pruning vs non pruning seems close. Unexpected, need to check for bugs in the code.
 \end{enumerate}
 
 \end{document}
