@@ -197,11 +197,6 @@ Add edge $ X \rightarrow M $:
 	\end{subfigure}
 \end{figure}
 
-Remarks:
-\begin{enumerate}
-	\item After drawing an edge, the parameter values can change. Happens in both cases.
-	\item In the marginal case, all paths between variables with effect get added and later need to be pruned. Pruning is required in the conditional case as well.
-\end{enumerate}
 
 \section{Empirical Analysis}
 
@@ -217,8 +212,19 @@ Method:
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.7]{../code/plots/shd.pdf}
-	\caption{Mean SHD with varying edge probabilities and oracle accuracy.}
+	\caption{Mean SHD with varying edge probabilities and oracle accuracy. Compared to Hill-Climb Search with BIC score}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.7]{../code/plots/shd_pruned.pdf}
+	\caption{Mean SHD with varying edge probabilities and oracle accuracy. Compared to Hill-Climb Search with BIC score}
 \end{figure}
 
+Remarks:
+\begin{enumerate}
+	\item After drawing an edge, the parameter values can change.
+	\item In the marginal case, all paths between variables with effect get added and later need to be pruned. Pruning is required in the conditional case as well.
+	\item No huge difference between pruned vs not pruned.
+\end{enumerate}
 
 \end{document}
