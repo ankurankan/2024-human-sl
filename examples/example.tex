@@ -210,14 +210,15 @@ Method:
 \end{enumerate}
 
 \begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.7]{../code/plots/shd.pdf}
-	\caption{Mean SHD with varying edge probabilities and oracle accuracy. Compared to Hill-Climb Search with BIC score}
-\end{figure}
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.7]{../code/plots/shd_pruned.pdf}
-	\caption{Mean SHD with varying edge probabilities and oracle accuracy. Compared to Hill-Climb Search with BIC score}
+	\begin{subfigure}{0.5 \textwidth}
+		\centering
+		\includegraphics{../code/plots/shd.pdf}
+	\end{subfigure}%
+	\begin{subfigure}{0.5 \textwidth}
+		\centering
+		\includegraphics{../code/plots/shd_pruned.pdf}
+	\end{subfigure}
+		\caption{Mean SHD with varying edge probabilities and oracle accuracy (Left) Without Pruning (Right) With pruning. Compared to Hill-Climb Search with BIC score}
 \end{figure}
 
 Remarks:

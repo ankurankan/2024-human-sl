@@ -23,9 +23,10 @@ make_shd_plot <- function(filename, plot_filename){
 		theme(legend.position='top') +
 		labs(x = "Oracle Accuracy") +
 		labs(y = "Mean SHD") + 
-		labs(color = "Edge Probability")
+		labs(color = "Edge Probability") +
+		ylim(0, 50)
 
-	ggsave(plot_filename, p)
+	ggsave(plot_filename, p, width=2.5, height=3.5, units='in')
 }
 
 make_shd_plot(filename='results/sl_results.csv', plot_filename='plots/shd.pdf')
