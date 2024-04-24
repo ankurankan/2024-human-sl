@@ -92,6 +92,8 @@ compute_effects_marg <- function(dag, data){
 	return(as.data.frame(all_possible_edges))
 }
 
+# Iterate over all possible combination of edges. Use the adjustment set for the edge as the
+# conditioning variable and estimate the effect.
 compute_effects_v2 <- function(dag, d){
 	all_possible_edges <- t(combn(names(dag), 2))
 

@@ -44,7 +44,3 @@ my_endpoint <- function( dag ){
 		r
 }
 
-
-
-
-
