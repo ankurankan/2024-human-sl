@@ -92,6 +92,38 @@ compute_effects_marg <- function(dag, data){
 	return(as.data.frame(all_possible_edges))
 }
 
+compute_effects_v2 <- function(dag, d){
+	all_possible_edges <- t(combn(names(dag), 2))
+
+	r <- c()
+	for (edge_index in 1:nrow(all_possible_edges)){
+		n1 <- all_possible_edges[edge_index, ][1]
+		n2 <- all_possible_edges[edge_index, ][2]
+
+		p1 <- parents(dag, n1)
+		p2 <- parents(dag, n2)
+
+		if( n2 %in% p1 ){		
+			otherparents <- setdiff( p1, n2 )
+			tst <- ciTest( X=n1, Y=n2, Z=otherparents, d,
+				type="cis.pillai" )
+			u <- n2; v <- n1 ; a <- "->"
+		} else if( n1 %in% p2 ) {
+			otherparents <- setdiff( p1, n2 )
+			tst <- ciTest( X=n1, Y=n2, Z=otherparents, d,
+				type="cis.pillai" )
+			u <- n1 ; v <- n2 ; a <- "->"
+		} else {
+			tst <- ciTest( X=n1, Y=n2, Z=union( p1, p2 ), d,
+				type="cis.pillai" )
+					u <- n1 ; v <- n2 ; a <- "--"
+			}
+		r <- rbind( r, data.frame(list(X=u,A=a,Y=v,
+				cor=tst[,"estimate"],p=tst[,"p.value"])) )
+	}
+	return(r)
+}
+
 test_dag <- function(true_dag, dag, effect_type){
 	sim_data <- simulateSEM(true_dag, b.default=0.3, empirical=T)
 	if (effect_type == 'marg'){
@@ -99,6 +131,9 @@ test_dag <- function(true_dag, dag, effect_type){
 	}
 	else if (effect_type == 'cond'){
 		return(compute_effects_cond(dag=dag, data=sim_data))
+	}
+	else if (effect_type == 'v2'){
+		return(compute_effects_v2(dag=dag, d=sim_data))
 	}
 }
 
@@ -120,14 +155,14 @@ dag5 <- dagitty("dag{ x1 <- a -> b -> x2 x1 -> x2}")
 # DAG 6:
 dag6 <- dagitty("dag{ x3 -> x -> {x1 x2} -> y }")
 
-# print(test_dag(true_dag=dag2, dag=dagitty('dag{X -> M -> Y}'), effect_type='marg'))
+# print(test_dag(true_dag=dag2, dag=dagitty('dag{X -> M Y}'), effect_type='v2'))
 # print(test_dag(true_dag=dag2, dag=dagitty('dag{X -> M -> Y}'), effect_type='cond'))
 
-# print(test_dag(true_dag=dag3, dag=dagitty('dag{X -> M -> Y }'), effect_type='marg'))
+# print(test_dag(true_dag=dag3, dag=dagitty('dag{X -> M -> Y X -> Y }'), effect_type='v2'))
 # print(test_dag(true_dag=dag3, dag=dagitty('dag{X -> M -> Y }'), effect_type='cond'))
 
 # print(test_dag(true_dag=dag5, dag=dagitty('dag{ x1 <- a b -> x2}'), effect_type='marg'))
 # print(test_dag(true_dag=dag5, dag=dagitty('dag{ x1 <- a b -> x2}'), effect_type='cond'))
 
-# print(test_dag(true_dag=dag6, dag=dagitty('dag{ x3 -> x -> {x1 x2} -> y}'), effect_type='marg'))
+# print(test_dag(true_dag=dag6, dag=dagitty('dag{ x3 -> x -> {x1 x2} -> y}'), effect_type='v2'))
 # print(test_dag(true_dag=dag6, dag=dagitty('dag{ x3 -> x -> {x1 x2} -> y}'), effect_type='cond'))
