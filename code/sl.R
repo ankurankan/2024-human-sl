@@ -195,7 +195,7 @@ run_single_exp_pc <- function(n_nodes, edge_prob){
 
 run_single_exp_human <- function(n_nodes, edge_prob, oracle_acc){
 	d <- gen_lin_data(n_nodes=n_nodes, edge_prob=edge_prob)
-	dag <- d$true_dag
+	true_dag <- d$true_dag
 	true_adj <- d$true_adj
 	sim_data <- d$sim_data
 
