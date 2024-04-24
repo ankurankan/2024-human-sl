@@ -180,6 +180,7 @@ run_single_exp <- function(n_nodes, edge_prob, oracle_acc){
 	# Step 4: Simulate human SL based on independence tests
 	human_adj <- simulate_human_sl(sim_data=sim_data, true_dag=dag, oracle_acc=oracle_acc)
 
+	browser()
 	# Step 4: Compare the learned graph with the true graph.
 	human_dist <- sum(abs(true_adj - human_adj))
 	hc_dist <- sum(abs(true_adj - hc_adj))
@@ -192,15 +193,15 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 	results_pruned <- data.frame()
 	
 	pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
-	for (oracle_acc in oracle_accs){
-		for (edge_prob in edge_probs){
-			shd <- t(future_replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc), future.chunk.size=3))
-			# shd <- t(replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=F)))
+	for (edge_prob in edge_probs){
+		for (oracle_acc in oracle_accs){
+			# shd <- t(future_replicate(R, run_single_exp(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc), future.chunk.size=3))
+			shd <- t(replicate(R, run_single_exp(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
 			mean_shd <- apply(shd, mean, MARGIN=2)
 			sd_shd <- apply(shd, sd, MARGIN=2)/sqrt(R)
 			results <- rbind(results, c(oracle_acc, edge_prob, mean_shd, sd_shd))
 	
-			shd_pruned <- t(future_replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc), future.chunk.size=3))
+			shd_pruned <- t(future_replicate(R, run_single_exp(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc), future.chunk.size=3))
 			mean_shd <- apply(shd_pruned, mean, MARGIN=2)
 			sd_shd <- apply(shd_pruned, sd, MARGIN=2)/sqrt(R)
 			results_pruned <- rbind(results_pruned, c(oracle_acc, edge_prob, mean_shd, sd_shd))
