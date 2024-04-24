@@ -222,7 +222,7 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 		pc_sd <- c(NA, sd(pc_dist[, 2])/sqrt(R))
 
 		for (oracle_acc in oracle_accs){
-			human_dist <- t(future_replicate(R, run_single_exp(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc), future.chunk.size=3))
+			human_dist <- t(future_replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc), future.chunk.size=3))
 
 			human_mean <- apply(human_dist, mean, MARGIN=2)
 			human_sd <- apply(human_dist, sd, MARGIN=2)/sqrt(R)
