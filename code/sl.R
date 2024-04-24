@@ -5,7 +5,7 @@ source('test_dag.R')
 library(future.apply)
 library(tidyverse)
 library(progress)
-plan(multisession, workers=32)
+plan(multisession)
 
 THRESHOLD <- 0.05
 
@@ -139,11 +139,7 @@ simulate_human_sl <- function(sim_data, true_dag, oracle_acc, max_iter=1e4){
 	return(dag_to_adjmatrix(new_dag))
 }
 
-
-# Generates a random dag with n_nodes number of nodes with edge probability edge_prob.
-# Returns the SHD between the learned (using a greedy approach) and the true graph.
-run_single_exp <- function(n_nodes, edge_prob, oracle_acc){
-	# Step 1: Create a random DAG and simulate data from it.
+gen_lin_data <- function(n_nodes, edge_prob){
 	varnames <- sapply(1:n_nodes, function(v) {
 	    paste0("x", v)
 	})
@@ -157,12 +153,28 @@ run_single_exp <- function(n_nodes, edge_prob, oracle_acc){
 		}
 	}
 	true_adj <- dag_to_adjmatrix(dag)
+	return (list(true_dag=dag, true_adj=true_adj, sim_data=sim_data))
+}
 
-	# Step 2: Learn the model using Hill-Climb Search
+run_single_exp_hc <- function(n_nodes, edge_prob){
+	d <- gen_lin_data(n_nodes=n_nodes, edge_prob=edge_prob)
+	true_adj <- d$true_adj
+	sim_data <- d$sim_data
+
 	hc_dag <- bnlearn::hc(sim_data)
 	hc_adj <- bnlearn::amat(hc_dag)
 
-	# Step 3: Learn the model using PC algorithm
+	shd <- sum(abs(true_adj - hc_adj))
+	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=hc_adj)$sid
+
+	return(c(shd, sid))
+}
+
+run_single_exp_pc <- function(n_nodes, edge_prob){
+	d <- gen_lin_data(n_nodes=n_nodes, edge_prob=edge_prob)
+	true_adj <- d$true_adj
+	sim_data <- d$sim_data
+
     	# suffStat <- list(dm = sim_data, adaptDF = FALSE, test = 'mxm')
     	# alpha <- 0.05
 
@@ -176,15 +188,22 @@ run_single_exp <- function(n_nodes, edge_prob, oracle_acc){
 	# )
 	pc_dag <- bnlearn::pc.stable(sim_data, test='mc-cor', undirected=F)
 	pc_adj <- bnlearn::amat(pc_dag)
+	
+	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_adj)$sid
+	return(c(NA, sid))
+}
 
-	# Step 4: Simulate human SL based on independence tests
-	human_adj <- simulate_human_sl(sim_data=sim_data, true_dag=dag, oracle_acc=oracle_acc)
+run_single_exp_human <- function(n_nodes, edge_prob, oracle_acc){
+	d <- gen_lin_data(n_nodes=n_nodes, edge_prob=edge_prob)
+	dag <- d$true_dag
+	true_adj <- d$true_adj
+	sim_data <- d$sim_data
 
-	browser()
-	# Step 4: Compare the learned graph with the true graph.
-	human_dist <- sum(abs(true_adj - human_adj))
-	hc_dist <- sum(abs(true_adj - hc_adj))
-	return (c(human_dist, hc_dist))
+	human_adj <- simulate_human_sl(sim_data=sim_data, true_dag=true_dag, oracle_acc=oracle_acc)
+	shd <- sum(abs(true_adj - human_adj))
+	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=human_adj)$sid
+
+	return(c(shd, sid))
 }
 
 
@@ -194,30 +213,35 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 	
 	pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
 	for (edge_prob in edge_probs){
+		hc_dist <- t(future_replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob), future.chunk.size=3))
+		hc_mean <- apply(hc_dist, mean, MARGIN=2)
+		hc_sd <- apply(hc_dist, sd, MARGIN=2)/sqrt(R)
+
+		pc_dist <- t(future_replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob), future.chunk.size=3))
+		pc_mean <- c(NA, mean(pc_dist[, 2]))
+		pc_sd <- c(NA, sd(pc_dist[, 2])/sqrt(R))
+
 		for (oracle_acc in oracle_accs){
-			# shd <- t(future_replicate(R, run_single_exp(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc), future.chunk.size=3))
-			shd <- t(replicate(R, run_single_exp(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
-			mean_shd <- apply(shd, mean, MARGIN=2)
-			sd_shd <- apply(shd, sd, MARGIN=2)/sqrt(R)
-			results <- rbind(results, c(oracle_acc, edge_prob, mean_shd, sd_shd))
-	
-			shd_pruned <- t(future_replicate(R, run_single_exp(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc), future.chunk.size=3))
-			mean_shd <- apply(shd_pruned, mean, MARGIN=2)
-			sd_shd <- apply(shd_pruned, sd, MARGIN=2)/sqrt(R)
-			results_pruned <- rbind(results_pruned, c(oracle_acc, edge_prob, mean_shd, sd_shd))
+			human_dist <- t(future_replicate(R, run_single_exp(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc), future.chunk.size=3))
+
+			human_mean <- apply(human_dist, mean, MARGIN=2)
+			human_sd <- apply(human_dist, sd, MARGIN=2)/sqrt(R)
+			
+			results <- rbind(results, c(oracle_acc, edge_prob, hc_mean, hc_sd, pc_mean, pc_sd, human_mean, human_sd))
 			pb$tick()
 		}
 	}
-	colnames(results) <- c('oracle_acc', 'edge_prob', 'mean_shd_human', 'mean_shd_hc', 'std_error_human', 'std_error_hc')
-	colnames(results_pruned) <- c('oracle_acc', 'edge_prob', 'mean_shd_human', 'mean_shd_hc', 'std_error_human', 'std_error_hc')
+	colnames(results) <- c('oracle_acc', 'edge_prob', 
+			       'hc_shd_mean', 'hc_sid_mean', 'hc_shd_sd', 'hc_sid_sd',
+			       'pc_shd_mean', 'pc_sid_mean', 'pc_shd_sd', 'pc_sid_sd',
+			       'human_shd_mean', 'human_sid_mean', 'human_shd_sd', 'human_sid_sd')
 	write.csv(results, 'results/sl_results.csv')
-	write.csv(results_pruned, 'results/sl_results_pruned.csv')
 }
 
 
 edge_probs <- seq(0.1, 0.9, 0.2)
 oracle_accs <- seq(0.1, 0.9, 0.1)
 n_nodes <- 10
-R <- 3
+R <- 100
 
 run_sim(R, n_nodes, edge_probs, oracle_accs)
