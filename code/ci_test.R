@@ -266,6 +266,12 @@ ci.test <- function(x, y, z, d, test){
 	}
 }
 
+sl.test <- function(x, y, z, suffStat) {
+    if (suffStat$test == "mxm") {
+        return(likelihood.test(names(suffStat$dm)[x], names(suffStat$dm)[y], names(suffStat$dm)[z], suffStat$dm))
+    }
+}
+
 cond_effects <- function(x, y, x_parents, y_parents, d){
 	return(residual.test(d[, x], d[, y], d[x_parents], d[y_parents], 'glm', 'pillai'))
 }

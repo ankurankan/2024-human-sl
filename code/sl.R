@@ -1,3 +1,4 @@
+source('ci_test.R')
 source('test_dag.R')
 
 
@@ -66,20 +67,36 @@ run.sim <- function(n_nodes, edge_prob, oracle_acc, prune_dags=T){
 	hc_dag <- bnlearn::hc(sim_data)
 	hc_adj <- bnlearn::amat(hc_dag)
 
+	# Step 3: Learn the model using PC algorithm
+    	# suffStat <- list(dm = sim_data, adaptDF = FALSE, test = 'mxm')
+    	# alpha <- 0.05
+
+	# pc.skel <- pcalg::skeleton(
+	# 	suffStat,
+	# 	indepTest = sl.test,
+	# 	alpha = alpha,
+	# 	labels = colnames(sim_data),
+	#     	method = "stable",
+	#     	verbose = FALSE
+	# )
+	pc_dag <- bnlearn::pc.stable(sim_data, test='mc-cor', undirected=F)
+	browser()
+
+	new_dag <- dagitty(paste0("dag{ ", paste(varnames, collapse=" "), " }"))
 	# Step 2: Compute marginal correlation between all variable pairs.
-	marg_cor <- compute_effects_marg(dag, sim_data)[, c('u', 'v', 'cor')]
-	marg_cor_thresh <- marg_cor[abs(as.double(marg_cor$cor)) > 0.05, ]
-	marg_cor_thresh_sorted <- marg_cor_thresh %>% arrange(desc(marg_cor_thresh$cor))
+	effects <- compute_effects_v2(new_dag, sim_data)[, c('X', 'A', 'Y', 'cor')]
+	effects_thres <- effects[abs(as.double(effects$cor)) > 0.05, ]
+	effects_thres_sorted <- effects_thres %>% arrange(desc(abs(effects_thres$cor)))
 
 	# Step 3: Modify graph depending on correlation i.e. simulate a human.
 	# Step 3.1: Check if no significant correlation, return empty graph.
 	if (nrow(marg_cor_thresh_sorted) == 0){
 		learned_adj <- matrix(0, nrow=10, ncol=10)
 	}
-	# Step 3.2: Otherwise iterate over pairs, and use oracle to add edges.
+	# Step 3.2: Otherwise iterate over pairs, and use oracle to add edges, recompute effects and repeat.
 	else{
 		learned_edges <- list()
-		for (i_row in 1:nrow(marg_cor_thresh_sorted)){
+		for (i_row in 1:nrow(effects_thres_sorted)){
 			oracle_edge <- oracle(
 				u=marg_cor_thresh_sorted[i_row, 'u'],
 				v=marg_cor_thresh_sorted[i_row, 'v'],
@@ -87,7 +104,8 @@ run.sim <- function(n_nodes, edge_prob, oracle_acc, prune_dags=T){
 				accuracy=oracle_acc
 			)
 			learned_edges[[i_row]] <- oracle_edge
-
+			
+			# Do the pruning using both the p-value and effect size.
 			if(prune_dags){
 				# Prune edges if coefficient goes to 0.
 				inter_dag <- edgelist_to_dagitty(learned_edges, names(dag))
@@ -132,8 +150,8 @@ results_pruned <- data.frame()
 pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
 for (oracle_acc in oracle_accs){
 	for (edge_prob in edge_probs){
-		shd <- t(future_replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=F), future.chunk.size=3))
-		# shd <- t(replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=F)))
+		# shd <- t(future_replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=F), future.chunk.size=3))
+		shd <- t(replicate(R, run.sim(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc, prune_dags=F)))
 		mean_shd <- apply(shd, mean, MARGIN=2)
 		sd_shd <- apply(shd, sd, MARGIN=2)/sqrt(R)
 		results <- rbind(results, c(oracle_acc, edge_prob, mean_shd, sd_shd))
