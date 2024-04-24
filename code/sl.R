@@ -213,16 +213,16 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 	
 	pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
 	for (edge_prob in edge_probs){
-		hc_dist <- t(future_replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob), future.chunk.size=3))
+		hc_dist <- t(future_replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob)))
 		hc_mean <- apply(hc_dist, mean, MARGIN=2)
 		hc_sd <- apply(hc_dist, sd, MARGIN=2)/sqrt(R)
 
-		pc_dist <- t(future_replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob), future.chunk.size=3))
+		pc_dist <- t(future_replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob)))
 		pc_mean <- c(NA, mean(pc_dist[, 2]))
 		pc_sd <- c(NA, sd(pc_dist[, 2])/sqrt(R))
 
 		for (oracle_acc in oracle_accs){
-			human_dist <- t(future_replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc), future.chunk.size=3))
+			human_dist <- t(future_replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
 
 			human_mean <- apply(human_dist, mean, MARGIN=2)
 			human_sd <- apply(human_dist, sd, MARGIN=2)/sqrt(R)
