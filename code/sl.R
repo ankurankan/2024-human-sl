@@ -45,6 +45,63 @@ edgelist_to_dagitty <- function(edgelist, all_vars){
 	return(learned_dag)
 }
 
+# Simulate a human structure learning based on CI tests.
+# Use a greedy approach where the highest correlation is added first.
+simulate.human.sl <- function(sim_data, max_iter=1e4){
+	new_dag <- dagitty(paste0("dag{ ", paste(varnames, collapse=" "), " }"))
+	counter <- 1
+	while (counter < max_iter){
+		effects <- compute_effects_v2(new_dag, sim_data)[, c('X', 'A', 'Y', 'cor')]
+		effects_thres <- effects[abs(as.double(effects$cor)) > 0.05, ]
+		effects_thres_sorted <- effects_thres %>% arrange(desc(abs(effects_thres$cor)))
+		browser()
+		if (nrow(marg_cor_thresh_sorted) == 0){
+			return (new_dag)
+		}
+		else{
+			learned_edges <- list()
+			for (i_row in 1:nrow(effects_thres_sorted)){
+				oracle_edge <- oracle(
+					u=marg_cor_thresh_sorted[i_row, 'u'],
+					v=marg_cor_thresh_sorted[i_row, 'v'],
+					true_dag=dag,
+					accuracy=oracle_acc
+				)
+				learned_edges[[i_row]] <- oracle_edge
+				
+				# Do the pruning using both the p-value and effect size.
+				if(prune_dags){
+					# Prune edges if coefficient goes to 0.
+					inter_dag <- edgelist_to_dagitty(learned_edges, names(dag))
+					edge_coefs <- compute_effects_marg(inter_dag, sim_data) %>% 
+								filter(edge==T) %>%
+								filter(abs(as.double(cor)) <= 0.05) %>%
+								select(c('u', 'v'))
+					if (nrow(edge_coefs) > 0){
+						remove_indexes <- c()
+						for (coefs_row in 1:nrow(edge_coefs)){
+							for (i_edge in 1:length(learned_edges)){
+								x1 <- edge_coefs[coefs_row, 'u']
+								x2 <- edge_coefs[coefs_row, 'v']
+								if (all(c(x1, x2) == learned_edges[[i_edge]]) | all(c(x2, x1)==learned_edges[[i_edge]])){
+									# print(paste0("Removing edge: ", paste0(learned_edges[[i_edge]], collapse=" ")))
+									remove_indexes <- c(remove_indexes, i_edge)
+								}
+							}
+						}
+						learned_edges[remove_indexes] <- NULL
+					}
+				}
+			}
+		}
+		learned_dag <- edgelist_to_dagitty(edgelist=learned_edges, all_vars=names(dag))
+		learned_adj <- dag_to_adjmatrix(learned_dag)
+	}
+
+
+}
+
+
 # Generates a random dag with n_nodes number of nodes with edge probability edge_prob.
 # Returns the SHD between the learned (using a greedy approach) and the true graph.
 run.sim <- function(n_nodes, edge_prob, oracle_acc, prune_dags=T){
@@ -80,58 +137,10 @@ run.sim <- function(n_nodes, edge_prob, oracle_acc, prune_dags=T){
 	#     	verbose = FALSE
 	# )
 	pc_dag <- bnlearn::pc.stable(sim_data, test='mc-cor', undirected=F)
-	browser()
+	pc_adj <- bnlearn::amat(pc_dag)
 
-	new_dag <- dagitty(paste0("dag{ ", paste(varnames, collapse=" "), " }"))
-	# Step 2: Compute marginal correlation between all variable pairs.
-	effects <- compute_effects_v2(new_dag, sim_data)[, c('X', 'A', 'Y', 'cor')]
-	effects_thres <- effects[abs(as.double(effects$cor)) > 0.05, ]
-	effects_thres_sorted <- effects_thres %>% arrange(desc(abs(effects_thres$cor)))
-
-	# Step 3: Modify graph depending on correlation i.e. simulate a human.
-	# Step 3.1: Check if no significant correlation, return empty graph.
-	if (nrow(marg_cor_thresh_sorted) == 0){
-		learned_adj <- matrix(0, nrow=10, ncol=10)
-	}
-	# Step 3.2: Otherwise iterate over pairs, and use oracle to add edges, recompute effects and repeat.
-	else{
-		learned_edges <- list()
-		for (i_row in 1:nrow(effects_thres_sorted)){
-			oracle_edge <- oracle(
-				u=marg_cor_thresh_sorted[i_row, 'u'],
-				v=marg_cor_thresh_sorted[i_row, 'v'],
-				true_dag=dag,
-				accuracy=oracle_acc
-			)
-			learned_edges[[i_row]] <- oracle_edge
-			
-			# Do the pruning using both the p-value and effect size.
-			if(prune_dags){
-				# Prune edges if coefficient goes to 0.
-				inter_dag <- edgelist_to_dagitty(learned_edges, names(dag))
-				edge_coefs <- compute_effects_marg(inter_dag, sim_data) %>% 
-							filter(edge==T) %>%
-							filter(abs(as.double(cor)) <= 0.05) %>%
-							select(c('u', 'v'))
-				if (nrow(edge_coefs) > 0){
-					remove_indexes <- c()
-					for (coefs_row in 1:nrow(edge_coefs)){
-						for (i_edge in 1:length(learned_edges)){
-							x1 <- edge_coefs[coefs_row, 'u']
-							x2 <- edge_coefs[coefs_row, 'v']
-							if (all(c(x1, x2) == learned_edges[[i_edge]]) | all(c(x2, x1)==learned_edges[[i_edge]])){
-								# print(paste0("Removing edge: ", paste0(learned_edges[[i_edge]], collapse=" ")))
-								remove_indexes <- c(remove_indexes, i_edge)
-							}
-						}
-					}
-					learned_edges[remove_indexes] <- NULL
-				}
-			}
-		}
-		learned_dag <- edgelist_to_dagitty(edgelist=learned_edges, all_vars=names(dag))
-		learned_adj <- dag_to_adjmatrix(learned_dag)
-	}
+	# Step 4: Simulate human SL based on independence tests
+	simulate.human.sl(sim_data)
 
 	# Step 4: Compare the learned graph with the true graph.
 	human_dist <- sum(abs(true_adj - learned_adj))
