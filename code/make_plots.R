@@ -1,24 +1,28 @@
 library(ggplot2)
 library(dplyr)
+library(tibble)
 
 
 make_shd_plot <- function(filename, plot_filename){
 	d <- read.csv(filename, row.names=1)
+	d <- d[d$edge_prob %in% c(0.1, 0.5, 0.9), ]
+
 	d$edge_prob <- sapply(d$edge_prob, as.character)
 
-	d <- d %>% filter(edge_prob %in% c("0.1", "0.5", "0.9"))
+	col_names <- c('oracle_acc', 'edge_prob', 'shd_mean', 'sid_mean', 'shd_sd', 'sid_sd', 'alg')
+	d_hc <- d %>% select(oracle_acc, edge_prob, hc_shd_mean:hc_sid_sd) %>% add_column(alg='hc')
+	colnames(d_hc) <- col_names
+	d_pc <- d %>% select(oracle_acc, edge_prob, pc_shd_mean:pc_sid_sd) %>% add_column(alg='pc')
+	colnames(d_pc) <- col_names
+	d_human <- d %>% select(oracle_acc, edge_prob, human_shd_mean:human_sid_sd) %>% add_column(alg='human')
+	colnames(d_human) <- col_names
 
-	d_long <- rbind(d, d)
-	d_long[(nrow(d)+1):nrow(d_long), 'mean_shd_human'] <- d[, 'mean_shd_hc']
-	d_long[(nrow(d)+1):nrow(d_long), 'std_error_human'] <- d[, 'std_error_hc']
-	d_long <- d_long %>% select('oracle_acc', 'edge_prob', 'mean_shd_human', 'std_error_human')
-	colnames(d_long) <- c('oracle_acc', 'edge_prob', 'mean_shd', 'std_error')
-	d_long$alg <- c(rep('human', nrow(d)), rep('hc', nrow(d)))
+	d_long <- rbind(d_hc, d_pc, d_human)
 
-	p <- ggplot(d_long, aes(x=oracle_acc, y=mean_shd, color=edge_prob, shape=alg, group=interaction(edge_prob, alg))) + 
+	p_shd <- ggplot(d_long, aes(x=oracle_acc, y=shd_mean, color=edge_prob, shape=alg, group=interaction(edge_prob, alg))) + 
 		geom_line() +
 		geom_point() +
-		geom_ribbon(aes(ymin=mean_shd - std_error, ymax=mean_shd + std_error, color=edge_prob), alpha=.2, linetype=0, show.legend=F) + 
+		geom_ribbon(aes(ymin=shd_mean - shd_sd, ymax=shd_mean + shd_sd, color=edge_prob), alpha=.2, linetype=0, show.legend=F) + 
       		theme_minimal(base_size = 8) + 
 		theme(legend.position='top') +
 		labs(x = "Oracle Accuracy") +
@@ -26,8 +30,20 @@ make_shd_plot <- function(filename, plot_filename){
 		labs(color = "Edge Probability") +
 		ylim(0, 50)
 
-	ggsave(plot_filename, p, width=2.5, height=3.5, units='in')
+	ggsave("plots/shd.pdf", p_shd, units='in')
+
+	p_sid <- ggplot(d_long, aes(x=oracle_acc, y=sid_mean, color=edge_prob, shape=alg, group=interaction(edge_prob, alg))) + 
+		geom_line() +
+		geom_point() +
+		geom_ribbon(aes(ymin=sid_mean - sid_sd, ymax=sid_mean + sid_sd, color=edge_prob), alpha=.2, linetype=0, show.legend=F) + 
+      		theme_minimal(base_size = 8) + 
+		theme(legend.position='top') +
+		labs(x = "Oracle Accuracy") +
+		labs(y = "Mean SHD") + 
+		labs(color = "Edge Probability") +
+		ylim(0, 85)
+
+	ggsave("plots/sid.pdf", p_sid, units='in')
 }
 
-make_shd_plot(filename='results/sl_results.csv', plot_filename='plots/shd.pdf')
-make_shd_plot(filename='results/sl_results_pruned.csv', plot_filename='plots/shd_pruned.pdf')
+make_shd_plot(filename='results/sl_results.csv')
