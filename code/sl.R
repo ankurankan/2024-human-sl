@@ -212,11 +212,11 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 	
 	pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
 	for (edge_prob in edge_probs){
-		hc_dist <- t(replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob)))
+		hc_dist <- t(future_replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob)))
 		hc_mean <- apply(hc_dist, mean, MARGIN=2)
 		hc_sd <- apply(hc_dist, sd, MARGIN=2)/sqrt(R)
 
-		pc_dist <- t(replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob)))
+		pc_dist <- t(future_replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob)))
 		pc_mean <- c(NA, mean(pc_dist[, 2]))
 		pc_sd <- c(NA, sd(pc_dist[, 2])/sqrt(R))
 
