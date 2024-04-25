@@ -161,12 +161,11 @@ run_single_exp_hc <- function(n_nodes, edge_prob){
 	true_adj <- d$true_adj
 	sim_data <- d$sim_data
 
-	hc_dag <- bnlearn::hc(sim_data)
+	hc_dag <- bnlearn::hc(sim_data, score='bic-g')
 	hc_adj <- bnlearn::amat(hc_dag)
 
-	shd <- sum(abs(true_adj - hc_adj))
+	shd <- causalDisco::shd(hc_adj, true_adj)
 	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=hc_adj)$sid
-
 	return(c(shd, sid))
 }
 
@@ -175,22 +174,22 @@ run_single_exp_pc <- function(n_nodes, edge_prob){
 	true_adj <- d$true_adj
 	sim_data <- d$sim_data
 
-    	# suffStat <- list(dm = sim_data, adaptDF = FALSE, test = 'mxm')
-    	# alpha <- 0.05
+    	suffStat <- list(dm = sim_data, adaptDF = FALSE, test = 'mxm')
+    	alpha <- 0.05
 
-	# pc.skel <- pcalg::skeleton(
-	# 	suffStat,
-	# 	indepTest = sl.test,
-	# 	alpha = alpha,
-	# 	labels = colnames(sim_data),
-	#     	method = "stable",
-	#     	verbose = FALSE
-	# )
-	pc_dag <- bnlearn::pc.stable(sim_data, test='mc-cor', undirected=F)
-	pc_adj <- bnlearn::amat(pc_dag)
+	pc.cpdag <- pcalg::pc(
+		suffStat,
+		indepTest = sl.test,
+		alpha = alpha,
+		u2pd='relaxed',
+		labels = colnames(sim_data),
+	    	skel.method = "stable",
+	    	verbose = FALSE
+	)
+	pc_adj <- as(pc.cpdag, 'amat')
 	
-	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_adj)$sid
-	return(c(NA, sid))
+	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_adj)
+	return(c(sid$sidLowerBound, sid$sidUpperBound))
 }
 
 run_single_exp_human <- function(n_nodes, edge_prob, oracle_acc){
@@ -200,7 +199,7 @@ run_single_exp_human <- function(n_nodes, edge_prob, oracle_acc){
 	sim_data <- d$sim_data
 
 	human_adj <- simulate_human_sl(sim_data=sim_data, true_dag=true_dag, oracle_acc=oracle_acc)
-	shd <- sum(abs(true_adj - human_adj))
+	shd <- causalDisco::shd(hc_adj, true_adj)
 	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=human_adj)$sid
 
 	return(c(shd, sid))
@@ -213,11 +212,11 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 	
 	pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
 	for (edge_prob in edge_probs){
-		hc_dist <- t(future_replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob)))
+		hc_dist <- t(replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob)))
 		hc_mean <- apply(hc_dist, mean, MARGIN=2)
 		hc_sd <- apply(hc_dist, sd, MARGIN=2)/sqrt(R)
 
-		pc_dist <- t(future_replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob)))
+		pc_dist <- t(replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob)))
 		pc_mean <- c(NA, mean(pc_dist[, 2]))
 		pc_sd <- c(NA, sd(pc_dist[, 2])/sqrt(R))
 
@@ -233,13 +232,13 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 	}
 	colnames(results) <- c('oracle_acc', 'edge_prob', 
 			       'hc_shd_mean', 'hc_sid_mean', 'hc_shd_sd', 'hc_sid_sd',
-			       'pc_shd_mean', 'pc_sid_mean', 'pc_shd_sd', 'pc_sid_sd',
+			       'pc_sid_best_mean', 'pc_sid_mean', 'pc_sid_best_sd', 'pc_sid_sd',
 			       'human_shd_mean', 'human_sid_mean', 'human_shd_sd', 'human_sid_sd')
 	write.csv(results, 'results/sl_results.csv')
 }
 
 
-edge_probs <- seq(0.1, 0.9, 0.1)
+edge_probs <- seq(0.5, 0.9, 0.1)
 oracle_accs <- seq(0.1, 0.9, 0.1)
 n_nodes <- 10
 R <- 100

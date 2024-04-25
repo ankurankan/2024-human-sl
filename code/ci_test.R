@@ -204,12 +204,20 @@ residual.test <- function(x, y, x_parents, y_parents, predictor, test) {
 
 likelihood.test <- function(x, y, z, dataset){
     d <- dataset %>% dplyr::select(-c(x))
+
+    if(length(z) == 0){
+	csIndex <- c()
+    }
+    else{
+	csIndex=as.vector(sapply(z, function(t){which(t == colnames(d))}))
+    }
+
     if (is.numeric(dataset[, x])){
       res <- MXM::testIndMMReg(
 		target=dataset[, x],
 		dataset=d,
 		xIndex=which(y == colnames(d)),
-		csIndex=as.vector(sapply(z, function(t){which(t == colnames(d))}))
+		csIndex=csIndex
 		)
       return(10^res$pvalue)
     }
@@ -218,7 +226,7 @@ likelihood.test <- function(x, y, z, dataset){
 		target=dataset[, x],
 		dataset=d,
 		xIndex=which(y == colnames(d)),
-		csIndex=as.vector(sapply(z, function(t){which(t == colnames(d))})),
+		csIndex=csIndex
 		)
       return(10^res$pvalue)
     }
@@ -227,7 +235,7 @@ likelihood.test <- function(x, y, z, dataset){
 		target=dataset[, x],
 		dataset=d,
 		xIndex=which(y == colnames(d)),
-		csIndex=as.vector(sapply(z, function(t){which(t == colnames(d))}))
+		csIndex=csIndex
 		)
       return(10^res$pvalue)
     }
