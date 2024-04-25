@@ -12,7 +12,7 @@ make_shd_plot <- function(filename, plot_filename){
 	col_names <- c('oracle_acc', 'edge_prob', 'shd_mean', 'sid_mean', 'shd_sd', 'sid_sd', 'alg')
 	d_hc <- d %>% select(oracle_acc, edge_prob, hc_shd_mean:hc_sid_sd) %>% add_column(alg='hc')
 	colnames(d_hc) <- col_names
-	d_pc <- d %>% select(oracle_acc, edge_prob, pc_shd_mean:pc_sid_sd) %>% add_column(alg='pc')
+	d_pc <- d %>% select(oracle_acc, edge_prob, pc_sid_best_mean:pc_sid_sd) %>% add_column(alg='pc')
 	colnames(d_pc) <- col_names
 	d_human <- d %>% select(oracle_acc, edge_prob, human_shd_mean:human_sid_sd) %>% add_column(alg='human')
 	colnames(d_human) <- col_names
