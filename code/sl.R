@@ -199,7 +199,7 @@ run_single_exp_human <- function(n_nodes, edge_prob, oracle_acc){
 	sim_data <- d$sim_data
 
 	human_adj <- simulate_human_sl(sim_data=sim_data, true_dag=true_dag, oracle_acc=oracle_acc)
-	shd <- causalDisco::shd(hc_adj, true_adj)
+	shd <- causalDisco::shd(human_adj, true_adj)
 	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=human_adj)$sid
 
 	return(c(shd, sid))
