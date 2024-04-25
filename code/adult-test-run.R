@@ -1,17 +1,21 @@
+library(dplyr)
+library(plumber)
+
 ee <- new.env()
 
 
-d <- read.csv("adult.data",header=FALSE,
+d <- read.csv("adult_proc.csv",header=T,
 		na.strings="?",sep=",",strip.white=TRUE,stringsAsFactors=TRUE)
-	colnames(d) <- c("Age","Workclass","Fnlwgt","Education","EducationNum",
-        	"MaritalStatus","Occupation","Relationship","Race","Sex","CapitalGain",
-	        "CapitalLoss","HoursPerWeek","NativeCountry","Income")
+d <- d[, 2:ncol(d)]
+	colnames(d) <- c("Age","Workclass", "Education",
+        	"MaritalStatus","Occupation","Relationship","Race","Sex",
+	        "HoursPerWeek","NativeCountry","Income")
 
 	# Tell R about which variables are ordinal
-	d$Education <- as.integer(d$EducationNum)
+	# d$Education <- as.integer(d$EducationNum)
 	d$Income <- ordered(d$Income)
 
-	d <- d[,-which(colnames(d)=="EducationNum")] 
+	# d <- d[,-which(colnames(d)=="EducationNum")] 
 
 	d$NativeCountry <- as.character( d$NativeCountry )
 	d$NativeCountry[!d$NativeCountry %in% c("United-States","Mexico")] <- "Other"

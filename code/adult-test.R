@@ -9,30 +9,31 @@ cors <- function(res) {
 
 
 #* @param dag
+#* @param threshold
 #* @get /simpletest
-my_endpoint <- function( dag ){
+my_endpoint <- function( dag, threshold){
 		d <- get("d")
 		g <- dagitty::dagitty(dag)
 		r <- c()
 		nn <- names(g)
 		for( n1i in seq(1,length(nn)-1,by=1) ){
 			n1 <- nn[n1i]
-			p1 <- parents(g, n1)
+			p1 <- dagitty::parents(g, n1)
 			for( n2i in seq(n1i+1, length(nn), by=1) ){
 				n2 <- nn[n2i]
-				p2 <- parents( g, n2 )
+				p2 <- dagitty::parents( g, n2 )
 				if( n2 %in% p1 ){		
 					otherparents <- setdiff( p1, n2 )
-					tst <- ciTest( X=n1, Y=n2, Z=otherparents, d,
+					tst <- dagitty::ciTest( X=n1, Y=n2, Z=otherparents, d,
 						type="cis.pillai" )
 					u <- n2; v <- n1 ; a <- "->"
 				} else if( n1 %in% p2 ) {
 					otherparents <- setdiff( p1, n2 )
-					tst <- ciTest( X=n1, Y=n2, Z=otherparents, d,
+					tst <- dagitty::ciTest( X=n1, Y=n2, Z=otherparents, d,
 						type="cis.pillai" )
 					u <- n1 ; v <- n2 ; a <- "->"
 				} else {
-					tst <- ciTest( X=n1, Y=n2, Z=union( p1, p2 ), d,
+					tst <- dagitty::ciTest( X=n1, Y=n2, Z=union( p1, p2 ), d,
 						type="cis.pillai" )
 					u <- n1 ; v <- n2 ; a <- "--"
 				}
@@ -41,6 +42,7 @@ my_endpoint <- function( dag ){
 
 			}
 		}
-		r
+		r <- r %>% filter(abs(cor) > as.double(threshold))
+		return (r)
 }
 
