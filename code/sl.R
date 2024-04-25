@@ -239,7 +239,7 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 }
 
 
-edge_probs <- seq(0.1, 0.9, 0.2)
+edge_probs <- seq(0.1, 0.9, 0.1)
 oracle_accs <- seq(0.1, 0.9, 0.1)
 n_nodes <- 10
 R <- 100
