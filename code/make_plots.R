@@ -19,15 +19,21 @@ make_shd_plot <- function(filename, plot_filename){
 	colnames(d_human) <- col_names
 
 	d_hc <- d_hc %>% select(!oracle_acc) %>% distinct()
+	d_hc$color <- 'hc'
+	d_hc$linetype <- 'solid'
 	d_pc <- d_pc %>% select(!oracle_acc) %>% distinct()
+	d_pc$color <- 'pc'
+	d_pc$linetype <- 'solid'
 	d_human$alg <- paste(d_human$alg, d_human$oracle_acc)
+	d_human$color <- 'human'
+	d_human$linetype <- 'dashed'
 	d_human <- d_human %>% select(!oracle_acc)
 
 	d_long_shd <- rbind(d_hc, d_human)
-	p_shd <- ggplot(d_long_shd, aes(x=edge_prob, y=shd_mean, group=alg, color=alg)) + 
+	p_shd <- ggplot(d_long_shd, aes(x=edge_prob, y=shd_mean, group=alg, color=color, linetype=linetype)) + 
 		geom_line() +
 		geom_point() +
-		geom_ribbon(aes(ymin=shd_mean - shd_sd, ymax=shd_mean + shd_sd, fill=alg), alpha=.2, linetype=0, show.legend=F) + 
+		geom_ribbon(aes(ymin=shd_mean - shd_sd, ymax=shd_mean + shd_sd, fill=color), alpha=.2, linetype=0, show.legend=F) + 
       		theme_minimal(base_size = 8) + 
 		theme(legend.position='top') +
 		labs(x = "Edge Probability") +
@@ -43,10 +49,10 @@ make_shd_plot <- function(filename, plot_filename){
 
 	d_long_sid <- rbind(d_hc, d_pc, d_human)
 
-	p_sid <- ggplot(d_long_sid, aes(x=edge_prob, y=sid_mean, group=alg, color=alg))+ 
+	p_sid <- ggplot(d_long_sid, aes(x=edge_prob, y=sid_mean, group=alg, color=color, linetype=linetype))+ 
 		geom_line() +
 		geom_point() +
-		geom_ribbon(aes(ymin=sid_mean - sid_sd, ymax=sid_mean + sid_sd, fill=alg), alpha=.2, linetype=0, show.legend=F) + 
+		geom_ribbon(aes(ymin=sid_mean - sid_sd, ymax=sid_mean + sid_sd, fill=color), alpha=.2, linetype=0, show.legend=F) + 
       		theme_minimal(base_size = 8) + 
 		theme(legend.position='top') +
 		labs(x = "Edge Probability") +
