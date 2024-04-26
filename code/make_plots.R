@@ -5,7 +5,8 @@ library(tibble)
 
 make_shd_plot <- function(filename, plot_filename){
 	d <- read.csv(filename, row.names=1)
-	d <- d[d$edge_prob %in% c(0.1, 0.5, 0.9), ]
+	# d <- d[d$edge_prob %in% c(0.1, 0.3, 0.5, 0.7, 0.9), ]
+	d <- d[d$oracle_acc %in% c(0.1, 0.3, 0.5, 0.7, 0.9), ]
 
 	d$edge_prob <- sapply(d$edge_prob, as.character)
 
@@ -17,17 +18,21 @@ make_shd_plot <- function(filename, plot_filename){
 	d_human <- d %>% select(oracle_acc, edge_prob, human_shd_mean:human_sid_sd) %>% add_column(alg='human')
 	colnames(d_human) <- col_names
 
-	d_long_shd <- rbind(d_hc, d_human)
+	d_hc <- d_hc %>% select(!oracle_acc) %>% distinct()
+	d_pc <- d_pc %>% select(!oracle_acc) %>% distinct()
+	d_human$alg <- paste(d_human$alg, d_human$oracle_acc)
+	d_human <- d_human %>% select(!oracle_acc)
 
-	p_shd <- ggplot(d_long_shd, aes(x=oracle_acc, y=shd_mean, color=edge_prob, shape=alg, group=interaction(edge_prob, alg))) + 
+	d_long_shd <- rbind(d_hc, d_human)
+	p_shd <- ggplot(d_long_shd, aes(x=edge_prob, y=shd_mean, group=alg, color=alg)) + 
 		geom_line() +
 		geom_point() +
-		geom_ribbon(aes(ymin=shd_mean - shd_sd, ymax=shd_mean + shd_sd, fill=edge_prob), alpha=.2, linetype=0, show.legend=F) + 
+		geom_ribbon(aes(ymin=shd_mean - shd_sd, ymax=shd_mean + shd_sd, fill=alg), alpha=.2, linetype=0, show.legend=F) + 
       		theme_minimal(base_size = 8) + 
 		theme(legend.position='top') +
-		labs(x = "Oracle Accuracy") +
+		labs(x = "Edge Probability") +
 		labs(y = "Mean SHD") + 
-		labs(color = "Edge Probability") +
+		labs(color = "Algorithm") +
 		ylim(0, 50)
 
 	ggsave("plots/shd.pdf", p_shd, units='in')
@@ -38,15 +43,15 @@ make_shd_plot <- function(filename, plot_filename){
 
 	d_long_sid <- rbind(d_hc, d_pc, d_human)
 
-	p_sid <- ggplot(d_long_sid, aes(x=oracle_acc, y=sid_mean, color=edge_prob, shape=alg, group=interaction(edge_prob, alg))) + 
+	p_sid <- ggplot(d_long_sid, aes(x=edge_prob, y=sid_mean, group=alg, color=alg))+ 
 		geom_line() +
 		geom_point() +
-		geom_ribbon(aes(ymin=sid_mean - sid_sd, ymax=sid_mean + sid_sd, fill=edge_prob), alpha=.2, linetype=0, show.legend=F) + 
+		geom_ribbon(aes(ymin=sid_mean - sid_sd, ymax=sid_mean + sid_sd, fill=alg), alpha=.2, linetype=0, show.legend=F) + 
       		theme_minimal(base_size = 8) + 
 		theme(legend.position='top') +
-		labs(x = "Oracle Accuracy") +
-		labs(y = "Mean SHD") + 
-		labs(color = "Edge Probability") +
+		labs(x = "Edge Probability") +
+		labs(y = "Mean SID") + 
+		labs(color = "Algorithm") +
 		ylim(0, 80)
 
 	ggsave("plots/sid.pdf", p_sid, units='in')
