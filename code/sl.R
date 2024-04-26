@@ -163,6 +163,8 @@ run_single_exp_hc <- function(n_nodes, edge_prob){
 
 	hc_dag <- bnlearn::hc(sim_data, score='bic-g')
 	hc_adj <- bnlearn::amat(hc_dag)
+	hc_pdag <- pcalg::dag2cpdag(hc_adj)
+	hc_alldags <- pcalg::pdag2allDags(hc_pdag)
 
 	shd <- causalDisco::shd(hc_adj, true_adj)
 	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=hc_adj)$sid
@@ -187,6 +189,8 @@ run_single_exp_pc <- function(n_nodes, edge_prob){
 	    	verbose = FALSE
 	)
 	pc_adj <- as(pc.cpdag, 'amat')
+
+	alldags <- pcalg::pdag2allDags(pc_adj)
 	
 	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_adj)
 	return(c(sid$sidLowerBound, sid$sidUpperBound))
@@ -212,11 +216,11 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 	
 	pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
 	for (edge_prob in edge_probs){
-		hc_dist <- t(future_replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob)))
+		hc_dist <- t(replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob)))
 		hc_mean <- apply(hc_dist, mean, MARGIN=2)
 		hc_sd <- apply(hc_dist, sd, MARGIN=2)/sqrt(R)
 
-		pc_dist <- t(future_replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob)))
+		pc_dist <- t(replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob)))
 		pc_mean <- apply(pc_dist, mean, MARGIN=2)
 		pc_sd <- apply(pc_dist, sd, MARGIN=2)/sqrt(R)
 
