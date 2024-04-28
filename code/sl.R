@@ -154,7 +154,7 @@ gen_lin_data <- function(n_nodes, edge_prob){
 	
 	dag <- pcalg::randomDAG(n=n_nodes, prob=edge_prob, lB=1, uB=1, V=varnames)
 	dag <- pcalg::pcalg2dagitty(as(dag, "matrix"), labels = varnames, type = "dag")
-	sim_data <- mixed_data_gen_multinom(n=500, dag=dag)$d
+	sim_data <- mixed_data_gen_multinom(n=500, dag=dag)
 	# repeat{
 	# 	sim_data <- try(simulateSEM(dag, empirical=T))
 	# 	if (!(inherits(sim_data, "try-error"))){
@@ -162,15 +162,22 @@ gen_lin_data <- function(n_nodes, edge_prob){
 	# 	}
 	# }
 	true_adj <- dag_to_adjmatrix(dag)
-	return (list(true_dag=dag, true_adj=true_adj, sim_data=sim_data))
+	return (list(true_dag=dag, true_adj=true_adj, sim_data=sim_data$d, var_types=sim_data$var_types))
 }
 
 run_single_exp_hc <- function(n_nodes, edge_prob){
 	d <- gen_lin_data(n_nodes=n_nodes, edge_prob=edge_prob)
 	true_adj <- d$true_adj
 	sim_data <- d$sim_data
+	var_types <- d$var_types
+	if (all(unlist(var_types) == 'cont')){
+		scoring_method <- 'bic-g'
+	}
+	else{
+		scoring_method <- 'bic-cg'
+	}
 
-	hc_dag <- bnlearn::hc(sim_data, score='bic-cg')
+	hc_dag <- bnlearn::hc(sim_data, score=scoring_method)
 	hc_adj <- bnlearn::amat(hc_dag)
 	hc_pdag <- pcalg::dag2cpdag(hc_adj)
 	hc_alldags <- pcalg::pdag2allDags(hc_pdag)$dags
