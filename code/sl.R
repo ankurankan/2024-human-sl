@@ -1,3 +1,4 @@
+source('data.R')
 source('ci_test.R')
 source('test_dag.R')
 
@@ -153,12 +154,13 @@ gen_lin_data <- function(n_nodes, edge_prob){
 	
 	dag <- pcalg::randomDAG(n=n_nodes, prob=edge_prob, lB=1, uB=1, V=varnames)
 	dag <- pcalg::pcalg2dagitty(as(dag, "matrix"), labels = varnames, type = "dag")
-	repeat{
-		sim_data <- try(simulateSEM(dag, empirical=T))
-		if (!(inherits(sim_data, "try-error"))){
-			break
-		}
-	}
+	sim_data <- mixed_data_gen_multinom(n=500, dag=dag)$d
+	# repeat{
+	# 	sim_data <- try(simulateSEM(dag, empirical=T))
+	# 	if (!(inherits(sim_data, "try-error"))){
+	# 		break
+	# 	}
+	# }
 	true_adj <- dag_to_adjmatrix(dag)
 	return (list(true_dag=dag, true_adj=true_adj, sim_data=sim_data))
 }
@@ -168,7 +170,7 @@ run_single_exp_hc <- function(n_nodes, edge_prob){
 	true_adj <- d$true_adj
 	sim_data <- d$sim_data
 
-	hc_dag <- bnlearn::hc(sim_data, score='bic-g')
+	hc_dag <- bnlearn::hc(sim_data, score='bic-cg')
 	hc_adj <- bnlearn::amat(hc_dag)
 	hc_pdag <- pcalg::dag2cpdag(hc_adj)
 	hc_alldags <- pcalg::pdag2allDags(hc_pdag)$dags
@@ -259,7 +261,7 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 			       'pc_lower_shd_mean', 'pc_upper_shd_mean', 'pc_lower_sid_mean', 'pc_upper_shd_mean', 
 			       'pc_lower_shd_sd', 'pc_upper_shd_sd', 'pc_lower_sid_sd', 'pc_upper_sid_sd',
 			       'human_shd_mean', 'human_sid_mean', 'human_shd_sd', 'human_sid_sd')
-	write.csv(results, 'results/sl_results.csv')
+	write.csv(results, 'results/sl_results_mixed.csv')
 }
 
 
