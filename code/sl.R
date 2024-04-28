@@ -170,9 +170,15 @@ run_single_exp_hc <- function(n_nodes, edge_prob){
 	true_adj <- d$true_adj
 	sim_data <- d$sim_data
 	var_types <- d$var_types
+	# All continuous
 	if (all(unlist(var_types) == 'cont')){
 		scoring_method <- 'bic-g'
 	}
+	# All discrete 
+	else if (all(unlist(var_types) != 'cont')){
+		scoring_method <- 'bic'
+	}
+	# Mixture
 	else{
 		scoring_method <- 'bic-cg'
 	}
