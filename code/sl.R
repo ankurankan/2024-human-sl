@@ -164,11 +164,17 @@ run_single_exp_hc <- function(n_nodes, edge_prob){
 	hc_dag <- bnlearn::hc(sim_data, score='bic-g')
 	hc_adj <- bnlearn::amat(hc_dag)
 	hc_pdag <- pcalg::dag2cpdag(hc_adj)
-	hc_alldags <- pcalg::pdag2allDags(hc_pdag)
+	hc_alldags <- pcalg::pdag2allDags(hc_pdag)$dags
 
-	shd <- causalDisco::shd(hc_adj, true_adj)
-	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=hc_adj)$sid
-	return(c(shd, sid))
+	if (is.null(nrow(hc_alldags))){
+		print("No orientation found from PDAG. Using original DAG.")
+		shd <- causalDisco::shd(hc_adj, true_adj)
+	}
+	else{
+		shd <- apply(hc_alldags, function(x) causalDisco::shd(matrix(x, n_nodes, n_nodes), true_adj), MARGIN=1)
+	}
+	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=hc_pdag)
+	return(c(min(shd), max(shd), sid$sidLowerBound, sid$sidUpperBound))
 }
 
 run_single_exp_pc <- function(n_nodes, edge_prob){
@@ -189,11 +195,17 @@ run_single_exp_pc <- function(n_nodes, edge_prob){
 	    	verbose = FALSE
 	)
 	pc_adj <- as(pc.cpdag, 'amat')
+	pc_alldags <- pcalg::pdag2allDags(pc_adj)$dags
 
-	alldags <- pcalg::pdag2allDags(pc_adj)
-	
-	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_adj)
-	return(c(sid$sidLowerBound, sid$sidUpperBound))
+	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_adj)	
+	if (is.null(nrow(pc_alldags))){
+		print("No orientation found from PDAG. Skipping computing SHD.")
+		return(c(NA, NA, sid$sidLowerBound, sid$sidUpperBound))
+	}
+	else{
+		shd <- apply(pc_alldags, function(x) causalDisco::shd(matrix(x, n_nodes, n_nodes), true_adj), MARGIN=1)
+		return(c(min(shd), max(shd), sid$sidLowerBound, sid$sidUpperBound))
+	}
 }
 
 run_single_exp_human <- function(n_nodes, edge_prob, oracle_acc){
@@ -225,7 +237,7 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 		pc_sd <- apply(pc_dist, sd, MARGIN=2)/sqrt(R)
 
 		for (oracle_acc in oracle_accs){
-			human_dist <- t(future_replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
+			human_dist <- t(replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
 
 			human_mean <- apply(human_dist, mean, MARGIN=2)
 			human_sd <- apply(human_dist, sd, MARGIN=2)/sqrt(R)
@@ -245,6 +257,6 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 edge_probs <- seq(0.1, 0.9, 0.1)
 oracle_accs <- seq(0.1, 0.9, 0.1)
 n_nodes <- 10
-R <- 100
+R <- 2
 
 run_sim(R, n_nodes, edge_probs, oracle_accs)
