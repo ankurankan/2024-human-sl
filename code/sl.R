@@ -132,7 +132,14 @@ simulate_human_sl <- function(sim_data, true_dag, oracle_acc, max_iter=1e4){
 							   unexplain_cor_sorted[1, 'Y']))
 			}
 			else{
-				new_dag <- add_edge(new_dag, oracle_edge)
+				temp_dag <- add_edge(new_dag, oracle_edge)
+				if (dagitty::isAcyclic(temp_dag)){
+					new_dag <- temp_dag
+				}
+				else{
+					print("Not adding edge to avoid cycle.")
+					blacklist_edges <- rbind(blacklist_edges, oracle_edge)
+				}
 			}
 		}
 	}
@@ -233,8 +240,8 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 		hc_sd <- apply(hc_dist, sd, MARGIN=2)/sqrt(R)
 
 		pc_dist <- t(replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob)))
-		pc_mean <- apply(pc_dist, mean, MARGIN=2)
-		pc_sd <- apply(pc_dist, sd, MARGIN=2)/sqrt(R)
+		pc_mean <- apply(pc_dist, function(x) mean(x, na.rm=T), MARGIN=2)
+		pc_sd <- apply(pc_dist, function(x) sd(x, na.rm=T), MARGIN=2)/sqrt(sum(!is.na(pc_dist[, 1])))
 
 		for (oracle_acc in oracle_accs){
 			human_dist <- t(replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
@@ -247,8 +254,10 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 		}
 	}
 	colnames(results) <- c('oracle_acc', 'edge_prob', 
-			       'hc_shd_mean', 'hc_sid_mean', 'hc_shd_sd', 'hc_sid_sd',
-			       'pc_sid_best_mean', 'pc_sid_mean', 'pc_sid_best_sd', 'pc_sid_sd',
+			       'hc_lower_shd_mean', 'hc_upper_shd_mean', 'hc_lower_sid_mean', 'hc_upper_shd_mean', 
+			       'hc_lower_shd_sd', 'hc_upper_shd_sd', 'hc_lower_sid_sd', 'hc_upper_sid_sd',
+			       'pc_lower_shd_mean', 'pc_upper_shd_mean', 'pc_lower_sid_mean', 'pc_upper_shd_mean', 
+			       'pc_lower_shd_sd', 'pc_upper_shd_sd', 'pc_lower_sid_sd', 'pc_upper_sid_sd',
 			       'human_shd_mean', 'human_sid_mean', 'human_shd_sd', 'human_sid_sd')
 	write.csv(results, 'results/sl_results.csv')
 }
