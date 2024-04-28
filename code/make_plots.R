@@ -59,7 +59,7 @@ make_plots <- function(filename, plot_type){
 			labs(color = "Algorithm") +
 			ylim(0, 40)
 
-		ggsave("plots/shd.pdf", p_shd, units='in')
+		ggsave("plots/shd.pdf", p_shd, height=2.8, width=5, units='in')
 
 		d_long_sid <- rbind(d_hc_lower, d_hc_upper, d_pc_lower, d_pc_upper, d_human)
 		p_sid <- ggplot(d_long_sid, aes(x=edge_prob, y=sid_mean, group=alg, color=color))+ 
@@ -74,7 +74,7 @@ make_plots <- function(filename, plot_type){
 			labs(color = "Algorithm") +
 			ylim(0, 80)
 
-		ggsave("plots/sid.pdf", p_sid, units='in')
+		ggsave("plots/sid.pdf", p_sid, height=2.8, width=5, units='in')
 	}
 	else if(plot_type == 'ribbon'){
 		d_hc_wide <- cbind(d_hc_lower, shd_upper_mean=d_hc_upper$shd_mean, sid_upper_mean=d_hc_upper$sid_mean)
@@ -96,7 +96,7 @@ make_plots <- function(filename, plot_type){
 			labs(color = "Algorithm") +
 			ylim(0, 40)
 			
-		ggsave("plots/shd_ribbon.pdf", p_shd, units='in')
+		ggsave("plots/shd_ribbon.pdf", p_shd, height=2.8, width=5, units='in')
 
 		p_sid <- ggplot(d_human, aes(x=edge_prob, y=sid_mean, group=alg, color=color)) +
 			geom_line(aes(linetype=linetype)) +
@@ -109,10 +109,10 @@ make_plots <- function(filename, plot_type){
 			labs(x = "Edge Probability") +
 			labs(y = "Mean SID") + 
 			labs(color = "Algorithm") +
-			ylim(0, 80)
+			ylim(0, 100)
 			
-		ggsave("plots/sid_ribbon.pdf", p_sid, units='in')
+		ggsave("plots/sid_ribbon.pdf", p_sid, height=2.8, width=5, units='in')
 	}
 }
 
-make_plots(filename='results/sl_results.csv', plot_type='ribbon')
+make_plots(filename='results/sl_results_mixed.csv', plot_type='ribbon')
