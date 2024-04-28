@@ -269,9 +269,9 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 		}
 	}
 	colnames(results) <- c('oracle_acc', 'edge_prob', 
-			       'hc_lower_shd_mean', 'hc_upper_shd_mean', 'hc_lower_sid_mean', 'hc_upper_shd_mean', 
+			       'hc_lower_shd_mean', 'hc_upper_shd_mean', 'hc_lower_sid_mean', 'hc_upper_sid_mean', 
 			       'hc_lower_shd_sd', 'hc_upper_shd_sd', 'hc_lower_sid_sd', 'hc_upper_sid_sd',
-			       'pc_lower_shd_mean', 'pc_upper_shd_mean', 'pc_lower_sid_mean', 'pc_upper_shd_mean', 
+			       'pc_lower_shd_mean', 'pc_upper_shd_mean', 'pc_lower_sid_mean', 'pc_upper_sid_mean', 
 			       'pc_lower_shd_sd', 'pc_upper_shd_sd', 'pc_lower_sid_sd', 'pc_upper_sid_sd',
 			       'human_shd_mean', 'human_sid_mean', 'human_shd_sd', 'human_sid_sd')
 	write.csv(results, 'results/sl_results_mixed.csv')
