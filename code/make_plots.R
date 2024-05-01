@@ -27,21 +27,21 @@ make_plots <- function(filename, plot_type){
 
 	d_hc_lower <- d_hc_lower %>% select(!oracle_acc) %>% distinct()
 	d_hc_upper <- d_hc_upper %>% select(!oracle_acc) %>% distinct()
-	d_hc_lower$color <- 'hc'
+	d_hc_lower$color <- 'Hill-Climb'
 	d_hc_lower$linetype <- 'solid'
-	d_hc_upper$color <- 'hc'
+	d_hc_upper$color <- 'Hill-Climb'
 	d_hc_upper$linetype <- 'solid'
 
 	d_pc_lower <- d_pc_lower %>% select(!oracle_acc) %>% distinct()
 	d_pc_upper <- d_pc_upper %>% select(!oracle_acc) %>% distinct()
-	d_pc_lower$color <- 'pc'
+	d_pc_lower$color <- 'PC'
 	d_pc_lower$linetype <- 'solid'
-	d_pc_upper$color <- 'pc'
+	d_pc_upper$color <- 'PC'
 	d_pc_upper$linetype <- 'solid'
 
 	o_acc <- d_human$oracle_acc
 	d_human$alg <- paste(d_human$alg, d_human$oracle_acc)
-	d_human$color <- 'human'
+	d_human$color <- 'Expert'
 	d_human$linetype <- 'dashed'
 	d_human <- d_human %>% select(!oracle_acc)
 
@@ -84,11 +84,13 @@ make_plots <- function(filename, plot_type){
 		d_human <- cbind(d_human, oracle_acc=o_acc)
 
 		p_shd <- ggplot(d_human, aes(x=edge_prob, y=shd_mean, group=alg, color=color)) +
-			geom_line(aes(linetype=linetype)) +
-			geom_point() + 
+			guides(color='none') +
+			geom_line(show.legend=F) +
+			geom_point(show.legend=F) + 
 			geom_ribbon(aes(ymin=shd_mean - shd_sd, ymax=shd_mean + shd_sd, fill=color), alpha=.2, linetype=0, show.legend=F) +
-			geom_dl(aes(label=oracle_acc), color='black', method=list(dl.trans(x=x+.2), "last.points")) + 
+			geom_dl(aes(label=oracle_acc), color='black', method=list(dl.trans(x=x+.2), "last.points", cex=0.5)) + 
 			geom_ribbon(data=d_wide, aes(x=edge_prob, ymin=shd_mean-shd_sd, ymax=shd_upper_mean+shd_sd, group=alg, fill=color), alpha=0.2, linetype=2, show.legend=T) +
+			guides(color='none') +
       			theme_minimal(base_size = 8) + 
 			theme(legend.position='top') +
 			labs(x = "Edge Probability") +
@@ -96,14 +98,16 @@ make_plots <- function(filename, plot_type){
 			labs(color = "Algorithm") +
 			ylim(0, 40)
 			
-		ggsave("plots/shd_ribbon.pdf", p_shd, height=2.8, width=5, units='in')
+		ggsave("plots/shd_ribbon.pdf", p_shd, height=3.1, width=4.8, units='in')
 
 		p_sid <- ggplot(d_human, aes(x=edge_prob, y=sid_mean, group=alg, color=color)) +
-			geom_line(aes(linetype=linetype)) +
-			geom_point() + 
+			guides(color='none') +
+			geom_line(show.legend=F) +
+			geom_point(show.legend=F) + 
 			geom_ribbon(aes(ymin=sid_mean - sid_sd, ymax=sid_mean + sid_sd, fill=color), alpha=.2, linetype=0, show.legend=F) +
-			geom_dl(aes(label=oracle_acc), color='black', method=list(dl.trans(x=x+.2), "last.points")) + 
+			geom_dl(aes(label=oracle_acc), color='black', method=list(dl.trans(x=x+.2), "last.points", cex=0.5)) + 
 			geom_ribbon(data=d_wide, aes(x=edge_prob, ymin=sid_mean-sid_sd, ymax=sid_upper_mean+sid_sd, group=alg, fill=color), alpha=0.2, linetype=2, show.legend=T) +
+			guides(color='none') +
       			theme_minimal(base_size = 8) + 
 			theme(legend.position='top') +
 			labs(x = "Edge Probability") +
@@ -111,7 +115,7 @@ make_plots <- function(filename, plot_type){
 			labs(color = "Algorithm") +
 			ylim(0, 100)
 			
-		ggsave("plots/sid_ribbon.pdf", p_sid, height=2.8, width=5, units='in')
+		ggsave("plots/sid_ribbon.pdf", p_sid, height=3.1, width=4.8, units='in')
 	}
 }
 
