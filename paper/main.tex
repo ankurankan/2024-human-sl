@@ -86,9 +86,7 @@
 
 \begin{document}
 
-
 \maketitle
-
 
 \begin{abstract}
 	Causal discovery is a fundamental problem in causal inference, and
@@ -123,33 +121,53 @@
 \section{Introduction}
 \textbf{Para 1: Many Causal discovery algorithms but commonly constructed manually.}
 
+\todo[inline]{Add citations}
+
 To perform any causal effect identification or estimation in Pearl's Directed
-Acyclic Graphs (DAGs) based causal inference usually requires to come up with
+Acyclic Graphs (DAGs) based causal framework usually requires to come up with
 the DAG structure. Learning these DAG structures from data is known as
 \emph{causal discovery}. Plenty of algorithms have been developed for these in
 the literature such as constraint-based methods such as PC, FCI, score based
 methods such as Hill-Climb Search, GES, and constrained continuous optimization
-based such as No TEARS.
+based such as No TEARS. All these algorithms take different approaches to
+causal discovery, constraint-based algorithms utilize statistical conditional
+independence (CI) tests to come up with a model structure, the score-based
+methods iteratively perform local modifications to the model such that some
+score function is maximized, the continuous optimization methods reformulate
+the problem statement as a constrained optimization problem and use
+optimization algorithms to come up with a graph.
 
 \textbf{Para 2: Reasons behind this}
 
-Even with the existence of all these algorithms for constructing DAGs from
-data, in applied fields researchers prefer to construct DAGs by hand. We
-hypothesize that the adaption of these algorithms in applied literature is
-low due to the following reasons:
+Even though we have various algorithms for doing casual discovery, yet
+researchers in applied fields prefer to construct these DAGs manually based on
+their domain knowledge. We hypothesize the following two reasons for low
+adaption of these methods in applied sciences:
+
 \begin{enumerate}
-	\item Algorithms can make very obvious mistakes at times making it harder
-		for the user to trust their outputs.
-	\item Difficult to choose a single algorithm and their hyper-parameters.
+	\item Algorithms making obvious mistakes: These algorithms often 
+		make very obvious mistakes, making it harder for the user
+		to trust them.
+	\item Difficulties in choosing an algorithm: For any given dataset, the
+		user need to make a choice of the algorithm. Given that these
+		algorithms work very differently, it can be difficult to make a
+		choice. Additionally, each of these algorithms have
+		hyperparameters and choices to make for them, making it
+		difficult. As there is no way to evaluate the performance of 
+		these algorithms on our dataset.
 \end{enumerate}
 
 \textbf{Para 3: Importance of testing, include modification indices}
 
-When these models are constructed manually, it is extremely important that they
-are tested before they are used for making any inference. Local testing methods
-have been used for this purpose, where the implied conditional independences of
-the model are testing in the data using statistical tests. These tests can then
-be used to modify our models.
+Both in the cases when the DAG is an output of an algorithm or when constructed
+by hand, it is vital to test these models against data before using them for
+making any inference. In the field of Structural Equation Models (SEMs)
+modification indices have been used to do this. However, as modification index
+is an evaluation of the global fit of the model. An alternative is local fit of
+models using CI tests where the implied conditional independences of the model
+can be tested using statistical tests. Similar to modification indices, these
+tests can then be used to modify our models. Figure shows an example of this
+testing.
 
 \textbf{Para 4: Mixed data testing}
 
@@ -160,7 +178,6 @@ One of the limitations here is there are no effect size measures available for m
 	\item An effect size measure for mixed data. 
 	\item A web-based tool to help with both model testing and construction. Combining both domain knowledge and data.
 \end{enumerate}
-
 
 \section{Background}
 \todo[inline]{Add notation used here}
