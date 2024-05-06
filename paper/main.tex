@@ -121,17 +121,17 @@
 \end{abstract}
 
 \section{Introduction}
-Para 1: Many Causal discovery algorithms but commonly constructed manually.
+\textbf{Para 1: Many Causal discovery algorithms but commonly constructed manually.}
 
-To perform any causal effect identification or estimation in Directed Acyclic
-Graph(DAG) based causal inference usually requires to come up with the DAG
-structure. Learning these DAG structures from data is known as \emph{causal
-discovery}. Plenty of algorithms have been developed for these in the
-literature such as constraint-based methods such as PC, FCI, score based
+To perform any causal effect identification or estimation in Pearl's Directed
+Acyclic Graphs (DAGs) based causal inference usually requires to come up with
+the DAG structure. Learning these DAG structures from data is known as
+\emph{causal discovery}. Plenty of algorithms have been developed for these in
+the literature such as constraint-based methods such as PC, FCI, score based
 methods such as Hill-Climb Search, GES, and constrained continuous optimization
 based such as No TEARS.
 
-Para 2: Reasons behind this
+\textbf{Para 2: Reasons behind this}
 
 Even with the existence of all these algorithms for constructing DAGs from
 data, in applied fields researchers prefer to construct DAGs by hand. We
@@ -143,7 +143,7 @@ low due to the following reasons:
 	\item Difficult to choose a single algorithm and their hyper-parameters.
 \end{enumerate}
 
-Para 3: Importance of testing 
+\textbf{Para 3: Importance of testing, include modification indices}
 
 When these models are constructed manually, it is extremely important that they
 are tested before they are used for making any inference. Local testing methods
@@ -151,18 +151,34 @@ have been used for this purpose, where the implied conditional independences of
 the model are testing in the data using statistical tests. These tests can then
 be used to modify our models.
 
-Para 4: Mixed data testing
+\textbf{Para 4: Mixed data testing}
 
-One of the limitations here is there are no effect size measures available for 
+One of the limitations here is there are no effect size measures available for mixed data.
 
-Para 5: Contributions
+\textbf{Para 5: Contributions}
+\begin{enumerate}
+	\item An effect size measure for mixed data. 
+	\item A web-based tool to help with both model testing and construction. Combining both domain knowledge and data.
+\end{enumerate}
 
 
 \section{Background}
+\todo[inline]{Add notation used here}
+
 \subsection{Continuous Variables}
+Correlation coefficient and partial correlation coefficient.
+
 \subsection{Discrete Variables}
-\subsection{Ordinal Variables}
+Chi-Squared and Cram\'er's V
+
 \subsection{Ordinal and Continuous Variables}
+Polyserial Correlation
+
+\subsection{Ordinal Variables}
+Polychoric Correlation
+
+\subsection{Mixed data}
+Background on CI tests for mixed data; but no effect size measure.
 
 \section{Effect size for mixed data}
 
