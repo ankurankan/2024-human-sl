@@ -167,11 +167,16 @@ is an evaluation of the global fit of the model. An alternative is local fit of
 models using CI tests where the implied conditional independences of the model
 can be tested using statistical tests. Similar to modification indices, these
 tests can then be used to modify our models. Figure shows an example of this
-testing.
+testing. We can not also only rely on the p-values, effect size can help in
+deciding.
 
 \textbf{Para 4: Mixed data testing}
 
-One of the limitations here is there are no effect size measures available for mixed data.
+As these CI based testing uses p-values and effect size measures from CI tests
+for testing. And as mixed data is common, we need both a test and effect size
+measure for mixed data. Recently, a few CI tests for mixed data have been
+proposed but an effect size is still missing.
+
 
 \textbf{Para 5: Contributions}
 \begin{enumerate}
@@ -182,22 +187,44 @@ One of the limitations here is there are no effect size measures available for m
 \section{Background}
 \todo[inline]{Add notation used here}
 
-\subsection{Continuous Variables}
-Correlation coefficient and partial correlation coefficient.
+We need to do both conditional and non-conditional tests. We would assume that
+we are testing the statement $ X \ci Y \rvert \bm{Z} $, where $ \bm{Z} $ is a
+set of conditional variables possibly null.
 
-\subsection{Discrete Variables}
+\subsection{Effect Size Measures}
+
+\subsubsection{Continuous Variables}
+In the case when $ \bm{Z} = \emptyset $, and when both $ X $ and $ Y $ are
+continuous variables, Pearson's correlation coefficient based test can be used
+which also gives an effect size measure. The p-value computation requires the
+data to be normally distributed but other statistics can be used such as
+Spearman's rank correlation, or Kendall's Tau.
+
+In the case when $ \bm{Z} \neq \emptyset $, then partial correlations can be used.
+In this case we first compute the residuals of $ X $ and $ Y $ using $ \bm{Z} $ as 
+the predictor. We start by training two model $ X \sim \bm{Z} $ and $ Y \sim \bm{Z} $.
+Then the residuals are computed for both as $ R_X = X - \hat{X} $ and $ R_Y = Y - \hat{Y} $.
+After this we can do a normal non-conditional test on $ R_X $ and $ R_Y $.
+
+\subsubsection{Discrete Variables}
+
 Chi-Squared and Cram\'er's V
 
-\subsection{Ordinal and Continuous Variables}
+\subsubsection{Ordinal and Continuous Variables}
 Polyserial Correlation
 
-\subsection{Ordinal Variables}
+\subsubsection{Ordinal Variables}
 Polychoric Correlation
 
-\subsection{Mixed data}
-Background on CI tests for mixed data; but no effect size measure.
+\subsubsection{Mixed data}
+Recently multiple tests for mixed data have been proposed but they do not have
+an effect size measure. 
+
+\subsection{Canonical Correlations}
 
 \section{Effect size for mixed data}
+\subsection{Non-conditional Case}
+\subsection{Conditional Case}
 
 \section{Web Tool}
 As most of the DAGs in practice are built manually, we use our mixed data effect size measure to build a web-tool that aids researches in building DAGs.
