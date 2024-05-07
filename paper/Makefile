@@ -1,4 +1,10 @@
-all : main.pdf
+all : plots main.pdf
 
 main.pdf : main.tex
 	latexmk -use-make -pdf $<
+
+plots:
+	cd ../code/ && Rscript make_plots.R
+
+clean:
+	rm main.pdf

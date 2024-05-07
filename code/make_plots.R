@@ -98,7 +98,7 @@ make_plots <- function(filename, plot_type){
 			labs(color = "Algorithm") +
 			ylim(0, 40)
 			
-		ggsave("plots/shd_ribbon.pdf", p_shd, height=3.1, width=4.8, units='in')
+		ggsave("plots/shd_ribbon.pdf", p_shd, height=2.5, width=2.6, units='in')
 
 		p_sid <- ggplot(d_human, aes(x=edge_prob, y=sid_mean, group=alg, color=color)) +
 			guides(color='none') +
@@ -115,7 +115,7 @@ make_plots <- function(filename, plot_type){
 			labs(color = "Algorithm") +
 			ylim(0, 100)
 			
-		ggsave("plots/sid_ribbon.pdf", p_sid, height=3.1, width=4.8, units='in')
+		ggsave("plots/sid_ribbon.pdf", p_sid, height=2.5, width=2.6, units='in')
 	}
 }
 

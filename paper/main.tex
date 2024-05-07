@@ -38,7 +38,10 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{todonotes}
+\usepackage{bm}
+\usepackage{subcaption}
 
+\def\ci{\perp\!\!\!\!\!\perp}
 
 \title{Title}
 
@@ -184,6 +187,48 @@ proposed but an effect size is still missing.
 	\item A web-based tool to help with both model testing and construction. Combining both domain knowledge and data.
 \end{enumerate}
 
+\begin{figure}
+		\centering
+		\begin{tikzpicture}
+			\begin{scope}[yshift=0.7cm, scale=0.8]
+			\tikzstyle{every node}=[align=center, inner sep=1pt]
+				\node (sex) at (-0.7, -0.8) {Sex};
+				\node (age) at (-0.3, 0) {Age};
+				\node (ed) at (-1.8, -1.6) {Education};
+				\node (occ) at (1.8, 0) {Occupation};
+				\node (hrpw) at (1.3, -1.6) {Hours Per \\ Week};
+				\node (income) at (-0.7, -2.8) {Income};
+			
+				\draw[->]  (age) to[bend right=20] (ed);
+				\draw[->]  (sex) to (ed);
+				\draw[->]  (age) to (hrpw);
+				\draw[->]  (ed) to (hrpw);
+				\draw[->]  (sex) to (hrpw);
+				\draw[->]  (ed) to (income);
+				\draw[->]  (hrpw) to (income);
+				\draw[->]  (occ) to[out=300, in=0, looseness=1.4] (income.east);
+				\draw[->]  (sex) to (income);
+				\draw[->]  (ed) to[out=90, in=150, looseness=1.3] (occ);
+				\draw[->]  (sex) to (occ);	
+			\end{scope}
+			\draw[thick, ->, double, cyan] (2.5,0) -- (3,0);
+			\node[rectangle, align=center, inner sep=1pt] at (6, 0) {
+				\begin{minipage}{\textwidth}
+					\begin{equation*}
+						\begin{split}
+							\textnormal{Age} &\ci \textnormal{Incm} \rvert \textnormal{Edct, Hrpw, Sex} \\
+							\textnormal{Age} &\ci \textnormal{Occp} \rvert \textnormal{Edct, Sex} \\
+							\textnormal{Age} &\ci \textnormal{Sex} \\
+							\textnormal{Hrpw} &\ci \textnormal{Occp} \rvert \textnormal{Edct, Sex} \\
+						\end{split}
+					\end{equation*}
+				\end{minipage}
+				};
+		\end{tikzpicture}
+		\caption{\todo[inline]{Show a full example of testing using this model}}
+\end{figure}
+
+
 \section{Background}
 \todo[inline]{Add notation used here}
 
@@ -208,26 +253,46 @@ After this we can do a normal non-conditional test on $ R_X $ and $ R_Y $.
 
 \subsubsection{Discrete Variables}
 
-Chi-Squared and Cram\'er's V
+When $ \bm{Z} = \emptyset $, in the case of discrete variables, chi-squared test can be used. Effect size 
+measures such as Cram\'er's V are available for it.
+
+When $ \bm{Z} \neq \emptyset $, we do stratification.
+
 
 \subsubsection{Ordinal and Continuous Variables}
 Polyserial Correlation
+
+When $ \bm{Z} = \emptyset $, ordinal variable can be assumed to be coming from a thresholded normal distribution, estimate the thresholds and latent variable to compute 
+the correlation coefficient.
 
 \subsubsection{Ordinal Variables}
 Polychoric Correlation
 
 \subsubsection{Mixed data}
 Recently multiple tests for mixed data have been proposed but they do not have
-an effect size measure. 
+an effect size measure. We propose one based on canonical correlations.
 
 \subsection{Canonical Correlations}
+Canonical correlations are generalization of correlations to set of variables.
 
 \section{Effect size for mixed data}
 \subsection{Non-conditional Case}
 \subsection{Conditional Case}
+\subsection{Connection to special cases}
 
 \section{Web Tool}
 As most of the DAGs in practice are built manually, we use our mixed data effect size measure to build a web-tool that aids researches in building DAGs.
+
+\begin{figure}
+	\centering
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[scale=0.25]{../../presentations/2024_05_das/1.png}
+	\end{subfigure}%
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[scale=0.25]{../../presentations/2024_05_das/2.png}
+	\end{subfigure}
+	\caption{\todo[inline]{Insert screenshots of the web-tool}}
+\end{figure}
 
 \section{Empirical Analysis}
 We performed empirical analysis to compare how well does creating a graph manually based on effect sizes and p-value compare to algorithmic approaches.
@@ -250,10 +315,18 @@ of the edge between these variables such that the new added edge does not create
 After adding each edge, we also check if the p-value of any existing edge shows independence. If that happens we remove that edge and blacklist that edge. 
 Blacklisted edges are not suggested to the expert in future iterations. We repeat this till we have explained all the correlations in the dataset.
 
-This is a possibility that this greedy expert gets stuck at incorrect graph structures as it does not do any backtracking to fix its earlier mistakes.
+There is a possibility that this greedy expert gets stuck at incorrect graph structures as it does not do any backtracking to fix its earlier mistakes.
 
 
 \subsection{Results}
+\begin{figure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics{../code/plots/shd_ribbon.pdf}
+	\end{subfigure}%
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics{../code/plots/sid_ribbon.pdf}
+	\end{subfigure}
+\end{figure}
 
 \section{Conclusions}
 \subsection{Using LLMs as experts}
