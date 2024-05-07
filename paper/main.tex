@@ -92,17 +92,18 @@
 \maketitle
 
 \begin{abstract}
-	Causal discovery is a fundamental problem in causal inference, and
-	numerous algorithms have been developed to address it. However, their
-	adoption in applied disciplines  has been limited, possibly due to a
+	Constructing a Directed Acyclic Graph (DAG) from observational data,
+	called causal discovery, is a fundamental problem in causal inference.
+	Numerous algorithms have been developed to address it. However, their
+	adoption in applied disciplines has been limited, possibly due to a
 	lack of confidence in these algorithms stemming from them making
 	obvious mistakes, and the difficulties in choosing the right algorithm
 	for specific datasets. Consequently, in applied disciplines, these
 	causal Directed Acyclic Graphs (DAGs) are predominantly constructed
 	manually based on domain expertise. This makes it vital to test and
 	potentially modify these models against data before using them for any
-	analysis. Local testing based on Conditional Independence tests and
-	their effect sizes have been commonly used for this purpose. However,
+	analysis. Local testing based on Conditional Independence (CI) tests and
+	effect sizes have been commonly used for this purpose. However,
 	one of the current limitations of this approach is that there are no
 	effect sizes for mixed data. To address this, we introduce a novel
 	effect size measure for mixed data based on canonical correlations.
@@ -148,6 +149,7 @@ their domain knowledge. We hypothesize the following two reasons for low
 adaption of these methods in applied sciences:
 
 \begin{enumerate}
+	\item Algorithsm can be biased towards sparse graphs. Ref: Malinsky's paper.
 	\item Algorithms making obvious mistakes: These algorithms often 
 		make very obvious mistakes, making it harder for the user
 		to trust them.
@@ -273,11 +275,19 @@ Recently multiple tests for mixed data have been proposed but they do not have
 an effect size measure. We propose one based on canonical correlations.
 
 \subsection{Canonical Correlations}
-Canonical correlations are generalization of correlations to set of variables.
+Canonical correlations are generalization of correlations to multi-dimensional case.
+
+Multiple effect sizes measures based on canonical correations are available.
 
 \section{Effect size for mixed data}
-\subsection{Non-conditional Case}
+In this section, we use canonical correlations to define an effect size for mixed data CI tests. The main idea is to transform any CI test into j
+We consider the following two cases separately:
+
+\subsection{No conditional variables}
+When we have no conditonal variables, we are trying
+
 \subsection{Conditional Case}
+
 \subsection{Connection to special cases}
 
 \section{Web Tool}
