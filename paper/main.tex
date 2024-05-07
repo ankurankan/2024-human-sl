@@ -295,20 +295,25 @@ As most of the DAGs in practice are built manually, we use our mixed data effect
 \end{figure}
 
 \section{Empirical Analysis}
-We performed empirical analysis to compare how well does creating a graph manually based on effect sizes and p-value compare to algorithmic approaches.
+To compare how well does creating a graph manually based on effect sizes and
+p-value compare to algorithmic approaches, we performed some emperical
+analysis.
+
 \subsection{Simulating an expert}
 To simulate an expert building a model manually, we wrote a simple greedy simulation as shown in the Figure. The expert always starts with a graph with
 no edges and chooses the pair of variables with the highest correlation between them. The expert based on some accuracy measure decides the direction
-of the edge between these variables such that the new added edge does not create a cycle in the DAG:
+of the edge between these variables such that the new added edge does not create a cycle in the DAG.
 
-\todo{Summarize this section and equaiton in an algorithm}
+\todo[inline]{Summarize this section and equaiton in an algorithm}
+\todo[inline]{Show a consistency proof for this expert simulation}
+
 \begin{equation}
 	\begin{split}
 		x &= \textnormal{rand}([0, 1]) \\
 		O(\alpha) &= \begin{cases} 
 			M \rightarrow Y, & \textnormal{if  } x <= \alpha \\
 			\textnormal{rand}(M \rightarrow Y, M \leftarrow Y, None) & \textnormal{otherwise} \\
-			     \end{cases} \\
+				\end{cases} \\
 	\end{split}
 \end{equation}
 
