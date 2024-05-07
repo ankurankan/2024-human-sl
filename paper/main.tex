@@ -86,7 +86,6 @@
   % \texttt{email} \\
 }
 
-
 \begin{document}
 
 \maketitle
@@ -149,7 +148,7 @@ their domain knowledge. We hypothesize the following two reasons for low
 adaption of these methods in applied sciences:
 
 \begin{enumerate}
-	\item Algorithsm can be biased towards sparse graphs. Ref: Malinsky's paper.
+	\item Biased towards sparse graphs.
 	\item Algorithms making obvious mistakes: These algorithms often 
 		make very obvious mistakes, making it harder for the user
 		to trust them.
@@ -192,7 +191,7 @@ proposed but an effect size is still missing.
 \begin{figure}
 		\centering
 		\begin{tikzpicture}
-			\begin{scope}[yshift=0.7cm, scale=0.8]
+			\begin{scope}[yshift=0.7cm, scale=1]
 			\tikzstyle{every node}=[align=center, inner sep=1pt]
 				\node (sex) at (-0.7, -0.8) {Sex};
 				\node (age) at (-0.3, 0) {Age};
@@ -232,15 +231,22 @@ proposed but an effect size is still missing.
 
 
 \section{Background}
-\todo[inline]{Add notation used here}
+We consider one-dimensional variables $ X $, and $ Y $ and a possibly
+multi-dimensional co$ Z = Z_1, \cdots, Z_k $, potentially being an empty set $
+Z = \emptyset $. We consider various scenarios where the variables $ X $, $ Y $
+and $ Z $ could be either discrete, ordinal, or continuous. With mixed data, we
+mean an arbitrary mix of variable types among $ X $, $ Y $, and $ Z $.
 
-We need to do both conditional and non-conditional tests. We would assume that
-we are testing the statement $ X \ci Y \rvert \bm{Z} $, where $ \bm{Z} $ is a
-set of conditional variables possibly null.
+We consider the problem of estimating the partial (or conditional) association
+between $ X $ and $ Y $ in the presence of the conditioning set $ Z $. When $ Z
+= \emptyset $, this is equivalent to the marginal association between $ X $ and
+$ Y $.
+
+\todo[inline]{Add more notation as they come}
 
 \subsection{Effect Size Measures}
 
-\subsubsection{Continuous Variables}
+\subsubsection{$ X $ and $ Y $ are continuous}
 In the case when $ \bm{Z} = \emptyset $, and when both $ X $ and $ Y $ are
 continuous variables, Pearson's correlation coefficient based test can be used
 which also gives an effect size measure. The p-value computation requires the
@@ -253,21 +259,21 @@ the predictor. We start by training two model $ X \sim \bm{Z} $ and $ Y \sim \bm
 Then the residuals are computed for both as $ R_X = X - \hat{X} $ and $ R_Y = Y - \hat{Y} $.
 After this we can do a normal non-conditional test on $ R_X $ and $ R_Y $.
 
-\subsubsection{Discrete Variables}
+\subsubsection{All $ X $, $ Y $, $ Z $ are discrete}
 
 When $ \bm{Z} = \emptyset $, in the case of discrete variables, chi-squared test can be used. Effect size 
 measures such as Cram\'er's V are available for it.
 
-When $ \bm{Z} \neq \emptyset $, we do stratification.
+When $ \bm{Z} \neq \emptyset $, we can do stratification.
 
 
-\subsubsection{Ordinal and Continuous Variables}
+\subsubsection{$ X $ is ordinal and $ Y $ is continuous}
 Polyserial Correlation
 
 When $ \bm{Z} = \emptyset $, ordinal variable can be assumed to be coming from a thresholded normal distribution, estimate the thresholds and latent variable to compute 
 the correlation coefficient.
 
-\subsubsection{Ordinal Variables}
+\subsubsection{$ X $ and $ Y $ are ordinal}
 Polychoric Correlation
 
 \subsubsection{Mixed data}
