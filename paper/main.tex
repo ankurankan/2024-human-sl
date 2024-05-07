@@ -40,8 +40,12 @@
 \usepackage{todonotes}
 \usepackage{bm}
 \usepackage{subcaption}
+\usepackage[ruled]{algorithm2e}
 
 \def\ci{\perp\!\!\!\!\!\perp}
+
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
 
 \title{Title}
 
@@ -184,8 +188,14 @@ proposed but an effect size is still missing.
 
 \textbf{Para 5: Contributions}
 \begin{enumerate}
-	\item An effect size measure for mixed data. 
-	\item A web-based tool to help with both model testing and construction. Combining both domain knowledge and data.
+	\item We present an effect size measure based on canonical correlations
+		for mixed data that generalizes some of the commonly used
+		effect size in special cases such as partial correlation
+		coefficient for continuous variables, and Cram\'er's V for
+		discrete variables.
+	\item We also developed a web-based tool to help researches in
+		constructing and testing and modifying their DAGs using CI tests and
+		effect size measures.
 \end{enumerate}
 
 \begin{figure}
@@ -231,11 +241,14 @@ proposed but an effect size is still missing.
 
 
 \section{Background}
-We consider one-dimensional variables $ X $, and $ Y $ and a possibly
-multi-dimensional co$ Z = Z_1, \cdots, Z_k $, potentially being an empty set $
-Z = \emptyset $. We consider various scenarios where the variables $ X $, $ Y $
-and $ Z $ could be either discrete, ordinal, or continuous. With mixed data, we
-mean an arbitrary mix of variable types among $ X $, $ Y $, and $ Z $.
+We represent uni-dimensional variables as $ X $ and multi-dimensional variables
+as $ \bm{Z} $. We consider the case of estimating association between $ X $,
+and $ Y $ is the presence of a set of conditioning variables $ \bm{Z} = Z_1,
+\cdots, Z_k $, potentially being an empty set $ \bm{Z} = \emptyset $. We use $
+\rvert \bm{Z} \rvert $ to denote the cardinality of the variable $ \bm{Z} $. We
+consider various scenarios where the variables $ X $, $ Y $ and $ \bm{Z} $
+could be either discrete, ordinal, or continuous. With mixed data, we mean an
+arbitrary mix of variable types among $ X $, $ Y $, and $ \bm{Z} $.
 
 We consider the problem of estimating the partial (or conditional) association
 between $ X $ and $ Y $ in the presence of the conditioning set $ Z $. When $ Z
@@ -244,9 +257,11 @@ $ Y $.
 
 \todo[inline]{Add more notation as they come}
 
-\subsection{Effect Size Measures}
+\subsection{Effect size Measures}
+In this section, we give a background on some of the commonly used effect size
+measures in the context of CI testing.
 
-\subsubsection{$ X $ and $ Y $ are continuous}
+\paragraph{$ X $ and $ Y $ are continuous}
 In the case when $ \bm{Z} = \emptyset $, and when both $ X $ and $ Y $ are
 continuous variables, Pearson's correlation coefficient based test can be used
 which also gives an effect size measure. The p-value computation requires the
@@ -259,7 +274,7 @@ the predictor. We start by training two model $ X \sim \bm{Z} $ and $ Y \sim \bm
 Then the residuals are computed for both as $ R_X = X - \hat{X} $ and $ R_Y = Y - \hat{Y} $.
 After this we can do a normal non-conditional test on $ R_X $ and $ R_Y $.
 
-\subsubsection{All $ X $, $ Y $, $ Z $ are discrete}
+\paragraph{All variables are discrete}
 
 When $ \bm{Z} = \emptyset $, in the case of discrete variables, chi-squared test can be used. Effect size 
 measures such as Cram\'er's V are available for it.
@@ -267,30 +282,56 @@ measures such as Cram\'er's V are available for it.
 When $ \bm{Z} \neq \emptyset $, we can do stratification.
 
 
-\subsubsection{$ X $ is ordinal and $ Y $ is continuous}
+\paragraph{$ X $ is ordinal and $ Y $ is continuous}
 Polyserial Correlation
 
 When $ \bm{Z} = \emptyset $, ordinal variable can be assumed to be coming from a thresholded normal distribution, estimate the thresholds and latent variable to compute 
 the correlation coefficient.
 
-\subsubsection{$ X $ and $ Y $ are ordinal}
+\paragraph{$ X $ and $ Y $ are ordinal}
 Polychoric Correlation
 
-\subsubsection{Mixed data}
+\paragraph{Mixed data}
 Recently multiple tests for mixed data have been proposed but they do not have
 an effect size measure. We propose one based on canonical correlations.
 
-\subsection{Canonical Correlations}
-Canonical correlations are generalization of correlations to multi-dimensional case.
+\subsection{Canonical Correlation}
+Canonical correlations are generalization of correlations to multi-dimensional variables.
 
-Multiple effect sizes measures based on canonical correations are available.
+\begin{definition}
+	Given two sets of random variables $ \bm{U} = (U_1, U_2, \cdots, U_p) $
+	and $ \bm{V} = (V_1, V_2, \cdots, V_q) $, canonical correlation between
+	them, $\rho(\bm{U}, \bm{V}) $ is defined as:
+		
+	\begin{equation}
+		\rho(\bm{U}, \bm{V}) = \sup_{a, b} \frac{a^T \Sigma_{\bm{U}\bm{V}} b}{\sqrt{a^T \Sigma_{\bm{U}\bm{U}} a} \sqrt{b^T \Sigma_{\bm{V}\bm{V}} b}}
+	\end{equation}
+
+\end{definition}
+	
+	Canonical correlations try to find linear transformations $ a $ and $ b
+	$ of $ \bm{U} $ and $ \bm{V} $ such that the correlations between the
+	columns of $ a^T \bm{U} $ and $ b^T \bm{V} $ is maximized. The
+	individual columns of $ a^T \bm{U} $ and $ b^T \bm{V} $ are
+	independent. In the case when $ \rvert U \rvert = \rvert V \rvert = 1$,
+	canonical correlations are equivalent to Pearson's correlation
+	coefficient.
+
+Multiple effect sizes measures based on canonical correlation are available.
+\begin{itemize}
+	\item Wilks' Lambda: $ \Lambda = \prod (1 - \phi_i^2) $
+	\item Roy's Largest Root: $ \theta = \phi_{\max}^2 $
+	\item Pillai's Trace: $ \tau = \sum \phi_i^2 $
+\end{itemize}
+We use Pillai's Trace in this paper. \todo[inline]{Why?}.
 
 \section{Effect size for mixed data}
-In this section, we use canonical correlations to define an effect size for mixed data CI tests. The main idea is to transform any CI test into j
-We consider the following two cases separately:
+In this section, we use canonical correlations to define an effect size measure
+for mixed data CI tests. Our approach is similar to the approach used for the
+continuous variable case. 
 
 \subsection{No conditional variables}
-When we have no conditonal variables, we are trying
+When we have no conditonal variables, we need to convert the variables into 
 
 \subsection{Conditional Case}
 
@@ -299,20 +340,20 @@ When we have no conditonal variables, we are trying
 \section{Web Tool}
 As most of the DAGs in practice are built manually, we use our mixed data effect size measure to build a web-tool that aids researches in building DAGs.
 
-\begin{figure}
-	\centering
-	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[scale=0.25]{../../presentations/2024_05_das/1.png}
-	\end{subfigure}%
-	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[scale=0.25]{../../presentations/2024_05_das/2.png}
-	\end{subfigure}
-	\caption{\todo[inline]{Insert screenshots of the web-tool}}
-\end{figure}
+% \begin{figure}
+% 	\centering
+% 	\begin{subfigure}{0.5\textwidth}
+% 		\includegraphics[scale=0.25]{../../presentations/2024_05_das/2.png}
+% 	\end{subfigure}%
+% 	\begin{subfigure}{0.5\textwidth}
+% 		\includegraphics[scale=0.25]{../../presentations/2024_05_das/5.png}
+% 	\end{subfigure}
+% 	\caption{Screenshots of the web-tool. \todo[inline]{Insert screenshots of the web-tool}}
+% \end{figure}
 
 \section{Empirical Analysis}
 To compare how well does creating a graph manually based on effect sizes and
-p-value compare to algorithmic approaches, we performed some emperical
+p-value compare to algorithmic approaches, we performed some empirical
 analysis.
 
 \subsection{Simulating an expert}
@@ -320,7 +361,7 @@ To simulate an expert building a model manually, we wrote a simple greedy simula
 no edges and chooses the pair of variables with the highest correlation between them. The expert based on some accuracy measure decides the direction
 of the edge between these variables such that the new added edge does not create a cycle in the DAG.
 
-\todo[inline]{Summarize this section and equaiton in an algorithm}
+\todo[inline]{Summarize this section and equation in an algorithm}
 \todo[inline]{Show a consistency proof for this expert simulation}
 
 \begin{equation}
@@ -332,6 +373,19 @@ of the edge between these variables such that the new added edge does not create
 				\end{cases} \\
 	\end{split}
 \end{equation}
+
+\begin{algorithm}
+	\caption{Expert Simulation}
+	\While{True}{
+	   $ e \gets \textnormal{Effects}(G) > \textnormal{THRESHOLD} $ \;
+	   \If{$ \textnormal{len}(e) $}{
+		   $ \textnormal{return}(G) $ \;
+	   }
+	   $ X, Y \gets \max_{X, Y} e $\;
+	   $ dir \gets Expert(X, Y) $ \;
+	}
+
+\end{algorithm}
 
 After adding each edge, we also check if the p-value of any existing edge shows independence. If that happens we remove that edge and blacklist that edge. 
 Blacklisted edges are not suggested to the expert in future iterations. We repeat this till we have explained all the correlations in the dataset.
