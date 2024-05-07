@@ -377,12 +377,18 @@ of the edge between these variables such that the new added edge does not create
 \begin{algorithm}
 	\caption{Expert Simulation}
 	\While{True}{
-	   $ e \gets \textnormal{Effects}(G) > \textnormal{THRESHOLD} $ \;
-	   \If{$ \textnormal{len}(e) $}{
-		   $ \textnormal{return}(G) $ \;
+	   $ e \gets \textnormal{Effects}(G) > \textnormal{THRESHOLD} $\;
+	   $ e \gets e - \textnormal{blacklist} $\;
+	   \If {$ e = 0 $}{
+		$ G \gets G - e $ \;
+		$ \textnormal{blacklist} \gets \textnormal{blacklist} \cup e $\;
+	   } \;
+	   \If{$ \textnormal{len}(e) = 0$}{
+		   $ \textnormal{return}(G) $\;
 	   }
 	   $ X, Y \gets \max_{X, Y} e $\;
-	   $ dir \gets Expert(X, Y) $ \;
+	   $ dir \gets Expert(X, Y, \alpha) $\;
+	   $ G \gets G \cup dir $\;
 	}
 
 \end{algorithm}
