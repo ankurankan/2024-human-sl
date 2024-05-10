@@ -95,34 +95,53 @@
 \maketitle
 
 \begin{abstract}
-	Constructing a Directed Acyclic Graph (DAG) from observational data,
-	called causal discovery, is a fundamental problem in causal inference.
-	Numerous algorithms have been developed to address it. However, their
-	adoption in applied disciplines has been limited, possibly due to a
-	lack of confidence in these algorithms stemming from them making
-	obvious mistakes, and the difficulties in choosing the right algorithm
-	for specific datasets. Consequently, in applied disciplines, these
-	causal Directed Acyclic Graphs (DAGs) are predominantly constructed
-	manually based on domain expertise. This makes it vital to test and
-	potentially modify these models against data before using them for any
-	analysis. Local testing based on Conditional Independence (CI) tests and
-	effect sizes have been commonly used for this purpose. However,
-	one of the current limitations of this approach is that there are no
-	effect sizes for mixed data. To address this, we introduce a novel
-	effect size measure for mixed data based on canonical correlations.
-	This effect size is a generalization of some of the effect sizes used
-	in special cases to mixed variables. Moreover, to assist researchers in
-	constructing DAGs manually, we use the proposed mixed data effect size
-	measure to build a web-based tool that can help researchers in
-	constructing, validating, and modifying their DAGs with the help of
-	available data. The tool iteratively suggests modifications to DAGs
-	based on correlations that are not explained/over-explained by the DAG,
-	while the expert chooses the direction of the edge between those
-	variables. Empirically, we show that taking a greedy approach on the
-	tool's recommendations can perform comparably to causal discovery
-	algorithms, provided that the expert correctly determines the direction
-	of the edges in at least one out of three cases, with performance
-	improving as accuracy increases.
+	% Constructing a Directed Acyclic Graph (DAG) from observational data,
+	% called causal discovery, is a fundamental problem in causal inference.
+	% Numerous algorithms have been developed to address it. However, their
+	% adoption in applied disciplines has been limited, possibly due to a
+	% lack of confidence in these algorithms stemming from them making
+	% obvious mistakes, and the difficulties in choosing the right algorithm
+	% for specific datasets. Consequently, in applied disciplines, these
+	% causal Directed Acyclic Graphs (DAGs) are predominantly constructed
+	% manually based on domain expertise. This makes it vital to test and
+	% potentially modify these models against data before using them for any
+	% analysis. Local testing based on Conditional Independence (CI) tests and
+	% effect sizes have been commonly used for this purpose. However,
+	% one of the current limitations of this approach is that there are no
+	% effect sizes for mixed data. To address this, we introduce a novel
+	% effect size measure for mixed data based on canonical correlations.
+	% This effect size is a generalization of some of the effect sizes used
+	% in special cases to mixed variables. Moreover, to assist researchers in
+	% constructing DAGs manually, we use the proposed mixed data effect size
+	% measure to build a web-based tool that can help researchers in
+	% constructing, validating, and modifying their DAGs with the help of
+	% available data. The tool iteratively suggests modifications to DAGs
+	% based on correlations that are not explained/over-explained by the DAG,
+	% while the expert chooses the direction of the edge between those
+	% variables. Empirically, we show that taking a greedy approach on the
+	% tool's recommendations can perform comparably to causal discovery
+	% algorithms, provided that the expert correctly determines the direction
+	% of the edges in at least one out of three cases, with performance
+	% improving as accuracy increases.
+
+	Causal Discovery that is learning the causal graph from observational
+	data is a fundamental problem in causal inference. The problem has been
+	extensively studied and many algorithms have been developed to address
+	it. However, their adaption in applied fields have been limited,
+	possibly due to a lack of confidence in these algorithms stemming from
+	them making obvious mistakes, and the difficulties in choosing the
+	right algorithm for specific datasets. Moreover, these algorithms can
+	usuallly only get us to markov equivance class where the remaining
+	edges need to be somehow oriented before inference can be done from
+	them. Consequently, in applied disciplines, these Directed Acyclic
+	Graphs (DAGs) are predominantly constructed manually based on domain
+	expertise. Due to being constructed by hand, testing these models is
+	vital before making any inference using them. Local testing in these
+	models can be done by checking whether the implied conditional
+	independences (CIs) by the model hold in the data or not. (Shipley
+	2000) also proposed a global test based on combining these local tests.
+	Based on these local tests, in the case of continuous or discrete
+	variables, we can start by modifying the worst offending test.
 \end{abstract}
 
 \section{Introduction}
