@@ -131,17 +131,22 @@
 	possibly due to a lack of confidence in these algorithms stemming from
 	them making obvious mistakes, and the difficulties in choosing the
 	right algorithm for specific datasets. Moreover, these algorithms can
-	usuallly only get us to markov equivance class where the remaining
-	edges need to be somehow oriented before inference can be done from
-	them. Consequently, in applied disciplines, these Directed Acyclic
-	Graphs (DAGs) are predominantly constructed manually based on domain
-	expertise. Due to being constructed by hand, testing these models is
-	vital before making any inference using them. Local testing in these
-	models can be done by checking whether the implied conditional
-	independences (CIs) by the model hold in the data or not. (Shipley
-	2000) also proposed a global test based on combining these local tests.
-	Based on these local tests, in the case of continuous or discrete
-	variables, we can start by modifying the worst offending test.
+	usuallly only get us to markov equivance class (MEC) where the
+	remaining edges need to be somehow oriented before inference can be
+	done from them. Consequently, in applied disciplines, these Directed
+	Acyclic Graphs (DAGs) are predominantly constructed manually based on
+	domain expertise. Due to being constructed by hand, testing these
+	models is vital before making any inference using them. Local testing
+	in these models can be done by checking whether the implied conditional
+	independences (CIs) by the model hold in the data or not. In the field
+	on Structural Equation Models (SEMs), modification indices have been
+	used for this purpose where a global fit index is computed relative to
+	each possible modification in the model. These modification indices can
+	be used to select the appropriate modification backed by expert
+	knowledge. In the case of DAGs, we do have global fit index based on
+	combining local implied conditional independence tests. Based on this
+	test, we can make modifications to our model. This can for example be
+	done by using a conditional association measure
 \end{abstract}
 
 \section{Introduction}
