@@ -40,8 +40,12 @@
 \usepackage{todonotes}
 \usepackage{bm}
 \usepackage{subcaption}
+\usepackage[ruled]{algorithm2e}
 
 \def\ci{\perp\!\!\!\!\!\perp}
+
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
 
 \title{Title}
 
@@ -86,39 +90,64 @@
   % \texttt{email} \\
 }
 
-
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-	Causal discovery is a fundamental problem in causal inference, and
-	numerous algorithms have been developed to address it. However, their
-	adoption in applied disciplines  has been limited, possibly due to a
-	lack of confidence in these algorithms stemming from them making
-	obvious mistakes, and the difficulties in choosing the right algorithm
-	for specific datasets. Consequently, in applied disciplines, these
-	causal Directed Acyclic Graphs (DAGs) are predominantly constructed
-	manually based on domain expertise. This makes it vital to test and
-	potentially modify these models against data before using them for any
-	analysis. Local testing based on Conditional Independence tests and
-	their effect sizes have been commonly used for this purpose. However,
-	one of the current limitations of this approach is that there are no
-	effect sizes for mixed data. To address this, we introduce a novel
-	effect size measure for mixed data based on canonical correlations.
-	This effect size is a generalization of some of the effect sizes used
-	in special cases to mixed variables. Moreover, to assist researchers in
-	constructing DAGs manually, we use the proposed mixed data effect size
-	measure to build a web-based tool that can help researchers in
-	constructing, validating, and modifying their DAGs with the help of
-	available data. The tool iteratively suggests modifications to DAGs
-	based on correlations that are not explained/over-explained by the DAG,
-	while the expert chooses the direction of the edge between those
-	variables. Empirically, we show that taking a greedy approach on the
-	tool's recommendations can perform comparably to causal discovery
-	algorithms, provided that the expert correctly determines the direction
-	of the edges in at least one out of three cases, with performance
-	improving as accuracy increases.
+	% Constructing a Directed Acyclic Graph (DAG) from observational data,
+	% called causal discovery, is a fundamental problem in causal inference.
+	% Numerous algorithms have been developed to address it. However, their
+	% adoption in applied disciplines has been limited, possibly due to a
+	% lack of confidence in these algorithms stemming from them making
+	% obvious mistakes, and the difficulties in choosing the right algorithm
+	% for specific datasets. Consequently, in applied disciplines, these
+	% causal Directed Acyclic Graphs (DAGs) are predominantly constructed
+	% manually based on domain expertise. This makes it vital to test and
+	% potentially modify these models against data before using them for any
+	% analysis. Local testing based on Conditional Independence (CI) tests and
+	% effect sizes have been commonly used for this purpose. However,
+	% one of the current limitations of this approach is that there are no
+	% effect sizes for mixed data. To address this, we introduce a novel
+	% effect size measure for mixed data based on canonical correlations.
+	% This effect size is a generalization of some of the effect sizes used
+	% in special cases to mixed variables. Moreover, to assist researchers in
+	% constructing DAGs manually, we use the proposed mixed data effect size
+	% measure to build a web-based tool that can help researchers in
+	% constructing, validating, and modifying their DAGs with the help of
+	% available data. The tool iteratively suggests modifications to DAGs
+	% based on correlations that are not explained/over-explained by the DAG,
+	% while the expert chooses the direction of the edge between those
+	% variables. Empirically, we show that taking a greedy approach on the
+	% tool's recommendations can perform comparably to causal discovery
+	% algorithms, provided that the expert correctly determines the direction
+	% of the edges in at least one out of three cases, with performance
+	% improving as accuracy increases.
+
+	Causal Discovery that is learning the causal graph from observational
+	data is a fundamental problem in causal inference. The problem has been
+	extensively studied and many algorithms have been developed to address
+	it. However, their adaption in applied fields have been limited,
+	possibly due to a lack of confidence in these algorithms stemming from
+	them making obvious mistakes, and the difficulties in choosing the
+	right algorithm for specific datasets. Moreover, these algorithms can
+	usuallly only get us to markov equivance class (MEC) where the
+	remaining edges need to be somehow oriented before inference can be
+	done from them. Consequently, in applied disciplines, these Directed
+	Acyclic Graphs (DAGs) are predominantly constructed manually based on
+	domain expertise. Due to being constructed by hand, testing these
+	models is vital before making any inference using them. Local testing
+	in these models can be done by checking whether the implied conditional
+	independences (CIs) by the model hold in the data or not. In the field
+	on Structural Equation Models (SEMs), modification indices have been
+	used for this purpose where a global fit index is computed relative to
+	each possible modification in the model. These modification indices can
+	be used to select the appropriate modification backed by expert
+	knowledge. In the case of DAGs, we do have global fit index based on
+	combining local implied conditional independence tests. Based on this
+	test, we can make modifications to our model. This can for example be
+	done by using a conditional association measure such as partial
+	correlation. 
 \end{abstract}
 
 \section{Introduction}
@@ -148,6 +177,7 @@ their domain knowledge. We hypothesize the following two reasons for low
 adaption of these methods in applied sciences:
 
 \begin{enumerate}
+	\item Biased towards sparse graphs.
 	\item Algorithms making obvious mistakes: These algorithms often 
 		make very obvious mistakes, making it harder for the user
 		to trust them.
@@ -183,14 +213,20 @@ proposed but an effect size is still missing.
 
 \textbf{Para 5: Contributions}
 \begin{enumerate}
-	\item An effect size measure for mixed data. 
-	\item A web-based tool to help with both model testing and construction. Combining both domain knowledge and data.
+	\item We present an effect size measure based on canonical correlations
+		for mixed data that generalizes some of the commonly used
+		effect size in special cases such as partial correlation
+		coefficient for continuous variables, and Cram\'er's V for
+		discrete variables.
+	\item We also developed a web-based tool to help researches in
+		constructing and testing and modifying their DAGs using CI tests and
+		effect size measures.
 \end{enumerate}
 
 \begin{figure}
 		\centering
 		\begin{tikzpicture}
-			\begin{scope}[yshift=0.7cm, scale=0.8]
+			\begin{scope}[yshift=0.7cm, scale=1]
 			\tikzstyle{every node}=[align=center, inner sep=1pt]
 				\node (sex) at (-0.7, -0.8) {Sex};
 				\node (age) at (-0.3, 0) {Age};
@@ -230,15 +266,27 @@ proposed but an effect size is still missing.
 
 
 \section{Background}
-\todo[inline]{Add notation used here}
+We represent uni-dimensional variables as $ X $ and multi-dimensional variables
+as $ \bm{Z} $. We consider the case of estimating association between $ X $,
+and $ Y $ is the presence of a set of conditioning variables $ \bm{Z} = Z_1,
+\cdots, Z_k $, potentially being an empty set $ \bm{Z} = \emptyset $. We use $
+\rvert \bm{Z} \rvert $ to denote the cardinality of the variable $ \bm{Z} $. We
+consider various scenarios where the variables $ X $, $ Y $ and $ \bm{Z} $
+could be either discrete, ordinal, or continuous. With mixed data, we mean an
+arbitrary mix of variable types among $ X $, $ Y $, and $ \bm{Z} $.
 
-We need to do both conditional and non-conditional tests. We would assume that
-we are testing the statement $ X \ci Y \rvert \bm{Z} $, where $ \bm{Z} $ is a
-set of conditional variables possibly null.
+We consider the problem of estimating the partial (or conditional) association
+between $ X $ and $ Y $ in the presence of the conditioning set $ Z $. When $ Z
+= \emptyset $, this is equivalent to the marginal association between $ X $ and
+$ Y $.
 
-\subsection{Effect Size Measures}
+\todo[inline]{Add more notation as they come}
 
-\subsubsection{Continuous Variables}
+\subsection{Effect size Measures}
+In this section, we give a background on some of the commonly used effect size
+measures in the context of CI testing.
+
+\paragraph{$ X $ and $ Y $ are continuous}
 In the case when $ \bm{Z} = \emptyset $, and when both $ X $ and $ Y $ are
 continuous variables, Pearson's correlation coefficient based test can be used
 which also gives an effect size measure. The p-value computation requires the
@@ -251,66 +299,124 @@ the predictor. We start by training two model $ X \sim \bm{Z} $ and $ Y \sim \bm
 Then the residuals are computed for both as $ R_X = X - \hat{X} $ and $ R_Y = Y - \hat{Y} $.
 After this we can do a normal non-conditional test on $ R_X $ and $ R_Y $.
 
-\subsubsection{Discrete Variables}
+\paragraph{All variables are discrete}
 
 When $ \bm{Z} = \emptyset $, in the case of discrete variables, chi-squared test can be used. Effect size 
 measures such as Cram\'er's V are available for it.
 
-When $ \bm{Z} \neq \emptyset $, we do stratification.
+When $ \bm{Z} \neq \emptyset $, we can do stratification.
 
 
-\subsubsection{Ordinal and Continuous Variables}
+\paragraph{$ X $ is ordinal and $ Y $ is continuous}
 Polyserial Correlation
 
 When $ \bm{Z} = \emptyset $, ordinal variable can be assumed to be coming from a thresholded normal distribution, estimate the thresholds and latent variable to compute 
 the correlation coefficient.
 
-\subsubsection{Ordinal Variables}
+\paragraph{$ X $ and $ Y $ are ordinal}
 Polychoric Correlation
 
-\subsubsection{Mixed data}
+\paragraph{Mixed data}
 Recently multiple tests for mixed data have been proposed but they do not have
 an effect size measure. We propose one based on canonical correlations.
 
-\subsection{Canonical Correlations}
-Canonical correlations are generalization of correlations to set of variables.
+\subsection{Canonical Correlation}
+Canonical correlations are generalization of correlations to multi-dimensional variables.
+
+\begin{definition}
+	Given two sets of random variables $ \bm{U} = (U_1, U_2, \cdots, U_p) $
+	and $ \bm{V} = (V_1, V_2, \cdots, V_q) $, canonical correlation between
+	them, $\rho(\bm{U}, \bm{V}) $ is defined as:
+		
+	\begin{equation}
+		\rho(\bm{U}, \bm{V}) = \sup_{a, b} \frac{a^T \Sigma_{\bm{U}\bm{V}} b}{\sqrt{a^T \Sigma_{\bm{U}\bm{U}} a} \sqrt{b^T \Sigma_{\bm{V}\bm{V}} b}}
+	\end{equation}
+
+\end{definition}
+	
+	Canonical correlations try to find linear transformations $ a $ and $ b
+	$ of $ \bm{U} $ and $ \bm{V} $ such that the correlations between the
+	columns of $ a^T \bm{U} $ and $ b^T \bm{V} $ is maximized. The
+	individual columns of $ a^T \bm{U} $ and $ b^T \bm{V} $ are
+	independent. In the case when $ \rvert U \rvert = \rvert V \rvert = 1$,
+	canonical correlations are equivalent to Pearson's correlation
+	coefficient.
+
+Multiple effect sizes measures based on canonical correlation are available.
+\begin{itemize}
+	\item Wilks' Lambda: $ \Lambda = \prod (1 - \phi_i^2) $
+	\item Roy's Largest Root: $ \theta = \phi_{\max}^2 $
+	\item Pillai's Trace: $ \tau = \sum \phi_i^2 $
+\end{itemize}
+We use Pillai's Trace in this paper. \todo[inline]{Why?}.
 
 \section{Effect size for mixed data}
-\subsection{Non-conditional Case}
+In this section, we use canonical correlations to define an effect size measure
+for mixed data CI tests. Our approach is similar to the approach used for the
+continuous variable case. 
+
+\subsection{No conditional variables}
+When we have no conditonal variables, we need to convert the variables into 
+
 \subsection{Conditional Case}
+
 \subsection{Connection to special cases}
 
 \section{Web Tool}
 As most of the DAGs in practice are built manually, we use our mixed data effect size measure to build a web-tool that aids researches in building DAGs.
 
-\begin{figure}
-	\centering
-	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[scale=0.25]{../../presentations/2024_05_das/1.png}
-	\end{subfigure}%
-	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[scale=0.25]{../../presentations/2024_05_das/2.png}
-	\end{subfigure}
-	\caption{\todo[inline]{Insert screenshots of the web-tool}}
-\end{figure}
+% \begin{figure}
+% 	\centering
+% 	\begin{subfigure}{0.5\textwidth}
+% 		\includegraphics[scale=0.25]{../../presentations/2024_05_das/2.png}
+% 	\end{subfigure}%
+% 	\begin{subfigure}{0.5\textwidth}
+% 		\includegraphics[scale=0.25]{../../presentations/2024_05_das/5.png}
+% 	\end{subfigure}
+% 	\caption{Screenshots of the web-tool. \todo[inline]{Insert screenshots of the web-tool}}
+% \end{figure}
 
 \section{Empirical Analysis}
-We performed empirical analysis to compare how well does creating a graph manually based on effect sizes and p-value compare to algorithmic approaches.
+To compare how well does creating a graph manually based on effect sizes and
+p-value compare to algorithmic approaches, we performed some empirical
+analysis.
+
 \subsection{Simulating an expert}
 To simulate an expert building a model manually, we wrote a simple greedy simulation as shown in the Figure. The expert always starts with a graph with
 no edges and chooses the pair of variables with the highest correlation between them. The expert based on some accuracy measure decides the direction
-of the edge between these variables such that the new added edge does not create a cycle in the DAG:
+of the edge between these variables such that the new added edge does not create a cycle in the DAG.
 
-\todo{Summarize this section and equaiton in an algorithm}
+\todo[inline]{Summarize this section and equation in an algorithm}
+\todo[inline]{Show a consistency proof for this expert simulation}
+
 \begin{equation}
 	\begin{split}
 		x &= \textnormal{rand}([0, 1]) \\
 		O(\alpha) &= \begin{cases} 
 			M \rightarrow Y, & \textnormal{if  } x <= \alpha \\
 			\textnormal{rand}(M \rightarrow Y, M \leftarrow Y, None) & \textnormal{otherwise} \\
-			     \end{cases} \\
+				\end{cases} \\
 	\end{split}
 \end{equation}
+
+\begin{algorithm}
+	\caption{Expert Simulation}
+	\While{True}{
+	   $ e \gets \textnormal{Effects}(G) > \textnormal{THRESHOLD} $\;
+	   $ e \gets e - \textnormal{blacklist} $\;
+	   \If {$ e = 0 $}{
+		$ G \gets G - e $ \;
+		$ \textnormal{blacklist} \gets \textnormal{blacklist} \cup e $\;
+	   } \;
+	   \If{$ \textnormal{len}(e) = 0$}{
+		   $ \textnormal{return}(G) $\;
+	   }
+	   $ X, Y \gets \max_{X, Y} e $\;
+	   $ dir \gets Expert(X, Y, \alpha) $\;
+	   $ G \gets G \cup dir $\;
+	}
+
+\end{algorithm}
 
 After adding each edge, we also check if the p-value of any existing edge shows independence. If that happens we remove that edge and blacklist that edge. 
 Blacklisted edges are not suggested to the expert in future iterations. We repeat this till we have explained all the correlations in the dataset.
