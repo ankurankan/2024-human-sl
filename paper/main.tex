@@ -95,34 +95,34 @@
 \maketitle
 
 \begin{abstract}
-	\emph{Causal Discovery} is the process of learning the causal structure
-	either in form of a Directed Acyclic Graph (DAG) or a Structural
-	Equation Model (SEM) from observational data. This problem has been
-	extensively studied for both DAGs and SEMs.
-	In the field of DAGs, many automated algorithms
-	have been developed for constructing a DAG from a given dataset. However, the
-	adaption of these algorithms in applied fields have been limited,
-	possibly due to a lack of confidence in these algorithms stemming from
-	them making obvious mistakes, and the difficulties in choosing the
-	right algorithm for a given dataset. Consequently, in applied
-	disciplines, these DAGs are predominantly constructed manually based on
-	domain expertise. Due to being constructed by hand, it is vital that
-	the fit of these models are tested against data and the models are
-	potentially modified to acheive a better fit. On the other hand, in the
-	field of SEMs models are typically constructed manually through an
-	iterative process of assessing fit and modifying the model according to
-	that. This process is commonly known as \emph{Specification Search} 
-	where methods like \emph{modification indices} can be used to guide this
-	modification process. In the case of DAGs, although there are tests
-	such as Shipley 2000 that can assess the global fit of model by
-	combining the tests using implied conditional independencies of the model, but
-	there are no methods that can guide our modification process. In this
-	paper, we present a simple modification process aimed at helping researchers
-	in manually constructing or modifying the DAGs outputted by an algorithm.
-	This modification process is based on using a measure of association for 
-	these individual local CI tests to identify the worst offending CI test and
-	combining it with expert knowledge. We also present a measure of
-	association based on canonical correlations for mixed data. We also
+	\emph{Causal Discovery} involves learning causal structures
+	from data, typically represented as  Directed Acyclic Graphs
+	(DAGs) or Structural Equation Models (SEMs). This problem has been
+	extensively studied for both DAGs and SEMs. In the field of DAGs, many
+	automated algorithms have been developed for constructing a DAG from a
+	given dataset. However, the adaption of these algorithms in applied
+	fields have been limited, possibly due to a lack of confidence in these
+	algorithms stemming from them making obvious mistakes, and the
+	difficulties in choosing the right algorithm for a given dataset.
+	Consequently, in applied disciplines, these DAGs are predominantly
+	constructed manually based on domain expertise. Due to being
+	constructed by hand, it is vital that the fit of these models are
+	tested against data and the models are potentially modified to acheive
+	a better fit. On the other hand, in the field of SEMs models are
+	typically constructed manually through an iterative process of
+	assessing fit and modifying the model according to that. This process
+	is commonly known as \emph{Specification Search} where methods like
+	\emph{modification indices} can be used to guide this modification
+	process. In the case of DAGs, although there are tests such as Shipley
+	2000 that can assess the global fit of model by combining the tests
+	using implied conditional independencies of the model, but there are no
+	methods that can guide our modification process. In this paper, we
+	present a simple modification process aimed at helping researchers in
+	manually constructing or modifying the DAGs outputted by an algorithm.
+	This modification process is based on using a measure of association
+	for these individual local CI tests to identify the worst offending CI
+	test and combining it with expert knowledge. We also present a measure
+	of association based on canonical correlations for mixed data. We also
 	present a graphical web-tool that can assist researchers in iteratively
 	modifying and constructing their DAGs. We theoretically show that in
 	the presence of an oracle, this iterative modification process is
@@ -151,7 +151,7 @@ score function is maximized, the continuous optimization methods reformulate
 the problem statement as a constrained optimization problem and use
 optimization algorithms to come up with a graph.
 
-\textbf{Para 2: Reasons behind this}
+\textbf{Para 2: Reasons behind this and importance of verifying against data}
 
 Even though we have various algorithms for doing casual discovery, yet
 researchers in applied fields prefer to construct these DAGs manually based on
@@ -171,12 +171,13 @@ adaption of these methods in applied sciences:
 		difficult. As there is no way to evaluate the performance of 
 		these algorithms on our dataset.
 \end{enumerate}
-
-\textbf{Para 3: Importance of testing, include modification indices}
-
 Both in the cases when the DAG is an output of an algorithm or when constructed
 by hand, it is vital to test these models against data before using them for
-making any inference. In the field of Structural Equation Models (SEMs)
+making any inference. 
+
+\textbf{Para 3: Structural Equation Models, testing, include modification indices}
+
+In the field of Structural Equation Models (SEMs)
 modification indices have been used to do this. However, as modification index
 is an evaluation of the global fit of the model. An alternative is local fit of
 models using CI tests where the implied conditional independences of the model
@@ -185,8 +186,7 @@ tests can then be used to modify our models. Figure shows an example of this
 testing. We can not also only rely on the p-values, effect size can help in
 deciding.
 
-\textbf{Para 4: Mixed data testing}
-
+\textbf{Para 4: Measure of Association}
 As these CI based testing uses p-values and effect size measures from CI tests
 for testing. And as mixed data is common, we need both a test and effect size
 measure for mixed data. Recently, a few CI tests for mixed data have been
