@@ -204,7 +204,7 @@ run_single_exp_pc <- function(n_nodes, edge_prob){
 	true_adj <- d$true_adj
 	sim_data <- d$sim_data
 
-    	suffStat <- list(dm = sim_data, adaptDF = FALSE, test = 'mxm')
+    	suffStat <- list(dm = sim_data, adaptDF = FALSE, test = 'glm_q3')
     	alpha <- 0.05
 
 	pc.cpdag <- pcalg::pc(
