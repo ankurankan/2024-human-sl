@@ -112,13 +112,15 @@
 	field of SEMs models are typically constructed manually through an
 	iterative process of assessing fit and modifying the model according to
 	that. This process is commonly known as \emph{Specification Search} 
-	where things like \emph{modification indices} can be used to guide this
+	where methods like \emph{modification indices} can be used to guide this
 	modification process. In the case of DAGs, although there are tests
 	such as Shipley 2000 that can assess the global fit of model by
-	combining the implied conditional independencies of the model, but
+	combining the tests using implied conditional independencies of the model, but
 	there are no methods that can guide our modification process. In this
-	paper, we present a simple modification process based on using a
-	measure of association for these individual local CI tests and
+	paper, we present a simple modification process aimed at helping researchers
+	in manually constructing or modifying the DAGs outputted by an algorithm.
+	This modification process is based on using a measure of association for 
+	these individual local CI tests to identify the worst offending CI test and
 	combining it with expert knowledge. We also present a measure of
 	association based on canonical correlations for mixed data. We also
 	present a graphical web-tool that can assist researchers in iteratively
