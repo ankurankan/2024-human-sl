@@ -275,7 +275,12 @@ ci.test <- function(x, y, z, d, test){
 		return(residual.test(d[, x], d[, y], d[z], 'rf', 'pillai'))
 	}
 	else if (test == 'glm_q3'){
-		return(residual.test(d[, x], d[, y], d[z], 'glm', 'q3'))
+		if (length(z) == 0){
+			return (dagitty::ciTest(X=x, Y=y, Z=c(), d, type='cis.pillai')$p.value)
+		}
+		else{
+			return(residual.test(d[, x], d[, y], d[z], 'glm', 'q3'))
+		}
 	}
 	else if (test == 'rf_q3'){
 		return(residual.test(d[, x], d[, y], d[z], 'rf', 'q3'))

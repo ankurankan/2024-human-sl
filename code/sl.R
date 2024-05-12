@@ -8,7 +8,8 @@ library(tidyverse)
 library(progress)
 plan(multisession)
 
-THRESHOLD <- 0.05
+EFFECT_THRESHOLD <- 0.05
+PVALUE_THRESHOLD <- 0.05
 
 # Oracle function. Returns either true or (random or don't know) direction of the edge.
 oracle <- function(u, v, true_dag, accuracy=1){
@@ -94,17 +95,18 @@ simulate_human_sl <- function(sim_data, true_dag, oracle_acc, max_iter=1e4){
 	while (counter < max_iter){
 		counter <- counter + 1
 
-		effects <- compute_effects_v2(new_dag, sim_data)[, c('X', 'A', 'Y', 'cor')]
+		effects <- compute_effects_v2(new_dag, sim_data) %>% filter(p < PVALUE_THRESHOLD)
+		effects <- effects[, c('X', 'A', 'Y', 'cor')]
 
 		# If edges are present do pruning.
-		edges_to_prune <- effects %>% filter(A == '->') %>% filter(abs(cor) < THRESHOLD)
+		edges_to_prune <- effects %>% filter(A == '->') %>% filter(abs(cor) < EFFECT_THRESHOLD)
 		if (edges_to_prune %>% nrow() > 0){
 			new_dag <- remove_edges(new_dag, edges_to_prune)
 		}
 		
 		# Recompute effects after pruning: TODO: Do we need to do this?
 		effects <- compute_effects_v2(new_dag, sim_data)[, c('X', 'A', 'Y', 'cor')]
-		unexplain_cor_sorted <- effects %>% filter(abs(as.double(effects$cor)) > THRESHOLD) %>% filter(A == '--') %>% arrange(desc(abs(cor)))
+		unexplain_cor_sorted <- effects %>% filter(abs(as.double(effects$cor)) > EFFECT_THRESHOLD) %>% filter(A == '--') %>% arrange(desc(abs(cor)))
 
 		# Remove blaclisted edges
 		if (blacklist_edges %>% nrow() > 0){
@@ -250,16 +252,16 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 	
 	pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
 	for (edge_prob in edge_probs){
-		hc_dist <- t(future_replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob)))
-		hc_mean <- apply(hc_dist, mean, MARGIN=2)
-		hc_sd <- apply(hc_dist, sd, MARGIN=2)/sqrt(R)
+		# hc_dist <- t(future_replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob)))
+		# hc_mean <- apply(hc_dist, mean, MARGIN=2)
+		# hc_sd <- apply(hc_dist, sd, MARGIN=2)/sqrt(R)
 
-		pc_dist <- t(future_replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob)))
-		pc_mean <- apply(pc_dist, function(x) mean(x, na.rm=T), MARGIN=2)
-		pc_sd <- apply(pc_dist, function(x) sd(x, na.rm=T), MARGIN=2)/sqrt(sum(!is.na(pc_dist[, 1])))
+		# pc_dist <- t(replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob)))
+		# pc_mean <- apply(pc_dist, function(x) mean(x, na.rm=T), MARGIN=2)
+		# pc_sd <- apply(pc_dist, function(x) sd(x, na.rm=T), MARGIN=2)/sqrt(sum(!is.na(pc_dist[, 1])))
 
 		for (oracle_acc in oracle_accs){
-			human_dist <- t(future_replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
+			human_dist <- t(replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
 
 			human_mean <- apply(human_dist, mean, MARGIN=2)
 			human_sd <- apply(human_dist, sd, MARGIN=2)/sqrt(R)
