@@ -96,8 +96,8 @@
 
 \begin{abstract}
 	\emph{Causal Discovery} involves learning causal structures
-	from data, typically represented as  Directed Acyclic Graphs
-	(DAGs) or Structural Equation Models (SEMs). This problem has been
+	from data, and has been studied both in Directed Acyclic Graphs
+	(DAGs) and Structural Equation Models (SEMs). This problem has been
 	extensively studied for both DAGs and SEMs. In the field of DAGs, many
 	automated algorithms have been developed for constructing a DAG from a
 	given dataset. However, the adaption of these algorithms in applied
@@ -177,16 +177,24 @@ making any inference.
 
 \textbf{Para 3: Structural Equation Models, testing, include modification indices}
 
-In the field of Structural Equation Models (SEMs)
-modification indices have been used to do this. However, as modification index
-is an evaluation of the global fit of the model. An alternative is local fit of
-models using CI tests where the implied conditional independences of the model
-can be tested using statistical tests. Similar to modification indices, these
-tests can then be used to modify our models. Figure shows an example of this
-testing. We can not also only rely on the p-values, effect size can help in
-deciding.
+In the field of Structural Equation Models (SEMs), models are typically
+constructed by hand. Researchers typically come up with an initial model, which
+then they use the data to make modifications to. This process is known as
+\emph{Specification Search}. One of the common ways to do this is through
+\emph{modification indices} where a global fit of the model is measured with
+different modification to the model. Utilizing expert knowledge to select the
+appropriate modification that gives the maximum improvement to the global fit.
+
+% modification indices have been used to do this. However, as modification index
+% is an evaluation of the global fit of the model. An alternative is local fit of
+% models using CI tests where the implied conditional independences of the model
+% can be tested using statistical tests. Similar to modification indices, these
+% tests can then be used to modify our models. Figure shows an example of this
+% testing. We can not also only rely on the p-values, effect size can help in
+% deciding.
 
 \textbf{Para 4: Measure of Association}
+In the case of DAGs however, we do not have any way to 
 As these CI based testing uses p-values and effect size measures from CI tests
 for testing. And as mixed data is common, we need both a test and effect size
 measure for mixed data. Recently, a few CI tests for mixed data have been
