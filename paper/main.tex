@@ -95,13 +95,13 @@
 \maketitle
 
 \begin{abstract}
-	\emph{Causal Discovery} involves learning causal structures
-	from data, and has been studied both in Directed Acyclic Graphs
-	(DAGs) and Structural Equation Models (SEMs). This problem has been
-	extensively studied for both DAGs and SEMs. In the field of DAGs, many
-	automated algorithms have been developed for constructing a DAG from a
-	given dataset. However, the adaption of these algorithms in applied
-	fields have been limited, possibly due to a lack of confidence in these
+	\emph{Causal Discovery} involves learning causal structures from data,
+	and has been studied both in Directed Acyclic Graphs (DAGs) and
+	Structural Equation Models (SEMs). This problem has been extensively
+	studied for both DAGs and SEMs. In the field of DAGs, many automated
+	algorithms have been developed for constructing a DAG from a given
+	dataset. However, the adaption of these algorithms in applied fields
+	have been limited, possibly due to a lack of confidence in these
 	algorithms stemming from them making obvious mistakes, and the
 	difficulties in choosing the right algorithm for a given dataset.
 	Consequently, in applied disciplines, these DAGs are predominantly
@@ -155,17 +155,18 @@ adaption of these methods in applied sciences:
 
 \begin{enumerate}
 	\item Biased towards sparse graphs.
-	\item Algorithms making obvious mistakes: These algorithms often 
-		make very obvious mistakes, making it harder for the user
-		to trust them.
+	\item Algorithms making obvious mistakes: These algorithms often make
+		very obvious mistakes, making it harder for the user to trust
+		them.
 	\item Difficulties in choosing an algorithm: For any given dataset, the
 		user need to make a choice of the algorithm. Given that these
 		algorithms work very differently, it can be difficult to make a
 		choice. Additionally, each of these algorithms have
 		hyperparameters and choices to make for them, making it
-		difficult. As there is no way to evaluate the performance of 
+		difficult. As there is no way to evaluate the performance of
 		these algorithms on our dataset.
 \end{enumerate}
+
 Both in the cases when the DAG is an output of an algorithm or when constructed
 by hand, it is vital to test these models against data before using them for
 making any inference. 
@@ -178,11 +179,11 @@ then they use the data to make modifications to. This process is known as
 different modification to the model. Utilizing expert knowledge to select the
 appropriate modification that gives the maximum improvement to the global fit.
 
-In the case of DAGs however, we do not have any way to 
-As these CI based testing uses p-values and effect size measures from CI tests
-for testing. And as mixed data is common, we need both a test and effect size
-measure for mixed data. Recently, a few CI tests for mixed data have been
-proposed but an effect size is still missing.
+In the case of DAGs however, we do not have any way to As these CI based
+testing uses p-values and effect size measures from CI tests for testing. And
+as mixed data is common, we need both a test and effect size measure for mixed
+data. Recently, a few CI tests for mixed data have been proposed but an effect
+size is still missing.
 
 \begin{enumerate}
 	\item We present a procedure to construct and modify DAGs using domain
