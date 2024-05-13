@@ -112,41 +112,44 @@
 	typically constructed manually through an iterative process of
 	assessing fit and modifying the model according to that. This process
 	is commonly known as \emph{Specification Search} where methods like
-	\emph{modification indices} can be used to guide this modification
-	process. In the case of DAGs, although there are tests such as Shipley
-	2000 that can assess the global fit of model by combining the tests
+	\emph{modification indices} combined with expert knowledge can be used
+	to guide this modification process. In the case of DAGs, although there
+	are tests to assess the global fit of a model by combining the tests
 	using implied conditional independencies of the model, but there are no
 	methods that can guide our modification process. In this paper, we
 	present a simple modification process aimed at helping researchers in
-	manually constructing or modifying the DAGs outputted by an algorithm.
-	This modification process is based on using a measure of association
-	for these individual local CI tests to identify the worst offending CI
-	test and combining it with expert knowledge. We also present a measure
-	of association based on canonical correlations for mixed data. We also
-	present a graphical web-tool that can assist researchers in iteratively
-	modifying and constructing their DAGs. We theoretically show that in
-	the presence of an oracle, this iterative modification process is
-	consistent in recovering the true DAG. Emprically, we show that this
-	process performs comparably to PC and Hill-Climb Search algorithms if
-	the user is able to correctly identify the direction of the edge in one
-	out of three cases.
+	manually constructing or modifying DAGs outputted by an algorithm. This
+	modification process is based on using a (conditional) measure of
+	association between variables in the model to assess potential edges
+	that best explains unexplained correlation between variables which the
+	researcher specifies the direction of this edge. In the case of
+	continuous or discrete variables, the effect size measures of local
+	tests can be used as this measure of association, however for mixed
+	data there is no such measure. We present a measure of association
+	based on canonical correlations for mixed data. We also present a
+	graphical web-tool that can assist researchers in iteratively modifying
+	and constructing their DAGs. We theoretically show that in the presence
+	of an oracle, this iterative modification process is consistent in
+	recovering the true DAG. Emprically, we show that using the mixed data
+	measure of association, the modification process performs comparably to
+	PC and Hill-Climb Search algorithms if the user is able to correctly
+	identify the direction of the edge in one out of three cases.
 \end{abstract}
 
 \section{Introduction}
 
-To perform any causal effect identification or estimation in Pearl's Directed
-Acyclic Graphs (DAGs) based causal framework usually requires to come up with
-the DAG structure. Learning these DAG structures from data is known as
-\emph{causal discovery}. Plenty of algorithms have been developed for these in
-the literature such as constraint-based methods such as PC, FCI, score based
-methods such as Hill-Climb Search, GES, and constrained continuous optimization
-based such as No TEARS. All these algorithms take different approaches to
-causal discovery, constraint-based algorithms utilize statistical conditional
-independence (CI) tests to come up with a model structure, the score-based
-methods iteratively perform local modifications to the model such that some
-score function is maximized, the continuous optimization methods reformulate
-the problem statement as a constrained optimization problem and use
-optimization algorithms to come up with a graph.
+To perform any causal effect identification or estimation using Directed
+Acyclic Graphs (DAGs) or Structural Equation Models (SEMs), researchers need to
+first construct a causal structure. This process of constructing the casual
+structure from data is known as \emph{Causal Discovery}. In the field of DAGs,
+plenty of algorithms have been developed to automatically construct DAGs from
+data. These algorithm takes different approaches to causal discovery such as
+Constraint-based algorithms such as PC and Fast Causal Infenrece (FCI) where
+the algorithm tries to match the conditional independences in the data to the
+ones impled by the model, score-based methods such as Hill-Climb Search, Greedy
+Equivalence Search (GES)  where the algorithm tries to find a model that has
+the best score given some scoring metric, and continuous optimization where the
+problem is formulated as a constrained optimization problem such as No Tears.
 
 Even though we have various algorithms for doing casual discovery, yet
 researchers in applied fields prefer to construct these DAGs manually based on
@@ -168,34 +171,36 @@ adaption of these methods in applied sciences:
 \end{enumerate}
 
 Both in the cases when the DAG is an output of an algorithm or when constructed
-by hand, it is vital to test these models against data before using them for
-making any inference. 
+by hand, it is vital to test these models against data and potentially modifying 
+them for a better fit before using them for making any inference. Both global
+and local tests for testing the fit of these models are available. However, when
+the fit fails, we don't have a procedure to modify these models.
 
-In the field of Structural Equation Models (SEMs), models are typically
+In the field of Structural Equation Models (SEMs), models are also typically
 constructed by hand. Researchers typically come up with an initial model, which
-then they use the data to make modifications to. This process is known as
-\emph{Specification Search}. One of the common ways to do this is through
-\emph{modification indices} where a global fit of the model is measured with
-different modification to the model. Utilizing expert knowledge to select the
-appropriate modification that gives the maximum improvement to the global fit.
+then they use the data and expert knowledge to make modifications to. This
+process is known as \emph{Specification Search}. One of the common ways to do
+this is through \emph{modification indices} where a global fit of the model is
+measured with different modification to the model. Utilizing expert knowledge
+to select the appropriate modification that gives the maximum improvement to
+the global fit.
 
-In the case of DAGs however, we do not have any way to As these CI based
-testing uses p-values and effect size measures from CI tests for testing. And
-as mixed data is common, we need both a test and effect size measure for mixed
-data. Recently, a few CI tests for mixed data have been proposed but an effect
-size is still missing.
+We present a similar procedure for modifying DAGs based on expert knowledge and
+measure of association. We first use the measure of association to test whether
+the association observed in the data is explained by the model structure. Based 
+on this testing, we suggest adding edges by ranking them by the most unexplained
+association between variables. The researcher can then use expert knowledge to 
+decide the direction of the edge between the variables.
 
+Our main contributions in this papers are as follows:
 \begin{enumerate}
-	\item We present a procedure to construct and modify DAGs using domain
-		knowledge.
-	\item The presented procedure uses a (conditional) measure of
-		association between variables. In the simple case of continuous
-		or discrete variables, effect size measures can be used,
-		however as no such measure exists for mixed data, we present
-		one.
-	\item Lastly, to assist researchers in using the DAG construction
-		approach, we developed a web-based tool to help researches in
-		constructing and modifying their DAGs.
+	\item We present a measure of (conditional) assocation between mixed variables using
+		canonical correlations. This mixed variable association is a generalization 
+		of partial correlation to mixed variables.
+	\item We present a procedure to iteratively construct and modify DAGs using expert 
+		knowledge such that it improves the explained association between variables.
+	\item Lastly, to assist researchers in manully constructing and modifying DAGs,
+		we developed a web-based tool to iteratively modify their DAGs.
 \end{enumerate}
 
 \begin{figure}
