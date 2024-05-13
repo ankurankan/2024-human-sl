@@ -255,7 +255,7 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 		hc_mean <- apply(hc_dist, mean, MARGIN=2)
 		hc_sd <- apply(hc_dist, sd, MARGIN=2)/sqrt(R)
 
-		pc_dist <- t(replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob)))
+		pc_dist <- t(future_replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob)))
 		pc_mean <- apply(pc_dist, function(x) mean(x, na.rm=T), MARGIN=2)
 		pc_sd <- apply(pc_dist, function(x) sd(x, na.rm=T), MARGIN=2)/sqrt(sum(!is.na(pc_dist[, 1])))
 
