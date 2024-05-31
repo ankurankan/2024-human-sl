@@ -219,55 +219,76 @@
 \section{Introduction}
 
 \emph{Causal discovery} is the process of identifying and understanding causal
-relationships among variables in a dataset. 
+relationships among variables in a dataset. Causal discovery techniques are
+used typically to understand and estimate causal effects between variables. In
+the To perform any causal effect estimation using Directed Acyclic Graphs
+(DAGs) or Structural Equation Models (SEMs), researchers need to first
+construct a causal structure. In the field of DAGs, a lot of attention has been
+put on developing automated algorithms that can construct these DAGs from data.
+These algorithm takes different approaches to causal discovery such as
+constraint-based algorithms such as PC and Fast Causal Infenrece (FCI) where
+the algorithm tries to match the conditional independences in the data to the
+ones impled by the model, score-based methods such as Hill-Climb Search, Greedy
+Equivalence Search (GES)  where the algorithm tries to find a model that has
+the best score given some scoring metric, and continuous optimization where the
+problem is formulated as a constrained optimization problem such as No Tears, and
+some hybrid approaches.
 
-To perform any causal effect identification or estimation using Directed
-Acyclic Graphs (DAGs) or Structural Equation Models (SEMs), researchers need to
-first construct a causal structure. This process of constructing the casual
-structure from data is known as \emph{causal discovery}. In the field of DAGs,
-a lot of effort has been put on developing automated algorithms that can
-construct these DAGs from data. These algorithm takes different approaches to
-causal discovery such as Constraint-based algorithms such as PC and Fast Causal
-Infenrece (FCI) where the algorithm tries to match the conditional
-independences in the data to the ones impled by the model, score-based methods
-such as Hill-Climb Search, Greedy Equivalence Search (GES)  where the algorithm
-tries to find a model that has the best score given some scoring metric, and
-continuous optimization where the problem is formulated as a constrained
-optimization problem such as No Tears.
-
-Even though we have various algorithms for doing casual discovery, yet
-researchers in applied fields prefer to construct these DAGs manually based on
-their domain knowledge. We hypothesize the following two reasons for low
-adaption of these methods in applied sciences:
+Even though we have various algorithms for casual discovery, the adaption of these
+algorithms in applied fields remain limited. In these applied fields, researchers 
+typically prefer to construct these DAGs manually based on their domain knowledge.
+We hypothesize that this preference towards manual DAG construction stems from the 
+following difficulties in applying these methods to real dataset. 
 
 \begin{enumerate}
-	\item Biased towards sparse graphs.
-	\item Algorithms making obvious mistakes: These algorithms often make
-		very obvious mistakes, making it harder for the user to trust
-		them.
-	\item Difficulties in choosing an algorithm: For any given dataset, the
-		user need to make a choice of the algorithm. Given that these
-		algorithms work very differently, it can be difficult to make a
-		choice. Additionally, each of these algorithms have
-		hyperparameters and choices to make for them, making it
-		difficult. As there is no way to evaluate the performance of
-		these algorithms on our dataset.
+	\item Algorithms output Markov Equivalence Class (MEC): Using observational
+		data, any causal discovery algorithm can only output the MEC.
+		MEC do not have all the edges oriented and to do further
+		hypothesis testing or causal effect estimation, researchers
+		typically have to rely on domain expertise to orient the
+		remaining edges in the MEC.
+	\item Difficulties in choosing an algorithm: To use any of these algorithms on 
+		any practical dataset, users need to make a lot of choices. For
+		example, for using constraint-based method, users need to
+		choose a suitable condtional independence (CI) test, and
+		hyperparameters for these tests. Similarly for score-based
+		methods users need to choose the scoring metrics and their
+		hyperparameters. Moreover, for practical implementation with
+		reasonable runtime, users also need to choose the algorithm
+		hyperparameters such as maximum number of conditioning
+		variables to consider, max indegree of variables in the model. With
+		no easy guides or method to evaluate these choices, it can be difficult.
+	\item Lack of trust: Most of these automated algorithms can make very obvious 
+		mistakes. Typically users have to test the outputs of the models and 
+		manually make corrections to the output to get a usable model.
+		This can lead to researchers not trusting these algorithms.
 \end{enumerate}
 
-Both in the cases when the DAG is an output of an algorithm or when constructed
+
+On the other hand, in the field of Structural Equation Models (SEMs), models
+are also typically constructed by hand. And a lot of focus has been put on
+developing tools to help researchers in constructing these models. Researchers
+typically come up with an initial model, which then they use the data and
+expert knowledge to make modifications to. This process is commonly known as
+\emph{Specification Search}. These tools can then be used to guide the
+researchers in suggesting best ways to modify the model. For example,
+\emph{modification indices} take the initial drawn model, and make all possible
+modifications to the model to check which modification improves the model fit
+the best. Based on this information, the researcher can make modifications to
+the model and reiterate this process till they get something that they are
+satisfied with.
+
+In the case of DAGs, global testing methodology does exist such as Shipley
+test, that can combine local structure tests into a single p-value test.
+However, this does not give us a way to make modifications to our model. A
+possible way to do this by using check which of these local tests are violated
+based on the 
+
+In the cases when the DAG is an output of an algorithm or when constructed
 by hand, it is vital to test these models against data and potentially modifying 
 them for a better fit before using them for making any inference. Both global
 and local tests for testing the fit of these models are available. However, when
 the fit fails, we don't have a procedure to modify these models.
-
-In the field of Structural Equation Models (SEMs), models are also typically
-constructed by hand. Researchers typically come up with an initial model, which
-then they use the data and expert knowledge to make modifications to. This
-process is known as \emph{Specification Search}. One of the common ways to do
-this is through \emph{modification indices} where a global fit of the model is
-measured with different modification to the model. Utilizing expert knowledge
-to select the appropriate modification that gives the maximum improvement to
-the global fit.
 
 We present a similar procedure for modifying DAGs based on expert knowledge and
 measure of association. We first use the measure of association to test whether
@@ -348,7 +369,7 @@ $ Y $.
 
 \todo[inline]{Add more notation as they come}
 
-\subsection{Effect size Measures}
+\subsection{Association Measures}
 In this section, we give a background on some of the commonly used effect size
 measures in the context of CI testing.
 
