@@ -219,20 +219,18 @@
 \section{Introduction}
 
 \emph{Causal discovery} is the process of identifying and understanding causal
-relationships among variables in a dataset. Causal discovery techniques are
-used typically to understand and estimate causal effects between variables. In
-the To perform any causal effect estimation using Directed Acyclic Graphs
-(DAGs) or Structural Equation Models (SEMs), researchers need to first
-construct a causal structure. In the field of DAGs, a lot of attention has been
-put on developing automated algorithms that can construct these DAGs from data.
-These algorithm takes different approaches to causal discovery such as
-constraint-based algorithms such as PC and Fast Causal Infenrece (FCI) where
-the algorithm tries to match the conditional independences in the data to the
-ones impled by the model, score-based methods such as Hill-Climb Search, Greedy
-Equivalence Search (GES)  where the algorithm tries to find a model that has
-the best score given some scoring metric, and continuous optimization where the
-problem is formulated as a constrained optimization problem such as No Tears, and
-some hybrid approaches.
+relationships among variables in a dataset.  To perform any causal effect
+estimation using Directed Acyclic Graphs (DAGs) or Structural Equation Models
+(SEMs), researchers need to first construct a causal structure. In the field of
+DAGs, a lot of attention has been put on developing automated algorithms that
+can construct these DAGs from data. These algorithm takes different approaches
+to causal discovery such as constraint-based algorithms such as PC and Fast
+Causal Infenrece (FCI) where the algorithm tries to match the conditional
+independences in the data to the ones impled by the model, score-based methods
+such as Hill-Climb Search, Greedy Equivalence Search (GES)  where the algorithm
+tries to find a model that has the best score given some scoring metric, and
+continuous optimization where the problem is formulated as a constrained
+optimization problem such as No Tears, and some hybrid approaches.
 
 Even though we have various algorithms for casual discovery, the adaption of these
 algorithms in applied fields remain limited. In these applied fields, researchers 
@@ -271,12 +269,12 @@ developing tools to help researchers in constructing these models. Researchers
 typically come up with an initial model, which then they use the data and
 expert knowledge to make modifications to. This process is commonly known as
 \emph{Specification Search}. These tools can then be used to guide the
-researchers in suggesting best ways to modify the model. For example,
-\emph{modification indices} take the initial drawn model, and make all possible
-modifications to the model to check which modification improves the model fit
-the best. Based on this information, the researcher can make modifications to
-the model and reiterate this process till they get something that they are
-satisfied with.
+researchers in suggesting best ways to modify the model combined with the
+expert knowledge. For example, \emph{modification indices} take the initial
+drawn model, and make all possible modifications to the model to check which
+modification improves the model fit the best. Based on this information, the
+researcher can make modifications to the model and reiterate this process till
+they get something that they are satisfied with.
 
 In the case of DAGs, global testing methodology does exist such as Shipley
 test, that can combine local structure tests into a single p-value test.
@@ -369,7 +367,7 @@ $ Y $.
 
 \todo[inline]{Add more notation as they come}
 
-\subsection{Association Measures}
+\subsection{Measures of Association}
 In this section, we give a background on some of the commonly used effect size
 measures in the context of CI testing.
 
@@ -437,7 +435,7 @@ Multiple effect sizes measures based on canonical correlation are available.
 \end{itemize}
 We use Pillai's Trace in this paper. \todo[inline]{Why?}.
 
-\section{Effect size for mixed data}
+\section{Measure of Association for mixed data}
 In this section, we use canonical correlations to define an effect size measure
 for mixed data CI tests. Our approach is similar to the approach used for the
 continuous variable case. 
