@@ -459,11 +459,32 @@ We use Pillai's Trace in this paper. \todo[inline]{Why?}.
 When we have no conditonal variables, we need to convert the variables into 
 
 \subsection{Conditional Case}
+For the conditional case we use an approach similar to partial correlation. We
+combine the mixed data residualization approach proposed in Ankan 2023. We then
+use a canonical correlation based measure on these residuals to get an effect
+size.
 
 \subsection{Connection to special cases}
+This natually is a generalization of partial correlations. Furthermore, it is 
+also a generalization of discrete case.
+
+\section{Using measure of association for modifying DAGs}
+The idea behind using the measure of association for modifying DAGs is that,
+for any given model and a dataset, we can use the condtiional measure of
+association to compute the amount of correlation in the data that is still not
+explained by the model. Based on this, we can compute how much improvement in
+the explanation would happen if we were to add an edge between variables. This
+can then be ranked using the maximum improvement.
+
+Theorem - If we have access to an oracle that can give all correct results, 
+the algorithm above is consistent.
 
 \section{Web Tool}
-As most of the DAGs in practice are built manually, we use our mixed data effect size measure to build a web-tool that aids researches in building DAGs.
+Based on the approach outlined in the previous section, we built a web-based
+tool that researchers can upload their dataset to and apply this method to
+interactively draw models.
+
+\todo[inline]{List some of the features of the online platform}
 
 % \begin{figure}
 % 	\centering
