@@ -218,6 +218,10 @@
 
 \section{Introduction}
 
+A lot of questions in science center around a causal understanding between 
+variables. \emph{Causal Discovery} methods aim to find these casual structure
+among variables from a given dataset.
+
 To perform any causal effect identification or estimation using Directed
 Acyclic Graphs (DAGs) or Structural Equation Models (SEMs), researchers need to
 first construct a causal structure commonly known as DAG or path diagram. This
@@ -232,7 +236,7 @@ where the algorithm tries to find a model that has the best score given some
 scoring metric, and continuous optimization where the problem is formulated as
 a constrained optimization problem such as No Tears.
 
-Even though we have various algorithms for casual discovery, the adaption of these
+Even though we have many algorithms for casual discovery, the adaption of these
 algorithms in applied fields remain limited. In these applied fields, researchers 
 typically prefer to construct these DAGs manually based on their domain knowledge.
 We hypothesize that this preference towards manual DAG construction stems from the 
@@ -279,23 +283,10 @@ they get something that they are satisfied with.
 In the case of DAGs, global testing methodology does exist such as Shipley
 test, that can combine local structure tests into a single p-value test.
 However, this does not give us a way to make modifications to our model. A
-possible way to do this by using check which of these local tests are violated
-based on the 
-
-In the cases when the DAG is an output of an algorithm or when constructed
-by hand, it is vital to test these models against data and potentially modifying 
-them for a better fit before using them for making any inference. Both global
-and local tests for testing the fit of these models are available. However, when
-the fit fails, we don't have a procedure to modify these models.
-
-In the field of Structural Equation Models (SEMs), models are also typically
-constructed by hand. Researchers typically come up with an initial model, which
-then they use the data and expert knowledge to make modifications to. This
-process is known as \emph{Specification Search}. One of the common ways to do
-this is through \emph{modification indices} where a global fit of the model is
-measured with different modification to the model.  Utilizing expert knowledge
-to select the appropriate modification that gives the maximum improvement to
-the global fit.
+possible way to do this by checking which of these local tests are violated.
+However, this approach can quickly become diffult as the size of the network
+increases. For example, the popular alarm network implies $x$ condition independence
+statements.
 
 \todo[inline]{Other methods: Modification indices and Lagrange Multiplier tests to
 selectively add edges And using Wald test or z statistics (also known as
@@ -306,21 +297,22 @@ for the structure but also the fitted parameterization.
 
 We present a similar procedure for modifying DAGs based on expert knowledge and
 measure of association. We first use the measure of association to test whether
-the association observed in the data is explained by the model structure. 
-We can not directly use the local CI tests to make modifications because that would give
-way too many independencies and we have no way to rank them.
-Based 
-on this testing, we suggest adding edges by ranking them by the most unexplained
-association between variables. The researcher can then use expert knowledge to 
-decide the direction of the edge between the variables.
+the association observed in the data is explained by the model structure. We
+can not directly use the local CI tests to make modifications because that
+would give way too many independencies and we have no way to rank them. Based
+on this testing, we suggest adding edges by ranking them by the most
+unexplained association between variables. The researcher can then use expert
+knowledge to decide the direction of the edge between the variables.
 
 Our main contributions in this papers are as follows:
 \begin{enumerate}
 	\item We present a measure of (conditional) assocation between mixed variables using
 		canonical correlations. This mixed variable association is a generalization 
-		of partial correlation to mixed variables.
-	\item We present a procedure to iteratively construct and modify DAGs using expert 
-		knowledge such that it improves the explained association between variables.
+		of some of the other association measures such as partial correlation to 
+		mixed variables.
+	\item We present a procedure to use this measure of association to
+		iteratively modify DAGs using expert knowledge such that it
+		improves the explained association between variables.
 	\item Lastly, to assist researchers in manully constructing and modifying DAGs,
 		we developed a web-based tool to iteratively modify their DAGs.
 \end{enumerate}
@@ -387,29 +379,37 @@ $ Y $.
 \todo[inline]{Add more notation as they come}
 
 \subsection{Measures of Association}
-In this section, we give a background on some of the commonly used effect size
-measures in the context of CI testing.
+As our DAG construction procedure relies on a measure of conditional
+association between variables, in this section we list out some of the already
+known measures for specific data types. These measure of associations are
+typically the effect size of various conditional indepdnence tests but they
+don't need to be. However, there are no generalized measure of association for
+mixed data, that we propose in the next section. This is by no means an
+exhaustive list, rather just to give an idea of what can be done.
 
-\paragraph{$ X $ and $ Y $ are continuous}
-In the case when $ \bm{Z} = \emptyset $, and when both $ X $ and $ Y $ are
-continuous variables, Pearson's correlation coefficient based test can be used
-which also gives an effect size measure. The p-value computation requires the
-data to be normally distributed but other statistics can be used such as
-Spearman's rank correlation, or Kendall's Tau.
+\paragraph{Both $ X $ and $ Y $ are continuous}
+Where there are no conditional variables, $ \bm{Z} = \emptyset $, Pearson's
+correlation coefficient can be used as a measure of association between the
+variables. This does make various assumptions such as linearity between the
+variables, normal distribution for $ X $ and $ Y $, and homoscedasticity.
 
-In the case when $ \bm{Z} \neq \emptyset $, then partial correlations can be used.
-In this case we first compute the residuals of $ X $ and $ Y $ using $ \bm{Z} $ as 
-the predictor. We start by training two model $ X \sim \bm{Z} $ and $ Y \sim \bm{Z} $.
-Then the residuals are computed for both as $ R_X = X - \hat{X} $ and $ R_Y = Y - \hat{Y} $.
-After this we can do a normal non-conditional test on $ R_X $ and $ R_Y $.
+In the case when $ \bm{Z} \neq \emptyset $, then partial correlations can be
+used. This requires using two linear regression models: $ E_X: X \sim \bm{Z} $
+and $ E_Y: Y \sim \bim{Z} $. Then computing the residuals using these two
+regressions as: $ R_X = X - E_X(\bm{Z}) $ and $ R_Y = Y - E_Y(\bm{Y}) $. After
+this a simple correlation coefficient can be computed between $ R_X $ and $ R_Y $.
 
-\paragraph{All variables are discrete}
+\paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete}
 
-When $ \bm{Z} = \emptyset $, in the case of discrete variables, chi-squared test can be used. Effect size 
-measures such as Cram\'er's V are available for it.
+In the case of discrete variables, Cramer\'s V has been typically used as a
+measure of association. When there are no conditional variables, $ \bm{Z} = \emptyset $,
+Cramer\'s V can be computed directly from the contingency table.
 
-When $ \bm{Z} \neq \emptyset $, we can do stratification.
+However, when conditional variables are present, we can iterate over all
+possible combinations of the conditional variables, compute the Cramer\'s V and
+then lastly combine them together. 
 
+\todo[inline]{Is it even possible}
 
 \paragraph{$ X $ is ordinal and $ Y $ is continuous}
 Polyserial Correlation
@@ -420,9 +420,10 @@ the correlation coefficient.
 \paragraph{$ X $ and $ Y $ are ordinal}
 Polychoric Correlation
 
-\paragraph{Mixed data}
-Recently multiple tests for mixed data have been proposed but they do not have
-an effect size measure. We propose one based on canonical correlations.
+\section{Measure of Association for mixed data}
+In this section, we use canonical correlations to define an effect size measure
+for mixed data CI tests. Our approach is similar to the approach used for the
+continuous variable case. 
 
 \subsection{Canonical Correlation}
 Canonical correlations are generalization of correlations to multi-dimensional variables.
@@ -453,11 +454,6 @@ Multiple effect sizes measures based on canonical correlation are available.
 	\item Pillai's Trace: $ \tau = \sum \phi_i^2 $
 \end{itemize}
 We use Pillai's Trace in this paper. \todo[inline]{Why?}.
-
-\section{Measure of Association for mixed data}
-In this section, we use canonical correlations to define an effect size measure
-for mixed data CI tests. Our approach is similar to the approach used for the
-continuous variable case. 
 
 \subsection{No conditional variables}
 When we have no conditonal variables, we need to convert the variables into 
