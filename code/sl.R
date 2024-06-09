@@ -94,7 +94,8 @@ simulate_human_sl <- function(sim_data, true_dag, oracle_acc, max_iter=1e4){
 
 	while (counter < max_iter){
 		counter <- counter + 1
-
+		
+		# Take only potential edges with significant correlation.
 		effects <- compute_effects_v2(new_dag, sim_data) %>% filter(p < PVALUE_THRESHOLD)
 		effects <- effects[, c('X', 'A', 'Y', 'cor')]
 
@@ -105,10 +106,11 @@ simulate_human_sl <- function(sim_data, true_dag, oracle_acc, max_iter=1e4){
 		}
 		
 		# Recompute effects after pruning: TODO: Do we need to do this?
-		effects <- compute_effects_v2(new_dag, sim_data)[, c('X', 'A', 'Y', 'cor')]
+		effects <- compute_effects_v2(new_dag, sim_data) %>% filter(p < PVALUE_THRESHOLD)
+		effects <- effects[, c('X', 'A', 'Y', 'cor')]
 		unexplain_cor_sorted <- effects %>% filter(abs(as.double(effects$cor)) > EFFECT_THRESHOLD) %>% filter(A == '--') %>% arrange(desc(abs(cor)))
 
-		# Remove blaclisted edges
+		# Remove blacklisted edges
 		if (blacklist_edges %>% nrow() > 0){
 			unexplain_cor_sorted <- unexplain_cor_sorted %>%
 				filter(!((X %in% blacklist_edges[, 1]) &
@@ -117,6 +119,7 @@ simulate_human_sl <- function(sim_data, true_dag, oracle_acc, max_iter=1e4){
 
 		# If no unexplained correlation is remaining, exit loop.
 		if(unexplain_cor_sorted %>% nrow() == 0){
+			print(paste0(counter, ": All corr explained"))
 			break
 		}
 		# Else add the highest correlated edge.
@@ -190,6 +193,7 @@ run_single_exp_hc <- function(n_nodes, edge_prob){
 	hc_pdag <- pcalg::dag2cpdag(hc_adj)
 	hc_alldags <- pcalg::pdag2allDags(hc_pdag)$dags
 
+	# TODO: Understand this better.
 	if (is.null(nrow(hc_alldags))){
 		print("No orientation found from PDAG. Using original DAG.")
 		shd <- causalDisco::shd(hc_adj, true_adj)
@@ -282,6 +286,6 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 edge_probs <- seq(0.1, 0.9, 0.1)
 oracle_accs <- seq(0.1, 0.9, 0.1)
 n_nodes <- 10
-R <- 100
+R <- 30
 
 run_sim(R, n_nodes, edge_probs, oracle_accs)
