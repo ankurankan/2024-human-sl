@@ -95,22 +95,21 @@
 \maketitle
 
 \begin{abstract}
-	The initial step in a causal analysis involves determining the causal
-	structure between the variables from data typically in the form of a
-	Directed Acyclic Graph (DAG) or an Structural Equation Model (SEM).
-	This procedure, known as \emph{causal discovery}, has been extensively
-	studied for both DAGs and SEMs. While numerous automated algorithms
-	exist for estimating DAGs from datasets, their application in applied
-	fields remain limited, possibly due to a lack of confidence in these
-	algorithms stemming from them making obvious mistakes, and the
-<<<<<<< HEAD
-	difficulties in choosing the right algorithm for a given dataset.
-	Consequently, in applied disciplines, these DAGs are predominantly
-	constructed manually based on domain expertise. Due to being
-	constructed by hand, it is vital that the fit of these models are
-	tested against data and the models are potentially modified to acheive
-	a better fit. On the other hand, in the field of SEMs models are
-	typically constructed manually through an iterative process of
+	In Pearl's framework, the initial step for performing a causal analysis
+	involves determining the causal structure between the variables from
+	data typically in the form of a Directed Acyclic Graph (DAG) or an
+	Structural Equation Model (SEM). This procedure, known as \emph{causal
+	discovery}, has been extensively studied for both DAGs and SEMs. While
+	numerous automated algorithms exist for estimating DAGs from datasets,
+	their application in applied fields remain limited, possibly due to a
+	lack of confidence in these algorithms stemming from them making
+	obvious mistakes, and the difficulties in choosing the right algorithm
+	for a given dataset. Consequently, in applied disciplines, these DAGs
+	are predominantly constructed manually based on domain expertise. Due
+	to being constructed by hand, it is vital that the fit of these models
+	are tested against data and the models are potentially modified to
+	acheive a better fit. On the other hand, in the field of SEMs models
+	are typically constructed manually through an iterative process of
 	assessing fit and modifying the model according to that. This process
 	is commonly known as \emph{Specification Search} where methods like
 	\emph{modification indices} combined with expert knowledge can be used
@@ -141,16 +140,17 @@
 
 To perform any causal effect identification or estimation using Directed
 Acyclic Graphs (DAGs) or Structural Equation Models (SEMs), researchers need to
-first construct a causal structure. This process of constructing the casual
-structure from data is known as \emph{Causal Discovery}. In the field of DAGs,
-plenty of algorithms have been developed to automatically construct DAGs from
-data. These algorithm takes different approaches to causal discovery such as
-Constraint-based algorithms such as PC and Fast Causal Infenrece (FCI) where
-the algorithm tries to match the conditional independences in the data to the
-ones impled by the model, score-based methods such as Hill-Climb Search, Greedy
-Equivalence Search (GES)  where the algorithm tries to find a model that has
-the best score given some scoring metric, and continuous optimization where the
-problem is formulated as a constrained optimization problem such as No Tears.
+first construct a causal structure commonly known as DAG or path diagram. This
+process of constructing the casual structure from data is known as \emph{Causal
+Discovery}. In the field of DAGs, plenty of algorithms have been developed to
+automatically construct DAGs from data. These algorithm takes different
+approaches to causal discovery such as Constraint-based algorithms such as PC
+and Fast Causal Infenrece (FCI) where the algorithm tries to match the
+conditional independences in the data to the ones impled by the model,
+score-based methods such as Hill-Climb Search, Greedy Equivalence Search (GES)
+where the algorithm tries to find a model that has the best score given some
+scoring metric, and continuous optimization where the problem is formulated as
+a constrained optimization problem such as No Tears.
 
 Even though we have various algorithms for doing casual discovery, yet
 researchers in applied fields prefer to construct these DAGs manually based on
@@ -158,6 +158,8 @@ their domain knowledge. We hypothesize the following two reasons for low
 adaption of these methods in applied sciences:
 
 \begin{enumerate}
+	\item Can only give a Markov Equivalence class (MEC), and then experts
+		need to rely on their domain expertise to orient these edges.
 	\item Biased towards sparse graphs.
 	\item Algorithms making obvious mistakes: These algorithms often make
 		very obvious mistakes, making it harder for the user to trust
@@ -182,13 +184,23 @@ constructed by hand. Researchers typically come up with an initial model, which
 then they use the data and expert knowledge to make modifications to. This
 process is known as \emph{Specification Search}. One of the common ways to do
 this is through \emph{modification indices} where a global fit of the model is
-measured with different modification to the model. Utilizing expert knowledge
+measured with different modification to the model.  Utilizing expert knowledge
 to select the appropriate modification that gives the maximum improvement to
 the global fit.
 
+\todo[inline]{Other methods: Modification indices and Lagrange Multiplier tests to
+selectively add edges And using Wald test or z statistics (also known as
+critical ratios) for removing edges.}
+
+One of the drawbacks of these global fit metrics is that they do not only test
+for the structure but also the fitted parameterization.
+
 We present a similar procedure for modifying DAGs based on expert knowledge and
 measure of association. We first use the measure of association to test whether
-the association observed in the data is explained by the model structure. Based 
+the association observed in the data is explained by the model structure. 
+We can not directly use the local CI tests to make modifications because that would give
+way too many independencies and we have no way to rank them.
+Based 
 on this testing, we suggest adding edges by ranking them by the most unexplained
 association between variables. The researcher can then use expert knowledge to 
 decide the direction of the edge between the variables.
