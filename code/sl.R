@@ -105,7 +105,7 @@ simulate_human_sl <- function(sim_data, true_dag, oracle_acc, max_iter=1e4){
 			new_dag <- remove_edges(new_dag, edges_to_prune)
 		}
 		
-		# Recompute effects after pruning: TODO: Do we need to do this?
+		# Recompute effects after pruning. We don't really need to do this.
 		effects <- compute_effects_v2(new_dag, sim_data) %>% filter(p < PVALUE_THRESHOLD)
 		effects <- effects[, c('X', 'A', 'Y', 'cor')]
 		unexplain_cor_sorted <- effects %>% filter(abs(as.double(effects$cor)) > EFFECT_THRESHOLD) %>% filter(A == '--') %>% arrange(desc(abs(cor)))

@@ -395,7 +395,7 @@ variables, normal distribution for $ X $ and $ Y $, and homoscedasticity.
 
 In the case when $ \bm{Z} \neq \emptyset $, then partial correlations can be
 used. This requires using two linear regression models: $ E_X: X \sim \bm{Z} $
-and $ E_Y: Y \sim \bim{Z} $. Then computing the residuals using these two
+and $ E_Y: Y \sim \bm{Z} $. Then computing the residuals using these two
 regressions as: $ R_X = X - E_X(\bm{Z}) $ and $ R_Y = Y - E_Y(\bm{Y}) $. After
 this a simple correlation coefficient can be computed between $ R_X $ and $ R_Y $.
 
@@ -499,15 +499,27 @@ interactively draw models.
 
 \section{Empirical Analysis}
 
-To compare how well this manual appraoch assisted by the suggested modications
-perform compared to automated learning algorithms, we performed an analysis
-using simulated data and simulating an expert. To construct the model using
-suggestions, we start with a model with no edges, and take a greedy approach
-for adding edges. At any point, we select to add an edge between variables that
-have the highest conditional association between them. A simulated expert is
-then asked to specify the direction for the edge. Given an accuracy of the
-expert $ \alpha $, the expert either gives the correct direction, incorrect
-direction, or can specify do not know as:
+We analyzed the performance of this manual approach by comparing it with two
+automated algorithms: PC and Hill-Climb Search. For the comparison we use
+simulated data from a known DAG and compare how well the algorithm is able to
+recover the original model using two metrics: Structural Hamming Distance (SHD)
+and Structural Intervention Distance (SID). To simulate the data, we start with
+a randomly generated DAG and use linear models with random effects to generate
+the data. We repeat the data generation $ 30 $ times for each density value for
+the DAG. As both PC and Hill-Climb Search can only give us a CPDAG, we compare
+the orientation of these CPDAG which result in the best and worst case scores
+on SHD and SID. This procedure is outlined in Algorithm 1.
+
+\todo[inline]{Add the algorithm}
+
+To simulate an expert using this assisted model construction approach, we start
+with an empty model and take a greedy approach to add edges to this model. At
+any point, we select the pair of variables that has significant correlation and
+the highest unexplained correlation, i.e., highest conditional association. We
+then use an oracle to decide the direction of the edge between the variables.
+Given an accuracy of the oracle, $ \alpha $, the oracle either gives the
+correct direction, incorrect direction, or returns None representing that it
+does not know the direction.
 
 \begin{equation}
 	\begin{split}
@@ -519,26 +531,32 @@ direction, or can specify do not know as:
 	\end{split}
 \end{equation}
 
-If the expert says `do not know` for any of the edges, the edge is not prompted
-again to the expert. We also make sure that only edges which do not form a
-cyclic in the graph are used to select the next potential edge. After adding
-each edge, we also check if the p-value of any existing edge shows
-independence. If that happens we remove that edge and blacklist that edge,
-i.e., that edge is not prompted again during the run of the algorithm. We
-repeat this procedure till the model explains all correlations between the
-variables. There is a possibility that this greedy expert gets stuck at
-incorrect graph structures as it does not do any backtracking to fix its
-earlier mistakes. This procedure is outlined in the Algorithm.
+If the oracle returns None for any pair of variables, an edge between this pair
+is not suggested to the oracle in future iterations. We also make sure that
+only edges which do not form a cyclic in the graph are used to select the next
+potential edge. After adding each edge, we also check if the p-value of any
+existing edge shows independence. If that happens we remove that edge and
+blacklist that edge, i.e., that edge is not prompted again during the run of
+the algorithm. We repeat this procedure till the model explains all
+correlations between the variables. There is a possibility that this greedy
+expert gets stuck at incorrect graph structures as it does not do any
+backtracking to fix its earlier mistakes. This procedure is outlined in the
+Algorithm.
 \todo[inline]{Add the algorithm}
 
 \subsection{Results}
 \begin{figure}
 	\begin{subfigure}{0.5\textwidth}
+		\centering
 		\includegraphics{../code/plots/shd_ribbon.pdf}
+		\caption{}
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
+		\centering
 		\includegraphics{../code/plots/sid_ribbon.pdf}
+		\caption{}
 	\end{subfigure}
+	\caption{Comparison of PC and Hill-Climb Search algorithms against }
 \end{figure}
 
 \section{Conclusions}
