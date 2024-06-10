@@ -499,17 +499,15 @@ interactively draw models.
 
 \section{Empirical Analysis}
 
-To compare how well does creating a graph manually based on effect sizes and
-p-value compare to algorithmic approaches, we performed some empirical
-analysis.
-
-\subsection{Simulating an expert}
-To simulate an expert building a model manually, we wrote a simple greedy simulation as shown in the Figure. The expert always starts with a graph with
-no edges and chooses the pair of variables with the highest correlation between them. The expert based on some accuracy measure decides the direction
-of the edge between these variables such that the new added edge does not create a cycle in the DAG.
-
-\todo[inline]{Summarize this section and equation in an algorithm}
-\todo[inline]{Show a consistency proof for this expert simulation}
+To compare how well this manual appraoch assisted by the suggested modications
+perform compared to automated learning algorithms, we performed an analysis
+using simulated data and simulating an expert. To construct the model using
+suggestions, we start with a model with no edges, and take a greedy approach
+for adding edges. At any point, we select to add an edge between variables that
+have the highest conditional association between them. A simulated expert is
+then asked to specify the direction for the edge. Given an accuracy of the
+expert $ \alpha $, the expert either gives the correct direction, incorrect
+direction, or can specify do not know as:
 
 \begin{equation}
 	\begin{split}
@@ -521,30 +519,17 @@ of the edge between these variables such that the new added edge does not create
 	\end{split}
 \end{equation}
 
-% \begin{algorithm}
-% 	\caption{Expert Simulation}
-% 	\While{True}{
-% 	   $ e \gets \textnormal{Effects}(G) > \textnormal{THRESHOLD} $\;
-% 	   $ e \gets e - \textnormal{blacklist} $\;
-% 	   \If {$ e = 0 $}{
-% 		$ G \gets G - e $ \;
-% 		$ \textnormal{blacklist} \gets \textnormal{blacklist} \cup e $\;
-% 	   } \;
-% 	   \If{$ \textnormal{len}(e) = 0$}{
-% 		   $ \textnormal{return}(G) $\;
-% 	   }
-% 	   $ X, Y \gets \max_{X, Y} e $\;
-% 	   $ dir \gets Expert(X, Y, \alpha) $\;
-% 	   $ G \gets G \cup dir $\;
-% 	}
-% 
-% \end{algorithm}
-
-After adding each edge, we also check if the p-value of any existing edge shows independence. If that happens we remove that edge and blacklist that edge. 
-Blacklisted edges are not suggested to the expert in future iterations. We repeat this till we have explained all the correlations in the dataset.
-
-There is a possibility that this greedy expert gets stuck at incorrect graph structures as it does not do any backtracking to fix its earlier mistakes.
-
+If the expert says `do not know` for any of the edges, the edge is not prompted
+again to the expert. We also make sure that only edges which do not form a
+cyclic in the graph are used to select the next potential edge. After adding
+each edge, we also check if the p-value of any existing edge shows
+independence. If that happens we remove that edge and blacklist that edge,
+i.e., that edge is not prompted again during the run of the algorithm. We
+repeat this procedure till the model explains all correlations between the
+variables. There is a possibility that this greedy expert gets stuck at
+incorrect graph structures as it does not do any backtracking to fix its
+earlier mistakes. This procedure is outlined in the Algorithm.
+\todo[inline]{Add the algorithm}
 
 \subsection{Results}
 \begin{figure}
