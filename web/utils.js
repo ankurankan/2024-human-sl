@@ -31,6 +31,7 @@ async function send(){
 	// send DAG to backend for testing
 	const a = await fetch('http://127.0.0.1:8000/simpletest?dag='+encodeURIComponent(g.toString())+'&threshold='+document.getElementById('thres_txt').value+'&pval='+document.getElementById('pval_txt').value)
 	const b = await a.json()
+
 	if( Array.isArray(b) ){
 		for( let e of b ){
 			e.edge = e.A == "->"
