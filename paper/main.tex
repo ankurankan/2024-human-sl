@@ -434,9 +434,26 @@ types, however we do not have any measure of association for a mixture of
 categorical, ordinal, and continuous data. In this section, we develop a
 measure of association for mixed data as a generalization of partial
 correlation by combining a mixed data residualization approach with canonical
-correlations.
+correlations. Similar to partial correlation, we first compute the residuals of
+both variables using some machine learning model, and then use a canoncial
+correlation based measure of association between the residuals instead of
+correlation coefficient.
 
 \subsection{Mixed Data Residualization}
+Residualization for mixed data is not as straight forwards as for continuous
+data. We use the residualization approach proposed in Ankan 2023. Given a variable
+$ X $ conditioned on $ \bm{Z} $, we compute the residuals as follows:
+
+If $ X $ is continuous, we simply take the difference between the true and the 
+predicted value.
+
+If $ X $ is ordinal, we take the LS-Residuals
+
+If $ X $ is categorical, we one hot encode the variable.
+
+
+As a result of this residualization we can get a matrix of continuous values for 
+the residuals. We need a measure of association for this set of variables.
 
 \subsection{Canonical Correlation}
 Canonical correlations are generalization of correlations to multi-dimensional variables.
@@ -475,7 +492,9 @@ When we have no conditonal variables, we need to convert the variables into
 For the conditional case we use an approach similar to partial correlation. We
 combine the mixed data residualization approach proposed in Ankan 2023. We then
 use a canonical correlation based measure on these residuals to get an effect
-size.
+size. 
+
+Benefits: Indifferent to one-hot encoding of the categorical variable.
 
 \subsection{Connections to other measures}
 This natually is a generalization of partial correlations. Furthermore, it is 
