@@ -175,110 +175,122 @@
 \maketitle
 
 \begin{abstract}
-	In Pearl's framework, the initial step for performing a causal analysis
-	involves determining the causal structure between the variables from
-	data typically in the form of a Directed Acyclic Graph (DAG) or an
-	Structural Equation Model (SEM). This procedure, known as \emph{causal
-	discovery}, has been extensively studied for both DAGs and SEMs. While
-	numerous automated algorithms exist for estimating DAGs from datasets,
-	their application in applied fields remain limited, possibly due to a
-	lack of confidence in these algorithms stemming from them making
-	obvious mistakes, and the difficulties in choosing the right algorithm
-	for a given dataset. Consequently, in applied disciplines, these DAGs
-	are predominantly constructed manually based on domain expertise. Due
-	to being constructed by hand, it is vital that the fit of these models
-	are tested against data and the models are potentially modified to
-	acheive a better fit. On the other hand, in the field of SEMs models
-	are typically constructed manually through an iterative process of
-	assessing fit and modifying the model according to that. This process
-	is commonly known as \emph{Specification Search} where methods like
-	\emph{modification indices} combined with expert knowledge can be used
-	to guide this modification process. In the case of DAGs, although there
-	are tests to assess the global fit of a model by combining the tests
-	using implied conditional independencies of the model, but there are no
-	methods that can guide our modification process. In this paper, we
-	present a simple modification process aimed at helping researchers in
-	manually constructing or modifying DAGs outputted by an algorithm. This
-	modification process is based on using a (conditional) measure of
-	association between variables in the model to assess potential edges
-	that best explains unexplained correlation between variables which the
-	researcher specifies the direction of this edge. In the case of
-	continuous or discrete variables, the effect size measures of local
-	tests can be used as this measure of association, however for mixed
-	data there is no such measure. We present a measure of association
-	based on canonical correlations for mixed data. We also present a
-	graphical web-tool that can assist researchers in iteratively modifying
-	and constructing their DAGs. We theoretically show that in the presence
-	of an oracle, this iterative modification process is consistent in
-	recovering the true DAG. Emprically, we show that using the mixed data
-	measure of association, the modification process performs comparably to
-	PC and Hill-Climb Search algorithms if the user is able to correctly
-	identify the direction of the edge in one out of three cases.
+	% TODO: Needs to be shortened.
+	% In Pearl's framework, the initial step for performing a causal analysis
+	% involves determining the causal structure between the variables from
+	% data typically in the form of a Directed Acyclic Graph (DAG) or an
+	% Structural Equation Model (SEM). This procedure, known as \emph{causal
+	% discovery}, has been extensively studied for both DAGs and SEMs. While
+	% numerous automated algorithms exist for estimating DAGs from datasets,
+	% their application in applied fields remain limited, possibly due to a
+	% lack of confidence in these algorithms stemming from them making
+	% obvious mistakes, and the difficulties in choosing the right algorithm
+	% for a given dataset. Consequently, in applied disciplines, these DAGs
+	% are predominantly constructed manually based on domain expertise. Due
+	% to being constructed by hand, it is vital that the fit of these models
+	% are tested against data and the models are potentially modified to
+	% acheive a better fit. On the other hand, in the field of SEMs models
+	% are typically constructed manually through an iterative process of
+	% assessing fit and modifying the model according to that. This process
+	% is commonly known as \emph{Specification Search} where methods like
+	% \emph{modification indices} combined with expert knowledge can be used
+	% to guide this modification process. In the case of DAGs, although there
+	% are tests to assess the global fit of a model by combining the tests
+	% using implied conditional independencies of the model, but there are no
+	% methods that can guide our modification process. In this paper, we
+	% present a simple modification process aimed at helping researchers in
+	% manually constructing or modifying DAGs outputted by an algorithm. This
+	% modification process is based on using a (conditional) measure of
+	% association between variables in the model to assess potential edges
+	% that best explains unexplained correlation between variables which the
+	% researcher specifies the direction of this edge. In the case of
+	% continuous or discrete variables, the effect size measures of local
+	% tests can be used as this measure of association, however for mixed
+	% data there is no such measure. We present a measure of association
+	% based on canonical correlations for mixed data. We also present a
+	% graphical web-tool that can assist researchers in iteratively modifying
+	% and constructing their DAGs. We theoretically show that in the presence
+	% of an oracle, this iterative modification process is consistent in
+	% recovering the true DAG. Emprically, we show that using the mixed data
+	% measure of association, the modification process performs comparably to
+	% PC and Hill-Climb Search algorithms if the user is able to correctly
+	% identify the direction of the edge in one out of three cases.
 \end{abstract}
 
 \section{Introduction}
 
-A lot of questions in science center around a causal understanding between 
-variables. \emph{Causal Discovery} methods aim to find these casual structure
-among variables from a given dataset.
+A lot of questions in life sciences center around a causal understanding
+between variables. \emph{Causal Discovery} aims to find these casual structure
+among random variables from a given dataset. The problem of causal discovery
+has been studied both the in Directed Acyclic Graph (DAGs) and Structure
+Equation Models (SEM) literatures. In the field of DAGs, many automated
+algorithms have been developed to learn the casual structure form a given 
+dataset such as constraint-based methods, score-based methods, and continuous
+optimization based methods.
 
-To perform any causal effect identification or estimation using Directed
-Acyclic Graphs (DAGs) or Structural Equation Models (SEMs), researchers need to
-first construct a causal structure commonly known as DAG or path diagram. This
-process of constructing the casual structure from data is known as \emph{Causal
-Discovery}. In the field of DAGs, plenty of algorithms have been developed to
-automatically construct DAGs from data. These algorithm takes different
-approaches to causal discovery such as Constraint-based algorithms such as PC
-and Fast Causal Infenrece (FCI) where the algorithm tries to match the
-conditional independences in the data to the ones impled by the model,
-score-based methods such as Hill-Climb Search, Greedy Equivalence Search (GES)
-where the algorithm tries to find a model that has the best score given some
-scoring metric, and continuous optimization where the problem is formulated as
-a constrained optimization problem such as No Tears.
+% To perform any causal effect identification or estimation using Directed
+% Acyclic Graphs (DAGs) or Structural Equation Models (SEMs), researchers need to
+% first construct a causal structure commonly known as DAG or path diagram. This
+% process of constructing the casual structure from data is known as \emph{Causal
+% Discovery}. In the field of DAGs, plenty of algorithms have been developed to
+% automatically construct DAGs from data. These algorithm takes different
+% approaches to causal discovery such as Constraint-based algorithms such as PC
+% and Fast Causal Infenrece (FCI) where the algorithm tries to match the
+% conditional independences in the data to the ones impled by the model,
+% score-based methods such as Hill-Climb Search, Greedy Equivalence Search (GES)
+% where the algorithm tries to find a model that has the best score given some
+% scoring metric, and continuous optimization where the problem is formulated as
+% a constrained optimization problem such as No Tears.
 
-Even though we have many algorithms for casual discovery, the adaption of these
-algorithms in applied fields remain limited. In these applied fields, researchers 
-typically prefer to construct these DAGs manually based on their domain knowledge.
-We hypothesize that this preference towards manual DAG construction stems from the 
-following difficulties in applying these methods to real dataset. 
+However, the adaption of these algorithms in applied fields remain extremely
+limited. In these applied fields, even though these algorithms exist,
+researchers typically prefer to construct these DAGs manually based on their
+domain knowledge. We hypothesize that this preference towards manual DAG
+construction stems from the following difficulties in applying causal discovery
+methods:
 
 \begin{enumerate}
-	\item Algorithms output Markov Equivalence Class (MEC): Using observational
-		data, any causal discovery algorithm can only output the MEC.
-		MEC do not have all the edges oriented and to do further
-		hypothesis testing or causal effect estimation, researchers
-		typically have to rely on domain expertise to orient the
-		remaining edges in the MEC.
-	\item Difficulties in choosing an algorithm: To use any of these algorithms on 
-		any practical dataset, users need to make a lot of choices. For
-		example, for using constraint-based method, users need to
-		choose a suitable condtional independence (CI) test, and
-		hyperparameters for these tests. Similarly for score-based
-		methods users need to choose the scoring metrics and their
-		hyperparameters. Moreover, for practical implementation with
-		reasonable runtime, users also need to choose the algorithm
-		hyperparameters such as maximum number of conditioning
-		variables to consider, max indegree of variables in the model. With
-		no easy guides or method to evaluate these choices, it can be difficult.
-	\item Lack of trust: Most of these automated algorithms can make very obvious 
-		mistakes. Typically users have to test the outputs of the models and 
-		manually make corrections to the output to get a usable model.
-		This can lead to researchers not trusting these algorithms.
+	\item Difficult to trust: Although asypotically these methods are 
+		consistent, in the finite sample scenario they can end up
+		making obvious mistakes. As a result of this, researchers
+		have to rely on posthoc modification of the output of these
+		algorithms using either their domain knowledge or assisted
+		by testing methods.
+	\item Algorithms output the Markov Equivalence Class (MEC): With any
+		causal discovery algorithm, we can only get to the MEC. However,
+		most of the methods developed for downstream tasks such 
+		as identification or casual effect estimation assume the
+		knowledge of a DAG. To orient these MECs to a DAG, researchers
+		have to either rely on their domain expertise, or make further
+		assumption to utilize a pairwise orientation method.
+	\item Difficulties in choosing an algorithm: All the algorithms
+		have the same goal with all of them having similar asympottic
+		properties. However, the finite sample properties of these
+		methods vary depending on the choices that we make. For
+		example, the choice of the conditional independence (CI) test
+		being used for constraint-based method depends on the dataset,
+		similarly for the scoring method for score-based methods. With
+		no obvious way to test the impact/performance of these choices
+		on a given dataset, it becomes quite hard to chose the optimal
+		algorithm for a given dataset.
 \end{enumerate}
 
+On the other hand, in the field of Structural Equation Models (SEMs), a lot
+more focus has been put on methods to help researchers draw models manually
+along with integrating their expertise. Researchers typically come up with an
+initial model based on their domain knowledge, and then use various tools to
+guide them in making modifications to this initial model. This process of
+constructing models is commonly known as \emph{Specification Search}. A
+commonly used method for suggesting potential modifications to the SEM is
+\emph{modification indices}. Given a specified model, modification indices
+tries to find potential modifications to the model that improve the model's fit
+to the data best. Based on the suggestions from this method along with their
+domain expertise, the researcher can then choose the most optimal modification
+for their model.
 
-On the other hand, in the field of Structural Equation Models (SEMs), models
-are also typically constructed by hand. And a lot of focus has been put on
-developing tools to help researchers in constructing these models. Researchers
-typically come up with an initial model, which then they use the data and
-expert knowledge to make modifications to. This process is commonly known as
-\emph{Specification Search}. These tools can then be used to guide the
-researchers in suggesting best ways to modify the model combined with the
-expert knowledge. For example, \emph{modification indices} take the initial
-drawn model, and make all possible modifications to the model to check which
-modification improves the model fit the best. Based on this information, the
-researcher can make modifications to the model and reiterate this process till
-they get something that they are satisfied with.
+\todo[inline]{Other methods: Modification indices and Lagrange Multiplier tests to
+selectively add edges And using Wald test or z statistics (also known as
+critical ratios) for removing edges.}
 
 In the case of DAGs, global testing methodology does exist such as Shipley
 test, that can combine local structure tests into a single p-value test.
@@ -287,10 +299,6 @@ possible way to do this by checking which of these local tests are violated.
 However, this approach can quickly become diffult as the size of the network
 increases. For example, the popular alarm network implies $x$ condition independence
 statements.
-
-\todo[inline]{Other methods: Modification indices and Lagrange Multiplier tests to
-selectively add edges And using Wald test or z statistics (also known as
-critical ratios) for removing edges.}
 
 One of the drawbacks of these global fit metrics is that they do not only test
 for the structure but also the fitted parameterization.
