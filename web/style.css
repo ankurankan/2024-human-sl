@@ -20,6 +20,8 @@
 }
 
 .dagitty{
+	width: 80vw;
+	height: 70vh;
         margin: auto;
         text-align: center;
         margin-left: auto;
@@ -50,7 +52,7 @@ input{
         display: inline-block;
         outline: none;
         cursor: pointer;
-        padding: 0 16px;
+        padding: 0 50px;
         background-color: #0070d2;
         border-radius: 0.25rem;
         border: 1px solid #0070d2;
