@@ -1,24 +1,54 @@
+<!DOCTYPE html>
 <html>
+<head>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<title>Expert-In-The-Loop SL</title>
+	<script type="text/javascript" src="https://dagitty.net/lib/dagitty-3.0.js"></script>
+	<script type="text/javascript" src="./utils.js"></script>
+</head>
 
-<script src="http://www.dagitty.net/lib/dagitty-3.0.js"></script>
-<div class="dagitty" data-mutable="true" style="width:20em; height:20em">
-  dag {
-    I [pos="1,0"]
-    X [exposure,pos="0,2"]
-    Y [outcome,pos="2,2"]
-    X -> { I -> Y }
-  }
+<body onload="setup()">
+
+<h1 class='center title'>Expert-In-The-Loop Causal Discovery</h1>
+
+<table class="center" id='parameters'>
+	<tr>
+		<th class="table_head"> Association </th>
+		<th class="table_head"> p-value </th>
+		<th class="table_head"> Shipley C </th>
+	</tr>
+	<tr>
+		<td> <input type="number" id="thres_txt" value=0.05 oninput="document.getElementById('thres_slide').value=this.value"> </td>
+		<td> <input type="number" id="pval_txt" value=0.05 oninput="document.getElementById('pval_slide').value=this.value"> </td>
+	</tr>
+	<tr>
+		<td> <input type="range" class="center" name="thresh" id="thres_slide" min="0" max="1" value="0.05" step="0.01" oninput="document.getElementById('thres_txt').value=this.value"> </td>
+		<td> <input type="range" class="center" name="pval" id="pval_slide" min="0" max="1" value="0.05" step="0.01" oninput="document.getElementById('pval_txt').value=this.value"> </td>
+		<td> Placeholder (0.3) </td>
+	</tr>
+	<tr class='description_row'>
+		<td class='description_txt'> Placeholder </td>
+		<td class='description_txt'> Placeholder </td>
+		<td class='description_txt'> Placeholder </td>
+	</tr>
+</table>
+
+<div class="dagitty" data-mutable="true">
+	dag {
+		bb="-1,0,1,3"
+		Age [pos="0.547,0.321"]
+		Education [pos="-0.532,1.662"]
+		Income [pos="0.012,2.356"]
+		MaritalStatus [pos="0.354,0.947"]
+		NativeCountry [pos="-0.737,0.288"]
+		Occupation [pos="-0.356,0.947"]
+		Sex [pos="-0.036,0.434"]
+		Workclass [pos="0.233,1.559"]	
+	}
+</div>
+<div class='center'>
+<button class="buttons" onclick="send()">Send</button>
 </div>
 
-<form action="http://127.0.0.1:4920/upload">
-</form>
-
-<form action="http://localhost:8000/marginals">
-	<label for="myfile">Select a file:</label>
-  	<input type="file" id="myfile" name="myfile"><br><br>
-  	<input type="submit">
-</form>
-
-<body onload="DAGitty.setup()">
-
+</body>
 </html>
