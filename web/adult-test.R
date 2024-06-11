@@ -11,7 +11,7 @@ cors <- function(res) {
 #* @param dag
 #* @param threshold
 #* @get /simpletest
-my_endpoint <- function( dag, threshold){
+my_endpoint <- function( dag, threshold, pval){
 		d <- get("d")
 		g <- dagitty::dagitty(dag)
 		r <- c()
@@ -42,7 +42,7 @@ my_endpoint <- function( dag, threshold){
 
 			}
 		}
-		r <- r %>% filter(abs(cor) > as.double(threshold))
+		r <- r %>% filter(abs(cor) > as.double(threshold)) %>% filter(p <= as.double(pval))
 		return (r)
 }
 

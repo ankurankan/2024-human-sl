@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<link rel="stylesheet" type="text/css" href="style.css">
 		<title>Expert-In-The-Loop SL</title>
 		<script type="text/javascript" src="https://dagitty.net/lib/dagitty-3.0.js"></script>
 
@@ -38,7 +39,7 @@ async function send(){
 	// remove all undirected edges
 	g = dagOnly(g)
 	// send DAG to backend for testing
-	const a = await fetch('http://127.0.0.1:8000/simpletest?dag='+encodeURIComponent(g.toString())+'&threshold='+document.getElementById('thres_txt').value)
+	const a = await fetch('http://127.0.0.1:8000/simpletest?dag='+encodeURIComponent(g.toString())+'&threshold='+document.getElementById('thres_txt').value+'&pval='+document.getElementById('pval_txt').value)
 	const b = await a.json()
 	if( Array.isArray(b) ){
 		for( let e of b ){
@@ -81,16 +82,34 @@ function setup(){
 
 
 </script>
-	</head>
-	<body onload="setup()">
-		<h1>Human-In-The-Loop SL</h1>
+</head>
+
+<body onload="setup()">
+<h1 class='center title'>Expert-In-The-Loop Causal Discovery</h1>
+
+<table class="center" id='parameters'>
+	<tr>
+		<th class="table_head"> Association </th>
+		<th class="table_head"> p-value </th>
+	</tr>
+	<tr>
+		<td> <input type="number" id="thres_txt" value=0.05 oninput="document.getElementById('thres_slide').value=this.value"> </td>
+		<td> <input type="number" id="pval_txt" value=0.05 oninput="document.getElementById('pval_slide').value=this.value"> </td>
+	</tr>
+	<tr>
+		<td> <input type="range" class="center" name="thresh" id="thres_slide" min="0" max="1" value="0.05" step="0.01" oninput="document.getElementById('thres_txt').value=this.value"> </td>
+		<td> <input type="range" class="center" name="pval" id="pval_slide" min="0" max="1" value="0.05" step="0.01" oninput="document.getElementById('pval_txt').value=this.value"> </td>
+	</tr>
+	<tr class='description_row'>
+		<td class='description_txt'> Placeholder </td>
+		<td class='description_txt'> Placeholder </td>
+	</tr>
+</table>
 
 <p>
-<button onclick="send()">send</button>
+<button class="buttons" onclick="send()">send</button>
 </p>
 
-Threshold: <input type="number" id="thres_txt" value=0.05 oninput="document.getElementById('thres_slide').value=this.value">
-<input type="range" class="center" name="thresh" id="thres_slide" min="0" max="1" value="0.05" step="0.01" oninput="document.getElementById('thres_txt').value=this.value">
 
 <div class="dagitty" style="width:1000px; height: 600px" data-mutable="true">
 	dag {
