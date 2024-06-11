@@ -15,7 +15,7 @@ function(file) {
   filename = names(file)
   # Read the uploaded CSV file
   csv_data <- read.csv(text=file[[filename]])
-  assign("dataset", csv_data)
+  dataset <<- csv_data
   
   # Print the first few rows of the CSV file (for demonstration)
   print(head(csv_data))
@@ -29,8 +29,10 @@ function(file) {
 #* @param pval
 #* @get /simpletest
 my_endpoint <- function( dag, threshold, pval){
-		d <- get("d")
+		# print(head(dataset))
+		# d <- get("d")
 		g <- dagitty::dagitty(dag)
+		browser()
 		r <- c()
 		nn <- names(g)
 		for( n1i in seq(1,length(nn)-1,by=1) ){
@@ -41,16 +43,16 @@ my_endpoint <- function( dag, threshold, pval){
 				p2 <- dagitty::parents( g, n2 )
 				if( n2 %in% p1 ){		
 					otherparents <- setdiff( p1, n2 )
-					tst <- dagitty::ciTest( X=n1, Y=n2, Z=otherparents, d,
+					tst <- dagitty::ciTest( X=n1, Y=n2, Z=otherparents, dataset,
 						type="cis.pillai" )
 					u <- n2; v <- n1 ; a <- "->"
 				} else if( n1 %in% p2 ) {
 					otherparents <- setdiff( p1, n2 )
-					tst <- dagitty::ciTest( X=n1, Y=n2, Z=otherparents, d,
+					tst <- dagitty::ciTest( X=n1, Y=n2, Z=otherparents, dataset,
 						type="cis.pillai" )
 					u <- n1 ; v <- n2 ; a <- "->"
 				} else {
-					tst <- dagitty::ciTest( X=n1, Y=n2, Z=union( p1, p2 ), d,
+					tst <- dagitty::ciTest( X=n1, Y=n2, Z=union( p1, p2 ), dataset,
 						type="cis.pillai" )
 					u <- n1 ; v <- n2 ; a <- "--"
 				}

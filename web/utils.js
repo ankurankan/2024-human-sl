@@ -43,6 +43,8 @@ function uploadFile() {
                 console.error('Error:', error);
                 alert('File upload failed');
             });
+	
+	    send();
         }
 
 async function send(){
@@ -90,6 +92,6 @@ async function send(){
 function setup(){
 	DAGitty.setup()
 	DAGitty.controllers[0].event_listeners["graphchange"][0] = send
-	send()
+	// send()
 }
 
