@@ -1,15 +1,32 @@
-
-
 #* @filter cors
 cors <- function(res) {
     res$setHeader("Access-Control-Allow-Origin", "*") # Or whatever
     plumber::forward()
 }
 
-
+# Define the file upload endpoint
+#* @post /upload
+#* @param file:file
+function(file) {
+  if (is.null(file)) {
+    return(list(status = "failure", message = "No file uploaded"))
+  }
+ 
+  filename = names(file)
+  # Read the uploaded CSV file
+  csv_data <- read.csv(text=file[[filename]])
+  assign("dataset", csv_data)
+  
+  # Print the first few rows of the CSV file (for demonstration)
+  print(head(csv_data))
+  
+  # Return a success message
+  list(status = "success", message = "File uploaded successfully")
+}
 
 #* @param dag
 #* @param threshold
+#* @param pval
 #* @get /simpletest
 my_endpoint <- function( dag, threshold, pval){
 		d <- get("d")

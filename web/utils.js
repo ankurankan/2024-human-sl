@@ -23,6 +23,28 @@ function dagOnly(){
 	return g2
 }
 
+function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please select a file.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('http://localhost:8000/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('File upload failed');
+            });
+        }
+
 async function send(){
 	let g  = DAGitty.controllers[0].graph
 	DAGitty.controllers[0].event_listeners["graphchange"] = []
