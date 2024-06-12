@@ -64,7 +64,6 @@ run_citests <- function( dag, threshold, pval){
 			}
 		}
 		r <- r %>% filter(abs(cor) > as.double(threshold)) %>% filter(p <= as.double(pval))
-		browser()
 		return (r)
 }
 
