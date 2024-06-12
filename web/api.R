@@ -7,6 +7,7 @@ cors <- function(res) {
 # Define the file upload endpoint
 #* @post /upload
 #* @param file:file
+#* @response 200
 function(file) {
   if (is.null(file)) {
     return(list(status = "failure", message = "No file uploaded"))
@@ -18,10 +19,12 @@ function(file) {
   dataset <<- csv_data
   
   # Print the first few rows of the CSV file (for demonstration)
-  # print(head(csv_data))
+  print(head(csv_data))
   
   # Return a success message
-  list(status = "success", message = "File uploaded successfully")
+  # return(list(status = "success", message = "File uploaded successfully"))
+  # return (dataset)
+  return(colnames(csv_data))
 }
 
 #* @param dag
@@ -33,7 +36,6 @@ run_citests <- function( dag, threshold, pval){
 		# d <- get("d")
 		g <- dagitty::dagitty(dag)
 		r <- c()
-		browser()
 		nn <- names(g)
 		for( n1i in seq(1,length(nn)-1,by=1) ){
 			n1 <- nn[n1i]
@@ -62,6 +64,7 @@ run_citests <- function( dag, threshold, pval){
 			}
 		}
 		r <- r %>% filter(abs(cor) > as.double(threshold)) %>% filter(p <= as.double(pval))
+		browser()
 		return (r)
 }
 

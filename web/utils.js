@@ -23,29 +23,37 @@ function dagOnly(){
 	return g2
 }
 
-function uploadFile() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
+async function uploadFile() {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
 
-            if (!file) {
-                alert("Please select a file.");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', file);
-
-            fetch('http://localhost:8000/upload', {
-                method: 'POST',
-                body: formData
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('File upload failed');
-            });
-	
-	    send();
+        if (!file) {
+        	alert("Please select a file.");
+        	return;
         }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+	let result;
+	try{
+        	const response = await fetch('http://127.0.0.1:8000/upload', {
+                	method: 'POST',
+                	body: formData
+		});
+		result = await response.json();
+	} catch(error){
+        	console.error('Error:', error);
+        	alert('File upload failed');
+        }
+
+	// Create an empty DAG with the variables.
+	const graph = document.getElementById('dagitty_graph');
+	graph.innerHTML = "dag{ " + result.join(" ") + " }";
+	DAGitty.setup();
+	DAGitty.controllers[0].event_listeners["graphchange"][0] = send;
+	send();
+}
 
 async function send(){
 	let g  = DAGitty.controllers[0].graph

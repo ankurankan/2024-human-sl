@@ -7,7 +7,8 @@
 	<script type="text/javascript" src="./utils.js"></script>
 </head>
 
-<body onload="setup()">
+<!-- <body onload="setup()"> -->
+<body>
 
 <h1 class='center title'>Expert-In-The-Loop Causal Discovery</h1>
 
@@ -16,7 +17,7 @@
 		<th class="table_head"> Dataset </th>
 		<th class="table_head"> Association </th>
 		<th class="table_head"> p-value </th>
-		<th class="table_head"> Shipley C </th>
+		<th class="table_head"> Fisher C </th>
 	</tr>
 	<tr>
 		<td> 
@@ -24,38 +25,25 @@
     			    <input type="file" id="fileInput" name="file">
     			</form>
 		</td>
-		<td> <input type="number" id="thres_txt" value=0.05 oninput="document.getElementById('thres_slide').value=this.value"> </td>
-		<td> <input type="number" id="pval_txt" value=0.05 oninput="document.getElementById('pval_slide').value=this.value"> </td>
+		<td> <input type="number" id="thres_txt" value=0.05 onchange="send()" oninput="document.getElementById('thres_slide').value=this.value"> </td>
+		<td> <input type="number" id="pval_txt" value=0.05 onchange="send()" oninput="document.getElementById('pval_slide').value=this.value"> </td>
 		<td></td>
 	</tr>
 	<tr>
 		<td> <button class="buttons" onclick="uploadFile()">Send</button> </td>
-		<td> <input type="range" class="center" name="thresh" id="thres_slide" min="0" max="1" value="0.05" step="0.01" oninput="document.getElementById('thres_txt').value=this.value"> </td>
-		<td> <input type="range" class="center" name="pval" id="pval_slide" min="0" max="1" value="0.05" step="0.01" oninput="document.getElementById('pval_txt').value=this.value"> </td>
+		<td> <input type="range" class="center" name="thresh" id="thres_slide" min="0" max="1" value="0.05" step="0.01" onchange="send()" oninput="document.getElementById('thres_txt').value=this.value"> </td>
+		<td> <input type="range" class="center" name="pval" id="pval_slide" min="0" max="1" value="0.05" step="0.01" onchange="send()" oninput="document.getElementById('pval_txt').value=this.value"> </td>
 		<td></td>
 	</tr>
 	<tr class='description_row'>
-		<td class='description_txt'> Placeholder </td>
-		<td class='description_txt'> Placeholder </td>
-		<td class='description_txt'> Placeholder </td>
-		<td> Placeholder (0.3) </td>
+		<td class='description_txt'> The dataset </td>
+		<td class='description_txt'> Association threshold to show a potential edge </td>
+		<td class='description_txt'> p-value threshold to show a potential edge </td>
+		<td class='description_txt'> p-value for current model's fit </td>
 	</tr>
 </table>
 
-<div class="dagitty" data-mutable="true">
-	dag {
-		bb="-1,0,1,3"
-		Age [pos="0.547,0.321"]
-		Education [pos="-0.532,1.662"]
-		Income [pos="0.012,2.356"]
-		MaritalStatus [pos="0.354,0.947"]
-		NativeCountry [pos="-0.737,0.288"]
-		Occupation [pos="-0.356,0.947"]
-		Sex [pos="-0.036,0.434"]
-		Workclass [pos="0.233,1.559"]	
-	}
-</div>
-<div class='center'>
+<div id=dagitty_graph class="dagitty" data-mutable="true">
 </div>
 
 </body>
