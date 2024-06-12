@@ -30,10 +30,9 @@ function(file) {
 #* @param dag
 #* @param threshold
 #* @param pval
-#* @get /simpletest
-run_citests <- function( dag, threshold, pval){
-		# print(head(dataset))
-		# d <- get("d")
+#* @get /getassoc
+#* @response 200
+run_citests <- function( dag, threshold, pval ){
 		g <- dagitty::dagitty(dag)
 		r <- c()
 		nn <- names(g)
@@ -67,3 +66,23 @@ run_citests <- function( dag, threshold, pval){
 		return (r)
 }
 
+#* @param dag
+#* @get /getfisher
+compute_fisher <- function( dag ){
+	g <- dagitty::dagitty(dag)
+	pvalues <- c()
+	nodes <- names(g)
+	for (i in 1:(length(nodes)-1)){
+		for (j in (i+1):length(nodes)){
+			pa_i <- dagitty::parents(g, nodes[i])
+			pa_j <- dagitty::parents(g, nodes[j])
+	
+			if (!(nodes[i] %in% pa_j) & !(nodes[j] %in% pa_i)){
+				tst <- dagitty::ciTest(X=nodes[i], Y=nodes[j], Z=union(pa_i, pa_j), dataset, type="cis.pillai")
+				pvalues <- c(pvalues, tst[,"p.value"])
+			}
+		}
+	}
+	fisherc <- -2 * sum(log(pvalues))
+	return (pchisq(fisherc, 2*length(pvalues), lower.tail=F))
+}

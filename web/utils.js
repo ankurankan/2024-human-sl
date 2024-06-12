@@ -61,8 +61,12 @@ async function send(){
 	// remove all undirected edges
 	g = dagOnly(g)
 	// send DAG to backend for testing
-	const a = await fetch('http://127.0.0.1:8000/simpletest?dag='+encodeURIComponent(g.toString())+'&threshold='+document.getElementById('thres_txt').value+'&pval='+document.getElementById('pval_txt').value)
+	const a = await fetch('http://127.0.0.1:8000/getassoc?dag='+encodeURIComponent(g.toString())+'&threshold='+document.getElementById('thres_txt').value+'&pval='+document.getElementById('pval_txt').value)
 	const b = await a.json()
+
+	const fisher = await fetch('http://127.0.0.1:8000/getfisher?dag='+encodeURIComponent(g.toString()))
+	const pval = await fisher.json()
+	document.getElementById('fisherc').innerHTML = pval;
 
 	if( Array.isArray(b) ){
 		for( let e of b ){
