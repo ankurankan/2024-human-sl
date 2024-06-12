@@ -18,7 +18,7 @@ function(file) {
   dataset <<- csv_data
   
   # Print the first few rows of the CSV file (for demonstration)
-  print(head(csv_data))
+  # print(head(csv_data))
   
   # Return a success message
   list(status = "success", message = "File uploaded successfully")
@@ -28,12 +28,12 @@ function(file) {
 #* @param threshold
 #* @param pval
 #* @get /simpletest
-my_endpoint <- function( dag, threshold, pval){
+run_citests <- function( dag, threshold, pval){
 		# print(head(dataset))
 		# d <- get("d")
 		g <- dagitty::dagitty(dag)
-		browser()
 		r <- c()
+		browser()
 		nn <- names(g)
 		for( n1i in seq(1,length(nn)-1,by=1) ){
 			n1 <- nn[n1i]
