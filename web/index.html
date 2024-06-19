@@ -15,8 +15,8 @@
 <table class="center" id='parameters'>
 	<tr>
 		<th class="table_head"> Dataset </th>
-		<th class="table_head"> Association </th>
-		<th class="table_head"> p-value </th>
+		<th class="table_head"> Association Threshold </th>
+		<th class="table_head"> p-value Threshold </th>
 		<th class="table_head"> Fisher C </th>
 	</tr>
 	<tr>
@@ -36,15 +36,14 @@
 		<td id="fisherc"> </td>
 	</tr>
 	<tr class='description_row'>
-		<td class='description_txt'> The dataset </td>
-		<td class='description_txt'> Association threshold to show a potential edge </td>
-		<td class='description_txt'> p-value threshold to show a potential edge </td>
-		<td class='description_txt'> p-value for current model's fit </td>
+		<td class='description_txt'> Select the dataset (csv) file </td>
+		<td colspan="2" class='description_txt'> Thresholds to decide whether to show a potential edge. Increasing association threshold would reduce and increasing p-value threshold would increase the number of suggested edges. </td>
+		<td class='description_txt'> p-value for current model's fit. Please refer <a href="https://doi.org/10.1207/S15328007SEM0702_4"> Shipley 2009 </a> for details. </td>
 	</tr>
 </table>
 
 <div id=dagitty_graph class="dagitty" data-mutable="true">	
-	<p><strong> Please select a dataset to start. </strong></p>
+	<p style="font-size:24px"><strong> Please select a dataset to start. </strong></p>
 </div>
 
 </body>
