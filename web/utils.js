@@ -49,7 +49,7 @@ async function uploadFile() {
 
 	// Create an empty DAG with the variables.
 	const graph = document.getElementById('dagitty_graph');
-	graph.innerHTML = "dag{ " + result.join(" ") + " }";
+	graph.innerHTML = "dag{ " + JSON.parse(result.body[0])['var_names'].join(" ") + " }";
 	DAGitty.setup();
 	DAGitty.controllers[0].event_listeners["graphchange"][0] = send;
 	send();

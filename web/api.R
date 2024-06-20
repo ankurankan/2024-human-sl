@@ -1,14 +1,18 @@
+library(jsonlite)
+
 #* @filter cors
 cors <- function(res) {
     res$setHeader("Access-Control-Allow-Origin", "*") # Or whatever
     plumber::forward()
 }
 
+datasets <- list()
+
 # Define the file upload endpoint
 #* @post /upload
 #* @param file:file
 #* @response 200
-function(file) {
+function(req, res, file) {
   if (is.null(file)) {
     return(list(status = "failure", message = "No file uploaded"))
   }
@@ -16,15 +20,21 @@ function(file) {
   filename = names(file)
   # Read the uploaded CSV file
   csv_data <- read.csv(text=file[[filename]])
-  dataset <<- csv_data
+  # dataset <<- csv_data
+  dataset_name <- paste0(sample(c(LETTERS, tolower(LETTERS)), 20, T), collapse='')
+  datasets[[dataset_name]] <<- csv_data
+
+  res$setCookie("dataset_name", dataset_name, path = "/", secure = TRUE, http = TRUE)
+
+  res$body <- toJSON(list(var_names=colnames(csv_data)))
   
   # Print the first few rows of the CSV file (for demonstration)
-  print(head(csv_data))
+  # print(head(csv_data))
   
   # Return a success message
   # return(list(status = "success", message = "File uploaded successfully"))
   # return (dataset)
-  return(colnames(csv_data))
+  return(res$toResponse())
 }
 
 #* @param dag
@@ -32,10 +42,12 @@ function(file) {
 #* @param pval
 #* @get /getassoc
 #* @response 200
-run_citests <- function( dag, threshold, pval ){
+run_citests <- function( req, res, dag, threshold, pval ){
 		g <- dagitty::dagitty(dag)
 		r <- c()
 		nn <- names(g)
+		browser()
+		dataset <- datasets[[1]]
 		for( n1i in seq(1,length(nn)-1,by=1) ){
 			n1 <- nn[n1i]
 			p1 <- dagitty::parents(g, n1)
@@ -72,6 +84,7 @@ compute_fisher <- function( dag ){
 	g <- dagitty::dagitty(dag)
 	pvalues <- c()
 	nodes <- names(g)
+	dataset <- datasets[[1]]
 	for (i in 1:(length(nodes)-1)){
 		for (j in (i+1):length(nodes)){
 			pa_i <- dagitty::parents(g, nodes[i])
