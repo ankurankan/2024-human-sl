@@ -458,15 +458,16 @@ Polychoric Correlation
 
 \section{A Measure of Association for Mixed Data}
 \label{sec:mixed_association}
-In the previous section, we outlined measure of associations for different data
-types, however we do not have any measure of association for a mixture of
-categorical, ordinal, and continuous data. In this section, we develop a
-measure of association for mixed data as a generalization of partial
-correlation by combining a mixed data residualization approach with canonical
-correlations. Similar to partial correlation, we first compute the residuals of
-both variables using some machine learning model, and then use a canoncial
-correlation based measure of association between the residuals instead of
-correlation coefficient.
+
+In this section, we develop a (conditional) measure of association for mixed
+data as a generalization of partial correlation by combining a mixed data
+residualization approach with canonical correlations. Assuming that we need to
+compute the association, $ \rho(X, Y; Z) $ between variables $ X $ and $ Y $
+conditioned on $ \bm{Z} $. Similar to partial correlations, we first start by
+computing the residuals for both $ X $ and $ Y $ using $ \bm{Z} $ as the
+predictor variables. When $ \bm{Z} = \emptyset $ we can use a constant value
+for $ \bm{Z} $. We use the mixed data residualization approach presented in
+Ankan and Textor 2023.
 
 \subsection{Mixed Data Residualization}
 Residualization for mixed data is not as straight forwards as for continuous
@@ -514,10 +515,6 @@ Multiple effect sizes measures based on canonical correlation are available.
 \end{itemize}
 We use Pillai's Trace in this paper. \todo[inline]{Why?}.
 
-\subsection{No conditional variables}
-When we have no conditonal variables, we need to convert the variables into 
-
-\subsection{Conditional Case}
 For the conditional case we use an approach similar to partial correlation. We
 combine the mixed data residualization approach proposed in Ankan 2023. We then
 use a canonical correlation based measure on these residuals to get an effect
@@ -531,6 +528,7 @@ also a generalization of discrete case.
 
 \section{Using measure of association for modifying DAGs}
 \label{sec:modification}
+
 The idea behind using the measure of association for modifying DAGs is that,
 for any given model and a dataset, we can use the condtiional measure of
 association to compute the amount of correlation in the data that is still not
@@ -545,7 +543,10 @@ the algorithm above is consistent.
 \label{sec:web}
 Based on the approach outlined in the previous section, we built a web-based
 tool that researchers can upload their dataset to and apply this method to
-interactively draw models.
+interactively draw models. Users can start by uploading their datasets. The web
+interface should then automatically show them all the correlated variables in a
+graphical representation. The red colored edges represent potential new edge
+between the variables.
 
 \todo[inline]{List some of the features of the online platform}
 
@@ -628,8 +629,16 @@ Algorithm.
 		multiple accuracy values of the oracle.}
 \end{figure}
 
+\subsection{Using Large Language Models as Experts}
+A lot of recent work has focused on finding pairwise causal direction among
+variables using Large Language Models. In this analysis, instead of using the
+oracle to decide the direction of edges, we used GPT4 to give us the direction
+of the edges based on description of the variables. As GPT4 has already
+memorized many of these models, we encoded the variable names using a random
+string and provided the description of the variable to let it decide the
+direction of the edge.
+
 \section{Conclusions}
-\subsection{Using LLMs as experts}
 
 \bibliography{references}
 \end{document}
