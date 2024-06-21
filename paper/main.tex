@@ -219,14 +219,15 @@
 
 \section{Introduction}
 
-A lot of questions in life sciences center around a causal understanding
-between variables. \emph{Causal Discovery} aims to find these casual structure
+Many questions in science center around a causal understanding between
+variables. \emph{Causal Discovery} aims to find the underlying causal structure
 among random variables from a given dataset. The problem of causal discovery
-has been studied both the in Directed Acyclic Graph (DAGs) and Structure
-Equation Models (SEM) literatures. In the field of DAGs, many automated
-algorithms have been developed to learn the casual structure form a given 
-dataset such as constraint-based methods, score-based methods, and continuous
-optimization based methods.
+has been studied both in Directed Acyclic Graphs (DAGs) and Structural Equation
+Models (SEM) literatures. In the DAG literature, the focus has been on
+developing automated algorithms that can learn the causal structure from a
+given observational or interventional dataset, whereas in the SEM literature
+the focus has on developing tools to help researchers construct or modify
+manually constructed models.
 
 % To perform any causal effect identification or estimation using Directed
 % Acyclic Graphs (DAGs) or Structural Equation Models (SEMs), researchers need to
@@ -242,37 +243,46 @@ optimization based methods.
 % scoring metric, and continuous optimization where the problem is formulated as
 % a constrained optimization problem such as No Tears.
 
-However, the adaption of these algorithms in applied fields remain extremely
-limited. In these applied fields, even though these algorithms exist,
-researchers typically prefer to construct these DAGs manually based on their
-domain knowledge. We hypothesize that this preference towards manual DAG
-construction stems from the following difficulties in applying causal discovery
-methods:
+In the DAG literature, many automated algorithms have been developed for causal
+discovery such as constraint based method (PC, FCI), score-based methods
+(Hill-Climb Search, Greedy Equivalence Search), and optimization based methods.
+However, the adaption of these algorithms in applied fields remain limited. In
+these applied fields, researchers typically prefer to construct these DAGs
+manually based on their domain knowledge. We hypothesize that this preference
+towards manual DAG construction stems from the following difficulties in
+applying causal discovery methods:
 
 \begin{enumerate}
-	\item Difficult to trust: Although asypotically these methods are 
-		consistent, in the finite sample scenario they can end up
-		making obvious mistakes. As a result of this, researchers
-		have to rely on posthoc modification of the output of these
-		algorithms using either their domain knowledge or assisted
-		by testing methods.
-	\item Algorithms output the Markov Equivalence Class (MEC): With any
-		causal discovery algorithm, we can only get to the MEC. However,
-		most of the methods developed for downstream tasks such 
-		as identification or casual effect estimation assume the
-		knowledge of a DAG. To orient these MECs to a DAG, researchers
-		have to either rely on their domain expertise, or make further
+	\item \textbf{Difficult to trust: } Even though most of these algorithms
+		have asymptotic theory proving them to be consistent, their
+		finite sample properties is not well understood. In real
+		setting with finite samples, these algorithms can make obvious
+		mistakes. As a result of this, researchers have to rely on
+		post-hoc modification of the output of these algorithms
+		using either their domain knowledge or assisted by model testing
+		methods.
+	\item \textbf{Algorithms output Markov Equivalence Class (MEC):} Given an 
+		observational dataset, multiple causal structures can be
+		faithful to it. As a result, using only observational datasets,
+		these algorithms can only get to the MEC such as Completed
+		Partially Directed Acyclic Graph (CPDAG) or a Partial Ancestral
+		Graph (PAG) where not all the edges are directed. However, as
+		most of the methods developed for downstream tasks such as
+		identification or casual effect estimation assume the knowledge
+		of a DAG. To orient these MECs to a DAG, researchers have to
+		either rely on their domain expertise, or make further
 		assumption to utilize a pairwise orientation method.
-	\item Difficulties in choosing an algorithm: All the algorithms
-		have the same goal with all of them having similar asympottic
-		properties. However, the finite sample properties of these
-		methods vary depending on the choices that we make. For
-		example, the choice of the conditional independence (CI) test
-		being used for constraint-based method depends on the dataset,
-		similarly for the scoring method for score-based methods. With
-		no obvious way to test the impact/performance of these choices
-		on a given dataset, it becomes quite hard to chose the optimal
-		algorithm for a given dataset.
+	\item \textbf{Difficult to choose appropriate algorithm and
+		hyperparameters:} All the algorithms have the same goal with
+		all of them having similar asymptotic properties. However, the
+		finite sample properties of these methods vary depending on the
+		choices that we make. For example, the choice of the
+		conditional independence (CI) test being used for
+		constraint-based method depends on the dataset, similarly for
+		the scoring method for score-based methods. With no obvious way
+		to test the impact/performance of these choices on a given
+		dataset, it becomes quite hard to chose the optimal algorithm
+		for a given dataset.
 \end{enumerate}
 
 On the other hand, in the field of Structural Equation Models (SEMs), a lot
@@ -292,37 +302,47 @@ for their model.
 selectively add edges And using Wald test or z statistics (also known as
 critical ratios) for removing edges.}
 
-In the case of DAGs, global testing methodology does exist such as Shipley
-test, that can combine local structure tests into a single p-value test.
-However, this does not give us a way to make modifications to our model. A
-possible way to do this by checking which of these local tests are violated.
-However, this approach can quickly become diffult as the size of the network
-increases. For example, the popular alarm network implies $x$ condition independence
-statements.
+As it is evident that researchers also draw DAGs by hand and even if they use
+an algorithm, the need to make some post-hoc adjustments to the model, in this
+paper we present a tool to assist researchers in making these adjustments
+somewhat inspired by modification indices. In the case of DAGs, global testing
+methodology does exist such as Shipley test, that can combine local structure
+tests into a single p-value test. However, this does not give us a way to make
+modifications to our model. A possible way to do this by checking which of
+these local tests are violated. However, this approach can quickly become
+diffult as the size of the network increases. For example, the popular alarm
+network implies $x$ condition independence statements.
 
-One of the drawbacks of these global fit metrics is that they do not only test
-for the structure but also the fitted parameterization.
+% One of the drawbacks of these global fit metrics is that they do not only test
+% for the structure but also the fitted parameterization.
 
-We present a similar procedure for modifying DAGs based on expert knowledge and
-measure of association. We first use the measure of association to test whether
-the association observed in the data is explained by the model structure. We
-can not directly use the local CI tests to make modifications because that
-would give way too many independencies and we have no way to rank them. Based
-on this testing, we suggest adding edges by ranking them by the most
-unexplained association between variables. The researcher can then use expert
-knowledge to decide the direction of the edge between the variables.
+Our proposed approach uses a measure of association to find correlated variables
+in the data that are not explained by the current model. Using the measure, we 
+can rank the edge that can lead to the highest explanation of the observed 
+correlation. Based on this information, the user can select a potential edge
+and based on their expert knowledge decide the direction of the edge.
+
+% We present a similar procedure for modifying DAGs based on expert knowledge and
+% measure of association. We first use the measure of association to test whether
+% the association observed in the data is explained by the model structure. We
+% can not directly use the local CI tests to make modifications because that
+% would give way too many independencies and we have no way to rank them. Based
+% on this testing, we suggest adding edges by ranking them by the most
+% unexplained association between variables. The researcher can then use expert
+% knowledge to decide the direction of the edge between the variables.
 
 Our main contributions in this papers are as follows:
 \begin{enumerate}
-	\item We present a measure of (conditional) assocation between mixed variables using
-		canonical correlations. This mixed variable association is a generalization 
-		of some of the other association measures such as partial correlation to 
-		mixed variables.
-	\item We present a procedure to use this measure of association to
-		iteratively modify DAGs using expert knowledge such that it
-		improves the explained association between variables.
-	\item Lastly, to assist researchers in manully constructing and modifying DAGs,
-		we developed a web-based tool to iteratively modify their DAGs.
+	\item We present a measure of (conditional) association for mixed data
+		based on canonical correlations. This measure of association
+		generalizes the widely used partial correlation to mixed data
+		setting.
+	\item Using this association measure, we present a procedure to suggest
+		potential new edges, or edge removals in the model. The user
+		gets to decide the direction of the new edge based on their
+		expertise.
+	\item Lastly, we present a web-browser based tool to allow researchers
+		to apply this method to their own datasets.
 \end{enumerate}
 
 \begin{figure}
@@ -368,8 +388,16 @@ Our main contributions in this papers are as follows:
 		\caption{\todo[inline]{Show a full example of testing using this model}}
 \end{figure}
 
+The rest of the paper is structured as follows. In
+Section~\ref{sec:background}, we give a background on the measures of
+association for various data types. In Section~\ref{sec:mixed_association}, we
+present our method for computing mixed data association. In
+Section~\ref{sec:modification}, we present how to use this method to rank the
+modifications, and lastly in Section~\ref{sec:empirical}, we show some
+empirical analysis on how well this modification process works.
 
 \section{Background}
+\label{sec:background}
 We represent uni-dimensional variables as $ X $ and multi-dimensional variables
 as $ \bm{Z} $. We consider the case of estimating association between $ X $,
 and $ Y $ is the presence of a set of conditioning variables $ \bm{Z} = Z_1,
@@ -429,6 +457,7 @@ the correlation coefficient.
 Polychoric Correlation
 
 \section{A Measure of Association for Mixed Data}
+\label{sec:mixed_association}
 In the previous section, we outlined measure of associations for different data
 types, however we do not have any measure of association for a mixture of
 categorical, ordinal, and continuous data. In this section, we develop a
@@ -501,6 +530,7 @@ This natually is a generalization of partial correlations. Furthermore, it is
 also a generalization of discrete case.
 
 \section{Using measure of association for modifying DAGs}
+\label{sec:modification}
 The idea behind using the measure of association for modifying DAGs is that,
 for any given model and a dataset, we can use the condtiional measure of
 association to compute the amount of correlation in the data that is still not
@@ -512,6 +542,7 @@ Theorem - If we have access to an oracle that can give all correct results,
 the algorithm above is consistent.
 
 \section{Web Tool}
+\label{sec:web}
 Based on the approach outlined in the previous section, we built a web-based
 tool that researchers can upload their dataset to and apply this method to
 interactively draw models.
@@ -530,6 +561,7 @@ interactively draw models.
 % \end{figure}
 
 \section{Empirical Analysis}
+\label{sec:empirical}
 
 We analyzed the performance of this manual approach by comparing it with two
 automated algorithms: PC and Hill-Climb Search. For the comparison we use
