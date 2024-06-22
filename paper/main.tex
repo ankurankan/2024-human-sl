@@ -450,8 +450,9 @@ then lastly combine them together.
 \paragraph{$ X $ is ordinal and $ Y $ is continuous}
 Polyserial Correlation
 
-When $ \bm{Z} = \emptyset $, ordinal variable can be assumed to be coming from a thresholded normal distribution, estimate the thresholds and latent variable to compute 
-the correlation coefficient.
+When $ \bm{Z} = \emptyset $, ordinal variable can be assumed to be coming from
+a thresholded normal distribution, estimate the thresholds and latent variable
+to compute the correlation coefficient.
 
 \paragraph{$ X $ and $ Y $ are ordinal}
 Polychoric Correlation
@@ -460,33 +461,42 @@ Polychoric Correlation
 \label{sec:mixed_association}
 
 In this section, we develop a (conditional) measure of association for mixed
-data as a generalization of partial correlation by combining a mixed data
-residualization approach with canonical correlations. Assuming that we need to
-compute the association, $ \rho(X, Y; Z) $ between variables $ X $ and $ Y $
-conditioned on $ \bm{Z} $. Similar to partial correlations, we first start by
-computing the residuals for both $ X $ and $ Y $ using $ \bm{Z} $ as the
-predictor variables. When $ \bm{Z} = \emptyset $ we can use a constant value
-for $ \bm{Z} $. We use the mixed data residualization approach presented in
-Ankan and Textor 2023.
+data. This measure is similar to partial correlation in the sense that it uses
+a residualization approach and takes the association between the residuals.
 
-\subsection{Mixed Data Residualization}
-Residualization for mixed data is not as straight forwards as for continuous
-data. We use the residualization approach proposed in Ankan 2023. Given a variable
-$ X $ conditioned on $ \bm{Z} $, we compute the residuals as follows:
+Given two variables $ X $ and $ Y $, and a set of conditioanl variables $
+\bm{Z} $, we are interested in computing the conditional association, $ \rho(X,
+Y; Z) $. Similar to partial correlation, we start by computing the residuals
+for $ X $ and $ Y $ using the $ \bm{Z} $ as the predictor varaibles and then
+compute the assocation between the residuals. As the residuals for mixed
+variable is not straightforward to define, we use the mixed data
+residualization approach presented in Ankan and Textor 2023.
 
-If $ X $ is continuous, we simply take the difference between the true and the 
-predicted value.
+Given a variable $ X $ with predictor variables $ \bm{Z} $, we first train an
+estimator, $ E_X $ for predicting $ X $ using $ \bm{Z} $. If the varialbes are
+ordinal or categorical, the estimator needs to be probability estimators for
+example a Random Forest Estimator or XGBoost. Given an estimator we can compute
+the residuals as follows:
+\begin{enumerate}
+	\item If $ X $ is continuous, we simply take the difference between the true and estimated value.
+		$$ R_X = X - E_X(\bm{Z}) $$
+	\item If $ X $ is ordinal, we take the Li-Sheperd residual.
+		$$ R_X = E_X(\bm{Z}) $$
+	\item If $ X $ is categorical, we one hot encode the variable and Li-Sheperd residuals as well.
+		$$ R_X = E_X(\bm{Z}) $$
+\end{enumerate}
+As a result of this residualization approach, the residuals are a matrix of
+continuous values. The shape of this matrix depends on the type of variable. If
+the variables are continuous or ordinal, we end up with a residual matrix of
+size $ n \times 1 $. If the the variable is categorical we end up with a
+residual matrix of size $ n \times (k-1) $, where $ k $ is the cardinality of
+the categorical variables. We have dropped one of the one hot encoded columns
+because it is redundant.
 
-If $ X $ is ordinal, we take the LS-Residuals
-
-If $ X $ is categorical, we one hot encode the variable.
-
-
-As a result of this residualization we can get a matrix of continuous values for 
-the residuals. We need a measure of association for this set of variables.
-
-\subsection{Canonical Correlation}
-Canonical correlations are generalization of correlations to multi-dimensional variables.
+Next we need a measure to quantify the association between these residuals. One
+of the general ways to have assocation between sets of variables is to use
+canonical correlations. Canonical correlations are generalization of
+correlations to multi-dimensional variables.
 
 \begin{definition}
 	Given two sets of random variables $ \bm{U} = (U_1, U_2, \cdots, U_p) $
@@ -507,27 +517,41 @@ Canonical correlations are generalization of correlations to multi-dimensional v
 	canonical correlations are equivalent to Pearson's correlation
 	coefficient.
 
-Multiple effect sizes measures based on canonical correlation are available.
+Multiple measures of association based on canonical correlation are available such as:
 \begin{itemize}
 	\item Wilks' Lambda: $ \Lambda = \prod (1 - \phi_i^2) $
 	\item Roy's Largest Root: $ \theta = \phi_{\max}^2 $
 	\item Pillai's Trace: $ \tau = \sum \phi_i^2 $
 \end{itemize}
+
 We use Pillai's Trace in this paper. \todo[inline]{Why?}.
 
-For the conditional case we use an approach similar to partial correlation. We
-combine the mixed data residualization approach proposed in Ankan 2023. We then
-use a canonical correlation based measure on these residuals to get an effect
-size. 
+This measure of association has many of the desired properties:
 
-Benefits: Indifferent to one-hot encoding of the categorical variable.
+\begin{enumerate}
+	\item Is bounded between $ 0 $ and $ 1 $.
+	\item Is independent of the sample size.
+	\item Is indifferent to the one-hot encoding scheme used for categorical variables.
+	\item In the case of both continuous variables, reduces to partial correlation.
+\end{enumerate}
 
 \subsection{Connections to other measures}
+In the continuous variable case, this is equivalent to partial correlation.
+
 This natually is a generalization of partial correlations. Furthermore, it is 
 also a generalization of discrete case.
 
 \section{Using measure of association for modifying DAGs}
 \label{sec:modification}
+
+Any two variables in a DAG that do not have an edge between them imply a
+conditional independence test that is they are independent given the parents of
+both the variables, $ X \ci Y | pa(X) \cup pa(Y) $. In the case of model
+testing, a CI statement like this can be used to check whether the assumption
+of the model holds in the data or is violated. For mixed data, a few different
+CI tests have been proposed such as likelihood-ratio based, and residualization
+based. However, if we just use the CI test to check the p-value we cannot use
+it to find the modification that is able to improve the score the most.
 
 The idea behind using the measure of association for modifying DAGs is that,
 for any given model and a dataset, we can use the condtiional measure of
