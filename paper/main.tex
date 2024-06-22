@@ -551,14 +551,19 @@ testing, a CI statement like this can be used to check whether the assumption
 of the model holds in the data or is violated. For mixed data, a few different
 CI tests have been proposed such as likelihood-ratio based, and residualization
 based. However, if we just use the CI test to check the p-value we cannot use
-it to find the modification that is able to improve the score the most.
+it to find the modification that is able to improve the score the most. We can
+however use the measure of association to check which assocation between the
+variables in the data is not explained by the model. Using this the expert can
+decide to add an edge between the variables but will need to choose the
+direction of the edge.
 
-The idea behind using the measure of association for modifying DAGs is that,
-for any given model and a dataset, we can use the condtiional measure of
-association to compute the amount of correlation in the data that is still not
-explained by the model. Based on this, we can compute how much improvement in
-the explanation would happen if we were to add an edge between variables. This
-can then be ranked using the maximum improvement. Give some examples here.
+The idea behind using the measure of association for modifying DAGs is inspired
+by modification indices in SEM. For any given model and a dataset, we can use
+the condtiional measure of association to compute the amount of correlation in
+the data that is still not explained by the model. Based on this, we can
+compute how much improvement in the explanation would happen if we were to add
+an edge between variables. This can then be ranked using the maximum
+improvement. Give some examples here.
 
 Theorem - If we have access to an oracle that can give all correct results, 
 the algorithm above is consistent.
