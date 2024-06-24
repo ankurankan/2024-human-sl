@@ -399,10 +399,13 @@ empirical analysis on how well this modification process works.
 \section{Background}
 \label{sec:background}
 We represent uni-dimensional variables as $ X $ and multi-dimensional variables
-as $ \bm{Z} $. We consider the case of estimating association between $ X $,
-and $ Y $ is the presence of a set of conditioning variables $ \bm{Z} = Z_1,
-\cdots, Z_k $, potentially being an empty set $ \bm{Z} = \emptyset $. We use $
-\rvert \bm{Z} \rvert $ to denote the cardinality of the variable $ \bm{Z} $. We
+as $ \bm{Z} $. All the variables are considered to be any mix of continuous,
+ordinal, or categorical unless specified explicitly.
+
+We consider the case of estimating association between $ X $ and $ Y $ is the
+presence of a set of conditioning variables $ \bm{Z} = Z_1, \cdots, Z_k $,
+potentially being an empty set $ \bm{Z} = \emptyset $. We use $ \rvert \bm{Z}
+\rvert $ to denote the cardinality of the set of variables $ \bm{Z} $. We
 consider various scenarios where the variables $ X $, $ Y $ and $ \bm{Z} $
 could be either discrete, ordinal, or continuous. With mixed data, we mean an
 arbitrary mix of variable types among $ X $, $ Y $, and $ \bm{Z} $.
@@ -414,7 +417,7 @@ $ Y $.
 
 \todo[inline]{Add more notation as they come}
 
-\subsection{Measures of Association}
+\subsection{Measures of (Conditional) Association}
 As our DAG construction procedure relies on a measure of conditional
 association between variables, in this section we list out some of the already
 known measures for specific data types. These measure of associations are
@@ -457,46 +460,58 @@ to compute the correlation coefficient.
 \paragraph{$ X $ and $ Y $ are ordinal}
 Polychoric Correlation
 
-\section{A Measure of Association for Mixed Data}
+\section{Measure of Association for Mixed Data}
 \label{sec:mixed_association}
 
-In this section, we develop a (conditional) measure of association for mixed
-data. This measure is similar to partial correlation in the sense that it uses
-a residualization approach and takes the association between the residuals.
+In this section, we develop a novel (conditional) measure of association for
+mixed data. The presented measure extends partial correlation to mixed data by
+combining a mixed-data residualization method with a multivariate measure of
+association.
 
-Given two variables $ X $ and $ Y $, and a set of conditioanl variables $
+Given two variables $ X $ and $ Y $, and a set of conditional variables $
 \bm{Z} $, we are interested in computing the conditional association, $ \rho(X,
-Y; Z) $. Similar to partial correlation, we start by computing the residuals
-for $ X $ and $ Y $ using the $ \bm{Z} $ as the predictor varaibles and then
-compute the assocation between the residuals. As the residuals for mixed
-variable is not straightforward to define, we use the mixed data
-residualization approach presented in Ankan and Textor 2023.
+Y; Z) $. As our measure is based on residulaization, we start by computing the
+residuals for $ X $ and $ Y $ using the $ \bm{Z} $ as the predictor variables.
+We use the mixed data residualization approach from \citet{Ankan2023}. We
+consider each variable type separately and repeat the following steps for both
+$ X $ and $ Y $:
 
-Given a variable $ X $ with predictor variables $ \bm{Z} $, we first train an
-estimator, $ E_X $ for predicting $ X $ using $ \bm{Z} $. If the varialbes are
-ordinal or categorical, the estimator needs to be probability estimators for
-example a Random Forest Estimator or XGBoost. Given an estimator we can compute
-the residuals as follows:
 \begin{enumerate}
-	\item If $ X $ is continuous, we simply take the difference between the true and estimated value.
-		$$ R_X = X - E_X(\bm{Z}) $$
-	\item If $ X $ is ordinal, we take the Li-Sheperd residual.
-		$$ R_X = E_X(\bm{Z}) $$
-	\item If $ X $ is categorical, we one hot encode the variable and Li-Sheperd residuals as well.
-		$$ R_X = E_X(\bm{Z}) $$
+	\item $ X $ is continuous: We start by training a regression model, $
+		E_X: X \sim \bm{Z} $. Next we take the predictions from this
+		model $ \hat{x} = E_X(\bm{Z}) $ and lastly the residuals are
+		computed as the difference between the true and the predicted
+		values.
+		$$ R_X = X - \hat{x} $$
+	\item $ X $ is ordinal: We start by training a probability estimator, $
+		p_X: X \sim \bm{Z} $, and take probability predictions from it
+		$ \hat{p}_X: p_X(\bm{Z}) $. Then we compute the residuals as follows:
+		$$ R_X = $$
+	\item $ X $ is categorical: We again start by training a probability estimator
+		$ p_X: X \sim \bm{Z} $, and take the probability estimates from it $ \hat{p}_X: p_Z(\bm{Z}) $.
+		Next, we one-hot encode the categorical variable and then compute the residuals
+		as follows:
+		$$ R_X $$
 \end{enumerate}
-As a result of this residualization approach, the residuals are a matrix of
-continuous values. The shape of this matrix depends on the type of variable. If
-the variables are continuous or ordinal, we end up with a residual matrix of
-size $ n \times 1 $. If the the variable is categorical we end up with a
-residual matrix of size $ n \times (k-1) $, where $ k $ is the cardinality of
-the categorical variables. We have dropped one of the one hot encoded columns
-because it is redundant.
 
-Next we need a measure to quantify the association between these residuals. One
-of the general ways to have assocation between sets of variables is to use
-canonical correlations. Canonical correlations are generalization of
-correlations to multi-dimensional variables.
+Here, users can choose the type of estimator that they want to use. There are
+single estimators such as Random Forest or XGBoost that can work for both the
+probability estimates and regression estimates. Or users can also choose
+different estimators such as variants of linear regression for computing the
+residuals. After the above steps are repeated for both $ X $ and $ Y $, we end
+up with two residual matrices: $ R_X $ and $ R_Y $. The type of the variable
+determines the shape for these matrices, i.e., if the variable is continuous we
+get a residual matrix of shape $ ( n \times 1 ) $ and if the variable is
+categorical we have a residual matrix of shape $ ( n \times (k-1)) $ (where one
+of the dummy encoded variables is dropped to avoid multicollinearity)
+
+Now, we have the two residuals and we need a measure to quantify the
+association between these residuals. As the residuals are matrices, we can
+treat them as sets of random variables, and in multivariate analysis canonical
+correlations have been used to quantify association between two sets of
+variables. Canonical correlations are generalization of correlations to
+multi-dimensional variables where they try to find linear combinations of the
+given sets of variables that maximize the correlation between them.
 
 \begin{definition}
 	Given two sets of random variables $ \bm{U} = (U_1, U_2, \cdots, U_p) $
@@ -517,7 +532,7 @@ correlations to multi-dimensional variables.
 	canonical correlations are equivalent to Pearson's correlation
 	coefficient.
 
-Multiple measures of association based on canonical correlation are available such as:
+Many measures of association based on canonical correlation are also available such as:
 \begin{itemize}
 	\item Wilks' Lambda: $ \Lambda = \prod (1 - \phi_i^2) $
 	\item Roy's Largest Root: $ \theta = \phi_{\max}^2 $
@@ -529,17 +544,12 @@ We use Pillai's Trace in this paper. \todo[inline]{Why?}.
 This measure of association has many of the desired properties:
 
 \begin{enumerate}
-	\item Is bounded between $ 0 $ and $ 1 $.
+	\item Is bounded between $ 0 $ and $ 1 $, with $ 0 $ representing no association and $ 1 $ representing a perfect linear relationship.
 	\item Is independent of the sample size.
-	\item Is indifferent to the one-hot encoding scheme used for categorical variables.
-	\item In the case of both continuous variables, reduces to partial correlation.
+	\item As canonical correlation finds linear transformations, the measure is independent of the one-hot encoding scheme used for categorical variables.
+	\item In the case of both continuous variables, it is equivalent to partial correlations.
+	\item For both discrete variables, the measure is connected to Cramers\' V, a well know effect size measure for discrete variables.
 \end{enumerate}
-
-\subsection{Connections to other measures}
-In the continuous variable case, this is equivalent to partial correlation.
-
-This natually is a generalization of partial correlations. Furthermore, it is 
-also a generalization of discrete case.
 
 \section{Using measure of association for modifying DAGs}
 \label{sec:modification}
