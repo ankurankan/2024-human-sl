@@ -467,15 +467,15 @@ Polychoric Correlation
 \label{sec:mixed_association}
 
 In this section, we develop a novel (conditional) measure of association for
-mixed data by extending partial correlation to mixed data. We do this by
-combining a mixed-data residualization method with a multivariate measure of
-association. Given two variables $ X $ and $ Y $, and a set of conditional
-variables $ \bm{Z} $, we are interested in computing an estimate of the
-conditional association, $ \rho(X, Y; Z) $. Firstly, we compute the residuals
-for $ x $ and $ y $ using the $ \bm{z} $ as the predictor variables. We use the
-mixed data residualization approach from \citet{Ankan2023}. We consider each
-variable type separately and repeat the following steps for both variables $ X
-$ and $ Y $:
+mixed data by extending the idea of partial correlation to mixed data. We do
+this by combining a mixed-data residualization method with a multivariate
+measure of association. Given two variables $ X $ and $ Y $, and a set of
+conditional variables $ \bm{Z} $, we are interested in computing an estimate of
+the conditional association, $ \rho(X, Y; Z) $. If $ \bm{Z} = \emptyset $, we
+use a constant value as $ Z $. Firstly, we compute the residuals for $ x $ and
+$ y $ using the $ \bm{z} $ as the predictor variables. We use the mixed data
+residualization approach from \citet{Ankan2023}. We consider each variable type
+separately and repeat the following steps for both variables $ X $ and $ Y $:
 
 \begin{enumerate}
 	\item \textbf{$ X $ is continuous:} We start by training a regression
@@ -511,13 +511,13 @@ variable is categorical we have a residual matrix of shape $ ( n \times (k-1))
 $ (where one of the dummy encoded variables is dropped to avoid
 multicollinearity)
 
-Now, we have the two residuals and we need a measure to quantify the
-association between these residuals. As the residuals are matrices, we can
-treat them as sets of random variables, and in multivariate analysis canonical
-correlations have been used to quantify association between two sets of
-variables. Canonical correlations are generalization of correlations to
-multi-dimensional variables where they try to find linear combinations of the
-given sets of variables that maximize the correlation between them.
+We now have two continuous valued residual matrices and we need a measure to
+quantify the association between these residuals. In multivariate statistics,
+canonical correlation based measures have been used for measuring association
+between two sets of variables. We can treat the residuals as sets of variables
+in case of categorical variable and use canonical corrleations to quantify the
+association between them.
+\todo[inline]{Justify the argument}
 
 \begin{definition}
 	Given two sets of random variables $ \bm{U} = (U_1, U_2, \cdots, U_p) $
@@ -530,34 +530,43 @@ given sets of variables that maximize the correlation between them.
 
 \end{definition}
 	
-	Canonical correlations try to find linear transformations $ a $ and $ b
-	$ of $ \bm{U} $ and $ \bm{V} $ such that the correlations between the
-	columns of $ a^T \bm{U} $ and $ b^T \bm{V} $ is maximized. The
-	individual columns of $ a^T \bm{U} $ and $ b^T \bm{V} $ are
-	independent. In the case when $ \rvert U \rvert = \rvert V \rvert = 1$,
-	canonical correlations are equivalent to Pearson's correlation
-	coefficient.
+Canonical correlations are generalization of correlations to multi-dimensional
+variables. It tries to find orthogonal linear transformations $ a $ and $ b $
+of $ \bm{U} $ and $ \bm{V} $ such that the correlation between the transformed
+variables $ a^T \bm{U} $ and $ b^T \bm{V} $ is maximized. It gives a vector of
+correlation values of size $ \min(\rvert U \rvert, \rvert V \rvert) $
+representing the correlation coefficient of each column of the transformed
+variables. Pearson's correlation coefficient is a special case of canonical
+correlations when $ \rvert U \rvert = \rvert V \rvert = 1$.
 
-Many measures of association based on canonical correlation are also available such as:
+Many measures of association based on canonical correlation have been used in
+multivariate statistics with each of them having slightly different properties.
 \begin{itemize}
 	\item Wilks' Lambda: $ \Lambda = \prod (1 - \phi_i^2) $
 	\item Roy's Largest Root: $ \theta = \phi_{\max}^2 $
 	\item Pillai's Trace: $ \tau = \sum \phi_i^2 $
 \end{itemize}
 
-We use Pillai's Trace in this paper. \todo[inline]{Why?}.
+We use Pillai's Trace for our purpose for two main reasons: 1) It uses all the
+canoncial correlation values, 2) Its interpretation is similar to correlation
+coefficient, i.e., $ 0 $ signifies no association and $ 1 $ signifies perfect
+linear relationship. 
 
-This measure of association has many of the desired properties:
+\todo[inline]{Add the formula for our case here}
+
+This measure of association has many desired properties:
 
 \begin{enumerate}
-	\item Is bounded between $ 0 $ and $ 1 $, with $ 0 $ representing no association and $ 1 $ representing a perfect linear relationship.
-	\item Is independent of the sample size.
-	\item As canonical correlation finds linear transformations, the measure is independent of the one-hot encoding scheme used for categorical variables.
-	\item In the case of both continuous variables, it is equivalent to partial correlations.
-	\item For both discrete variables, the measure is connected to Cramers\' V, a well know effect size measure for discrete variables.
+	\item Bounded between $ 0 $ and $ 1 $.
+	\item Independent of sample size.
+	\item Invariant to the one-hot encoding scheme used fr categorical variables.
+	\item Reduces to partial correlations when both variables are continuous.
+	\item In case of discrete variables, connected to Cramer\'s V, a well
+		known effect size measure for discrete variables.
+		\todo[inline]{Show the connection}
 \end{enumerate}
 
-\section{Using measure of association for modifying DAGs}
+\section{Using measure of association for DAG construction}
 \label{sec:modification}
 
 Any two variables in a DAG that do not have an edge between them imply a
