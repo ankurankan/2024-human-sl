@@ -467,46 +467,49 @@ Polychoric Correlation
 \label{sec:mixed_association}
 
 In this section, we develop a novel (conditional) measure of association for
-mixed data. The presented measure extends partial correlation to mixed data by
+mixed data by extending partial correlation to mixed data. We do this by
 combining a mixed-data residualization method with a multivariate measure of
-association.
-
-Given two variables $ X $ and $ Y $, and a set of conditional variables $
-\bm{Z} $, we are interested in computing the conditional association, $ \rho(X,
-Y; Z) $. As our measure is based on residulaization, we start by computing the
-residuals for $ X $ and $ Y $ using the $ \bm{Z} $ as the predictor variables.
-We use the mixed data residualization approach from \citet{Ankan2023}. We
-consider each variable type separately and repeat the following steps for both
-$ X $ and $ Y $:
+association. Given two variables $ X $ and $ Y $, and a set of conditional
+variables $ \bm{Z} $, we are interested in computing an estimate of the
+conditional association, $ \rho(X, Y; Z) $. Firstly, we compute the residuals
+for $ x $ and $ y $ using the $ \bm{z} $ as the predictor variables. We use the
+mixed data residualization approach from \citet{Ankan2023}. We consider each
+variable type separately and repeat the following steps for both variables $ X
+$ and $ Y $:
 
 \begin{enumerate}
-	\item $ X $ is continuous: We start by training a regression model, $
-		E_X: X \sim \bm{Z} $. Next we take the predictions from this
-		model $ \hat{x} = E_X(\bm{Z}) $ and lastly the residuals are
-		computed as the difference between the true and the predicted
-		values.
-		$$ R_X = X - \hat{x} $$
-	\item $ X $ is ordinal: We start by training a probability estimator, $
-		p_X: X \sim \bm{Z} $, and take probability predictions from it
-		$ \hat{p}_X: p_X(\bm{Z}) $. Then we compute the residuals as follows:
-		$$ R_X = $$
-	\item $ X $ is categorical: We again start by training a probability estimator
-		$ p_X: X \sim \bm{Z} $, and take the probability estimates from it $ \hat{p}_X: p_Z(\bm{Z}) $.
-		Next, we one-hot encode the categorical variable and then compute the residuals
-		as follows:
-		$$ R_X $$
+	\item \textbf{$ X $ is continuous:} We start by training a regression
+		model, $ E_X: x \sim \bm{z} $. Next we take the predictions
+		from this model $ \hat{x} = E_X(\bm{z}) $ and lastly the
+		residuals are computed as the difference between the true and
+		the predicted values.
+		$$ R_{x_i} = x_i - \hat{x}_i $$
+	\item \textbf{$ X $ is ordinal:} We start by training a probability
+		estimator, $ p_X: x \sim \bm{z} $, and take probability
+		predictions from it $ \hat{p}_X: \hat{p}_X(\bm{Z}) $. Then we
+		compute the residuals as follows:
+		$$ R_{x_i} = \hat{p}(\hat{x}_i > x_i) - \hat{p}(\hat{x}_i < x_i) $$
+	\item \textbf{$ X $ is categorical:} We again start by training a
+		probability estimator $ p_X: X \sim \bm{Z} $, and take the
+		probability estimates from it $ \hat{p}_X: p_Z(\bm{Z}) $. Next,
+		we one-hot encode the categorical variable and then compute the
+		residuals as follows: 
+		$$ R_X = x_i - \hat{p}(\bm{z}_i) $$
 \end{enumerate}
 
-Here, users can choose the type of estimator that they want to use. There are
-single estimators such as Random Forest or XGBoost that can work for both the
-probability estimates and regression estimates. Or users can also choose
-different estimators such as variants of linear regression for computing the
-residuals. After the above steps are repeated for both $ X $ and $ Y $, we end
-up with two residual matrices: $ R_X $ and $ R_Y $. The type of the variable
-determines the shape for these matrices, i.e., if the variable is continuous we
-get a residual matrix of shape $ ( n \times 1 ) $ and if the variable is
-categorical we have a residual matrix of shape $ ( n \times (k-1)) $ (where one
-of the dummy encoded variables is dropped to avoid multicollinearity)
+\todo[inline]{Fix notations above}
+
+Here, users have the option to choose the estimators based on the properties of
+their data. Non-parametric ensemble estimators such as Random Forest and
+XGBoost can work well on a large variety of data and any data type. For linear
+datasets users can also choose variants of linear regression depending on the
+type of data. After the above steps are repeated for both $ X $ and $ Y $, we
+end up with two residual matrices: $ R_X $ and $ R_Y $. The type of the
+variable determines the shape for these matrices, i.e., if the variable is
+continuous we get a residual matrix of shape $ ( n \times 1 ) $ and if the
+variable is categorical we have a residual matrix of shape $ ( n \times (k-1))
+$ (where one of the dummy encoded variables is dropped to avoid
+multicollinearity)
 
 Now, we have the two residuals and we need a measure to quantify the
 association between these residuals. As the residuals are matrices, we can
