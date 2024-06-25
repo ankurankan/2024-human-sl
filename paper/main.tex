@@ -219,15 +219,17 @@
 
 \section{Introduction}
 
-Many questions in science center around a causal understanding between
-variables. \emph{Causal Discovery} aims to find the underlying causal structure
+Many questions in science center around understanding the cause and effect
+relationships between variables, as it can reveal the underlying mechanisms for
+the observed phenomena and inform effective interventions or policy decisions.
+\emph{Causal Discovery} methods aim to find the underlying causal structure
 among random variables from a given dataset. The problem of causal discovery
-has been studied both in Directed Acyclic Graphs (DAGs) and Structural Equation
-Models (SEM) literatures. In the DAG literature, the focus has been on
-developing automated algorithms that can learn the causal structure from a
-given observational or interventional dataset, whereas in the SEM literature
-the focus has on developing tools to help researchers construct or modify
-manually constructed models.
+has been studied in both Directed Acyclic Graphs (DAGs) and Structural Equation
+Models (SEM) literatures with different approaches. In the DAG literature, the
+focus has been on developing automated algorithms that can learn the causal
+structure from a given observational or interventional dataset, whereas in the
+SEM literature the focus has on developing tools to help researchers construct 
+models manually or modify manually constructed models.
 
 % To perform any causal effect identification or estimation using Directed
 % Acyclic Graphs (DAGs) or Structural Equation Models (SEMs), researchers need to
@@ -244,13 +246,14 @@ manually constructed models.
 % a constrained optimization problem such as No Tears.
 
 In the DAG literature, many automated algorithms have been developed for causal
-discovery such as constraint based method (PC, FCI), score-based methods
-(Hill-Climb Search, Greedy Equivalence Search), and optimization based methods.
-However, the adaption of these algorithms in applied fields remain limited. In
-these applied fields, researchers typically prefer to construct these DAGs
-manually based on their domain knowledge. We hypothesize that this preference
-towards manual DAG construction stems from the following difficulties in
-applying causal discovery methods:
+discovery such as constraint based methods like PC \citep{Spirtes2001} and FCI
+\citep{Spirtes2000}, score-based methods like Hill-Climb Search, Greedy
+Equivalence Search \citep{Chickering2002}, and optimization based methods.
+However, the adaption of these algorithms in applied fields remain limited
+\citep{Tennant2020}. In applied fields, researchers typically prefer to
+construct these DAGs manually based on their domain knowledge. We hypothesize
+that this preference towards manual DAG construction stems from the following
+difficulties in applying causal discovery methods:
 
 \begin{enumerate}
 	\item \textbf{Difficult to trust: } Even though most of these algorithms
