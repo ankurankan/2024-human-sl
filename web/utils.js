@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Human-In-The-Loop SL</title>
-		<script type="text/javascript" src="https://dagitty.net/lib/dagitty-3.0.js"></script>
-
-<script>
-
-function getEdgeDOM( u , v, dir ){
-	let ekv = DAGitty.controllers[0].getView().edge_shapes.kv
+function getEdgeDOM( u , v, dir ){ let ekv = DAGitty.controllers[0].getView().edge_shapes.kv
 	let eid = `${u}\u0000${v}\u0000${dir}`
 	if( ekv[eid] ) {
 		return ekv[eid].dom.firstChild
@@ -32,14 +23,51 @@ function dagOnly(){
 	return g2
 }
 
+async function uploadFile() {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+
+        if (!file) {
+        	alert("Please select a file.");
+        	return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+	let result;
+	try{
+        	const response = await fetch('http://127.0.0.1:8000/upload', {
+                	method: 'POST',
+                	body: formData
+		});
+		result = await response.json();
+	} catch(error){
+        	console.error('Error:', error);
+        	alert('File upload failed');
+        }
+
+	// Create an empty DAG with the variables.
+	const graph = document.getElementById('dagitty_graph');
+	graph.innerHTML = "dag{ " + JSON.parse(result.body[0])['var_names'].join(" ") + " }";
+	DAGitty.setup();
+	DAGitty.controllers[0].event_listeners["graphchange"][0] = send;
+	send();
+}
+
 async function send(){
 	let g  = DAGitty.controllers[0].graph
 	DAGitty.controllers[0].event_listeners["graphchange"] = []
 	// remove all undirected edges
 	g = dagOnly(g)
 	// send DAG to backend for testing
-	const a = await fetch('http://127.0.0.1:8000/simpletest?dag='+encodeURIComponent(g.toString()))
+	const a = await fetch('http://127.0.0.1:8000/getassoc?dag='+encodeURIComponent(g.toString())+'&threshold='+document.getElementById('thres_txt').value+'&pval='+document.getElementById('pval_txt').value)
 	const b = await a.json()
+
+	const fisher = await fetch('http://127.0.0.1:8000/getfisher?dag='+encodeURIComponent(g.toString()))
+	const pval = await fisher.json()
+	document.getElementById('fisherc').innerHTML = pval;
+
 	if( Array.isArray(b) ){
 		for( let e of b ){
 			e.edge = e.A == "->"
@@ -76,34 +104,6 @@ async function send(){
 function setup(){
 	DAGitty.setup()
 	DAGitty.controllers[0].event_listeners["graphchange"][0] = send
-	send()
+	// send()
 }
 
-
-</script>
-	</head>
-	<body onload="setup()">
-		<h1>Human-In-The-Loop SL</h1>
-
-<p>
-<button onclick="send()">send</button>
-</p>
-
-		<div class="dagitty" style="width:500px; height: 300px" data-mutable="true">
-
-dag {
-bb="-1,0,1,3"
-Age [pos="0.547,0.321"]
-Education [pos="-0.532,1.662"]
-Income [pos="0.012,2.356"]
-MaritalStatus [pos="0.354,0.947"]
-NativeCountry [pos="-0.737,0.288"]
-Occupation [pos="-0.356,0.947"]
-Sex [pos="-0.036,0.434"]
-Workclass [pos="0.233,1.559"]
-
-}
-		</div>
-
-	</body>
-</html>
