@@ -583,44 +583,49 @@ This measure of association has many desired properties:
 \section{Using measure of association for DAG construction}
 \label{sec:modification}
 
+% Add that we need a p-value as well.
+
 Using this mixed data partial association measure, we propose an iterative DAG
 modification / construction procedure. Users can start with an empty graph.
 Given a DAG $ G $ and a dataset $ D $, for each pair for variable $ X $ and $ Y
 $ in $ G $ that does not have an edge between them, we compute the partial
-association measure: $ \rho(X, Y; pa_G(X) \cup pa_G(Y)) $. Additionally, for
-each pair of variable in $ G $, that has an edge between them in we compute the
-partial association measure: $ \rho(X, Y; pa_{\underline{G}}(X) \cup
-pa_{\underline{G}}(Y) $. In the case of no edge, this measure of association
-can be interpreted as the unexplained 
+association measure: $ \rho(X, Y; pa_G(X) \cup pa_G(Y)) $. The measure of
+assocation in this case can be interpreted as the unexplained observed
+association between them given the current model. We can then use this to rank
+pair of variables which have very high unexplained association between them.
+Based on the domain expertise, the user can then choose one of these suggested
+pair of variables, decide the direction of the edge between the variables, and
+add it to the model. Once the new edge is added we can recompute the assocation
+of all other variables and $ X $ and $ Y $.
 
-Any two variables in a DAG that do not have an edge between them imply a
-conditional independence test that is they are independent given the parents of
-both the variables, $ X \ci Y | pa(X) \cup pa(Y) $. In the case of model
-testing, a CI statement like this can be used to check whether the assumption
-of the model holds in the data or is violated. For mixed data, a few different
-CI tests have been proposed such as likelihood-ratio based, and residualization
-based. However, if we just use the CI test to check the p-value we cannot use
-it to find the modification that is able to improve the score the most. We can
-however use the measure of association to check which assocation between the
-variables in the data is not explained by the model. Using this the expert can
-decide to add an edge between the variables but will need to choose the
-direction of the edge.
+Additionally, in each iteration of modification, for each pair of variable in $
+G $, that has an edge between them in we compute the partial association
+measure: $ \rho(X, Y; pa_{\underline{G}}(X) \cup pa_{\underline{G}}(Y) $. This
+measure of assocation can be interpreted as the strength of the edge between
+the variables. If the value of this assocation below a certain threshold, we
+can remove the edge.
 
 \begin{theorem}
-If we have access to an oracle that can give correct edge directions, the
-algorithm above is consistent.
+	If we have access to an oracle that can give correct edge directions, taking a
+	greedy approach with the produre above results in the correct graph
+	being recovered.
 \end{theorem}
 
 \section{Web Tool}
 \label{sec:web}
-Based on the approach outlined in the previous section, we built a web-based
-tool that researchers can upload their dataset to and apply this method to
-interactively draw models. Users can start by uploading their datasets. The web
-interface should then automatically show them all the correlated variables in a
-graphical representation. The red colored edges represent potential new edge
-between the variables.
-
-\todo[inline]{List some of the features of the online platform}
+Based on the procedure outlined in the previous section, we built a web-based
+tool that allows users to interactively create/modify their model. The user
+starts by uploading their dataset and optionally the initial DAG. If no initial
+DAG is provided an empty graph is initialized. The tool also computes the
+Shipley's C value at any point. The web-tool would automatically show all
+unexplained assocations in the DAG by adding red edges between them. The edge
+weight of the edge represents how high this strength is. Users can also set the
+threshold for p-value and association to control how many edges are shown at a
+time. Based on these shown potential edges, the user can select the edge that
+they want to add and decide the direction for it. If the tool detects an
+incorrect edge in the graph, it is shown in black. Once the user is happy with
+the graph they have they can export it into different formats to use it for
+further computation.
 
 % \begin{figure}
 % 	\centering
