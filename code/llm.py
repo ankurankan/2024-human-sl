@@ -98,7 +98,7 @@ def test_all(dag, data):
 
     return pd.DataFrame(cis, columns=['u', 'v', 'z', 'edge_present', 'effect', 'p_val'])
 
-def simulate_human(data, descriptions, pval_thres=0.1, effect_thres=0.1):
+def simulate_human(data, descriptions, pval_thres=0.05, effect_thres=0.05):
     nodes = list(data.columns)
     dag = DAG()
     dag.add_nodes_from(nodes)
@@ -115,23 +115,20 @@ def simulate_human(data, descriptions, pval_thres=0.1, effect_thres=0.1):
 
         nonedge_effects = all_effects[all_effects.edge_present == False]
         nonedge_effects = nonedge_effects[(nonedge_effects.effect >= effect_thres) & (nonedge_effects.p_val <= pval_thres)]
-        add_edges = list(nonedge_effects.loc[:, ('u', 'v')].to_records(index=False))
-        add_edges_directed = []
-        print(f"Adding: {add_edges}")
-
-        for edge in add_edges:
-            add_edges_directed.append(query_direction(edge[0], edge[1], descriptions))
-        dag.add_edges_from(add_edges_directed)
 
         if (edge_effects.shape[0] == 0) and (nonedge_effects.shape[0] == 0):
             break
+
+        selected_edge = nonedge_effects.iloc[nonedge_effects.effect.argmax()]
+        print(f"Adding: {selected_edge.u} -- {selected_edge.v}")
+        dag.add_edges_from([query_direction(selected_edge.u, selected_edge.v, descriptions)])
     return(dag)
 
 descriptions = {'Age': 'The age of a person',
                 'Workclass': 'The workplace where the person is employed such as Private industry, or self employed',
                 'Education': "The highest level of education the person has finished.",
                 'MaritalStatus': "The marital status of a person",
-                "Occupation": "The kind of job the person does. For example, sales, craft repair, clerkial",
+                "Occupation": "The kind of job the person does. For example, sales, craft repair, clerical",
                 "Relationship": "The relationship status of the person",
                 "Race": "The ethnicity of the person",
                 "Sex": "The sex or gender of the person",
