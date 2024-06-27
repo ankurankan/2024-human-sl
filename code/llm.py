@@ -35,7 +35,7 @@ def query_direction(u, v, descriptions):
 
 
 def preprocess_data():
-    df = pd.read_csv("../work/2024-human-sl/code/adult_proc.csv", index_col=0)
+    df = pd.read_csv("adult_proc.csv", index_col=0)
     df.Age = pd.Categorical(
         df.Age,
         categories=["<21", "21-30", "31-40", "41-50", "51-60", "61-70", ">70"],
@@ -98,7 +98,7 @@ def test_all(dag, data):
 
     return pd.DataFrame(cis, columns=['u', 'v', 'z', 'edge_present', 'effect', 'p_val'])
 
-def simulate_human(data, descriptions, pval_thres=0.1, effect_thres=0.05):
+def simulate_human(data, descriptions, pval_thres=0.1, effect_thres=0.1):
     nodes = list(data.columns)
     dag = DAG()
     dag.add_nodes_from(nodes)
