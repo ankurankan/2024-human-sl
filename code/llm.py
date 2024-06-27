@@ -98,7 +98,7 @@ def test_all(dag, data):
 
     return pd.DataFrame(cis, columns=['u', 'v', 'z', 'edge_present', 'effect', 'p_val'])
 
-def simulate_human(data, descriptions, pval_thres=0.05, effect_thres=0.05):
+def simulate_human(data, descriptions, pval_thres=0.05, effect_thres=0.1):
     nodes = list(data.columns)
     dag = DAG()
     dag.add_nodes_from(nodes)
