@@ -259,13 +259,14 @@ challenges in applying causal discovery algorithms:
 \begin{enumerate}
 	\item \textbf{Trustworthiness: } Although most algorithms have
 		asymptotic theory proving them to be consistent, their finite
-		sample properties are not well understood. In real-world
-		settings with finite samples, these algorithms can make obvious
-		mistakes, for example, the constraint-based algorithms are
-		biased towards sparse graphs \citep{Malinsky2024}.
-		Consequently, researchers often have rely on post-hoc
-		modifications based on model testing methods and their domain
-		knowledge.
+		sample properties are not well understood. Moreover, depending
+		on the selected hyperparameters of the algorithms, the output
+		can vary very significantly. In real-world settings with finite
+		samples, these algorithms can make obvious mistakes, for
+		example, the constraint-based algorithms are biased towards
+		sparse graphs \citep{Malinsky2024}. Consequently, researchers
+		often have rely on post-hoc modifications based on model
+		testing methods and their domain knowledge.
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} Multiple causal
 		structures can be faithful to a given observational dataset.
 		Thus, using only observational data, these algorithms can only
@@ -275,15 +276,15 @@ challenges in applying causal discovery algorithms:
 		DAG. As a result, researchers have to rely on their expertise
 		to orient these edges or make further assumptions to make use
 		of pairwise orientation techniques.
-	\item \textbf{Algorithm and hyperparameter selection:} Each algorithm
-		has the same goal but they can learn very different models
-		depending on the choice of algorithm and their hyperparameters.
-		For example, the choice of the conditional independence (CI)
-		test being used for constraint-based method depends on the
-		dataset, similarly for the scoring method for score-based
-		methods. With no obvious way to test the impact/performance of
-		these choices on a given dataset, it becomes quite hard to
-		chose the optimal algorithm for a given dataset.
+	% \item \textbf{Algorithm and hyperparameter selection:} Each algorithm
+	% 	has the same goal but they can learn very different models
+	% 	depending on the choice of algorithm and their hyperparameters.
+	% 	For example, the choice of the conditional independence (CI)
+	% 	test being used for constraint-based method depends on the
+	% 	dataset, similarly for the scoring method for score-based
+	% 	methods. With no obvious way to test the impact/performance of
+	% 	these choices on a given dataset, it becomes quite hard to
+	% 	chose the optimal algorithm for a given dataset.
 \end{enumerate}
 
 As a result of these challenges, doesn't matter if the researcher is manually
@@ -292,7 +293,7 @@ modifications to the model before being able to use them for analysis. One of
 the common ways to guide this modification is to use Conditional Independence
 (CI) based model testing \cite{Ankan2021}. As DAGs imply CI statements that can
 be tested in the given data, and then model can be modified based on the
-results of this test. Figure~\ref{fig:ci_testing} shows an example of testing
+p-values of these test. Figure~\ref{fig:ci_testing} shows an example of testing
 using CIs. This approach has two main drawbacks:
 \begin{enumerate}
 	\item CIs are implied by missing edges only, and hence we can not test
@@ -324,16 +325,13 @@ common method for specification search is \emph{modification indices}, which
 identify potential changes to the model structure that improve the model fit
 and ranks them using the most improvement to the model fit. This ranking allows
 the researchers to focus first on the suggestions that can improve the model
-the most and can use their expertise to choose the most optimal modifications.
+the most and while integrating their expertise to choose the most optimal
+modifications.
 
 \todo[inline]{Show a figure of how the output looks like for modification indices}
 \todo[inline]{Other methods: Modification indices and Lagrange Multiplier tests to
 selectively add edges And using Wald test or z statistics (also known as
 critical ratios) for removing edges.}
-
-
-% One of the drawbacks of these global fit metrics is that they do not only test
-% for the structure but also the fitted parameterization.
 
 Inspired by this ranking approach, in this paper we present a way to rank the CI 
 testing using a measure of association. This can be interpreted as the edge 
@@ -368,56 +366,60 @@ Our main contributions in this papers are as follows:
 \end{enumerate}
 
 \begin{figure}
-		\centering
-		\begin{tikzpicture}
-			\begin{scope}[xshift=-2.5cm, yshift=0.7cm, scale=0.7]
+	\centering
+	\begin{tikzpicture}
+		\begin{scope}[xshift=-2.5cm, yshift=0.7cm, scale=0.7]
 			\tikzstyle{every node}=[align=center, inner sep=1pt]
-				\node (sex) at (-0.7, -0.8) {Sex};
-				\node (age) at (-0.3, 0) {Age};
-				\node (ed) at (-1.8, -1.6) {Education};
-				\node (occ) at (1.8, 0) {Occupation};
-				\node (hrpw) at (1.3, -1.6) {Hours Per \\ Week};
-				\node (income) at (-0.7, -2.8) {Income};
-			
-				\draw[->]  (age) to[bend right=20] (ed);
-				\draw[->]  (sex) to (ed);
-				\draw[->]  (age) to (hrpw);
-				\draw[->]  (ed) to (hrpw);
-				\draw[->]  (sex) to (hrpw);
-				\draw[->]  (ed) to (income);
-				\draw[->]  (hrpw) to (income);
-				\draw[->]  (occ) to[out=300, in=0, looseness=1.4] (income.east);
-				\draw[->]  (sex) to (income);
-				\draw[->]  (ed) to[out=90, in=150, looseness=1.3] (occ);
-				\draw[->]  (sex) to (occ);	
-			\end{scope}
-			\begin{scope}[xshift=-3cm]
-				\draw[thick, ->, double, cyan] (2.5,0) -- (3,0);
-				\node[rectangle, align=center, inner sep=1pt] at (5, 0) {
-					\begin{minipage}{.2\textwidth}
-						\begin{equation*}
-							\begin{split}
-								\textnormal{Age} &\ci \textnormal{Incm} \rvert \textnormal{Edct, Hrpw, Sex} \\
-								\textnormal{Age} &\ci \textnormal{Occp} \rvert \textnormal{Edct, Sex} \\
-								\textnormal{Age} &\ci \textnormal{Sex} \\
-								\textnormal{Hrpw} &\ci \textnormal{Occp} \rvert \textnormal{Edct, Sex} \\
-							\end{split}
-						\end{equation*}
-					\end{minipage}
-					};
-			\end{scope}
+			\node (sex) at (-0.7, -0.8) {Sex};
+			\node (age) at (-0.3, 0) {Age};
+			\node (ed) at (-1.8, -1.6) {Education};
+			\node (occ) at (1.8, 0) {Occupation};
+			\node (hrpw) at (1.3, -1.6) {Hours Per \\ Week};
+			\node (income) at (-0.7, -2.8) {Income};
+		
+			\draw[->]  (age) to[bend right=20] (ed);
+			\draw[->]  (sex) to (ed);
+			\draw[->]  (age) to (hrpw);
+			\draw[->]  (ed) to (hrpw);
+			\draw[->]  (sex) to (hrpw);
+			\draw[->]  (ed) to (income);
+			\draw[->]  (hrpw) to (income);
+			\draw[->]  (occ) to[out=300, in=0, looseness=1.4] (income.east);
+			\draw[->]  (sex) to (income);
+			\draw[->]  (ed) to[out=90, in=150, looseness=1.3] (occ);
+			\draw[->]  (sex) to (occ);	
+		\end{scope}
+		\begin{scope}[xshift=-3cm]
+			\draw[thick, ->, double, cyan] (2.5,0) -- (3,0);
+			\node[rectangle, align=center, inner sep=1pt] at (5, 0) {
+				\begin{minipage}{.2\textwidth}
+					\begin{equation*}
+						\begin{split}
+							\textnormal{Age} &\ci \textnormal{Incm} \rvert \textnormal{Edct, Hrpw, Sex} \\
+							\textnormal{Age} &\ci \textnormal{Occp} \rvert \textnormal{Edct, Sex} \\
+							\textnormal{Age} &\ci \textnormal{Sex} \\
+							\textnormal{Hrpw} &\ci \textnormal{Occp} \rvert \textnormal{Edct, Sex} \\
+						\end{split}
+					\end{equation*}
+				\end{minipage}
+				};
+		\end{scope}
 		\end{tikzpicture}
-		\caption{\todo[inline]{Show a full example of testing using this model}}
+		\caption{\todo[inline]{Finish figure to show an example of model testing}}
 		\label{fig:ci_testing}
+\end{figure}
+\begin{figure}
+	\caption{\todo[inline]{Placeholder for figure showing an example of modification indices}}
 \end{figure}
 
 The rest of the paper is structured as follows. In
 Section~\ref{sec:background}, we give a background on the measures of
 association for various data types. In Section~\ref{sec:mixed_association}, we
 present our method for computing mixed data association. In
-Section~\ref{sec:modification}, we present how to use this method to rank the
-modifications, and lastly in Section~\ref{sec:empirical}, we show some
-empirical analysis on how well this modification process works.
+Section~\ref{sec:modification} and Section~\ref{sec:}, we present how to use
+this method to make modifications and the web tool, and lastly in
+Section~\ref{sec:empirical}, we show some empirical analysis on how well this
+modification process works.
 
 \section{Background and Related Work}
 \label{sec:background}
@@ -480,7 +482,7 @@ to compute the correlation coefficient.
 \paragraph{$ X $ and $ Y $ are ordinal}
 Polychoric Correlation
 
-\section{Measure of Association for Mixed Data}
+\section{A Measure of Association for Mixed Data}
 \label{sec:mixed_association}
 
 In this section, we define a novel partial measure of association for mixed
@@ -585,34 +587,36 @@ This measure of association has many desired properties:
 		\todo[inline]{Show the connection}
 \end{enumerate}
 
-\section{Using measure of association for DAG construction}
+\section{Using Measure of Association for DAG Modification and Construction}
 \label{sec:modification}
 
 % Add that we need a p-value as well.
 
 Using this mixed data partial association measure, we propose an iterative DAG
-modification / construction procedure. Users can start with an empty graph.
-Given a DAG $ G $ and a dataset $ D $, for each pair for variable $ X $ and $ Y
-$ in $ G $ that does not have an edge between them, we compute the partial
-association measure: $ \rho(X, Y; pa_G(X) \cup pa_G(Y)) $. The measure of
-assocation in this case can be interpreted as the unexplained observed
-association between them given the current model. We can then use this to rank
-pair of variables which have very high unexplained association between them.
-Based on the domain expertise, the user can then choose one of these suggested
-pair of variables, decide the direction of the edge between the variables, and
-add it to the model. Once the new edge is added we can recompute the assocation
-of all other variables and $ X $ and $ Y $.
+modification procedure. 
+\todo[inline]{How similar is this to GES algorithm}
+If the user desires to construct the model manually, they can also start with
+an empty graph. Given a DAG $ G $ and a dataset $ D $, for each pair for
+variable $ X $ and $ Y $ in $ G $ that does not have an edge between them, we
+compute the partial association measure: $ \rho(X, Y; pa_G(X) \cup pa_G(Y)) $.
+The measure of association in this case can be interpreted as the unexplained
+observed association between them given the current model. We can then use this
+to rank pair of variables which have very high unexplained association between
+them. Based on the domain expertise, the user can then choose one of these
+suggested pair of variables, decide the direction of the edge between the
+variables, and add it to the model. Once the new edge is added we can recompute
+the association of all other variables and $ X $ and $ Y $.
 
 Additionally, in each iteration of modification, for each pair of variable in $
 G $, that has an edge between them in we compute the partial association
 measure: $ \rho(X, Y; pa_{\underline{G}}(X) \cup pa_{\underline{G}}(Y) $. This
-measure of assocation can be interpreted as the strength of the edge between
-the variables. If the value of this assocation below a certain threshold, we
+measure of association can be interpreted as the strength of the edge between
+the variables. If the value of this association below a certain threshold, we
 can remove the edge.
 
 \begin{theorem}
 	If we have access to an oracle that can give correct edge directions, taking a
-	greedy approach with the produre above results in the correct graph
+	greedy approach with the procedure above results in the correct graph
 	being recovered.
 \end{theorem}
 
@@ -623,7 +627,7 @@ tool that allows users to interactively create/modify their model. The user
 starts by uploading their dataset and optionally the initial DAG. If no initial
 DAG is provided an empty graph is initialized. The tool also computes the
 Shipley's C value at any point. The web-tool would automatically show all
-unexplained assocations in the DAG by adding red edges between them. The edge
+unexplained associations in the DAG by adding red edges between them. The edge
 weight of the edge represents how high this strength is. Users can also set the
 threshold for p-value and association to control how many edges are shown at a
 time. Based on these shown potential edges, the user can select the edge that
