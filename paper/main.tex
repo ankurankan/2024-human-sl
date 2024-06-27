@@ -224,13 +224,13 @@ Understanding cause-and-effect relationships between variables is a fundamental
 goal in many scientific questions as it reveals the underlying mechanisms of
 the observed phenomena and informs effective interventions or policy decisions.
 \emph{Causal Discovery} methods aim to uncover the underlying causal structure
-among random variables from a given dataset. The problem of causal discovery
-has been explored in both the Directed Acyclic Graphs (DAGs) and Structural
-Equation Models (SEM) literatures, each with different approaches. In the DAG
-literature, the focus has been on developing automated algorithms that can
-learn the causal structure from observational or interventional dataset. In
-contrast, the SEM literature emphasizes tools that help researchers manually
-construct or modify modify.
+among random variables from a given observational dataset. The problem of
+causal discovery has been explored in both the Directed Acyclic Graphs (DAGs)
+and Structural Equation Models (SEMs) literatures, each with different
+approaches. In the DAG literature, the focus has been on developing automated
+algorithms that can learn the causal structure from observational datasets. In
+contrast, the SEM literature focuses on tools that help researchers manually
+construct or modify models.
 
 % To perform any causal effect identification or estimation using Directed
 % Acyclic Graphs (DAGs) or Structural Equation Models (SEMs), researchers need to
@@ -262,16 +262,17 @@ challenges in applying causal discovery algorithms:
 		sample properties are not well understood. In real-world
 		settings with finite samples, these algorithms can make obvious
 		mistakes, for example, the constraint-based algorithms are
-		biased towards sparse graphs \citep{Malinsky2024}. Consequently,
-		researchers often have rely on post-hoc modifications based on 
-		their domain knowledge or model testing methods.
+		biased towards sparse graphs \citep{Malinsky2024}.
+		Consequently, researchers often have rely on post-hoc
+		modifications based on model testing methods and their domain
+		knowledge.
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} Multiple causal
 		structures can be faithful to a given observational dataset.
 		Thus, using only observational data, these algorithms can only
 		recover the MECs that can contain unoriented edges. However,
 		most methods for downstream tasks, such as identification or
 		causal effect estimation, assume knowledge of a fully oriented
-		DAG. As a results, researchers have to rely on their expertise
+		DAG. As a result, researchers have to rely on their expertise
 		to orient these edges or make further assumptions to make use
 		of pairwise orientation techniques.
 	\item \textbf{Algorithm and hyperparameter selection:} Each algorithm
@@ -285,19 +286,21 @@ challenges in applying causal discovery algorithms:
 		chose the optimal algorithm for a given dataset.
 \end{enumerate}
 
-As a result of these challenges, no matter if the researcher is manually
-constructing the DAG or using an algorithm, they need to utilize their domain
-expertise to construct and modify models. One potential way to through
-conditional independence (CI) based testing. As each missing edge in the DAG
-implies a CI statement, that can be tested in our data \ref{fig:ci_testing}.
-This however has two main drawbacks: 
+As a result of these challenges, doesn't matter if the researcher is manually
+constructing the DAG or using an algorithm, they need to do some manual
+modifications to the model before being able to use them for analysis. One of
+the common ways to guide this modification is to use Conditional Independence
+(CI) based model testing \cite{Ankan2021}. As DAGs imply CI statements that can
+be tested in the given data, and then model can be modified based on the
+results of this test. Figure~\ref{fig:ci_testing} shows an example of testing
+using CIs. This approach has two main drawbacks:
 \begin{enumerate}
-	\item As CIs are implied by only missing edges, we can not test if an
-		incorrect edge is present in the model.
-	\item For larger graphs, the number of CI tests can be very large, for example,
-		the alarm network with $ 37 $ nodes has $ 287 $ implied CIs. As
-		there is no way to rank these CIs, it can be tedious to
-		consider all these statements.
+	\item CIs are implied by missing edges only, and hence we can not test
+		whether an incorrect edge is present in the model.
+	\item For larger graphs, the number of CI tests can be very large, for
+		example, the alarm network with $ 37 $ nodes has $ 287 $
+		implied CIs. It can be difficult to look at all these tests for
+		violations.
 \end{enumerate}
 
 % As it is evident that researchers also draw DAGs by hand and even if they use
@@ -319,9 +322,9 @@ improve the fit of their model to data while it still making theoretical sense.
 This model construction process is known as \emph{Specification Search}. A
 common method for specification search is \emph{modification indices}, which
 identify potential changes to the model structure that improve the model fit
-and ranks them using the most improvement to the model fit. Researchers then
-use these suggestions and their expertise to choose the most optimal
-modifications.
+and ranks them using the most improvement to the model fit. This ranking allows
+the researchers to focus first on the suggestions that can improve the model
+the most and can use their expertise to choose the most optimal modifications.
 
 \todo[inline]{Show a figure of how the output looks like for modification indices}
 \todo[inline]{Other methods: Modification indices and Lagrange Multiplier tests to
