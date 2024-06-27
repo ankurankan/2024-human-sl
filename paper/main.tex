@@ -480,16 +480,18 @@ Polychoric Correlation
 \section{Measure of Association for Mixed Data}
 \label{sec:mixed_association}
 
-In this section, we develop a novel partial measure of association for
-mixed data by extending the idea of partial correlation to mixed data. We do
-this by combining a mixed-data residualization method with a multivariate
-measure of association. Given two variables $ X $ and $ Y $, and a set of
-conditional variables $ \bm{Z} $, we are interested in computing an estimate of
-the conditional association, $ \rho(X, Y; \bm{Z}) $. If $ \bm{Z} = \emptyset $, we
-use a constant value as $ Z $. Firstly, we compute the residuals for $ \bm{x} $ and
-$ y $ using the $ \bm{z} $ as the predictor variables. We use the mixed data
-residualization approach from \citet{Ankan2023}. We consider each variable type
-separately and repeat the following steps for both variables $ X $ and $ Y $:
+In this section, we define a novel partial measure of association for mixed
+data by extending the idea of partial correlation to mixed data. We do this by
+combining a mixed-data residualization method with a multivariate measure of
+association. Given $ n $ samples $ D = (x, y, \bm{z}) $ of variables $ X $, $ Y $,
+and $ \bm{Z} $, we are interested in computing an estimate of the conditional
+association $ \rho(X, Y; \bm{Z}) $ between $ X $ and $ Y $ conditioned on $
+\bm{Z} $. As the residualization approach requires atleast one conditional
+variable to be present, if $ \bm{Z} = \emptyset $, we use a constant value for
+$ Z $. Firstly, we compute the residuals for $ X $ and $ Y $ using the $ \bm{Z}
+$ as the predictor variables. We use the mixed data residualization approach
+from \citet{Ankan2023}. The residual computation depends on the type of 
+variable:
 
 \begin{enumerate}
 	\item \textbf{$ X $ is continuous:} We start by training a regression
