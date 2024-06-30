@@ -222,15 +222,15 @@
 
 Understanding cause-and-effect relationships between variables is a fundamental
 goal in many scientific questions as it reveals the underlying mechanisms of
-the observed phenomena and informs effective interventions or policy decisions.
+observed phenomena and informs effective interventions or policy decisions.
 \emph{Causal Discovery} methods aim to uncover the underlying causal structure
 among random variables from a given observational dataset. The problem of
 causal discovery has been explored in both the Directed Acyclic Graphs (DAGs)
-and Structural Equation Models (SEMs) literatures, each with different
-approaches. In the DAG literature, the focus has been on developing automated
-algorithms that can learn the causal structure from observational datasets. In
-contrast, the SEM literature focuses on tools that help researchers manually
-construct or modify models.
+and Structural Equation Models (SEMs) literatures, each adopting different
+approaches. In the DAG literature, the focus has primarily been on developing
+automated algorithms that can learn the causal structure from observational
+datasets. In contrast, the SEM literature has focused more towards developing
+tools that assist researchers in manually constructing or modifying models.
 
 % To perform any causal effect identification or estimation using Directed
 % Acyclic Graphs (DAGs) or Structural Equation Models (SEMs), researchers need to
@@ -246,63 +246,54 @@ construct or modify models.
 % scoring metric, and continuous optimization where the problem is formulated as
 % a constrained optimization problem such as No Tears.
 
-In the DAG literature, many automated algorithms have been developed for causal
-discovery such as constraint based methods like PC \citep{Spirtes2001} and FCI
-\citep{Spirtes2000}, score-based methods like Hill-Climb Search, Greedy
-Equivalence Search \citep{Chickering2002}, and optimization based methods.
-However, the adaption of these algorithms in applied fields remain limited
-\citep{Tennant2020}. Researchers in applied fields typically prefer to
-construct DAGs manually based on their domain knowledge. We hypothesize that
-this preference towards manual DAG construction stems from the following
-challenges in applying causal discovery algorithms: 
+As a result of these efforts, numerous approaches to automated algorithms for
+causal discovery have been proposed in the DAG literature, including
+constraint-based method like the PC algorithm \citep{Spirtes2001} and Fast
+Causal Inference (FCI) \citep{Spirtes2000}), score-based methods like
+Hill-Climb Search and Greedy Equivalence Search (GES) \citep{Chickering2002},
+and continuous optimization-based methods like NO TEARS \citep{Zheng2018} and
+DAGMA \citep{Bello2022}. However, the adaption of these algorithms in applied
+fields remain limited, and researchers typically prefer to construct DAGs
+manually based on their domain expertise \citep{Tennant2020, Petersen2021}.
+Even when using automated algorithms, users often rely on manual post hoc
+modifications to the model learned by the algorithm because they:
 
 \begin{enumerate}
-	\item \textbf{Trustworthiness: } Although most algorithms have
-		asymptotic theory proving them to be consistent, their finite
-		sample properties are not well understood. Moreover, depending
-		on the selected hyperparameters of the algorithms, the output
-		can vary very significantly. In real-world settings with finite
-		samples, these algorithms can make obvious mistakes, for
-		example, the constraint-based algorithms are biased towards
-		sparse graphs \citep{Malinsky2024}. Consequently, researchers
-		often have rely on post-hoc modifications based on model
-		testing methods and their domain knowledge.
-	\item \textbf{Outputs Markov Equivalence Class (MEC):} Multiple causal
-		structures can be faithful to a given observational dataset.
-		Thus, using only observational data, these algorithms can only
-		recover the MECs that can contain unoriented edges. However,
-		most methods for downstream tasks, such as identification or
-		causal effect estimation, assume knowledge of a fully oriented
-		DAG. As a result, researchers have to rely on their expertise
-		to orient these edges or make further assumptions to make use
-		of pairwise orientation techniques.
-	% \item \textbf{Algorithm and hyperparameter selection:} Each algorithm
-	% 	has the same goal but they can learn very different models
-	% 	depending on the choice of algorithm and their hyperparameters.
-	% 	For example, the choice of the conditional independence (CI)
-	% 	test being used for constraint-based method depends on the
-	% 	dataset, similarly for the scoring method for score-based
-	% 	methods. With no obvious way to test the impact/performance of
-	% 	these choices on a given dataset, it becomes quite hard to
-	% 	chose the optimal algorithm for a given dataset.
+	\item \textbf{Make Obvious Mistakes:} Although most algorithms are
+		theoretically consistent asymptotically, their finite sample
+		properties are not well understood. Moreover, depending on the
+		selected hyperparameters, their output can vary significantly.
+		These issues combined with no good method to test the
+		performance of these algorithms on a given dataset, in
+		real-world settings with finite samples, these algorithms can
+		make obvious mistakes. Consequently, users have to rely on
+		posthoc modifications to the model based on their domain
+		expertise.
+	\item \textbf{Outputs Markov Equivalence Class (MEC):} Multiple
+		DAGs can be faithful to a given observational dataset. Thus,
+		using only observational data, algorithms can only recover the
+		MECs that can contain a combination of directed and undirected
+		edges. However, most methods for downstream tasks, such as
+		identification or causal effect estimation, assume knowledge of
+		a fully oriented DAG. As a result, users have to manually
+		orient these edges before using them for analysis.
 \end{enumerate}
 
-As a result of these challenges, doesn't matter if the researcher is manually
-constructing the DAG or using an algorithm, they need to do some manual
-modifications to the model before being able to use them for analysis. One of
-the common ways to guide this modification is to use Conditional Independence
+Due to these challenges, whether constructing the model manually or using an
+algorithm, users must rely on their domain expertise to construct or modify the
+model. Hence, it is crucial to have tools to guide this modification process.
+One of the ways to guide this modification is to use Conditional Independence
 (CI) based model testing \cite{Ankan2021}. As DAGs imply CI statements that can
-be tested in the given data, and then model can be modified based on the
-p-values of these test. Figure~\ref{fig:ci_testing} shows an example of testing
-using CIs. This approach has two main drawbacks:
-\begin{enumerate}
-	\item CIs are implied by missing edges only, and hence we can not test
-		whether an incorrect edge is present in the model.
-	\item For larger graphs, the number of CI tests can be very large, for
-		example, the alarm network with $ 37 $ nodes has $ 287 $
-		implied CIs. It can be difficult to look at all these tests for
-		violations.
-\end{enumerate}
+be tested in the given data using statistical CI tests, we can verify whether
+the implied CIs are consistent in the data or not. If some of implied CIs are
+not valid in the given dataset, we can modify the model accordingly.
+Figure~\ref{fig:ci_testing} shows an example of model testing using CIs.
+However, this CI testing approach has a few drawbacks. Firstly, as CIs are
+implied only by missing edges in the model, we can not test whether an
+incorrect edge is already present in the model. Secondly, the number of implied
+CIs can be quite large. For example, in the moderately sized alarm network with 
+$ 37 $ node, there are $287$ implied CIs. If we rely only on the p-values of the
+CI tests, it can be difficult to figure which test to focus on.
 
 % As it is evident that researchers also draw DAGs by hand and even if they use
 % an algorithm, the need to make some post-hoc adjustments to the model, in this
@@ -316,42 +307,27 @@ using CIs. This approach has two main drawbacks:
 % network implies $x$ condition independence statements.
 
 On the other hand, in Structural Equation Models (SEMs) literature, more
-emphasis has been placed on helping researchers manually construct models while
-integrating their expertise. Researchers typically develop an initial model
-based on domain knowledge and use various tools to guide modifications to
-improve the fit of their model to data while it still making theoretical sense.
-This model construction process is known as \emph{Specification Search}. A
-common method for specification search is \emph{modification indices}, which
-identify potential changes to the model structure that improve the model fit
-and ranks them using the most improvement to the model fit. This ranking allows
-the researchers to focus first on the suggestions that can improve the model
-the most and while integrating their expertise to choose the most optimal
-modifications.
+emphasis has been placed on developing tools to help researchers manually
+construct models while integrating their domain expertise. Researchers
+typically develop an initial model based on domain knowledge and use various
+tools to guide modifications to improve the fit of their model to data. This
+model construction process is known as \emph{Specification Search}. A common
+method for specification search is using \emph{modification indices}, which
+identify potential changes to the model structure that improve the model fit.
+These potential changes are then ranked by the ones that improve the fit the
+most. This ranking allows the researchers to focus first on the suggestions
+that can improve the model the most and while integrating their expertise to
+choose the most optimal modifications.
 
-\todo[inline]{Show a figure of how the output looks like for modification indices}
-\todo[inline]{Other methods: Modification indices and Lagrange Multiplier tests to
-selectively add edges And using Wald test or z statistics (also known as
-critical ratios) for removing edges.}
-
-Inspired by this ranking approach, in this paper we present a way to rank the CI 
-testing using a measure of association. This can be interpreted as the edge 
-
-Our proposed approach uses a measure of association to find correlated variables
-in the data that are not explained by the current model. Using the measure, we 
-can rank the edge that can lead to the highest explanation of the observed 
-correlation. Based on this information, the user can select a potential edge
-and based on their expert knowledge decide the direction of the edge.
-
-% We present a similar procedure for modifying DAGs based on expert knowledge and
-% measure of association. We first use the measure of association to test whether
-% the association observed in the data is explained by the model structure. We
-% can not directly use the local CI tests to make modifications because that
-% would give way too many independencies and we have no way to rank them. Based
-% on this testing, we suggest adding edges by ranking them by the most
-% unexplained association between variables. The researcher can then use expert
-% knowledge to decide the direction of the edge between the variables.
-
-Our main contributions in this papers are as follows:
+Inspired by this ranking approach in modification indices, in this paper we
+develop a method to rank the CI tests using a conditional measure of
+association. Our proposed approach uses the measure of association to find
+correlated variables in the data that are not explained by the current model.
+Using the measure, we can then rank the pair of variables between which adding
+an edge would improve the explanation the most. Based on this information, the
+user can select a potential pair of variables and based on their expert
+knowledge decide the direction of the edge. Our main contributions in this
+paper are as follows:
 \begin{enumerate}
 	\item We present a measure of (conditional) association for mixed data
 		based on canonical correlations. This measure of association
@@ -409,7 +385,7 @@ Our main contributions in this papers are as follows:
 		\label{fig:ci_testing}
 \end{figure}
 \begin{figure}
-	\caption{\todo[inline]{Placeholder for figure showing an example of modification indices}}
+	\caption{\todo[inline]{Figure showing an example of modification indices}}
 \end{figure}
 
 The rest of the paper is structured as follows. In
@@ -437,9 +413,8 @@ between $ X $ and $ Y $ in the presence of a set of conditioning variables $
 \bm{Z} $. When $ Z = \emptyset $, this is equivalent to the marginal
 association between $ X $ and $ Y $.
 
-\todo[inline]{Add more notation as they come}
-
 \subsection{Measures of (Conditional) Association}
+\todo[inline]{Complete this section}
 As our DAG construction procedure relies on a measure of conditional
 association between variables, in this section we list out some of the already
 known measures for specific data types. These measure of associations are
@@ -470,8 +445,6 @@ However, when conditional variables are present, we can iterate over all
 possible combinations of the conditional variables, compute the Cramer\'s V and
 then lastly combine them together. 
 
-\todo[inline]{Is it even possible}
-
 \paragraph{$ X $ is ordinal and $ Y $ is continuous}
 Polyserial Correlation
 
@@ -485,32 +458,31 @@ Polychoric Correlation
 \section{A Measure of Association for Mixed Data}
 \label{sec:mixed_association}
 
-In this section, we define a novel partial measure of association for mixed
+In this section, we develop a novel partial measure of association for mixed
 data by extending the idea of partial correlation to mixed data. We do this by
 combining a mixed-data residualization method with a multivariate measure of
-association. Given $ n $ samples $ D = (x, y, \bm{z}) $ of variables $ X $, $ Y $,
-and $ \bm{Z} $, we are interested in computing an estimate of the conditional
-association $ \rho(X, Y; \bm{Z}) $ between $ X $ and $ Y $ conditioned on $
-\bm{Z} $. As the residualization approach requires atleast one conditional
-variable to be present, if $ \bm{Z} = \emptyset $, we use a constant value for
-$ Z $. Firstly, we compute the residuals for $ X $ and $ Y $ using the $ \bm{Z}
-$ as the predictor variables. We use the mixed data residualization approach
-from \citet{Ankan2023}. The residual computation depends on the type of 
-variable:
+association. Given $ n $ samples $ D = (x, y, \bm{z}) $ of variables $ X $, $ Y
+$, and $ \bm{Z} $, we are interested in computing an estimate of the
+conditional association $ \rho(X, Y; \bm{Z}) $ between $ X $ and $ Y $
+conditioned on $ \bm{Z} $. As the residualization approach requires atleast one
+conditional variable to be present, if $ \bm{Z} = \emptyset $, we use a
+constant value for $ Z $. Similar to partial correlation, we first compute the
+residuals for $ X $ and $ Y $ using $ \bm{Z} $ as the predictor variables. We
+use the mixed data residualization approach from \citet{Ankan2023}. Depending
+on the type of dependent variable, the residuals are defined as follows:
 
 \begin{enumerate}
-	\item \textbf{$ X $ is continuous:} We start by training a regression
-		model, $ E_X: x \sim \bm{z} $. Next we take the predictions
-		from this model $ \hat{x} = E_X(\bm{z}) $ and lastly the
-		residuals are computed as the difference between the true and
-		the predicted values.
-		$$ R_{x_i} = x_i - \hat{x}_i $$
-	\item \textbf{$ X $ is ordinal:} We start by training a probability
+	\item \textbf{Continuous:} We train a regression
+		model, $ E_X: x \sim \bm{z} $. The residuals are then defined
+		as the difference between the true and the predicted value using
+		$ E_X $.
+		$$ R_{x_i} = x_i - E_X(\bm{z}_i) $$
+	\item \textbf{Ordinal:} We start by training a probability
 		estimator, $ p_X: x \sim \bm{z} $, and take probability
 		predictions from it $ \hat{p}_X: \hat{p}_X(\bm{Z}) $. Then we
 		compute the residuals as follows:
 		$$ R_{x_i} = \hat{p}(\hat{x}_i > x_i) - \hat{p}(\hat{x}_i < x_i) $$
-	\item \textbf{$ X $ is categorical:} We again start by training a
+	\item \textbf{Categorical:} We again start by training a
 		probability estimator $ p_X: X \sim \bm{Z} $, and take the
 		probability estimates from it $ \hat{p}_X: p_Z(\bm{Z}) $. Next,
 		we one-hot encode the categorical variable and then compute the
@@ -522,31 +494,31 @@ variable:
 
 Here, users have the option to choose the estimators based on the properties of
 their data. Non-parametric ensemble estimators such as Random Forest and
-XGBoost can work well on a large variety of data and any data type. For linear
-datasets users can also choose variants of linear regression depending on the
-type of data. After the above steps are repeated for both $ X $ and $ Y $, we
-end up with two residual matrices: $ R_X $ and $ R_Y $. The type of the
-variable determines the shape for these matrices, i.e., if the variable is
-continuous we get a residual matrix of shape $ ( n \times 1 ) $ and if the
-variable is categorical we have a residual matrix of shape $ ( n \times (k-1))
-$ (where one of the dummy encoded variables is dropped to avoid
+XGBoost can work on any combination of data types while performing reasonably
+well. For linear datasets users can also choose variants of linear regression
+depending on the type of data. After the above steps are repeated for both $ X
+$ and $ Y $, we end up with two residual matrices: $ R_X $ and $ R_Y $. The
+type of the variable determines the shape for these matrices, i.e., if the
+variable is continuous we get a residual matrix of shape $ ( n \times 1 ) $ and
+if the variable is categorical we have a residual matrix of shape $ ( n \times
+(k-1)) $ (where one of the dummy encoded variables is dropped to avoid
 multicollinearity)
 
-We now have two continuous valued residual matrices and we need a measure to
-quantify the association between these residuals. In multivariate statistics,
-canonical correlation based measures have been used for measuring association
-between two sets of variables. We can treat the residuals as sets of variables
-in case of categorical variable and use canonical corrleations to quantify the
-association between them.
+We now have two continuous valued residual matrices and the second step now is
+to quantify the association between these residuals. In multivariate
+statistics, canonical correlation based measures have been used for measuring
+association between two sets of variables. We can treat the residuals as sets
+of variables in case of categorical variable and use canonical correlations to
+quantify the association between them.
 \todo[inline]{Justify the argument}
 
 \begin{definition}
 	Given two sets of random variables $ \bm{U} = (U_1, U_2, \cdots, U_p) $
 	and $ \bm{V} = (V_1, V_2, \cdots, V_q) $, canonical correlation between
-	them, $\rho(\bm{U}, \bm{V}) $ is defined as:
+	them, $\phi(\bm{U}, \bm{V}) $ is defined as:
 		
 	\begin{equation}
-		\rho(\bm{U}, \bm{V}) = \sup_{a, b} \frac{a^T \Sigma_{\bm{U}\bm{V}} b}{\sqrt{a^T \Sigma_{\bm{U}\bm{U}} a} \sqrt{b^T \Sigma_{\bm{V}\bm{V}} b}}
+		\phi(\bm{U}, \bm{V}) = \sup_{a, b} \frac{a^T \Sigma_{\bm{U}\bm{V}} b}{\sqrt{a^T \Sigma_{\bm{U}\bm{U}} a} \sqrt{b^T \Sigma_{\bm{V}\bm{V}} b}}
 	\end{equation}
 
 \end{definition}
@@ -571,9 +543,10 @@ multivariate statistics with each of them having slightly different properties.
 We use Pillai's Trace for our purpose for two main reasons: 1) It uses all the
 canoncial correlation values, 2) Its interpretation is similar to correlation
 coefficient, i.e., $ 0 $ signifies no association and $ 1 $ signifies perfect
-linear relationship. 
+linear relationship. This gives us the following partial measure of association:
 
-\todo[inline]{Add the formula for our case here}
+$$ \rho(X, Y; \bm{Z}) = \sum_{i=1}^{min(\rvert R_X \rvert, \rvert R_Y \rvert)} (\phi_i(R_X, R_Y))^2 $$
+
 
 This measure of association has many desired properties:
 
@@ -584,8 +557,8 @@ This measure of association has many desired properties:
 	\item Reduces to partial correlations when both variables are continuous.
 	\item In case of discrete variables, connected to Cramer\'s V, a well
 		known effect size measure for discrete variables.
-		\todo[inline]{Show the connection}
 \end{enumerate}
+\todo[inline]{Expand on these points}
 
 \section{Using Measure of Association for DAG Modification and Construction}
 \label{sec:modification}
@@ -636,6 +609,8 @@ incorrect edge in the graph, it is shown in black. Once the user is happy with
 the graph they have they can export it into different formats to use it for
 further computation.
 
+\todo[inline]{Add screenshots here}
+
 % \begin{figure}
 % 	\centering
 % 	\begin{subfigure}{0.5\textwidth}
@@ -649,6 +624,25 @@ further computation.
 
 \section{Empirical Analysis}
 \label{sec:empirical}
+
+\begin{figure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics{../code/plots/shd_ribbon.pdf}
+		\caption{}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics{../code/plots/sid_ribbon.pdf}
+		\caption{}
+	\end{subfigure}
+	\caption{Comparison of PC and Hill-Climb Search algorithms against
+		manually drawn DAGs using the assistance method. As PC and
+		Hill-Climb Search return the Markov Equivalence Class (MEC), we
+		use the best and worst scoring orientation of the MEC to get
+		the range of values. The human drawn values are done for
+	multiple accuracy values of the oracle. \todo[inline]{Replace Hill-Climb with GES}}
+\end{figure}
 
 We analyzed the performance of this manual approach by comparing it with two
 automated algorithms: PC and Hill-Climb Search. For the comparison we use
@@ -696,24 +690,6 @@ Algorithm.
 \todo[inline]{Add the algorithm}
 
 \subsection{Results}
-\begin{figure}
-	\begin{subfigure}{0.5\textwidth}
-		\centering
-		\includegraphics{../code/plots/shd_ribbon.pdf}
-		\caption{}
-	\end{subfigure}
-	\begin{subfigure}{0.5\textwidth}
-		\centering
-		\includegraphics{../code/plots/sid_ribbon.pdf}
-		\caption{}
-	\end{subfigure}
-	\caption{Comparison of PC and Hill-Climb Search algorithms against
-		manually drawn DAGs using the assistance method. As PC and
-		Hill-Climb Search return the Markov Equivalence Class (MEC), we
-		use the best and worst scoring orientation of the MEC to get
-		the range of values. The human drawn values are done for
-		multiple accuracy values of the oracle.}
-\end{figure}
 
 \subsection{Using Large Language Models as Experts}
 A lot of recent work has focused on finding pairwise causal direction among
@@ -724,7 +700,14 @@ memorized many of these models, we encoded the variable names using a random
 string and provided the description of the variable to let it decide the
 direction of the edge.
 
+\begin{figure}[ht]
+	\centering
+	\includegraphics[scale=0.3]{../code/plots/llm_adult.png}
+	\caption{\todo[inline]{Change figure to have consistent style}}
+\end{figure}
+
 \section{Conclusions}
 
+\newpage
 \bibliography{references}
 \end{document}
