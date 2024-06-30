@@ -319,28 +319,6 @@ most. This ranking allows the researchers to focus first on the suggestions
 that can improve the model the most and while integrating their expertise to
 choose the most optimal modifications.
 
-Inspired by this ranking approach in modification indices, in this paper we
-develop a method to rank the CI tests using a conditional measure of
-association. Our proposed approach uses the measure of association to find
-correlated variables in the data that are not explained by the current model.
-Using the measure, we can then rank the pair of variables between which adding
-an edge would improve the explanation the most. Based on this information, the
-user can select a potential pair of variables and based on their expert
-knowledge decide the direction of the edge. Our main contributions in this
-paper are as follows:
-\begin{enumerate}
-	\item We present a measure of (conditional) association for mixed data
-		based on canonical correlations. This measure of association
-		generalizes the widely used partial correlation to mixed data
-		setting.
-	\item Using this association measure, we present a procedure to suggest
-		modifications (i.e., new edges, and deleting edges) to a given
-		model such that the model can better explain the observed
-		associations in the data. 
-	\item Lastly, we present a web-browser based tool to allow researchers
-		to apply this method to their own datasets.
-\end{enumerate}
-
 \begin{figure}
 	\centering
 	\begin{tikzpicture}
@@ -388,6 +366,28 @@ paper are as follows:
 	\caption{\todo[inline]{Figure showing an example of modification indices}}
 \end{figure}
 
+Inspired by this ranking approach in modification indices, in this paper we
+develop a method to rank the CI tests using a conditional measure of
+association. Our proposed approach uses the measure of association to find
+correlated variables in the data that are not explained by the current model.
+Using the measure, we can then rank the pair of variables between which adding
+an edge would improve the explanation the most. Based on this information, the
+user can select a potential pair of variables and based on their expert
+knowledge decide the direction of the edge. Our main contributions in this
+paper are as follows:
+\begin{enumerate}
+	\item We present a measure of (conditional) association for mixed data
+		based on canonical correlations. This measure of association
+		generalizes the widely used partial correlation to mixed data
+		setting.
+	\item Using this partial association measure, we present a procedure to
+		rank CI tests. This ranking can in turn then be used to
+		prioritize addition or deletion of edges from the model.
+	\item Lastly, we present a web-browser based tool to allow researchers
+		to apply this method to their own datasets.
+\end{enumerate}
+
+
 The rest of the paper is structured as follows. In
 Section~\ref{sec:background}, we give a background on the measures of
 association for various data types. In Section~\ref{sec:mixed_association}, we
@@ -402,11 +402,12 @@ modification process works.
 We consider random variable $ X $ and $ Y $ with a possible multi-dimensional
 variable $ \bm{Z} = \{ Z_1, \cdots, Z_k \} $. We consider these variables in
 the mixed data setting where these variables can be any combination of
-continuous, categorical, or ordinal unless specified. We use $ \rvert \bm{Z}
-\rvert $ to represent the cardinality of the variable $ \bm{Z} $. We write $
-\bm{x} = (x_1, \cdots, x_n) $ for a sample from $ X $ of size $ n $. We write
-the expectation of a variable $ X $ as $ \mathbb{E}[X] $, conditional
-expectations as $ \mathbb{E}[X | \bm{Z}] $.
+continuous, categorical, or ordinal unless specified. We also assume all
+variables to be observed. We use $ \rvert \bm{Z} \rvert $ to represent the
+cardinality of the variable $ \bm{Z} $. We write $ \bm{x} = (x_1, \cdots, x_n)
+$ for a sample from $ X $ of size $ n $. We write the expectation of a variable
+$ X $ as $ \mathbb{E}[X] $, conditional expectations as $ \mathbb{E}[X |
+\bm{Z}] $.
 
 We consider the problem of estimating the partial (or conditional) association
 between $ X $ and $ Y $ in the presence of a set of conditioning variables $
@@ -565,14 +566,13 @@ This measure of association has many desired properties:
 
 % Add that we need a p-value as well.
 
-Using this mixed data partial association measure, we propose an iterative DAG
-modification procedure. 
-\todo[inline]{How similar is this to GES algorithm}
-If the user desires to construct the model manually, they can also start with
-an empty graph. Given a DAG $ G $ and a dataset $ D $, for each pair for
-variable $ X $ and $ Y $ in $ G $ that does not have an edge between them, we
-compute the partial association measure: $ \rho(X, Y; pa_G(X) \cup pa_G(Y)) $.
-The measure of association in this case can be interpreted as the unexplained
+Using this mixed data partial association measure, we propose a method to rank
+CI tests. If the user desires to construct the model manually, they can also
+start with an empty graph, or start with a DAG outputted by a causal discovery
+algorithm. Given a DAG $ G $ and a dataset $ D $, for each pair for variable
+$ X $ and $ Y $ in $ G $ that does not have an edge between them, we compute
+the partial association measure: $ \rho(X, Y; pa_G(X) \cup pa_G(Y)) $. The
+measure of association in this case can be interpreted as the unexplained
 observed association between them given the current model. We can then use this
 to rank pair of variables which have very high unexplained association between
 them. Based on the domain expertise, the user can then choose one of these
@@ -590,7 +590,7 @@ can remove the edge.
 \begin{theorem}
 	If we have access to an oracle that can give correct edge directions, taking a
 	greedy approach with the procedure above results in the correct graph
-	being recovered.
+	being recovered. \todo[inline]{Reword and add proof}
 \end{theorem}
 
 \section{Web Tool}
@@ -645,15 +645,17 @@ further computation.
 \end{figure}
 
 We analyzed the performance of this manual approach by comparing it with two
-automated algorithms: PC and Hill-Climb Search. For the comparison we use
-simulated data from a known DAG and compare how well the algorithm is able to
-recover the original model using two metrics: Structural Hamming Distance (SHD)
-and Structural Intervention Distance (SID). To simulate the data, we start with
-a randomly generated DAG and use linear models with random effects to generate
-the data. We repeat the data generation $ 30 $ times for each density value for
-the DAG. As both PC and Hill-Climb Search can only give us a CPDAG, we compare
-the orientation of these CPDAG which result in the best and worst case scores
-on SHD and SID. This procedure is outlined in Algorithm 1.
+automated algorithms: PC and Greedy Equivalence Search. For the comparison we
+use simulated data from a known DAG and compare how well the algorithm is able
+to recover the original model using two metrics: Structural Hamming Distance
+(SHD) and Structural Intervention Distance (SID). To simulate the data, we
+start with a randomly generated DAG and use linear models with random effects
+to generate the data. We repeat the data generation $ 30 $ times for each
+density value for the DAG. As both PC and Hill-Climb Search can only give us a
+CPDAG, we compare the orientation of these CPDAG which result in the best and
+worst case scores on SHD and SID. This procedure is outlined in Algorithm 1.
+best and worst case scores on SHD and SID. This procedure is outlined in
+Algorithm 1.
 
 \todo[inline]{Add the algorithm}
 
@@ -700,10 +702,16 @@ memorized many of these models, we encoded the variable names using a random
 string and provided the description of the variable to let it decide the
 direction of the edge.
 
-\begin{figure}[ht]
+\begin{figure}
 	\centering
-	\includegraphics[scale=0.3]{../code/plots/llm_adult.png}
-	\caption{\todo[inline]{Change figure to have consistent style}}
+	\begin{subfigure}{0.5\textwidth}
+		\caption{\todo[inline]{Add the prompt used}}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[scale=0.3]{../code/plots/llm_adult.png}
+		\caption{\todo[inline]{Change figure to have consistent style}}
+	\end{subfigure}
 \end{figure}
 
 \section{Conclusions}
