@@ -23,14 +23,15 @@ def query_direction(u, v, descriptions):
         """
 
     response = model.generate_content([prompt])
-    if response.text.strip().lower() in ('a', '1'):
+    response_txt = response.text.strip().lower().replace('*', '')
+    if response_txt in ('a', '1'):
         print(f"Direction: {u} -> {v}")
         return (u, v)
-    elif response.text.strip().lower() in ('b', '2'):
+    elif response_txt in ('b', '2'):
         print(f"Direction: {v} -> {u}")
         return (v, u)
     else:
-        print(response.text)
+        print(response_txt)
         raise ValueError("LLM Failed")
 
 
@@ -126,8 +127,8 @@ def simulate_human(data, descriptions, pval_thres=0.05, effect_thres=0.1):
 
 descriptions = {'Age': 'The age of a person',
                 'Workclass': 'The workplace where the person is employed such as Private industry, or self employed',
-                'Education': "The highest level of education the person has finished.",
-                'MaritalStatus': "The marital status of a person",
+                'Education': "The highest level of education the person has finished",
+                'MaritalStatus': "The marital status of the person",
                 "Occupation": "The kind of job the person does. For example, sales, craft repair, clerical",
                 "Relationship": "The relationship status of the person",
                 "Race": "The ethnicity of the person",
