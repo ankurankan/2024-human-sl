@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import networkx as nx
 from itertools import combinations
 
 import google.generativeai as genai
@@ -99,11 +100,12 @@ def test_all(dag, data):
 
     return pd.DataFrame(cis, columns=['u', 'v', 'z', 'edge_present', 'effect', 'p_val'])
 
-def simulate_human(data, descriptions, pval_thres=0.05, effect_thres=0.1):
+def simulate_human(data, descriptions, pval_thres=0.05, effect_thres=0.05):
     nodes = list(data.columns)
     dag = DAG()
     dag.add_nodes_from(nodes)
 
+    blacklisted_edges = []
     while(True):
         all_effects = test_all(dag, data)
 
@@ -120,9 +122,19 @@ def simulate_human(data, descriptions, pval_thres=0.05, effect_thres=0.1):
         if (edge_effects.shape[0] == 0) and (nonedge_effects.shape[0] == 0):
             break
 
+        if len(blacklisted_edges) > 0:
+            nonedge_effects = nonedge_effects.loc[((nonedge_effects.u in [edge[0] for edge in blacklisted_edges]) & (nonedge_effects.v in [edge[1] for edge in blacklisted_edges])) or
+                             ((nonedge_effects.u in [edge[1] for edge in blacklisted_edges]) & (nonedge_effects.v in [edge[0] for edge in blacklisted_edges])), :]
+        if len(blacklisted_edges) > 0:
+            import ipdb; ipdb.set_trace()
         selected_edge = nonedge_effects.iloc[nonedge_effects.effect.argmax()]
         print(f"Adding: {selected_edge.u} -- {selected_edge.v}")
-        dag.add_edges_from([query_direction(selected_edge.u, selected_edge.v, descriptions)])
+        edge_direction = query_direction(selected_edge.u, selected_edge.v, descriptions)
+        if nx.has_path(dag, edge_direction[1], edge_direction[0]):
+            print(f"Blacklisting: {edge_direction}")
+            blacklisted_edges.append(edge_direction)
+        else:
+            dag.add_edges_from([edge_direction])
     return(dag)
 
 descriptions = {'Age': 'The age of a person',
