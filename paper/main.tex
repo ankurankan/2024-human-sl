@@ -106,7 +106,7 @@
 % nouns, adverbs, adjectives should be capitalized, including both words in hyphenated terms, while
 % articles, conjunctions, and prepositions are lower case unless they
 % directly follow a colon or long dash
-\title{Title}
+\title{Human-In-The-Loop Causal Discovery}
 \author{
     %Authors
     % All authors must be in the same font size and format.
@@ -220,17 +220,18 @@
 
 \section{Introduction}
 
-Understanding cause-and-effect relationships between variables is a fundamental
-goal in many scientific questions as it reveals the underlying mechanisms of
-observed phenomena and informs effective interventions or policy decisions.
-\emph{Causal Discovery} methods aim to uncover the underlying causal structure
-among random variables from a given observational dataset. The problem of
-causal discovery has been explored in both the Directed Acyclic Graphs (DAGs)
-and Structural Equation Models (SEMs) literatures, each adopting different
-approaches. In the DAG literature, the focus has primarily been on developing
-automated algorithms that can learn the causal structure from observational
-datasets. In contrast, the SEM literature has focused more towards developing
-tools that assist researchers in manually constructing or modifying models.
+Understanding the cause-and-effect relationships between variables is a
+fundamental goal in many scientific questions as it reveals the underlying
+mechanisms of observed phenomena and informs effective interventions or policy
+decisions. \emph{Causal Discovery} methods aim to uncover the underlying causal
+structure among random variables from a given observational dataset. The
+problem of causal discovery has been explored in both the Directed Acyclic
+Graphs (DAGs) and Structural Equation Models (SEMs) literatures, each adopting
+different approaches. In the DAG literature, the focus has primarily been on
+developing automated algorithms that can learn the causal structure from
+observational datasets. In contrast, the SEM literature has focused more
+towards developing tools that assist researchers in manually constructing or
+modifying models.
 
 % To perform any causal effect identification or estimation using Directed
 % Acyclic Graphs (DAGs) or Structural Equation Models (SEMs), researchers need to
@@ -265,10 +266,10 @@ modifications to the model learned by the algorithm because they:
 		selected hyperparameters, their output can vary significantly.
 		These issues combined with no good method to test the
 		performance of these algorithms on a given dataset, in
-		real-world settings with finite samples, these algorithms can
-		make obvious mistakes. Consequently, researchers have to rely on
-		posthoc modifications to the model based on their domain
-		expertise.
+		real-world settings with finite samples, it can be difficult to
+		trust the output of these algorithms. Consequently, researchers
+		have to rely on posthoc modifications to the model based on
+		their domain expertise.
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} Multiple
 		DAGs can be faithful to a given observational dataset. Thus,
 		using only observational data, algorithms can only recover the
@@ -278,7 +279,8 @@ modifications to the model learned by the algorithm because they:
 		a fully oriented DAG. As a result, researchers have to manually
 		orient these edges before using them for analysis.
 \end{enumerate}
-\todo[inline]{The second point doesn't seem to be adding much}
+
+\todo[inline]{Add an example here showing these problems}
 
 Due to these challenges, whether constructing the model manually or using an
 algorithm, we must rely on domain expertise to construct or modify the
@@ -374,8 +376,10 @@ correlated variables in the data that are not explained by the current model.
 Using the measure, we can then rank the pair of variables between which adding
 an edge would improve the explanation the most. Based on this information, the
 user can select a potential pair of variables and based on their expert
-knowledge decide the direction of the edge. Our main contributions in this
-paper are as follows:
+knowledge decide the direction of the edge. 
+\todo[inline]{Add about the score based methods somewhere here}
+
+Our main contributions in this paper are as follows:
 \begin{enumerate}
 	\item We present a measure of (conditional) association for mixed data
 		based on canonical correlations. This measure of association
