@@ -106,7 +106,7 @@
 % nouns, adverbs, adjectives should be capitalized, including both words in hyphenated terms, while
 % articles, conjunctions, and prepositions are lower case unless they
 % directly follow a colon or long dash
-\title{Human-In-The-Loop Causal Discovery}
+\title{Expert-In-The-Loop Causal Discovery: Integrating Expert Knowledge}
 \author{
     %Authors
     % All authors must be in the same font size and format.
@@ -223,41 +223,26 @@
 Understanding the cause-and-effect relationships between variables is a
 fundamental goal in many scientific questions as it reveals the underlying
 mechanisms of observed phenomena and informs effective interventions or policy
-decisions. \emph{Causal Discovery} methods aim to uncover the underlying causal
-structure among random variables from a given observational dataset. The
+decisions. \emph{Causal Discovery} methods aim to uncover these underlying
+cause-effect relationships among random variables from observational data. The
 problem of causal discovery has been explored in both the Directed Acyclic
 Graphs (DAGs) and Structural Equation Models (SEMs) literatures, each adopting
-different approaches. In the DAG literature, the focus has primarily been on
+a different approach. In the DAG literature, the focus has primarily been on
 developing automated algorithms that can learn the causal structure from
-observational datasets. In contrast, the SEM literature has focused more
-towards developing tools that assist researchers in manually constructing or
-modifying models.
+datasets. In contrast, the SEM literature has focused more towards developing
+tools that assist researchers in manually constructing or modifying models.
 
-% To perform any causal effect identification or estimation using Directed
-% Acyclic Graphs (DAGs) or Structural Equation Models (SEMs), researchers need to
-% first construct a causal structure commonly known as DAG or path diagram. This
-% process of constructing the casual structure from data is known as \emph{Causal
-% Discovery}. In the field of DAGs, plenty of algorithms have been developed to
-% automatically construct DAGs from data. These algorithm takes different
-% approaches to causal discovery such as Constraint-based algorithms such as PC
-% and Fast Causal Infenrece (FCI) where the algorithm tries to match the
-% conditional independences in the data to the ones impled by the model,
-% score-based methods such as Hill-Climb Search, Greedy Equivalence Search (GES)
-% where the algorithm tries to find a model that has the best score given some
-% scoring metric, and continuous optimization where the problem is formulated as
-% a constrained optimization problem such as No Tears.
-
-As a result of these efforts, numerous approaches to automated algorithms for
-causal discovery have been proposed in the DAG literature, including
-constraint-based method like the PC algorithm \citep{Spirtes2001} and Fast
-Causal Inference (FCI) \citep{Spirtes2000}), score-based methods like
-Hill-Climb Search and Greedy Equivalence Search (GES) \citep{Chickering2002},
-and continuous optimization-based methods like NO TEARS \citep{Zheng2018} and
-DAGMA \citep{Bello2022}. However, the adaption of these algorithms in applied
-fields remain limited, and researchers typically prefer to construct DAGs
-manually based on their domain expertise \citep{Tennant2020, Petersen2021}.
-Even when using automated algorithms, we often have to rely on manual post hoc
-modifications to the model learned by the algorithm because they:
+As a result of these efforts, numerous algorithms for causal discovery have
+been proposed in the DAG literature, such as constraint-based methods like the
+PC algorithm \citep{Spirtes2001} and Fast Causal Inference (FCI)
+\citep{Spirtes2000}), score-based methods like Hill-Climb Search and Greedy
+Equivalence Search (GES) \citep{Chickering2002}, and continuous
+optimization-based methods like NO TEARS \citep{Zheng2018} and DAGMA
+\citep{Bello2022}. However, the adaption of these algorithms in applied fields
+remain limited, and researchers typically prefer to construct DAGs manually
+based on their domain expertise \citep{Tennant2020, Petersen2021}. We believe this 
+is the case because of problems with these algorithms when applied in practical
+settings:
 
 \begin{enumerate}
 	\item \textbf{Make Obvious Mistakes:} Although most algorithms are
@@ -282,7 +267,9 @@ modifications to the model learned by the algorithm because they:
 
 \todo[inline]{Add an example here showing these problems}
 
-Due to these challenges, whether constructing the model manually or using an
+Due to these challenges, even when using automated algorithms, we often have to
+rely on manual post hoc testing and modifications to the model learned by the
+algorithm. Whether constructing the model manually or using an
 algorithm, we must rely on domain expertise to construct or modify the
 model. Hence, it is crucial to have tools to guide this modification process.
 One of the ways to guide this modification is to use Conditional Independence
@@ -297,17 +284,6 @@ incorrect edge is already present in the model. Secondly, the number of implied
 CIs can be quite large. For example, in the moderately sized alarm network with 
 $ 37 $ node, there are $287$ implied CIs. If we rely only on the p-values of the
 CI tests, it can be difficult to figure which test to focus on.
-
-% As it is evident that researchers also draw DAGs by hand and even if they use
-% an algorithm, the need to make some post-hoc adjustments to the model, in this
-% paper we present a tool to assist researchers in making these adjustments
-% somewhat inspired by modification indices. In the case of DAGs, global testing
-% methodology does exist such as Shipley test, that can combine local structure
-% tests into a single p-value test. However, this does not give us a way to make
-% modifications to our model. A possible way to do this by checking which of
-% these local tests are violated. However, this approach can quickly become
-% diffult as the size of the network increases. For example, the popular alarm
-% network implies $x$ condition independence statements.
 
 On the other hand, in Structural Equation Models (SEMs) literature, more
 emphasis has been placed on developing tools to help researchers manually
@@ -391,7 +367,6 @@ Our main contributions in this paper are as follows:
 	\item Lastly, we present a web-browser based tool to allow researchers
 		to apply this method to their own datasets.
 \end{enumerate}
-
 
 The rest of the paper is structured as follows. In
 Section~\ref{sec:background}, we give a background on the measures of
