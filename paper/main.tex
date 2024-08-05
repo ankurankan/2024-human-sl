@@ -269,32 +269,36 @@ settings:
 
 Due to these challenges, even when using automated algorithms, we often have to
 rely on manual post hoc testing and modifications to the model learned by the
-algorithm. Whether constructing the model manually or using an
-algorithm, we must rely on domain expertise to construct or modify the
-model. Hence, it is crucial to have tools to guide this modification process.
-One of the ways to guide this modification is to use Conditional Independence
-(CI) based model testing \cite{Ankan2021}. As DAGs imply CI statements that can
-be tested in the given data using statistical CI tests, we can verify whether
-the implied CIs are consistent in the data or not. If some of implied CIs are
-not valid in the given dataset, we can modify the model accordingly.
-Figure~\ref{fig:ci_testing} shows an example of model testing using CIs.
-However, this CI testing approach has a few drawbacks. Firstly, as CIs are
-implied only by missing edges in the model, we can not test whether an
-incorrect edge is already present in the model. Secondly, the number of implied
-CIs can be quite large. For example, in the moderately sized alarm network with 
-$ 37 $ node, there are $287$ implied CIs. If we rely only on the p-values of the
-CI tests, it can be difficult to figure which test to focus on.
+algorithm. Whether constructing the model manually or using an algorithm, we
+must rely on domain expertise to construct or modify the model. Hence, it is
+crucial to have tools to guide this modification process. One of the ways to
+guide this modification is to use Conditional Independence (CI) based model
+testing \cite{Ankan2023}. As DAGs imply CI statements that can be tested in the
+given data using statistical CI tests, we can verify whether the implied CIs
+are consistent in the data or not. If some of implied CIs are not valid in the
+given dataset, we can modify the model accordingly. Figure~\ref{fig:ci_testing}
+shows an example of model testing using CIs. However, using p-values of the CI
+tests has a few drawbacks. Firstly, as CIs are implied only by missing edges in
+the model, we can not test whether an incorrect edge is already present in the
+model. For examples, in high sample size scenarios, we might get a significant
+association between a pair of variables with very small association. Secondly,
+the number of implied CIs can be quite large. For example, in the moderately
+sized alarm network with $ 37 $ node, there are $287$ implied CIs. If we rely
+only on the p-values of the CI tests, it can be difficult to figure which test
+to focus on.
 
-On the other hand, in Structural Equation Models (SEMs) literature, more
-emphasis has been placed on developing tools to help researchers manually
-construct models while integrating their domain expertise. Researchers
-typically develop an initial model based on domain knowledge and use various
-tools to guide modifications to improve the fit of their model to data. This
-model construction process is known as \emph{Specification Search}. A common
-method for specification search is using \emph{modification indices}, which
-identify potential changes to the model structure that improve the model fit.
-These potential changes are then ranked by the ones that improve the fit the
-most. This ranking allows the researchers to focus first on the suggestions
+To deal with both this issues, in this paper, we develop a measure of partial
+association which can be using in combination of the CI test to rank the
+violations in these CI tests. On the other hand, in Structural Equation Models
+(SEMs) literature, more emphasis has been placed on developing tools to help
+researchers manually construct models while integrating their domain expertise.
+Researchers typically develop an initial model based on domain knowledge and
+use various tools to guide modifications to improve the fit of their model to
+data. This model construction process is known as \emph{Specification Search}.
+A common method for specification search is using \emph{modification indices},
+which identify potential changes to the model structure that improve the model
+fit. These potential changes are then ranked by the ones that improve the fit
+the most. This ranking allows the researchers to focus first on the suggestions
 that can improve the model the most and while integrating their expertise to
 choose the most optimal modifications.
 
@@ -440,17 +444,20 @@ Polychoric Correlation
 \label{sec:mixed_association}
 
 In this section, we develop a novel partial measure of association for mixed
-data by extending the idea of partial correlation to mixed data. We do this by
-combining a mixed-data residualization method with a multivariate measure of
-association. Given $ n $ samples $ D = (x, y, \bm{z}) $ of variables $ X $, $ Y
-$, and $ \bm{Z} $, we are interested in computing an estimate of the
-conditional association $ \rho(X, Y; \bm{Z}) $ between $ X $ and $ Y $
-conditioned on $ \bm{Z} $. As the residualization approach requires atleast one
-conditional variable to be present, if $ \bm{Z} = \emptyset $, we use a
-constant value for $ Z $. Similar to partial correlation, we first compute the
-residuals for $ X $ and $ Y $ using $ \bm{Z} $ as the predictor variables. We
-use the mixed data residualization approach from \citet{Ankan2023}. Depending
-on the type of dependent variable, the residuals are defined as follows:
+data by extending the idea of partial correlation to mixed data. As partial
+correlations require two things: 1) A residualization method, and 2) measure of
+associations between the residuals. We generalize this to mixed data by combining a
+mixed data residualization method \citep{Ankan2023} with a multivariate measure
+of association based on Pillai's Trace. Given $ n $ samples $ D = (x, y,
+\bm{z}) $ of variables $ X $, $ Y $, and $ \bm{Z} $, we are interested in
+computing an estimate of the conditional association $ \rho(X, Y; \bm{Z}) $
+between $ X $ and $ Y $ conditioned on $ \bm{Z} $. As the residualization
+approach requires atleast one conditional variable to be present, if $ \bm{Z} =
+\emptyset $, we use a constant value for $ Z $. Similar to partial correlation,
+we first compute the residuals for $ X $ and $ Y $ using $ \bm{Z} $ as the
+predictor variables. We use the mixed data residualization approach from
+\citet{Ankan2023}. Depending on the type of dependent variable, the residuals
+are defined as follows:
 
 \begin{enumerate}
 	\item \textbf{Continuous:} We train a regression
@@ -546,19 +553,27 @@ This measure of association has many desired properties:
 % Add that we need a p-value as well.
 
 Using this mixed data partial association measure, we propose a method to rank
-CI tests, and use it for model construction and modification. If the user
-desires to construct the model manually, they can also start with an empty
-graph, or start with a DAG outputted by a causal discovery algorithm. Given a
-DAG $ G $ and a dataset $ D $, for each pair for variable $ X $ and $ Y $ in $
-G $ that does not have an edge between them, we compute the partial association
-measure: $ \rho(X, Y; pa_G(X) \cup pa_G(Y)) $. The measure of association in
-this case can be interpreted as the unexplained observed association between
-them given the current model. We can then use this to rank pair of variables
-which have very high unexplained association between them. Based on the domain
-expertise, we can then choose one of these suggested pair of variables, decide
-the direction of the edge between the variables, and add it to the model. Once
-the new edge is added we can recompute the association of all other variables
-and $ X $ and $ Y $.
+CI tests, and use it for model construction and modification. Given a
+potentially empty DAG $ G $ and a dataset $ D $, for each pair for variable $ X
+$ and $ Y $ in $ G $:
+\begin{itemize}
+	\item If there is no edge between $ X $ and $ Y $, we compute p-value for the CI test $ X \ci Y \rvert pa_G(X) \cup pa_G(Y) $ and the partial association measure: $ \rho(X, Y; pa_G(X) \cup pa_G(Y)) $.
+	\item If there is an edge between $ X $ and $ Y $, we compute p-value for the CI test $ X \ci Y \rvert pa_\underling{G}(X) \cup pa_{\underline{G}(Y)} $ and the partial association measure: $ \rho(X, Y; pa_{\underline{G}}(X) \cup pa_{\underline{G}}(Y) $.
+\end{itemize}
+
+The value of this partial measure of association can be interpreted as - given
+the current structure of the model how much of the observed correlation between
+the variables $ X $ and $ Y $ in data is not explained by the model. To modify
+the model based on this, we can look at the pair of variables that have an edge
+between them. If any of these pair have a p-value greater than partial
+association below our chosen threshold, we can remove that edge as it is
+redundant. In the case when there are 
+
+We can then use this to rank pair of variables which have very high unexplained
+association between them. Based on the domain expertise, we can then choose one
+of these suggested pair of variables, decide the direction of the edge between
+the variables, and add it to the model. Once the new edge is added we can
+recompute the association of all other variables and $ X $ and $ Y $.
 
 Additionally, in each iteration of modification, for each pair of variable in $
 G $, that has an edge between them in we compute the partial association
