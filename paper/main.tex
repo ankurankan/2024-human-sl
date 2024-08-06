@@ -177,35 +177,37 @@
 
 \begin{abstract}
 	\emph{Causal Discovery} has received significant attention in the
-	Directed Acyclic Graphs (DAGs) literature, leading to the development
-	of numerous automated algorithms for constructing DAGs from data.
-	Despite these advancements, the application of these algorithms in
-	applied domains remain limited, with researchers often preferring to
+	\emph{Directed Acyclic Graphs} (DAGs) literature, leading to the
+	development of numerous automated algorithms for constructing DAGs from
+	data. Despite these advancements, the application of these algorithms
+	in applied domains remain limited, with researchers often preferring to
 	construct DAGs manually based on their expert knowledge. We hypothesize
 	that the reluctance to use automated algorithms arises due to several
-	practical issues, such as difficulty in choosing the best algorithm and
-	their hyperparameters for a given dataset, algorithms can make obvious
-	mistakes, and they output the Markov Equivalence Class (MEC) instead of
-	a DAG, which is often required for further analysis. Even when using
-	these algorithms, researchers must rely on their expert knowledge to
-	make modifications, or orient edges of the learned model. Given this
-	reliance on manual model construction and modification, in this paper,
-	we present a method inspired by \emph{specification search} in
-	Structural Equation Models (SEMs) to assist researchers in iteratively
-	modifying their models. Specifically, we utilize implied Conditional
-	Independence (CI) based model testing combined with a novel measure of
-	partial association for mixed data to rank violations of implied CIs in
-	data. Using this ranking users can make modifications to their models
-	by either removing edges or adding edges between pair of variables
-	while deciding the direction of the edge based on their domain
-	expertise. The ranking allows users to prioritize the worst offending
-	violations first. Through empirical analysis, when applied to learning
-	the model, we demonstrate that taking a greedy approach (i.e., fixing
-	the worst violation first) this approach can get comparable performance
-	to automated algorithms if the users are able to get the edge direction
-	correctly with an accuracy higher than $ 0.4 $. (check if this is
-	correct). Alternatively, we show that a Large Language Model (LLM) can
-	also be used to help in deciding the direction between the variables.
+	practical issues, such as algorithms often make obvious mistakes making
+	it difficult to trust, they output the Markov Equivalence Class (MEC)
+	instead of a DAG (which is often required for further analysis), and
+	difficulties in choosing the appropriate algorithm and hyperparameters
+	for a given dataset. Even when using these algorithms, researchers must
+	rely on their expert knowledge to make modifications and orient edges
+	of the learned model. Given this reliance on manual model modification,
+	in this paper, we present a method inspired by \emph{specification
+	search} in \emph{Structural Equation Models} (SEMs) to assist
+	researchers in iteratively modifying their models to improve their fit
+	to data. Specifically, we utilize implied Conditional Independence (CI)
+	based model testing combined with a novel measure of partial
+	association for mixed data to rank violations of implied CIs of the
+	model in data. Using this ranking users can choose to make
+	modifications to their models by either removing edges or adding edges
+	between pair of variables while using their expert knowledge to decide
+	the orientation of the edges. The ranking allows users to prioritize
+	the worst offending violations first. Through empirical analysis, when
+	applied to learning the model from scratch, we demonstrate that taking
+	a greedy approach (i.e., fixing the worst violation first) this
+	approach can get comparable performance to automated algorithms if the
+	users are able to decide the edge direction correctly with an accuracy
+	higher than $ 0.4 $. (TODO: Double check this value). We also show that
+	a Large Language Model (LLM) can also be used for the purpose of
+	deciding the edge orientation in the absence of an expert.
 \end{abstract}
 
 \section{Introduction}
@@ -263,6 +265,7 @@ problems with these algorithms when applied in practical settings:
 		identification or causal effect estimation, assume knowledge of
 		a fully oriented DAG. As a result, researchers have to manually
 		orient these edges before using them for analysis.
+	\item \textbf{Difficulty in Choosing Best Algorithm and Hyperparameters:}
 \end{enumerate}
 
 \todo[inline]{Add an example here showing these problems}
