@@ -206,20 +206,30 @@ problem of causal discovery has been explored in both the Directed Acyclic
 Graphs (DAGs) and Structural Equation Models (SEMs) literatures, each adopting
 a different approach. In the DAG literature, the focus has primarily been on
 developing automated algorithms that can learn the causal structure from
-datasets. In contrast, the SEM literature has focused more towards developing
-tools that assist researchers in manually constructing or modifying models.
-
-As a result of these efforts, numerous algorithms for causal discovery have
-been proposed in the DAG literature, such as constraint-based methods like the
-PC algorithm \citep{Spirtes2001} and Fast Causal Inference (FCI)
-\citep{Spirtes2000}), score-based methods like Hill-Climb Search and Greedy
-Equivalence Search (GES) \citep{Chickering2002}, and continuous
+datasets. As a result of these efforts, numerous algorithms for causal
+discovery have been proposed in the DAG literature, such as constraint-based
+methods like the PC algorithm \citep{Spirtes2001} and Fast Causal Inference
+(FCI) \citep{Spirtes2000}), score-based methods like Hill-Climb Search and
+Greedy Equivalence Search (GES) \citep{Chickering2002}, and continuous
 optimization-based methods like NO TEARS \citep{Zheng2018} and DAGMA
-\citep{Bello2022}. However, the adaption of these algorithms in applied fields
-remain limited, and researchers typically prefer to construct DAGs manually
-based on their domain expertise \citep{Tennant2020, Petersen2021}. We believe this 
-is the case because of problems with these algorithms when applied in practical
-settings:
+\citep{Bello2022}. In contrast, the SEM literature has focused more towards
+developing tools that can assist researchers in manually constructing or
+modifying models by allowing them to integrate their expert knowledge into the
+model building process. Researchers typically develop an initial model based on
+domain knowledge and use various tools to guide modifications to improve the
+fit of their model to data. This model construction process is known as
+\emph{Specification Search}. A common method for specification search is using
+\emph{modification indices}, which identify potential changes to the model
+structure that improve the model fit. These potential changes are then ranked
+by the ones that improve the fit the most. This ranking allows the researchers
+to focus first on the suggestions that can improve the model the most and while
+integrating their expertise to choose the most optimal modifications.
+
+Even though so many automated algorithms have been proposed, the adaption of
+these algorithms in applied fields remain limited, and researchers typically
+prefer to construct DAGs manually based on their domain expertise
+\citep{Tennant2020, Petersen2021}. We believe this is the case because of
+problems with these algorithms when applied in practical settings:
 
 \begin{enumerate}
 	\item \textbf{Make Obvious Mistakes:} Although most algorithms are
@@ -269,15 +279,6 @@ association which can be using in combination of the CI test to rank the
 violations in these CI tests. On the other hand, in Structural Equation Models
 (SEMs) literature, more emphasis has been placed on developing tools to help
 researchers manually construct models while integrating their domain expertise.
-Researchers typically develop an initial model based on domain knowledge and
-use various tools to guide modifications to improve the fit of their model to
-data. This model construction process is known as \emph{Specification Search}.
-A common method for specification search is using \emph{modification indices},
-which identify potential changes to the model structure that improve the model
-fit. These potential changes are then ranked by the ones that improve the fit
-the most. This ranking allows the researchers to focus first on the suggestions
-that can improve the model the most and while integrating their expertise to
-choose the most optimal modifications.
 
 \begin{figure}
 	\centering
@@ -319,11 +320,11 @@ choose the most optimal modifications.
 				};
 		\end{scope}
 		\end{tikzpicture}
-		\caption{\todo[inline]{Finish figure. Show an example of model testing using CIs}}
+		\caption{\todo[inline]{Finish figure. Show an example of model learnt using PC algorithm $\rightarrow$ Orienting the unoriented edges $\rightarrow$  Model testing}}
 		\label{fig:ci_testing}
 \end{figure}
 \begin{figure}
-	\caption{\todo[inline]{Figure showing an example of modification indices}}
+	\caption{\todo[inline]{Take a model; show the modification indices for it.}}
 \end{figure}
 
 Inspired by this ranking approach in modification indices, in this paper we
@@ -527,8 +528,6 @@ This measure of association has many desired properties:
 \section{Using Measure of Association for DAG Modification and Construction}
 \label{sec:modification}
 
-% Add that we need a p-value as well.
-
 Using this mixed data partial association measure, we propose a method to rank
 CI tests, and use it for model construction and modification. Given a
 potentially empty DAG $ G $ and a dataset $ D $, for each pair for variable $ X
@@ -538,13 +537,24 @@ $ and $ Y $ in $ G $:
 	\item If there is an edge between $ X $ and $ Y $, we compute p-value for the CI test $ X \ci Y \rvert pa_{\underline{G}}(X) \cup pa_{\underline{G}}(Y) $ and the partial association measure: $ \rho(X, Y; pa_{\underline{G}}(X) \cup pa_{\underline{G}}(Y) $.
 \end{itemize}
 
-The value of this partial measure of association can be interpreted as - given
-the current structure of the model how much of the observed correlation between
-the variables $ X $ and $ Y $ in data is not explained by the model. To modify
-the model based on this, we can look at the pair of variables that have an edge
+For a pair of variables $ X $ and $ Y $, if there is an edge present between
+them, the interpretation of this partial association measure is similar to path
+coefficients in SEMs, i.e. how strong is the edge between the variables. Hence,
+we can use this to identify potential edges that can be removed from the model.
+In the case when there is no edge between the variables, the value of this
+partial measure of association can be interpreted as - given the current
+structure of the model how much of the observed correlation between the
+variables $ X $ and $ Y $ in data is not explained by the model. To modify the
+model based on this, we can look at the pair of variables that have an edge
 between them. If any of these pair have a p-value greater than partial
 association below our chosen threshold, we can remove that edge as it is
-redundant. In the case when there are 
+redundant.
+
+The measure of association also gives us a way to rank the potential
+modifications. The smallest values (below the threshold) of the association
+measure are the worst offending ones and for when the edges are not present the
+largest values would add the most amount of explainability to the model. Using
+this ranking the user can decide which pair of variables to focus on.
 
 We can then use this to rank pair of variables which have very high unexplained
 association between them. Based on the domain expertise, we can then choose one
@@ -559,11 +569,19 @@ measure of association can be interpreted as the strength of the edge between
 the variables. If the value of this association below a certain threshold, we
 can remove the edge.
 
+\todo[inline]{Add a figure showing an example of how this modification works.}
+
 \begin{theorem}
 	If we have access to an oracle that can give correct edge directions, taking a
 	greedy approach with the procedure above results in the correct graph
 	being recovered. \todo[inline]{Reword and add proof}
 \end{theorem}
+
+\section{Connection to score based methods}
+
+\begin{itemize}
+	\item Because they make only local changes, can get stuck in local minimas.
+\end{itemize}
 
 \section{Web Tool}
 \label{sec:web}
