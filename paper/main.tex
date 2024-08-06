@@ -106,7 +106,7 @@
 % nouns, adverbs, adjectives should be capitalized, including both words in hyphenated terms, while
 % articles, conjunctions, and prepositions are lower case unless they
 % directly follow a colon or long dash
-\title{Expert-In-The-Loop Causal Discovery}
+\title{Expert-In-The-Loop Causal Discovery: An Iterative Approach for Efficiently Using Expert Knowledge in Model Construction}
 \author{
     %Authors
     % All authors must be in the same font size and format.
@@ -176,23 +176,37 @@
 \maketitle
 
 \begin{abstract}
-	Causal Discovery has received substantial attention in the DAG
-	literature and many automated algorithms have been proposed for
-	constructing DAGs from data. However, the application of these
-	algorithms in applied fields remain limited due to challenges in using
-	them in practice for example they make obvious mistakes, output CPDAGs
-	that need to be oriented using expert knowledge before estimation
-	methods can be applied. As a result of these challenges, researchers
-	typically construct these model by hand. In this paper, inspired by
-	specification search in SEMs where the method suggests changes in the
-	model that improves the fit the most, we present a method based on
-	Conditional Independence testing and a novel measure of partial
-	association. The method iteratively suggests addition and removal of
-	edges between pairs of variables, while the user can choose the
-	direction of the edge. Using empirical analysis we show that this
-	manual construction approach can outperform automated algorithms if the
-	user gets the direction correct in <x out of y> cases. We also show
-	that the user expert can be replaced with an LLM.
+	Causal Discovery has received significant attention in the Directed
+	Acyclic Graphs (DAGs) literature, leading to the development of
+	numerous automated algorithms for constructing DAGs from data. Despite
+	these advancements, the application of these algorithms in applied
+	domains remain limited, with researchers often preferring to construct
+	DAGs manually based on their expert knowledge. We hypothesize that the
+	reluctance to use automated algorithms arise due to issues with these
+	algorithms such as their tendency to make obvious mistakes, and
+	outputting the Markov Equivalence Class (MEC) instead of a DAG, which
+	is often required for further analysis. Even when using these
+	algorithms, researchers have to rely on their expert knowledge to make
+	modifications to the learned model. Given this reliance on manual model
+	construction and modification, in this paper, we introduce a method to
+	assist researchers in this task inspired by specification search in
+	Structural Equation Models(SEMs). We present an iterative approach to
+	model modification utilizing Conditional Independence (CI) testing
+	combined with a novel measure of partial association for mixed data to
+	rank potential additions or removal of edges to the DAG such that the
+	improvement in the model's explanation of the data is improved the
+	most. Specifically, the method ranks violations of implied conditional
+	independences (CI) in the data using the measure of partial
+	association. The user can choose to fix these violations by adding
+	edges between the pair of variables while using their domain expertise
+	to decide the direction of edge between the variables. Through
+	empirical analysis, we demonstrate that taking a greedy approach (i.e.
+	fixing the worst ranked violation first) with this manual construction
+	approach can get comparable performance to automated algorithms if the
+	user are able to get the edge direction correctly between the variables
+	at least $ 1 $ out of $ 3 $ prompts (check if this is correct).
+	Alternatively, we show that a Large Language Model (LLM) can also be
+	used to help in deciding the direction between the variables.
 \end{abstract}
 
 \section{Introduction}
