@@ -106,7 +106,7 @@
 % nouns, adverbs, adjectives should be capitalized, including both words in hyphenated terms, while
 % articles, conjunctions, and prepositions are lower case unless they
 % directly follow a colon or long dash
-\title{Expert-In-The-Loop Causal Discovery: Integrating Expert Knowledge}
+\title{Expert-In-The-Loop Causal Discovery}
 \author{
     %Authors
     % All authors must be in the same font size and format.
@@ -176,46 +176,23 @@
 \maketitle
 
 \begin{abstract}
-	% TODO: Needs to be shortened.
-	% In Pearl's framework, the initial step for performing a causal analysis
-	% involves determining the causal structure between the variables from
-	% data typically in the form of a Directed Acyclic Graph (DAG) or an
-	% Structural Equation Model (SEM). This procedure, known as \emph{causal
-	% discovery}, has been extensively studied for both DAGs and SEMs. While
-	% numerous automated algorithms exist for estimating DAGs from datasets,
-	% their application in applied fields remain limited, possibly due to a
-	% lack of confidence in these algorithms stemming from them making
-	% obvious mistakes, and the difficulties in choosing the right algorithm
-	% for a given dataset. Consequently, in applied disciplines, these DAGs
-	% are predominantly constructed manually based on domain expertise. Due
-	% to being constructed by hand, it is vital that the fit of these models
-	% are tested against data and the models are potentially modified to
-	% acheive a better fit. On the other hand, in the field of SEMs models
-	% are typically constructed manually through an iterative process of
-	% assessing fit and modifying the model according to that. This process
-	% is commonly known as \emph{Specification Search} where methods like
-	% \emph{modification indices} combined with expert knowledge can be used
-	% to guide this modification process. In the case of DAGs, although there
-	% are tests to assess the global fit of a model by combining the tests
-	% using implied conditional independencies of the model, but there are no
-	% methods that can guide our modification process. In this paper, we
-	% present a simple modification process aimed at helping researchers in
-	% manually constructing or modifying DAGs outputted by an algorithm. This
-	% modification process is based on using a (conditional) measure of
-	% association between variables in the model to assess potential edges
-	% that best explains unexplained correlation between variables which the
-	% researcher specifies the direction of this edge. In the case of
-	% continuous or discrete variables, the effect size measures of local
-	% tests can be used as this measure of association, however for mixed
-	% data there is no such measure. We present a measure of association
-	% based on canonical correlations for mixed data. We also present a
-	% graphical web-tool that can assist researchers in iteratively modifying
-	% and constructing their DAGs. We theoretically show that in the presence
-	% of an oracle, this iterative modification process is consistent in
-	% recovering the true DAG. Emprically, we show that using the mixed data
-	% measure of association, the modification process performs comparably to
-	% PC and Hill-Climb Search algorithms if the user is able to correctly
-	% identify the direction of the edge in one out of three cases.
+	Causal Discovery has received substantial attention in the DAG
+	literature and many automated algorithms have been proposed for
+	constructing DAGs from data. However, the application of these
+	algorithms in applied fields remain limited due to challenges in using
+	them in practice for example they make obvious mistakes, output CPDAGs
+	that need to be oriented using expert knowledge before estimation
+	methods can be applied. As a result of these challenges, researchers
+	typically construct these model by hand. In this paper, inspired by
+	specification search in SEMs where the method suggests changes in the
+	model that improves the fit the most, we present a method based on
+	Conditional Independence testing and a novel measure of partial
+	association. The method iteratively suggests addition and removal of
+	edges between pairs of variables, while the user can choose the
+	direction of the edge. Using empirical analysis we show that this
+	manual construction approach can outperform automated algorithms if the
+	user gets the direction correct in <x out of y> cases. We also show
+	that the user expert can be replaced with an LLM.
 \end{abstract}
 
 \section{Introduction}
