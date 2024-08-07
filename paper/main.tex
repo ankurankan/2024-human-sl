@@ -179,26 +179,24 @@
 Causal discovery has received significant attention in the Directed Acyclic
 Graphs (DAGs) literature, leading to the development of numerous automated
 algorithms for learning DAGs from data. Despite these advancements, the
-application of these algorithms in applied domains remains limited, with
+application of these algorithms in practical domains remains limited, with
 researchers often preferring to manually construct DAGs based on their expert
 knowledge. Even when using these algorithms, researchers must rely on their
-expertise to correct any mistakes or orient edges before the models can be used
-for further analysis. Given this reliance on manual model construction and
+expertise to correct mistakes or orient edges before the models can be used for
+further analysis. Given this reliance on manual model construction and
 modification, we propose a method inspired by specification search in
 Structural Equation Models (SEMs) to assist researchers in iteratively
 modifying DAGs. Our method employs implied Conditional Independence (CI) based
 model testing, combined with a novel measure of partial association for mixed
 data, to rank violations of implied CIs of the model in the data. This ranking
-helps the user in choosing pairs of variables between which to add or remove
-edges. Based of their expertise, the user can decide to remove or add edge
-while deciding the correct orientation between the pair of variables.
-Empirically, we demonstrate that a greedy approach (i.e., fixing the worst
-violation first) achieves performance comparable to automated algorithms,
-provided the user can correctly determine the edge direction in $ 1 $ out of $
-3 $ edge additions. Additionally, we show that in the absence of an expert, a
-Large Language Model (LLM) can potentially be used to determine edge
-orientations. We provide the implementation of this approach as both a website
-and in the Python package <redacted>.
+helps users to prioritize pair of variables between which to add or remove
+edges. Users can then decide to remove or add edges while determining the
+correct orientation of the edge based on their expertise. Empirically, we
+demonstrate that a greedy approach (i.e., fixing the worst violation first)
+achieves performance comparable to automated algorithms, provided the user can
+correctly determine the edge direction in $ 1 $ out of $ 3 $ edge additions.
+Additionally, we show that in the absence of an expert, a Large Language Model
+(LLM) can potentially be used to determine edge orientations. 
 \end{abstract}
 
 \section{Introduction}
