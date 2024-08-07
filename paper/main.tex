@@ -176,38 +176,29 @@
 \maketitle
 
 \begin{abstract}
-	\emph{Causal Discovery} has received significant attention in the
-	\emph{Directed Acyclic Graphs} (DAGs) literature, leading to the
-	development of numerous automated algorithms for learning DAGs from
-	data. Despite these advancements, the application of these algorithms
-	in applied domains remain limited, with researchers often preferring to
-	construct DAGs manually based on their expert knowledge. We hypothesize
-	that the reluctance to use these algorithms arises due to several
-	practical issues, such as algorithms often make obvious mistakes making
-	it difficult to trust, they output the Markov Equivalence Class (MEC)
-	instead of a DAG (which is often required for further analysis), and
-	difficulties in choosing the appropriate algorithm and hyperparameters
-	for a given dataset. Even if using these algorithms, researchers have
-	to rely on their expert knowledge to make modifications to the learned
-	model in terms of fixing any mistakes or orienting the edges before
-	these models can be used for any further analysis. Given this reliance
-	on manual model modification, in this paper, we present a method
-	inspired by \emph{specification search} in \emph{Structural Equation
-	Models} (SEMs) to assist researchers in iteratively modifying or
-	constructing their models to improve their fit to data. Specifically,
-	we utilize implied Conditional Independence (CI) based model testing
-	combined with a novel measure of partial association for mixed data to
-	rank violations of implied CIs of the model in data. Based on this
-	ranking, users can then choose to make modifications to the model by
-	either removing or adding edges while using their expertise to decide
-	the orientation of the edge. The ranking allows users to prioritize the
-	worst offending violations first. Through empirical analysis, when
-	applied to constructing the model from scratch, we demonstrate that
-	taking a greedy approach (i.e., fixing the worst violation first) gets
-	us comparable performance to automated algorithms if the user is able
-	to correctly provide the edge direction in $ 1 $ out of $ 3 $ prompts.
-	We further show that in the absence of an expert, a Large Language
-	Model (LLM) can also be used for getting the edge orientations.
+Causal discovery has received significant attention in the Directed Acyclic
+Graphs (DAGs) literature, leading to the development of numerous automated
+algorithms for learning DAGs from data. Despite these advancements, the
+application of these algorithms in applied domains remains limited, with
+researchers often preferring to manually construct DAGs based on their expert
+knowledge. Even when using these algorithms, researchers must rely on their
+expertise to correct any mistakes or orient edges before the models can be used
+for further analysis. Given this reliance on manual model construction and
+modification, we propose a method inspired by specification search in
+Structural Equation Models (SEMs) to assist researchers in iteratively
+modifying DAGs. Our method employs implied Conditional Independence (CI) based
+model testing, combined with a novel measure of partial association for mixed
+data, to rank violations of implied CIs of the model in the data. This ranking
+helps the user in choosing pairs of variables between which to add or remove
+edges. Based of their expertise, the user can decide to remove or add edge
+while deciding the correct orientation between the pair of variables.
+Empirically, we demonstrate that a greedy approach (i.e., fixing the worst
+violation first) achieves performance comparable to automated algorithms,
+provided the user can correctly determine the edge direction in $ 1 $ out of $
+3 $ edge additions. Additionally, we show that in the absence of an expert, a
+Large Language Model (LLM) can potentially be used to determine edge
+orientations. We provide the implementation of this approach as both a website
+and in the Python package <redacted>.
 \end{abstract}
 
 \section{Introduction}
