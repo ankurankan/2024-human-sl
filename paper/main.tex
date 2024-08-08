@@ -223,8 +223,8 @@ researchers in manually constructing or modifying models while allowing them to
 integrate their expert knowledge into the model-building process. Researchers
 typically develop an initial model based on their expertise and then use
 various tools to guide modifications to improve the model's fit to data. This
-model modification process is commonly known as \emph{Specification Search}
-\citep{Long1983}, employing method like modification indices, and Wald-based
+model construction process is commonly known as \emph{Specification Search}
+\citep{Long1983} and uses method like modification indices, and Wald-based
 tests \citep{Marcoulides2018}.
 
 Despite the many automated algorithms proposed for constructing DAGs, their
@@ -234,14 +234,14 @@ Petersen2021}. We believe this preference persists due to several issues with
 these algorithms when applied in practical settings:
 
 \begin{enumerate}
-	\item \textbf{Obvious Mistakes:} Although most algorithms are
-		theoretically consistent asymptotically, their finite sample
-		properties are not well understood. Moreover, their output can
-		vary significantly depending on the selected algorithm and
-		their hyperparameters. Combined with the lack of robust methods
-		to test these algorithms' performance on a given dataset, it
-		can be difficult to trust their outputs. Consequently,
-		researchers have to rely on post-hoc modifications to the model
+	\item \textbf{Lack of Trust:} Although most algorithms are
+		asymptotically consistent, their finite sample properties are
+		not well understood. Moreover, their output can vary
+		significantly depending on the algorithm and their
+		hyperparameters. Combined with the lack of robust methods to
+		test these algorithms' performance on a given dataset, it can
+		be difficult to trust their outputs. Consequently, researchers
+		usually have to rely on post-hoc modifications to the model
 		based on their domain expertise.
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} Multiple
 		DAGs can be faithful to a given observational dataset. Thus,
@@ -253,7 +253,8 @@ these algorithms when applied in practical settings:
 		orient these edges before using them for analysis.
 \end{enumerate}
 
-Due to these challenges, even when using automated algorithms, we often have to
+Figure shows some of these issues when applied to the Adult Income dataset. Due
+to these challenges, even when using automated algorithms, we often have to
 rely on manual post hoc testing and modifications to the model learned by the
 algorithm. Whether constructing the model manually or using an algorithm, we
 must rely on domain expertise to construct or modify the model. Hence, it is
