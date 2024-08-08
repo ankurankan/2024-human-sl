@@ -296,20 +296,19 @@ ci.test <- function(x, y, z, d, test){
 }
 
 sl.test <- function(x, y, z, suffStat){
-	# if (length(z) == 0){
-	# 	x_type = suffStat$var_types[[names(suffStat$dm)[x]]]
-	# 	y_type = suffStat$var_types[[names(suffStat$dm)[y]]]
-	# 	browser()
-	# 	if ((x_type == 'cont') & (y_type == 'cont')){
-	# 		return(bnlearn::ci.test(names(suffStat$dm)[x], names(suffStat$dm)[y], data=suffStat$dm, test='mc-mi-g')$p.value)
-	# 	}
-	# 	else if ((x_type %in% c('ord', 'cat')) & (y_type %in% c('ord', 'cat'))){
-	# 		return(bnlearn::ci.test(names(suffStat$dm)[x], names(suffStat$dm)[y], data=suffStat$dm, test='mc-mi')$p.value)
-	# 	}
-	# 	else{
-	# 		return(bnlearn::ci.test(names(suffStat$dm)[x], names(suffStat$dm)[y], data=suffStat$dm, test='mi-cg')$p.value)
-	# 	}
-	# }
+	if (length(z) == 0){
+		x_type = suffStat$var_types[[names(suffStat$dm)[x]]]
+		y_type = suffStat$var_types[[names(suffStat$dm)[y]]]
+		if ((x_type == 'cont') & (y_type == 'cont')){
+			return(bnlearn::ci.test(names(suffStat$dm)[x], names(suffStat$dm)[y], data=suffStat$dm, test='mc-mi-g')$p.value)
+		}
+		else if ((x_type %in% c('ord', 'cat')) & (y_type %in% c('ord', 'cat'))){
+			return(bnlearn::ci.test(names(suffStat$dm)[x], names(suffStat$dm)[y], data=suffStat$dm, test='mc-mi')$p.value)
+		}
+		else{
+			return(bnlearn::ci.test(names(suffStat$dm)[x], names(suffStat$dm)[y], data=suffStat$dm, test='mi-cg')$p.value)
+		}
+	}
 
 	if (suffStat$test=='rf_pillai'){
 		return(residual.test(suffStat$dm[, x], suffStat$dm[, y], suffStat$dm[z], 'rf', 'pillai'))
@@ -365,11 +364,13 @@ d$HoursPerWeek <- as.double(d$HoursPerWeek)
 
 education_levels = c( "Preschool", "1st-4th", "5th-6th", "7th-8th", "9th", "10th", "11th","12th", "HS-grad", "Some-college", "Assoc-voc", "Assoc-acdm", "Bachelors", "Masters", "Prof-school", "Doctorate" )
 d$Education <- factor(d$Education, levels=education_levels, ordered=T)
+d <- d[complete.cases(d), ]
+d <- d[1:1000, ]
 
 # Using bnlearn
 dag <- bnlearn::pc.stable(d)
 
 # Using pcalg
-var_types <- list(Age='cont', Workclass='cat', Education='ord', MaritalStatus='cat', Occupation='cat', Relationship='cat', Race='cat', Sex='cat', HoursPerWeek='cont', Income='cat')
+var_types <- list(Age='cont', Workclass='cat', Education='ord', MaritalStatus='cat', Occupation='cat', Relationship='cat', Race='cat', Sex='cat', HoursPerWeek='cont', Income='cat', NativeCountry='cat')
 suffStat <- list(dm=d, adaptDF=F, test="mxm", var_types=var_types)
-pc.skel <- pcalg::skeleton(suffStat, indepTest = sl.test, alpha=0.05, labels=colnames(d), method='stable', verbose = F)
+pc.skel <- pcalg::pc(suffStat, indepTest = sl.test, alpha=0.05, labels=colnames(d), u2pd="relaxed", skel.method='stable.fast', numCores=8, verbose = F)
