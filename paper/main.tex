@@ -424,23 +424,23 @@ Polychoric Correlation
 \section{A Measure of Association for Mixed Data}
 \label{sec:mixed_association}
 
-In this section, we develop a novel measure of partial association for mixed
-data by extending partial correlations \citep{Whittaker2009} \todo{Verify this
-citation} to mixed data. To compute partial correlations we use: 1) A
-residualization method, and 2) a measure of associations between the residuals.
-In the case when both $ X $ and $ Y $ are continuous variables, the residuals
-are typically computed using a regression based method and  Pearson's
-correlation coefficient is used as a measure of association between the
-residuals. To extend this idea to mixed data, we combining a mixed data
-residualization method \citep{Ankan2023} with a multivariate measure of
-association based, Pillai's Trace \citep{Pillai1955}. 
+In this section, we introduce a novel measure of partial association for mixed
+data by extending the concept of partial correlations \citep{Whittaker2009}
+\todo{Verify this citation} to handle mixed data types. To compute partial
+correlations, we have two key steps: 1) a residualization method, and 2) a
+measure of associations between the residuals. When both $ X $ and $ Y $ are
+continuous variables, residuals are typically computed using a regression-based
+method, and Pearson's correlation coefficient is used to measure the association
+between these residuals. To extend this approach to mixed data, we combine a mixed
+data residualization method \citep{Ankan2023} with a multivariate measure of
+association based on canonical correlations, Pillai's Trace \citep{Pillai1955}. 
 
 Given $ n $ samples $ D = (x, y, \bm{z}) $ of variables $ X $, $ Y $, and $
-\bm{Z} $, we are interested in computing an estimate of the conditional
+\bm{Z} $, we aim to estimate the conditional
 association $ \rho(X, Y; \bm{Z}) $ between $ X $ and $ Y $ conditioned on $
-\bm{Z} $. To compute the residuals, we utilize the residualization approach
-from \citet{Ankan2023}. Depending on the type of dependent variable, the
-residuals are defined as follows:
+\bm{Z} $. We use the residualization approach from \citet{Ankan2023} to compute 
+the residuals. The residuals are defined as follows, depending on the type of 
+dependent variable:
 
 \begin{enumerate}
 	\item \textbf{Continuous:} We train a regression
@@ -540,14 +540,22 @@ linear relationship. This gives us the following partial measure of association:
 This measure of association has many desired properties:
 
 \begin{enumerate}
-	\item \textbf{Bounded: } 
-
-		between $ 0 $ and $ 1 $. This allows for interpretability and standardization to allow us to compare.
-	\item Independent of sample size.
-	\item Invariant to the one-hot encoding scheme used fr categorical variables.
-	\item Reduces to partial correlations when both variables are continuous.
-	\item In case of discrete variables, connected to Cramer\'s V, a well
-		known effect size measure for discrete variables.
+	\item \textbf{Bounded: } $ \rho $ is bounded between $ 0 $ and $ 1 $,
+		with $ 0 $ representing no association while $ 1 $ representing
+		perfect linear association. This helps in interpretation and
+		comparing values across multiple partial associations.
+	\item \textbf{Independent of sample size: }
+	\item \textbf{Invariant to the dummy encoding scheme: } As we use dummy
+		encoding to compute the residuals for categorical variables,
+		but as canonical correlations search for linear combinations
+		over the columns, the measure is invariant to the dummy
+		encoding scheme that we use.
+	\item \textbf{Generalizes partial correlations to mixed data: }
+		As canonical correlation is equivalent to Pearson's correlation
+		coefficient, when both $ X $ and $ Y $ are continuous, $ \rho $
+		is equivalent to canonical correlations. Hence, $ \rho $ is a
+		generalization of partial correlations to mixed data.
+	\item \textbf{Related to Cramer\'s V: }
 \end{enumerate}
 \todo[inline]{Expand on these points}
 
