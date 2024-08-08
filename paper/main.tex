@@ -253,8 +253,6 @@ these algorithms when applied in practical settings:
 		orient these edges before using them for analysis.
 \end{enumerate}
 
-\todo[inline]{Add an example here showing these problems}
-
 Due to these challenges, even when using automated algorithms, we often have to
 rely on manual post hoc testing and modifications to the model learned by the
 algorithm. Whether constructing the model manually or using an algorithm, we
@@ -339,7 +337,6 @@ explained by the current model. Using the measure, we can then rank the pair of
 variables between which adding an edge would improve the explanation the most.
 Based on this information, the user can select a potential pair of variables
 and based on their expert knowledge decide the direction of the edge. 
-\todo[inline]{Add about the score based methods somewhere here}
 
 Our main contributions in this paper are as follows:
 \begin{enumerate}
@@ -350,8 +347,9 @@ Our main contributions in this paper are as follows:
 	\item Using this partial association measure, we present a procedure to
 		rank CI tests. This ranking can be used to prioritize addition
 		or deletion of edges from the model.
-	\item Lastly, we present a web-browser based tool to allow researchers
-		to apply this method to their own datasets.
+	\item Lastly, we present a both a web-browser based tool and an
+		implementation in the Python package to allow researchers to
+		apply this method to their own datasets.
 \end{enumerate}
 
 The rest of the paper is structured as follows. In
