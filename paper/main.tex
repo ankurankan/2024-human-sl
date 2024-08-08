@@ -426,20 +426,22 @@ Polychoric Correlation
 
 In this section, we develop a novel measure of partial association for mixed
 data by extending partial correlations \citep{Whittaker2009} \todo{Verify this
-citation} to mixed data.
-As partial correlations require two things: 1) A
-residualization method, and 2) measure of associations between the residuals.
-We generalize this to mixed data by combining a mixed data residualization
-method \citep{Ankan2023} with a multivariate measure of association based on
-Pillai's Trace. Given $ n $ samples $ D = (x, y, \bm{z}) $ of variables $ X $,
-$ Y $, and $ \bm{Z} $, we are interested in computing an estimate of the
-conditional association $ \rho(X, Y; \bm{Z}) $ between $ X $ and $ Y $
-conditioned on $ \bm{Z} $. As the residualization approach requires atleast one
-conditional variable to be present, if $ \bm{Z} = \emptyset $, we use a
-constant value for $ Z $. Similar to partial correlation, we first compute the
-residuals for $ X $ and $ Y $ using $ \bm{Z} $ as the predictor variables. We
-use the mixed data residualization approach from \citet{Ankan2023}. Depending
-on the type of dependent variable, the residuals are defined as follows:
+citation} to mixed data. To compute partial correlations we use: 1) A
+residualization method, and 2) a measure of associations between the residuals.
+In the case of continuous data, the residuals can be computed using a
+regression based method and Pearson's correlation coefficient can be used for
+computing the association between the residuals. We extend this idea to mixed
+data by combining a mixed data residualization method \citep{Ankan2023} with a
+multivariate measure of association based, Pillai's Trace \citep{Pillai1955}.
+Given $ n $ samples $ D = (x, y, \bm{z}) $ of variables $ X $, $ Y $, and $
+\bm{Z} $, we are interested in computing an estimate of the conditional
+association $ \rho(X, Y; \bm{Z}) $ between $ X $ and $ Y $ conditioned on $
+\bm{Z} $. As the residualization approach requires atleast one conditional
+variable to be present, if $ \bm{Z} = \emptyset $, we use a constant value for
+$ Z $. Similar to partial correlation, we first compute the residuals for $ X $
+and $ Y $ using $ \bm{Z} $ as the predictor variables. We use the mixed data
+residualization approach from \citet{Ankan2023}. Depending on the type of
+dependent variable, the residuals are defined as follows:
 
 \begin{enumerate}
 	\item \textbf{Continuous:} We train a regression
