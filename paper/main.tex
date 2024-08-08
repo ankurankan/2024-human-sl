@@ -253,32 +253,47 @@ these algorithms when applied in practical settings:
 		orient these edges before using them for analysis.
 \end{enumerate}
 
-Figure shows some of these issues when applied to the Adult Income dataset. Due
-to these challenges, even when using automated algorithms, we often have to
-rely on manual post hoc testing and modifications to the model learned by the
-algorithm. Whether constructing the model manually or using an algorithm, we
-must rely on domain expertise to construct or modify the model. Hence, it is
-crucial to have tools to guide this modification process. One of the ways to
-guide this modification is to use Conditional Independence (CI) based model
-testing \cite{Ankan2023}. As DAGs imply CI statements that can be tested in the
-given data using statistical CI tests, we can verify whether the implied CIs
-are consistent in the data or not. If some of implied CIs are not valid in the
-given dataset, we can modify the model accordingly. Figure~\ref{fig:ci_testing}
-shows an example of model testing using CIs. However, using p-values of the CI
-tests has a few drawbacks. Firstly, as CIs are implied only by missing edges in
-the model, we can not test whether an incorrect edge is already present in the
-model. For examples, in high sample size scenarios, we might get a significant
-association between a pair of variables with very small association. Secondly,
-the number of implied CIs can be quite large. For example, in the moderately
-sized alarm network with $ 37 $ node, there are $287$ implied CIs. If we rely
-only on the p-values of the CI tests, it can be difficult to figure which test
-to focus on.
+Figure~\ref{fig:intro} shows some of these issues when applied to the Adult
+Income dataset. Due to these challenges, whether constructing the model
+manually or using an algorithm, we typically have to rely on some expert
+knowledge to get a model that we can use for further analysis. Hence, it is
+crucial to have tools to guide this construction or modification process.
 
-To deal with both this issues, in this paper, we develop a measure of partial
-association which can be using in combination of the CI test to rank the
-violations in these CI tests. On the other hand, in Structural Equation Models
-(SEMs) literature, more emphasis has been placed on developing tools to help
-researchers manually construct models while integrating their domain expertise.
+A common method for specification search is using \emph{modification indices},
+which identify potential changes to the model structure that improve the model
+fit. These potential changes are then ranked by the ones that improve the fit
+the most. This ranking allows the researchers to focus first on the suggestions
+that can improve the model the most and while integrating their expertise to
+choose the most optimal modifications. 
+
+One of the ways to guide this modification is to use Conditional Independence
+(CI) based model testing \cite{Ankan2023}. As DAGs imply CI statements that can
+be tested in the given data using statistical CI tests, we can verify whether
+the implied CIs are consistent with the data or not. If some of implied CIs are
+not valid in the given dataset, we can modify the model accordingly.
+Figure~\ref{fig:ci_testing} shows an example of model testing using CIs.
+However, using p-values of the CI tests has a few drawbacks. Firstly, as CIs
+are implied only by missing edges in the model, we can not test whether an
+incorrect edge is already present in the model. For examples, in high sample
+size scenarios, we might get a significant association between a pair of
+variables with very small association. Secondly, the number of implied CIs can
+be quite large. For example, in the moderately sized alarm network with $ 37 $
+node, there are $287$ implied CIs. If we rely only on the p-values of the CI
+tests, it can be difficult to figure which test to focus on.
+
+Inspired by this ranking approach in modification indices, in this paper we
+develop a method to rank the CI tests using a conditional measure of
+association.  To deal with both this issues, in this paper, we develop a
+measure of partial association which can be using in combination of the CI test
+to rank the violations in these CI tests. On the other hand, in Structural
+Equation Models (SEMs) literature, more emphasis has been placed on developing
+tools to help researchers manually construct models while integrating their
+domain expertise. Our proposed approach uses the measure of association to find
+correlated variables in the data that are not explained by the current model.
+Using the measure, we can then rank the pair of variables between which adding
+an edge would improve the explanation the most. Based on this information, the
+user can select a potential pair of variables and based on their expert
+knowledge decide the direction of the edge. 
 
 \begin{figure}
 	\centering
@@ -321,23 +336,8 @@ researchers manually construct models while integrating their domain expertise.
 		\end{scope}
 		\end{tikzpicture}
 		\caption{\todo[inline]{Finish figure. Show an example of model learnt using PC algorithm $\rightarrow$ Orienting the unoriented edges $\rightarrow$  Model testing}}
-		\label{fig:ci_testing}
+		\label{fig:intro}
 \end{figure}
-
-
-A common method for specification search is using \emph{modification indices},
-which identify potential changes to the model structure that improve the model
-fit. These potential changes are then ranked by the ones that improve the fit
-the most. This ranking allows the researchers to focus first on the suggestions
-that can improve the model the most and while integrating their expertise to
-choose the most optimal modifications. Inspired by this ranking approach in
-modification indices, in this paper we develop a method to rank the CI tests
-using a conditional measure of association. Our proposed approach uses the
-measure of association to find correlated variables in the data that are not
-explained by the current model. Using the measure, we can then rank the pair of
-variables between which adding an edge would improve the explanation the most.
-Based on this information, the user can select a potential pair of variables
-and based on their expert knowledge decide the direction of the edge. 
 
 Our main contributions in this paper are as follows:
 \begin{enumerate}
@@ -348,7 +348,7 @@ Our main contributions in this paper are as follows:
 	\item Using this partial association measure, we present a procedure to
 		rank CI tests. This ranking can be used to prioritize addition
 		or deletion of edges from the model.
-	\item Lastly, we present a both a web-browser based tool and an
+	\item Lastly, we present both a web-browser based tool and an
 		implementation in the Python package to allow researchers to
 		apply this method to their own datasets.
 \end{enumerate}
@@ -425,18 +425,18 @@ Polychoric Correlation
 \label{sec:mixed_association}
 
 In this section, we develop a novel partial measure of association for mixed
-data by extending the idea of partial correlation to mixed data. As partial
-correlations require two things: 1) A residualization method, and 2) measure of
-associations between the residuals. We generalize this to mixed data by combining a
-mixed data residualization method \citep{Ankan2023} with a multivariate measure
-of association based on Pillai's Trace. Given $ n $ samples $ D = (x, y,
-\bm{z}) $ of variables $ X $, $ Y $, and $ \bm{Z} $, we are interested in
-computing an estimate of the conditional association $ \rho(X, Y; \bm{Z}) $
-between $ X $ and $ Y $ conditioned on $ \bm{Z} $. As the residualization
-approach requires atleast one conditional variable to be present, if $ \bm{Z} =
-\emptyset $, we use a constant value for $ Z $. Similar to partial correlation,
-we first compute the residuals for $ X $ and $ Y $ using $ \bm{Z} $ as the
-predictor variables. We use the mixed data residualization approach from
+data by extending partial correlations to mixed data. As partial correlations
+require two things: 1) A residualization method, and 2) measure of associations
+between the residuals. We generalize this to mixed data by combining a mixed
+data residualization method \citep{Ankan2023} with a multivariate measure of
+association based on Pillai's Trace. Given $ n $ samples $ D = (x, y, \bm{z}) $
+of variables $ X $, $ Y $, and $ \bm{Z} $, we are interested in computing an
+estimate of the conditional association $ \rho(X, Y; \bm{Z}) $ between $ X $
+and $ Y $ conditioned on $ \bm{Z} $. As the residualization approach requires
+atleast one conditional variable to be present, if $ \bm{Z} = \emptyset $, we
+use a constant value for $ Z $. Similar to partial correlation, we first
+compute the residuals for $ X $ and $ Y $ using $ \bm{Z} $ as the predictor
+variables. We use the mixed data residualization approach from
 \citet{Ankan2023}. Depending on the type of dependent variable, the residuals
 are defined as follows:
 
@@ -580,11 +580,15 @@ can remove the edge.
 	being recovered. \todo[inline]{Reword and add proof}
 \end{theorem}
 
-\section{Connection to score based methods}
-
+\section{Connection to Score Based Methods}
 \begin{itemize}
-	\item Because they make only local changes, can get stuck in local minimas.
+	\item The process of iteratively adding and removing edges in very similar to
+		Greedy Equivalence Search (GES).
+	\item But Because they make only local changes, can get stuck in local minimas.
+	\item This approach looks for modifications globally.
 \end{itemize}
+
+\todo[inline]{Show an example where local changes can get stuck}
 
 \section{Web Tool}
 \label{sec:web}
