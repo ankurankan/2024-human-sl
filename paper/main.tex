@@ -443,21 +443,19 @@ the residuals. The residuals are defined as follows, depending on the type of
 dependent variable:
 
 \begin{enumerate}
-	\item \textbf{Continuous:} We train a regression
-		model, $ E_X: x \sim \bm{z} $. The residuals are then defined
-		as the difference between the true and the predicted value using
-		$ E_X $.
+	\item \textbf{Continuous:} We train a regression model, $ E_X: x \sim
+		\bm{z} $. The residuals are then defined as the difference
+		between the true and the predicted values using $ E_X $. 
 		$$ R_{x_i} = x_i - E_X(\bm{z}_i) $$
-	\item \textbf{Ordinal:} We start by training a probability
-		estimator, $ p_X: x \sim \bm{z} $, and take probability
-		predictions from it $ \hat{p}_X: \hat{p}_X(\bm{Z}) $. Then we
-		compute the residuals as follows:
+	\item \textbf{Ordinal:} We start by training a probability estimator, $
+		p_X: x \sim \bm{z} $, and obtain probability predictions 
+		$ \hat{p}_X: \hat{p}_X(\bm{Z}) $. Then, we compute the residuals
+		as follows \citep{Li2012}:
 		$$ R_{x_i} = \hat{p}(\hat{x}_i > x_i) - \hat{p}(\hat{x}_i < x_i) $$
-	\item \textbf{Categorical:} We again start by training a
-		probability estimator $ p_X: X \sim \bm{Z} $, and take the
-		probability estimates from it $ \hat{p}_X: p_Z(\bm{Z}) $. Next,
-		we one-hot encode the categorical variable and then compute the
-		residuals as follows: 
+	\item \textbf{Categorical:} We again start by training a probability
+		estimator $ p_X: X \sim \bm{Z} $, and obtain probability
+		estimates $ \hat{p}_X: p_Z(\bm{Z}) $. Next, we dummy encode the
+		categorical variable and then compute the residuals as follows: 
 		$$ R_X = x_i - \hat{p}(\bm{z}_i) $$
 \end{enumerate}
 
@@ -465,72 +463,77 @@ dependent variable:
 
 We repeat the above step for the variable $ Y $ and compute its residual $ R_Y
 $. Here, we have the option to choose the estimators based on the properties of
-their data. Non-parametric ensemble estimators such as Random Forest and
-XGBoost can work on any combination of data types while performing reasonably
-well. For linear datasets we can also choose variants of linear regression
-depending on the type of data. After the above steps are repeated for both $ X
-$ and $ Y $, we end up with two residual matrices: $ R_X $ and $ R_Y $. The
-type of the variable determines the shape for these matrices, i.e., if the
-variable is continuous we get a residual matrix of shape $ ( n \times 1 ) $ and
-if the variable is categorical we have a residual matrix of shape $ ( n \times
-(k-1)) $ (where one of the dummy encoded variables is dropped to avoid
-multicollinearity)
+the data. Non-parametric ensemble estimators such as Random Forest and XGBoost
+can handle any combination of data types while performing reasonably well. For
+linear datasets, we can also choose variants of linear regression depending on
+the type of data. 
 
-We now have two continuous valued residual matrices and the second step now is
+After the above steps are repeated for both $ X $ and $ Y $, we end up with two
+residual matrices: $ R_X $ and $ R_Y $. The type of the variable determines the
+shape for these matrices. If the variable is continuous, we get a residual
+matrix of shape $ ( n \times 1 ) $ and if the variable is categorical, we have
+a residual matrix of shape $ ( x \times (k -1)) $ where one of the dummy encoded
+variables is dropped to avoid multicollinearity.
+
+We now have two continuous-valued residual matrices. The next step is
 to quantify the association between these residuals. In multivariate
-statistics, canonical correlation based measures have been used for measuring
-association between two sets of variables. We can treat the residuals as sets
-of variables in case of categorical variable and use canonical correlations to
-quantify the association between them.
-
+statistics, canonical correlation based measures have been used to measure
+the association between two sets of variables. We can treat our residuals
+as sets of variables and use canonical correlations to quantify the association
+between them.
 
 \begin{definition} 
 
 	Given two sets of random variables $ \bm{U} = (U_1, U_2, \cdots, U_p) $
 	and $ \bm{V} = (V_1, V_2, \cdots, V_q) $, canonical correlation between
-	them, $\phi(\bm{U}, \bm{V}) $ is defined as:
+	them, $\rho(\bm{U}, \bm{V}) $ is defined as:
 		
 	% \begin{equation}
 	% 	\phi(\bm{U}, \bm{V}) = \sup_{a, b} \frac{a^T \Sigma_{\bm{U}\bm{V}} b}{\sqrt{a^T \Sigma_{\bm{U}\bm{U}} a} \sqrt{b^T \Sigma_{\bm{V}\bm{V}} b}}
 	% \end{equation}
 
-\begin{equation}
-	\begin{split}
-		\bm{\rho}(\bm{U}, \bm{V}) &= \sqrt{\mathrm{E} \left( \Sigma_{\bm{UU}}^{-1} \Sigma_{\bm{UV}} \Sigma_{\bm{VV}}^{-1} \Sigma_{\bm{VU}} \right)}
-	\end{split}
-\end{equation}
+% \begin{equation}
+% 	\begin{split}
+% 		\bm{\rho}(\bm{U}, \bm{V}) &= \sqrt{\mathrm{E} \left( \Sigma_{\bm{UU}}^{-1} \Sigma_{\bm{UV}} \Sigma_{\bm{VV}}^{-1} \Sigma_{\bm{VU}} \right)}
+% 	\end{split}
+% \end{equation}
+	\begin{equation}
+		\rho(\bm{U}, \bm{V}) = \max_{a, b} Corr(a^T \bm{U}, b^T \bm{V})
+	\end{equation}
 
+	where $ a $ and $ b $ are vectors of coefficients that maximize the correlations
+	between the linear combinations of $ a^T \bm{U} $ and $ b^T \bm{V} $.
 \end{definition}
 
-where $ \mathrm{E}(\Sigma) $ denotes the eigenvalues of the matrix $ \Sigma $.
-$ \Sigma_{UU} $ and $ \Sigma_{VV} $ are the covariance matrices of $ \bm{U} $
-and $ \bm{V} $, and $ \Sigma_{UV} $ and $ \Sigma_{VU} $ are the
-cross-covariance matrices.
+% where $ \mathrm{E}(\Sigma) $ denotes the eigenvalues of the matrix $ \Sigma $.
+% $ \Sigma_{UU} $ and $ \Sigma_{VV} $ are the covariance matrices of $ \bm{U} $
+% and $ \bm{V} $, and $ \Sigma_{UV} $ and $ \Sigma_{VU} $ are the
+% cross-covariance matrices.
 	
-Canonical correlations are generalization of correlations to multi-dimensional
-variables. It tries to find orthogonal linear transformations $ a $ and $ b $
-of $ \bm{U} $ and $ \bm{V} $ such that the correlation between the transformed
-variables $ a^T \bm{U} $ and $ b^T \bm{V} $ is maximized. It gives a vector of
-correlation values of size $ \min(\rvert U \rvert, \rvert V \rvert) $
-representing the correlation coefficient of each column of the transformed
-variables. Pearson's correlation coefficient is a special case of canonical
-correlations when $ \rvert U \rvert = \rvert V \rvert = 1$.
+Canonical correlations generalize correlations to multi-dimensional variables. They
+find orthogonal linear transformations $ a $ and $ b $ of $ \bm{U} $ and $ \bm{V} $
+such that the correlation between the transformed variables $ a^T \bm{U} $ and 
+$ b^T \bm{V} $ is maximized. This yields a vector of correlation values of 
+size $ \min(p, q) $, representing the correlation coefficient of each pair of 
+transformed variables. Pearson's correlation coefficient is a special case of 
+canonical correlations when $ p = q = 1 $.
 
 Many measures of association based on canonical correlation have been used in
-multivariate statistics with each of them having slightly different properties.
+multivariate statistics, each with slightly different properties.
 \begin{itemize}
 	\item Wilks' Lambda:
-		$$ \Lambda = \prod (1 - \phi_i^2) $$
+		$$ \Lambda = \prod_{i}^{\min(p, q)} (1 - \phi_i^2) $$
 	\item Roy's Largest Root: 
-		$$ \theta = \phi_{\max}^2 $$
+		$$ \theta = \max_i(\phi_i^2) $$
 	\item Pillai's Trace: 
-		$$ \tau = \sum \phi_i^2 $$
+		$$ \tau = \sum_{i=1}^{\min(p, q)} \phi_i^2 $$
 \end{itemize}
 
 We use Pillai's Trace for our purpose for two main reasons: 1) It uses all the
-canoncial correlation values, 2) Its interpretation is similar to correlation
+canonical correlation values, 2) Its interpretation is similar to correlation
 coefficient, i.e., $ 0 $ signifies no association and $ 1 $ signifies perfect
-linear relationship. This gives us the following partial measure of association:
+linear relationship. This gives us the following partial measure of
+association:
 
 \begin{equation}
 	\rho(X, Y; \bm{Z}) = \frac{1}{\min(\rvert R_X \rvert, \rvert R_Y \rvert)}
@@ -541,23 +544,22 @@ This measure of association has many desired properties:
 
 \begin{enumerate}
 	\item \textbf{Bounded: } $ \rho $ is bounded between $ 0 $ and $ 1 $,
-		with $ 0 $ representing no association while $ 1 $ representing
+		with $ 0 $ representing no association while $ 1 $ represents
 		perfect linear association. This helps in interpretation and
 		comparing values across multiple partial associations.
-	\item \textbf{Independent of sample size: }
-	\item \textbf{Invariant to the dummy encoding scheme: } As we use dummy
-		encoding to compute the residuals for categorical variables,
-		but as canonical correlations search for linear combinations
-		over the columns, the measure is invariant to the dummy
-		encoding scheme that we use.
-	\item \textbf{Generalizes partial correlations to mixed data: }
-		As canonical correlation is equivalent to Pearson's correlation
-		coefficient, when both $ X $ and $ Y $ are continuous, $ \rho $
-		is equivalent to canonical correlations. Hence, $ \rho $ is a
-		generalization of partial correlations to mixed data.
-	\item \textbf{Related to Cramer\'s V: }
+	\item \textbf{Independent of Sample Size: } The measure remains consistent
+		regardless of the sample size ensuring reliability across 
+		studies with different sample sizes.
+	\item \textbf{Invariant to the Dummy Encoding Scheme: } Since canonical
+		correlations search for linear combinations over the columns,
+		the measure is invariant to the specific dummy encoding
+		scheme used for categorical variables.
+	\item \textbf{Generalizes Partial Correlations to Mixed Data: }
+		Canonical correlations is equivalent to Pearson's correlation coefficient
+		when both $ X $ and $ Y $ are continuous. Hence, $ \rho $ generalizes
+		partial correlations to mixed data types.
+	\item \textbf{Related to Cramer\'s V: } 
 \end{enumerate}
-\todo[inline]{Expand on these points}
 
 \section{Using Measure of Association for DAG Modification and Construction}
 \label{sec:modification}
