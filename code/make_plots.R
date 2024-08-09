@@ -168,7 +168,9 @@ make_plots_v2 <- function(filename, plot_type){
 		geom_ribbon(linetype=0, alpha=0.4, show.legend=F) + 
 		geom_dl(aes(label=line_labels), color='black', method=list(dl.trans(x=x+.1), "last.points", cex=0.5)) + 
       		theme_minimal(base_size = 8) + 
-		theme(legend.position='top', legend.title=element_blank()) +
+		theme(legend.position='top',
+		      legend.title=element_blank(),
+		      legend.text=element_text(size=8)) +
 		labs(x = "Edge Probability") +
 		labs(y = "Mean SHD") + 
 		labs(color = "Algorithm") +
@@ -205,7 +207,6 @@ make_plots_v2 <- function(filename, plot_type){
 		       ))
 	colnames(d_sid) <- c('edge_prob', 'oracle_acc', 'mean_val', 'lower', 'upper', 'algo', 'grp', 'line_labels')
 
-	browser()
 	d_sid$oracle_acc <- NULL
 	d_sid <- d_sid %>% distinct()
 	d_sid$mean_val <- as.double(d_sid$mean_val)
@@ -221,9 +222,11 @@ make_plots_v2 <- function(filename, plot_type){
 		geom_ribbon(linetype=0, alpha=0.4, show.legend=F) + 
 		geom_dl(aes(label=line_labels), color='black', method=list(dl.trans(x=x+.1), "last.points", cex=0.5)) + 
       		theme_minimal(base_size = 8) + 
-		theme(legend.position='top', legend.title=element_blank()) +
+		theme(legend.position='top',
+		      legend.title=element_blank(),
+		      legend.text=element_text(size=8)) +
 		labs(x = "Edge Probability") +
-		labs(y = "Mean SHD") + 
+		labs(y = "Mean SID") + 
 		labs(color = "Algorithm") +
 		ylim(0, 90) +
 		guides(linetype='none', fill='none')
