@@ -46,7 +46,6 @@ run_citests <- function( req, res, dag, threshold, pval ){
 		g <- dagitty::dagitty(dag)
 		r <- c()
 		nn <- names(g)
-		browser()
 		dataset <- datasets[[1]]
 		for( n1i in seq(1,length(nn)-1,by=1) ){
 			n1 <- nn[n1i]
