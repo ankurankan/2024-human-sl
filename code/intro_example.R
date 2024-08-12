@@ -1,3 +1,4 @@
+library(dplyr)
 
 sqrtinv <- function(mA) {
   ei <- eigen(mA)
@@ -372,5 +373,5 @@ dag <- bnlearn::pc.stable(d)
 
 # Using pcalg
 var_types <- list(Age='cont', Workclass='cat', Education='ord', MaritalStatus='cat', Occupation='cat', Relationship='cat', Race='cat', Sex='cat', HoursPerWeek='cont', Income='cat', NativeCountry='cat')
-suffStat <- list(dm=d, adaptDF=F, test="mxm", var_types=var_types)
+suffStat <- list(dm=d, adaptDF=F, test="rf_q3", var_types=var_types)
 pc.skel <- pcalg::pc(suffStat, indepTest = sl.test, alpha=0.05, labels=colnames(d), u2pd="relaxed", skel.method='stable.fast', numCores=8, verbose = F)
