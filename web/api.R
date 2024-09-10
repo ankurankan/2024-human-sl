@@ -1,5 +1,32 @@
 library(jsonlite)
 
+preprocess_adult <- function(d){
+	d$X <- NULL
+	d$Fnlwgt <- NULL
+	d$EducationNum <- NULL
+	d$CapitalGain <- NULL
+	d$CaptialLoss <- NULL
+
+	d$Workclass <- factor(d$Workclass, ordered=F)
+	d$MaritalStatus <- factor(d$MaritalStatus, ordered=F)
+	d$Occupation <- factor(d$Occupation, ordered=F)
+	d$Relationship <- factor(d$Relationship, ordered=F)
+	d$Race <- factor(d$Race, ordered=F)
+	d$Sex <- factor(d$Sex, ordered=F)
+	d$NativeCountry <- factor(d$NativeCountry, ordered=F)
+	d$Income <- factor(d$Income, ordered=F)
+	
+	d$Age <- as.double(d$Age)
+	d$HoursPerWeek <- as.double(d$HoursPerWeek)
+	
+	education_levels = c( "Preschool", "1st-4th", "5th-6th", "7th-8th", "9th", "10th", "11th","12th", "HS-grad", "Some-college", "Assoc-voc", "Assoc-acdm", "Bachelors", "Masters", "Prof-school", "Doctorate" )
+	d$Education <- factor(d$Education, levels=education_levels, ordered=T)
+	d <- d[complete.cases(d), ]
+	d <- d[1:1000, ]
+	
+	return(d)
+}
+
 #* @filter cors
 cors <- function(res) {
     res$setHeader("Access-Control-Allow-Origin", "*") # Or whatever
@@ -20,7 +47,6 @@ function(req, res, file) {
   filename = names(file)
   # Read the uploaded CSV file
   csv_data <- read.csv(text=file[[filename]])
-  # dataset <<- csv_data
   dataset_name <- paste0(sample(c(LETTERS, tolower(LETTERS)), 20, T), collapse='')
   datasets[[dataset_name]] <<- csv_data
 
@@ -46,7 +72,7 @@ run_citests <- function( req, res, dag, threshold, pval ){
 		g <- dagitty::dagitty(dag)
 		r <- c()
 		nn <- names(g)
-		dataset <- datasets[[1]]
+		dataset <- preprocess_adult(datasets[[1]])
 		for( n1i in seq(1,length(nn)-1,by=1) ){
 			n1 <- nn[n1i]
 			p1 <- dagitty::parents(g, n1)
@@ -83,7 +109,7 @@ compute_fisher <- function( dag ){
 	g <- dagitty::dagitty(dag)
 	pvalues <- c()
 	nodes <- names(g)
-	dataset <- datasets[[1]]
+	dataset <- preprocess_adult(datasets[[1]])
 	for (i in 1:(length(nodes)-1)){
 		for (j in (i+1):length(nodes)){
 			pa_i <- dagitty::parents(g, nodes[i])

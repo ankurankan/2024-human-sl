@@ -12,17 +12,18 @@ model = genai.GenerativeModel(model_name="gemini-1.5-flash")
 
 
 def query_direction(u, v, descriptions):
-    prompt = f""" You are an expert in social sciences. You are given two variables with the following descriptions:
+    prompt = f""" You are an expert in Social Science. Following are the descriptions of two variables:
+
         <A>: {descriptions[u]}
         <B>: {descriptions[v]}
 
-        Which of the following two options is the most likely causal direction between them:
+        Which of the following two options is the most likely causal direction between these variables:
+
         1. <A> causes <B>
         2. <B> causes <A>
 
-        Return a single letter answer between the choices above. I do not need the reasoning behind it. Do not add any formatting in the answer.
+        Return a single letter answer between the choices above; Do not provide any reasoning in the answer; Do not add any text formatting to the answer.
         """
-
     response = model.generate_content([prompt])
     response_txt = response.text.strip().lower().replace('*', '')
     if response_txt in ('a', '1'):
