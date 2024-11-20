@@ -4,7 +4,7 @@ import networkx as nx
 from itertools import combinations
 
 import google.generativeai as genai
-from pgmpy.estimators.CITests import ci_pillai
+from pgmpy.estimators.CITests import pillai_trace
 from pgmpy.base import DAG
 
 genai.configure(api_key=os.environ['GEMINI_API_KEY'])
@@ -96,7 +96,7 @@ def test_all(dag, data):
             edge_present = False
 
         cond_set = list(set(u_parents).union(v_parents))
-        effect, p_value = ci_pillai(X=u, Y=v, Z=cond_set, data=data, boolean=False)
+        effect, p_value = pillai_trace(X=u, Y=v, Z=cond_set, data=data, boolean=False)
         cis.append([u, v, cond_set, edge_present, effect, p_value])
 
     return pd.DataFrame(cis, columns=['u', 'v', 'z', 'edge_present', 'effect', 'p_val'])
@@ -126,7 +126,7 @@ def simulate_human(data, descriptions, pval_thres=0.05, effect_thres=0.05):
         if len(blacklisted_edges) > 0:
             nonedge_effects = nonedge_effects.loc[((nonedge_effects.u in [edge[0] for edge in blacklisted_edges]) & (nonedge_effects.v in [edge[1] for edge in blacklisted_edges])) or
                              ((nonedge_effects.u in [edge[1] for edge in blacklisted_edges]) & (nonedge_effects.v in [edge[0] for edge in blacklisted_edges])), :]
-        if len(blacklisted_edges) > 0:
+
         selected_edge = nonedge_effects.iloc[nonedge_effects.effect.argmax()]
         print(f"Adding: {selected_edge.u} -- {selected_edge.v}")
         edge_direction = query_direction(selected_edge.u, selected_edge.v, descriptions)
