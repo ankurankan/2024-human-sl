@@ -127,7 +127,6 @@ def simulate_human(data, descriptions, pval_thres=0.05, effect_thres=0.05):
             nonedge_effects = nonedge_effects.loc[((nonedge_effects.u in [edge[0] for edge in blacklisted_edges]) & (nonedge_effects.v in [edge[1] for edge in blacklisted_edges])) or
                              ((nonedge_effects.u in [edge[1] for edge in blacklisted_edges]) & (nonedge_effects.v in [edge[0] for edge in blacklisted_edges])), :]
         if len(blacklisted_edges) > 0:
-            import ipdb; ipdb.set_trace()
         selected_edge = nonedge_effects.iloc[nonedge_effects.effect.argmax()]
         print(f"Adding: {selected_edge.u} -- {selected_edge.v}")
         edge_direction = query_direction(selected_edge.u, selected_edge.v, descriptions)
