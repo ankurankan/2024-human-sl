@@ -1,6 +1,6 @@
-source('data.R')
-source('ci_test.R')
-source('test_scripts/test_dag.R')
+source('../utils/data.R')
+source('../utils/ci_test.R')
+source('../test_scripts/test_dag.R')
 
 
 library(future.apply)
