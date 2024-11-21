@@ -1,5 +1,5 @@
-source('data.R')
-source('ci_test.R')
+source('../utils/data.R')
+source('../utils/ci_test.R')
 
 
 # Test whether u -> v or u <- v is present in present_edges.

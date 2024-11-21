@@ -11,3 +11,4 @@ ggplot2
 dplyr
 tibble
 directlabels
+fastDummies
