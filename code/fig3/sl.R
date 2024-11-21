@@ -162,6 +162,31 @@ run_single_exp_pc <- function(n_nodes, edge_prob){
 	}
 }
 
+run_single_exp_ges <- function(n_nodes, edge_prob){
+	d <- gen_mixed_data(n_nodes=n_nodes, edge_prob=edge_prob)
+	true_adj <- d$true_adj
+	sim_data <- d$sim_data
+
+	rand_str <- stringi::stri_rand_strings(1, 5)
+	write.csv(sim_data, paste0("temp/", rand_str,".csv"), row.names=F)
+	system(paste0("python sl_ges.py temp/", rand_str, ".csv"))
+	
+	ges_adj <- as.matrix(read.csv(paste0("temp/adj_", rand_str, ".csv"), row.names=1))
+	ges_pdag <- pcalg::dag2cpdag(ges_adj)
+	ges_alldags <- pcalg::pdag2allDags(ges_pdag)$dags
+	
+	# TODO: Understand this better.
+	if (is.null(nrow(ges_alldags))){
+		print("No orientation found from PDAG. Using original DAG.")
+		shd <- causalDisco::shd(ges_adj, true_adj)
+	}
+	else{
+		shd <- apply(ges_alldags, function(x) causalDisco::shd(matrix(x, n_nodes, n_nodes), true_adj), MARGIN=1)
+	}
+	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=ges_pdag)
+	return(c(min(shd), max(shd), sid$sidLowerBound, sid$sidUpperBound))
+}
+
 run_single_exp_human <- function(n_nodes, edge_prob, oracle_acc){
 	d <- gen_mixed_data(n_nodes=n_nodes, edge_prob=edge_prob)
 	true_dag <- d$true_dag
@@ -188,22 +213,29 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 		pc_mean <- apply(pc_dist, function(x) mean(x, na.rm=T), MARGIN=2)
 		pc_sd <- apply(pc_dist, function(x) sd(x, na.rm=T), MARGIN=2)/sqrt(sum(!is.na(pc_dist[, 1])))
 
+		ges_dist <- t(future_replicate(R, run_single_exp_ges(n_nodes=n_nodes, edge_prob=edge_prob)))
+		ges_mean <- apply(ges_dist, function(x) mean(x), MARGIN=2)
+		ges_sd <- apply(ges_dist, function(x) sd(x), MARGIN=2)
+
 		for (oracle_acc in oracle_accs){
 			human_dist <- t(future_replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
 
 			human_mean <- apply(human_dist, mean, MARGIN=2)
 			human_sd <- apply(human_dist, sd, MARGIN=2)/sqrt(R)
 			
-			results <- rbind(results, c(oracle_acc, edge_prob, hc_mean, hc_sd, pc_mean, pc_sd, human_mean, human_sd))
+			results <- rbind(results, c(oracle_acc, edge_prob, hc_mean, hc_sd, pc_mean, pc_sd, ges_mean, ges_sd, human_mean, human_sd))
 			pb$tick()
 		}
 	}
-	colnames(results) <- c('oracle_acc', 'edge_prob', 
-			       'hc_lower_shd_mean', 'hc_upper_shd_mean', 'hc_lower_sid_mean', 'hc_upper_sid_mean', 
-			       'hc_lower_shd_sd', 'hc_upper_shd_sd', 'hc_lower_sid_sd', 'hc_upper_sid_sd',
-			       'pc_lower_shd_mean', 'pc_upper_shd_mean', 'pc_lower_sid_mean', 'pc_upper_sid_mean', 
-			       'pc_lower_shd_sd', 'pc_upper_shd_sd', 'pc_lower_sid_sd', 'pc_upper_sid_sd',
-			       'human_shd_mean', 'human_sid_mean', 'human_shd_sd', 'human_sid_sd')
+	colnames(results) <- c(
+		'oracle_acc', 'edge_prob', 
+		'hc_lower_shd_mean', 'hc_upper_shd_mean', 'hc_lower_sid_mean', 'hc_upper_sid_mean', 
+		'hc_lower_shd_sd', 'hc_upper_shd_sd', 'hc_lower_sid_sd', 'hc_upper_sid_sd',
+		'pc_lower_shd_mean', 'pc_upper_shd_mean', 'pc_lower_sid_mean', 'pc_upper_sid_mean', 
+		'pc_lower_shd_sd', 'pc_upper_shd_sd', 'pc_lower_sid_sd', 'pc_upper_sid_sd',
+		'ges_lower_shd_mean', 'ges_upper_shd_mean', 'ges_lower_sid_mean', 'ges_upper_sid_mean', 
+		'ges_lower_shd_sd', 'ges_upper_shd_sd', 'ges_lower_sid_sd', 'ges_upper_sid_sd',
+		'human_shd_mean', 'human_sid_mean', 'human_shd_sd', 'human_sid_sd')
 	write.csv(results, 'results/sl_results_mixed.csv')
 }
 
