@@ -1,6 +1,6 @@
 source('data.R')
 source('ci_test.R')
-source('test_dag.R')
+source('test_scripts/test_dag.R')
 
 
 library(future.apply)
@@ -255,7 +255,7 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 	
 	pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
 	for (edge_prob in edge_probs){
-		hc_dist <- t(future_replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob)))
+		hc_dist <- t(replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob)))
 		hc_mean <- apply(hc_dist, mean, MARGIN=2)
 		hc_sd <- apply(hc_dist, sd, MARGIN=2)/sqrt(R)
 
