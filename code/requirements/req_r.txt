@@ -12,3 +12,6 @@ dplyr
 tibble
 directlabels
 fastDummies
+future.apply
+tidyverse
+
