@@ -29,7 +29,7 @@ def build_network():
                     }
 
     est = ExpertInLoop(get_adult_df())
-    dag = est.estimate(
+    dag, total_unexplained_effect, total_ll = est.estimate(
             pval_threshold=0.05,
             effect_size_threshold=0.05,
             use_llm=True,
