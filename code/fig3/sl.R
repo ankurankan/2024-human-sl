@@ -169,8 +169,7 @@ run_single_exp_ges <- function(n_nodes, edge_prob){
 
 	rand_str <- stringi::stri_rand_strings(1, 5)
 	write.csv(sim_data, paste0("temp/", rand_str,".csv"), row.names=F)
-	print(paste0("Filename: ", rand_str))
-	system(paste0("python sl_ges.py temp/", rand_str, ".csv"))
+	system(paste0("python sl_ges.py temp/", rand_str, ".csv"), intern=T)
 	
 	ges_adj <- as.matrix(read.csv(paste0("temp/adj_", rand_str, ".csv"), row.names=1))
 	ges_pdag <- pcalg::dag2cpdag(ges_adj)
@@ -248,7 +247,7 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 
 
 edge_probs <- seq(0.1, 0.9, 0.1)
-oracle_accs <- seq(0.1, 0.9, 0.1)
+oracle_accs <- seq(0.1, 0.9, 0.2)
 n_nodes <- 10
 R <- 30
 
