@@ -1,13 +1,17 @@
+import sys
+sys.path.append("../utils/")
+
 import os
 from ast import literal_eval
 from itertools import combinations
 
 import pandas as pd
 import networkx as nx
-from pgmpy.estimators import ExpertInLoop
 from pgmpy.models import BayesianNetwork
 
 from data import get_adult_df
+
+from expert import ExpertInLoop
 
 
 def build_network():
@@ -33,20 +37,24 @@ def build_network():
             variable_descriptions=descriptions,
             show_progress=True,
     )
-    return(dag)
+    return(dag, total_unexplained_effect, total_ll)
 
 def make_plot():
-    with open('plot_data/llm_edge_list.txt', 'r') as f:
+    with open('results/llm_edge_list.txt', 'r') as f:
         edge_list = literal_eval(f.readline())
     bn = BayesianNetwork(edge_list)
-    bn.to_graphviz().draw('plots/llm_adult.pdf', prog='dot')
+    bn.to_graphviz().draw('results/llm_adult.pdf', prog='dot')
 
 
 if __name__ == "__main__":
-    dag = build_network()
+    dag, total_unexplained_effect, total_ll = build_network()
 
-    with open('plot_data/llm_edge_list.txt', 'w') as f:
+    with open('results/llm_edge_list.txt', 'w') as f:
         f.write(str(list(dag.edges())))
+    with open('results/unexplained_effect.txt', 'w') as f:
+        f.write(str(list(total_unexplained_effect)))
+        f.write('\n')
+        f.write(str(list(total_ll)))
 
     make_plot()
 
