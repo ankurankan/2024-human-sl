@@ -116,6 +116,14 @@ run_single_exp_hc <- function(n_nodes, edge_prob){
 
 	hc_dag <- bnlearn::hc(sim_data, score=scoring_method)
 	hc_adj <- bnlearn::amat(hc_dag)
+
+	### Temp code block #################################################
+	shd <- causalDisco::shd(hc_adj, true_adj)
+	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=hc_adj)
+	return(shd, shd, sid$sidLowerBound, sid$sidUpperBound)
+
+	#####################################################################
+
 	hc_pdag <- pcalg::dag2cpdag(hc_adj)
 	hc_alldags <- pcalg::pdag2allDags(hc_pdag)$dags
 
@@ -149,6 +157,14 @@ run_single_exp_pc <- function(n_nodes, edge_prob){
 	    	verbose = FALSE
 	)
 	pc_adj <- as(pc.cpdag, 'amat')
+
+	### Temp code block #################################################
+	shd <- causalDisco::shd(pc_adj, true_adj)
+	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_adj)
+	return(shd, shd, sid$sidLowerBound, sid$sidUpperBound)
+
+	#####################################################################
+
 	pc_alldags <- pcalg::pdag2allDags(pc_adj)$dags
 
 	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_adj)	
@@ -169,10 +185,16 @@ run_single_exp_ges <- function(n_nodes, edge_prob){
 
 	rand_str <- stringi::stri_rand_strings(1, 5)
 	write.csv(sim_data, paste0("temp/", rand_str,".csv"), row.names=F)
-	print(paste0("Filename: ", rand_str))
-	system(paste0("python sl_ges.py temp/", rand_str, ".csv"))
+	system(paste0("python sl_ges.py temp/", rand_str, ".csv"), intern=T)
 	
 	ges_adj <- as.matrix(read.csv(paste0("temp/adj_", rand_str, ".csv"), row.names=1))
+
+	### Temp code block #################################################
+	shd <- causalDisco::shd(ges_adj, true_adj)
+	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=ges_adj)
+	return(shd, shd, sid$sidLowerBound, sid$sidUpperBound)
+
+	#####################################################################
 	ges_pdag <- pcalg::dag2cpdag(ges_adj)
 	ges_alldags <- pcalg::pdag2allDags(ges_pdag)$dags
 	
@@ -185,6 +207,7 @@ run_single_exp_ges <- function(n_nodes, edge_prob){
 		shd <- apply(ges_alldags, function(x) causalDisco::shd(matrix(x, n_nodes, n_nodes), true_adj), MARGIN=1)
 	}
 	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=ges_pdag)
+	
 	return(c(min(shd), max(shd), sid$sidLowerBound, sid$sidUpperBound))
 }
 
@@ -210,13 +233,19 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 		ges_mean <- apply(ges_dist, function(x) mean(x), MARGIN=2)
 		ges_sd <- apply(ges_dist, function(x) sd(x), MARGIN=2)
 
+		print("Done with GES")
+
 		hc_dist <- t(future_replicate(R, run_single_exp_hc(n_nodes=n_nodes, edge_prob=edge_prob)))
 		hc_mean <- apply(hc_dist, mean, MARGIN=2)
 		hc_sd <- apply(hc_dist, sd, MARGIN=2)/sqrt(R)
 
+		print("Done with Hill-Climb")
+
 		pc_dist <- t(future_replicate(R, run_single_exp_pc(n_nodes=n_nodes, edge_prob=edge_prob)))
 		pc_mean <- apply(pc_dist, function(x) mean(x, na.rm=T), MARGIN=2)
 		pc_sd <- apply(pc_dist, function(x) sd(x, na.rm=T), MARGIN=2)/sqrt(sum(!is.na(pc_dist[, 1])))
+
+		print("Done with PC")
 
 		for (oracle_acc in oracle_accs){
 			human_dist <- t(future_replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
@@ -242,7 +271,7 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 
 
 edge_probs <- seq(0.1, 0.9, 0.1)
-oracle_accs <- seq(0.1, 0.9, 0.1)
+oracle_accs <- seq(0.1, 0.9, 0.2)
 n_nodes <- 10
 R <- 30
 
