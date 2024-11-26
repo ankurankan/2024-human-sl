@@ -1,3 +1,6 @@
+### This script utilizes the GES implementation in pgmpy to get the results. Called from sl.R
+
+
 import sys
 
 import pandas as pd
