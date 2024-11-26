@@ -117,13 +117,6 @@ run_single_exp_hc <- function(n_nodes, edge_prob){
 	hc_dag <- bnlearn::hc(sim_data, score=scoring_method)
 	hc_adj <- bnlearn::amat(hc_dag)
 
-	### Temp code block #################################################
-	shd <- causalDisco::shd(hc_adj, true_adj)
-	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=hc_adj)
-	return(c(shd, shd, sid$sidLowerBound, sid$sidUpperBound))
-
-	#####################################################################
-
 	hc_pdag <- pcalg::dag2cpdag(hc_adj)
 	hc_alldags <- pcalg::pdag2allDags(hc_pdag)$dags
 
@@ -158,13 +151,6 @@ run_single_exp_pc <- function(n_nodes, edge_prob){
 	)
 	pc_adj <- as(pc.cpdag, 'amat')
 
-	### Temp code block #################################################
-	shd <- causalDisco::shd(pc_adj, true_adj)
-	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_adj)
-	return(c(shd, shd, sid$sidLowerBound, sid$sidUpperBound))
-
-	#####################################################################
-
 	pc_alldags <- pcalg::pdag2allDags(pc_adj)$dags
 
 	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_adj)	
@@ -189,12 +175,6 @@ run_single_exp_ges <- function(n_nodes, edge_prob){
 	
 	ges_adj <- as.matrix(read.csv(paste0("temp/adj_", rand_str, ".csv"), row.names=1))
 
-	### Temp code block #################################################
-	shd <- causalDisco::shd(ges_adj, true_adj)
-	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=ges_adj)
-	return(c(shd, shd, sid$sidLowerBound, sid$sidUpperBound))
-
-	#####################################################################
 	ges_pdag <- pcalg::dag2cpdag(ges_adj)
 	ges_alldags <- pcalg::pdag2allDags(ges_pdag)$dags
 	
