@@ -120,7 +120,7 @@ run_single_exp_hc <- function(n_nodes, edge_prob){
 	### Temp code block #################################################
 	shd <- causalDisco::shd(hc_adj, true_adj)
 	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=hc_adj)
-	return(shd, shd, sid$sidLowerBound, sid$sidUpperBound)
+	return(c(shd, shd, sid$sidLowerBound, sid$sidUpperBound))
 
 	#####################################################################
 
@@ -161,7 +161,7 @@ run_single_exp_pc <- function(n_nodes, edge_prob){
 	### Temp code block #################################################
 	shd <- causalDisco::shd(pc_adj, true_adj)
 	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_adj)
-	return(shd, shd, sid$sidLowerBound, sid$sidUpperBound)
+	return(c(shd, shd, sid$sidLowerBound, sid$sidUpperBound))
 
 	#####################################################################
 
@@ -192,7 +192,7 @@ run_single_exp_ges <- function(n_nodes, edge_prob){
 	### Temp code block #################################################
 	shd <- causalDisco::shd(ges_adj, true_adj)
 	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=ges_adj)
-	return(shd, shd, sid$sidLowerBound, sid$sidUpperBound)
+	return(c(shd, shd, sid$sidLowerBound, sid$sidUpperBound))
 
 	#####################################################################
 	ges_pdag <- pcalg::dag2cpdag(ges_adj)
