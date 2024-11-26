@@ -206,29 +206,27 @@ edge orientations.
 
 Understanding cause-and-effect relationships between variables is a fundamental
 goal in many scientific inquiries, as it reveals the underlying mechanisms of
-observed phenomena and informs effective interventions or policy decisions.
-\emph{Causal Discovery} methods aim to uncover these relationships among random
-variables from observational data. Methods for causal discovery have been
-developed in both the Directed Acyclic Graphs (DAGs) and Structural Equation
-Models (SEMs) literatures, each adopting a different approach. 
+observed phenomena and help in determining effective interventions or policy
+decisions. \emph{Causal Discovery} methods aim to uncover these relationships
+among random variables from observational data. Methods for causal discovery
+have been developed in both the Directed Acyclic Graphs (DAGs) and Structural
+Equation Models (SEMs) literatures, each adopting a different approach. 
 
 In the DAG literature, the focus has primarily been on developing automated
 algorithms to learn causal structures from datasets. As a result of these
-efforts, numerous algorithms for causal discovery have been proposed, such as
+efforts, many algorithms for causal discovery have been proposed, such as
 constraint-based methods like the PC algorithm \citep{Spirtes2001} and Fast
 Causal Inference (FCI) \citep{Spirtes2000}), score-based methods like
 Hill-Climb Search and Greedy Equivalence Search (GES) \citep{Chickering2002},
 and continuous optimization-based methods like NO TEARS \citep{Zheng2018} and
-DAGMA \citep{Bello2022}. 
-
-In contrast, the SEM literature has focused more on developing tools to assist
-researchers in manually constructing or modifying models while allowing them to
-integrate their expert knowledge into the model-building process. Researchers
-typically develop an initial model based on their expertise and then use
-various tools to guide modifications to improve the model's fit to data. This
-model construction process is commonly known as \emph{Specification Search}
-\citep{Long1983} and uses method like modification indices, and Wald-based
-tests \citep{Marcoulides2018}.
+DAGMA \citep{Bello2022}. In contrast, the SEM literature has focused more on
+developing tools to assist researchers in manually constructing or modifying
+models while allowing them to integrate their expert knowledge into the
+model-building process. Researchers typically develop an initial model based on
+their expertise and then use various tools to guide modifications to improve
+the model's fit to data. This model construction process is commonly known as
+\emph{Specification Search} \citep{Long1983} and uses method like modification
+indices, and Wald-based tests \citep{Marcoulides2018}.
 
 Despite the many automated algorithms proposed for constructing DAGs, their
 adoption in applied research remains limited, with researchers often preferring
@@ -240,12 +238,12 @@ these algorithms when applied in practical settings:
 	\item \textbf{Lack of Trust:} Although most algorithms are
 		asymptotically consistent, their finite sample properties are
 		not well understood. Moreover, their output can vary
-		significantly depending on the algorithm and their
+		significantly depending on the chosen algorithm and their
 		hyperparameters. Combined with the lack of robust methods to
 		test these algorithms' performance on a given dataset, it can
 		be difficult to trust their outputs. Consequently, researchers
 		usually have to rely on post-hoc modifications to the model
-		based on their domain expertise.
+		based on model testing and their domain expertise.
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} Multiple
 		DAGs can be faithful to a given observational dataset. Thus,
 		using only observational data, algorithms can only recover the
@@ -256,18 +254,13 @@ these algorithms when applied in practical settings:
 		orient these edges before using them for analysis.
 \end{enumerate}
 
-Figure~\ref{fig:intro} shows some of these issues when applied to the Adult
-Income dataset. Due to these challenges, whether constructing the model
-manually or using an algorithm, we typically have to rely on some expert
-knowledge to get a model that we can use for further analysis. Hence, it is
-crucial to have tools to guide this construction or modification process.
+Figure~\ref{fig:intro} shows an example of application of a causal discovery
+algorithms namely PC on the Adult Income dataset. \todo[inline]{Explain}.
 
-A common method for specification search is using \emph{modification indices},
-which identify potential changes to the model structure that improve the model
-fit. These potential changes are then ranked by the ones that improve the fit
-the most. This ranking allows the researchers to focus first on the suggestions
-that can improve the model the most and while integrating their expertise to
-choose the most optimal modifications. 
+Due to these challenges, whether constructing the model manually or using an
+algorithm, we typically have to rely on some expert knowledge to get a model
+that we can use for further analysis. Hence, it is crucial to have tools to
+guide this construction or modification process.
 
 One of the ways to guide this modification is to use Conditional Independence
 (CI) based model testing \cite{Ankan2023}. As DAGs imply CI statements that can
@@ -283,6 +276,13 @@ variables with very small association. Secondly, the number of implied CIs can
 be quite large. For example, in the moderately sized alarm network with $ 37 $
 node, there are $287$ implied CIs. If we rely only on the p-values of the CI
 tests, it can be difficult to figure which test to focus on.
+
+A common method for specification search is using \emph{modification indices},
+which identify potential changes to the model structure that improve the model
+fit. These potential changes are then ranked by the ones that improve the fit
+the most. This ranking allows the researchers to focus first on the suggestions
+that can improve the model the most and while integrating their expertise to
+choose the most optimal modifications. 
 
 Inspired by this ranking approach in modification indices, in this paper we
 develop a method to rank the CI tests using a conditional measure of
@@ -381,6 +381,8 @@ We consider the problem of estimating the partial (or conditional) association
 between $ X $ and $ Y $ in the presence of a set of conditioning variables $
 \bm{Z} $. When $ Z = \emptyset $, this is equivalent to the marginal
 association between $ X $ and $ Y $.
+
+\subsection{Ranking using Correlation Coefficients}
 
 \subsection{Measures of (Conditional) Association}
 \todo[inline]{Complete this section}
