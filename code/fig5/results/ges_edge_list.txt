@@ -1,0 +1,1 @@
+[('Age', 'MaritalStatus'), ('MaritalStatus', 'Relationship'), ('Relationship', 'Sex'), ('Relationship', 'Income'), ('Sex', 'Occupation'), ('Income', 'HoursPerWeek'), ('Income', 'Education')]
