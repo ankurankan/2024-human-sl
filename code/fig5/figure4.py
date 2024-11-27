@@ -7,6 +7,7 @@ from itertools import combinations
 
 import pandas as pd
 import networkx as nx
+import numpy as np
 from pgmpy.models import BayesianNetwork
 
 from data import get_adult_df

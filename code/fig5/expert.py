@@ -8,7 +8,7 @@ from pgmpy import config
 from pgmpy.base import DAG
 from pgmpy.estimators import StructureEstimator
 from pgmpy.estimators.CITests import pillai_trace
-from pgmpy.estimators import LogLikelihoodCondGauss
+from pgmpy.estimators import BICCondGauss
 from pgmpy.utils import llm_pairwise_orient, manual_pairwise_orient
 
 
@@ -139,7 +139,12 @@ class ExpertInLoop(StructureEstimator):
         total_unexplained_effect = []
         total_ll = []
 
-        score_method = LogLikelihoodCondGauss(self.data)
+        score_method = BICCondGauss(self.data)
+
+        temp_all_effects = self.test_all(dag)
+        total_unexplained_effect.append(temp_all_effects[temp_all_effects.edge_present == False].effect.sum())
+        total_ll.append(score_method.score(dag))
+
         while True:
             # Step 1: Compute effects and p-values between every combination of variables.
             all_effects = self.test_all(dag)
