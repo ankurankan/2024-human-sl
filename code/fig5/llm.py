@@ -22,8 +22,7 @@ def query_direction(u, v, descriptions):
         1. <A> causes <B>
         2. <B> causes <A>
 
-        Return a single letter answer between the choices above; Do not provide any reasoning in the answer; Do not add any text formatting to the answer.
-        """
+        Return a single letter answer between the choices above; Do not provide any reasoning in the answer; Do not add any text formatting to the answer."""
     response = model.generate_content([prompt])
     response_txt = response.text.strip().lower().replace('*', '')
     if response_txt in ('a', '1'):
@@ -38,7 +37,7 @@ def query_direction(u, v, descriptions):
 
 
 def preprocess_data():
-    df = pd.read_csv("adult_proc.csv", index_col=0)
+    df = pd.read_csv("../utils/adult_proc.csv", index_col=0)
     df.Age = pd.Categorical(
         df.Age,
         categories=["<21", "21-30", "31-40", "41-50", "51-60", "61-70", ">70"],
@@ -120,12 +119,15 @@ def simulate_human(data, descriptions, pval_thres=0.05, effect_thres=0.05):
         nonedge_effects = all_effects[all_effects.edge_present == False]
         nonedge_effects = nonedge_effects[(nonedge_effects.effect >= effect_thres) & (nonedge_effects.p_val <= pval_thres)]
 
+        if len(blacklisted_edges) > 0:
+            nonedge_effects = nonedge_effects.loc[
+                    ~(((nonedge_effects.u.isin([edge[0] for edge in blacklisted_edges])) &
+                       (nonedge_effects.v.isin([edge[1] for edge in blacklisted_edges]))) |
+                      ((nonedge_effects.u.isin([edge[1] for edge in blacklisted_edges])) &
+                       (nonedge_effects.v.isin([edge[0] for edge in blacklisted_edges])))), :]
+
         if (edge_effects.shape[0] == 0) and (nonedge_effects.shape[0] == 0):
             break
-
-        if len(blacklisted_edges) > 0:
-            nonedge_effects = nonedge_effects.loc[((nonedge_effects.u in [edge[0] for edge in blacklisted_edges]) & (nonedge_effects.v in [edge[1] for edge in blacklisted_edges])) or
-                             ((nonedge_effects.u in [edge[1] for edge in blacklisted_edges]) & (nonedge_effects.v in [edge[0] for edge in blacklisted_edges])), :]
 
         selected_edge = nonedge_effects.iloc[nonedge_effects.effect.argmax()]
         print(f"Adding: {selected_edge.u} -- {selected_edge.v}")
@@ -151,3 +153,4 @@ descriptions = {'Age': 'The age of a person',
                 }
 
 dag = simulate_human(preprocess_data(), descriptions)
+import ipdb; ipdb.set_trace()
