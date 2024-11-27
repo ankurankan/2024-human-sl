@@ -231,7 +231,7 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 	for (edge_prob in edge_probs){
 		ges_dist <- t(future_replicate(R, run_single_exp_ges(n_nodes=n_nodes, edge_prob=edge_prob)))
 		ges_mean <- apply(ges_dist, function(x) mean(x), MARGIN=2)
-		ges_sd <- apply(ges_dist, function(x) sd(x), MARGIN=2)
+		ges_sd <- apply(ges_dist, function(x) sd(x), MARGIN=2)/sqrt(R)
 
 		print("Done with GES")
 
