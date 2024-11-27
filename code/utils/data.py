@@ -2,7 +2,7 @@ import pandas as pd
 
 
 def get_adult_df():
-    df = pd.read_csv("adult_proc.csv", index_col=0)
+    df = pd.read_csv("/home/ankur/work/2024-human-sl/code/utils/adult_proc.csv", index_col=0)
     df.Age = pd.Categorical(
         df.Age,
         categories=["<21", "21-30", "31-40", "41-50", "51-60", "61-70", ">70"],
