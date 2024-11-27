@@ -184,7 +184,7 @@ make_plots_v2 <- function(filename, plot_type){
 		geom_line(alpha=0.4, show.legend=T) +
 		geom_point(data=subset(d_shd, !(algo %in% c('GES', 'PC', 'Hill-Climb Search'))), pch=19, size=1, alpha=0.4, show.legend=F) +
 		geom_ribbon(linetype=0, alpha=0.4, show.legend=F) + 
-		geom_dl(aes(label=line_labels), color='black', method=list(dl.trans(x=x+.1), "last.points", cex=0.5)) + 
+		# geom_dl(aes(label=line_labels), color='black', method=list(dl.trans(x=x+.1), "last.points", cex=0.5)) + 
       		theme_minimal(base_size = 8) + 
 		theme(legend.position='top',
 		      legend.title=element_blank(),
@@ -198,7 +198,11 @@ make_plots_v2 <- function(filename, plot_type){
 	ggsave("shd_ribbon.pdf", p_shd, height=2.5, width=3.2, units='in')
 
 
-	d_sid <- d %>% select(edge_prob, oracle_acc, hc_lower_sid_mean, hc_upper_sid_mean, hc_lower_sid_sd, hc_upper_sid_sd, pc_lower_sid_mean, pc_upper_sid_mean, pc_lower_sid_sd, pc_upper_sid_sd, human_sid_mean, human_sid_sd)
+	d_sid <- d %>% select(edge_prob, oracle_acc, ges_lower_sid_mean, ges_upper_sid_mean, ges_lower_sid_sd, ges_upper_sid_sd, hc_lower_sid_mean, hc_upper_sid_mean, hc_lower_sid_sd, hc_upper_sid_sd, pc_lower_sid_mean, pc_upper_sid_mean, pc_lower_sid_sd, pc_upper_sid_sd, human_sid_mean, human_sid_sd)
+
+	d_sid$ges_lower <- d_sid$ges_lower_sid_mean - d_sid$ges_lower_sid_sd
+	d_sid$ges_upper <- d_sid$ges_upper_sid_mean + d_sid$ges_upper_sid_sd
+	d_sid$ges_mean <- (d_sid$ges_lower + d_sid$ges_upper)/2
 
 	d_sid$hc_lower <- d_sid$hc_lower_sid_mean - d_sid$hc_lower_sid_sd
 	d_sid$hc_upper <- d_sid$hc_upper_sid_mean + d_sid$hc_upper_sid_sd
@@ -212,16 +216,16 @@ make_plots_v2 <- function(filename, plot_type){
 	d_sid$human_upper <- d_sid$human_sid_mean + d_sid$human_sid_sd
 	d_sid$human_mean <- d_sid$human_sid_mean
 
-	d_sid <- d_sid %>% select(edge_prob, oracle_acc, hc_mean, hc_lower, hc_upper, pc_mean, pc_lower, pc_upper, human_mean, human_lower, human_upper)
+	d_sid <- d_sid %>% select(edge_prob, oracle_acc, ges_mean, ges_lower, ges_upper, hc_mean, hc_lower, hc_upper, pc_mean, pc_lower, pc_upper, human_mean, human_lower, human_upper)
 
 	d_sid <- as.data.frame(cbind(c(d_sid$edge_prob, d_sid$edge_prob, d_sid$edge_prob),
 	      	       c(d_sid$oracle_acc, d_sid$oracle_acc, d_sid$oracle_acc),
-	      	       c(d_sid$hc_mean, d_sid$pc_mean, d_sid$human_mean),
-	      	       c(d_sid$hc_lower, d_sid$pc_lower, d_sid$human_lower),
-	      	       c(d_sid$hc_upper, d_sid$pc_upper, d_sid$human_upper),
-		       c(rep('Hill-Climb Search', nrow(d_sid)), rep('PC', nrow(d_sid)), rep('Expert', nrow(d_sid))),
-		       c(rep('hc', nrow(d_sid)), rep('pc', nrow(d_sid)), paste('human', d_sid$oracle_acc)),
-		       c(rep(NA, nrow(d_sid)), rep(NA, nrow(d_sid)), d_sid$oracle_acc)
+	      	       c(d_sid$ges_mean, d_sid$hc_mean, d_sid$pc_mean, d_sid$human_mean),
+	      	       c(d_sid$ges_lower, d_sid$hc_lower, d_sid$pc_lower, d_sid$human_lower),
+	      	       c(d_sid$ges_upper, d_sid$hc_upper, d_sid$pc_upper, d_sid$human_upper),
+		       c(rep('GES', nrow(d_sid)), rep('Hill-Climb Search', nrow(d_sid)), rep('PC', nrow(d_sid)), rep('Expert', nrow(d_sid))),
+		       c(rep('ges', nrow(d_sid)), rep('hc', nrow(d_sid)), rep('pc', nrow(d_sid)), paste('human', d_sid$oracle_acc)),
+		       c(rep(NA, nrow(d_sid)), rep(NA, nrow(d_sid)), rep(NA, nrow(d_sid)), d_sid$oracle_acc)
 		       ))
 	colnames(d_sid) <- c('edge_prob', 'oracle_acc', 'mean_val', 'lower', 'upper', 'algo', 'grp', 'line_labels')
 
@@ -234,9 +238,9 @@ make_plots_v2 <- function(filename, plot_type){
 	p_sid <- ggplot(d_sid, aes(x=edge_prob, y=mean_val, 
 				   ymin=lower, ymax=upper, 
 				   group=grp, color=algo, 
-				   fill=algo, linetype=ifelse(algo %in% c('PC', 'Hill-Climb Search'), NA, "solid"))) + 
+				   fill=algo, linetype=ifelse(algo %in% c('GES', 'PC', 'Hill-Climb Search'), NA, "solid"))) + 
 		geom_line(alpha=0.4, show.legend=T) +
-		geom_point(data=subset(d_sid, !(algo %in% c('PC', 'Hill-Climb Search'))), pch=19, size=1, alpha=0.4, show.legend=F) +
+		geom_point(data=subset(d_sid, !(algo %in% c('GES', 'PC', 'Hill-Climb Search'))), pch=19, size=1, alpha=0.4, show.legend=F) +
 		geom_ribbon(linetype=0, alpha=0.4, show.legend=F) + 
 		geom_dl(aes(label=line_labels), color='black', method=list(dl.trans(x=x+.1), "last.points", cex=0.5)) + 
       		theme_minimal(base_size = 8) + 
@@ -253,5 +257,4 @@ make_plots_v2 <- function(filename, plot_type){
 }
 
 make_plots_v2(filename='results/sl_results_mixed.csv', plot_type='ribbon')
-
 
