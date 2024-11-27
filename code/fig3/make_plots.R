@@ -162,8 +162,8 @@ make_plots_v2 <- function(filename, plot_type){
 	d_shd <- as.data.frame(cbind(c(d_shd$edge_prob, d_shd$edge_prob, d_shd$edge_prob),
 	      	       c(d_shd$oracle_acc, d_shd$oracle_acc, d_shd$oracle_acc),
 	      	       c(d_shd$ges_mean, d_shd$hc_mean, d_shd$pc_mean, d_shd$human_mean),
-	      	       c(d_shd$ges_mean, d_shd$hc_lower, d_shd$pc_lower, d_shd$human_lower),
-	      	       c(d_shd$ges_mean, d_shd$hc_upper, d_shd$pc_upper, d_shd$human_upper),
+	      	       c(d_shd$ges_lower, d_shd$hc_lower, d_shd$pc_lower, d_shd$human_lower),
+	      	       c(d_shd$ges_upper, d_shd$hc_upper, d_shd$pc_upper, d_shd$human_upper),
 		       c(rep('GES', nrow(d_shd)), rep('Hill-Climb Search', nrow(d_shd)), rep('PC', nrow(d_shd)), rep('Expert', nrow(d_shd))),
 		       c(rep('ges', nrow(d_shd)), rep('hc', nrow(d_shd)), rep('pc', nrow(d_shd)), paste('human', d_shd$oracle_acc)),
 		       c(rep(NA, nrow(d_shd)), rep(NA, nrow(d_shd)), rep(NA, nrow(d_shd)), d_shd$oracle_acc)
@@ -184,7 +184,7 @@ make_plots_v2 <- function(filename, plot_type){
 		geom_line(alpha=0.4, show.legend=T) +
 		geom_point(data=subset(d_shd, !(algo %in% c('GES', 'PC', 'Hill-Climb Search'))), pch=19, size=1, alpha=0.4, show.legend=F) +
 		geom_ribbon(linetype=0, alpha=0.4, show.legend=F) + 
-		# geom_dl(aes(label=line_labels), color='black', method=list(dl.trans(x=x+.1), "last.points", cex=0.5)) + 
+		geom_dl(aes(label=line_labels), color='black', method=list(dl.trans(x=x+.1), "last.points", cex=0.5)) + 
       		theme_minimal(base_size = 8) + 
 		theme(legend.position='top',
 		      legend.title=element_blank(),
