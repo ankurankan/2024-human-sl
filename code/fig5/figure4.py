@@ -52,9 +52,9 @@ if __name__ == "__main__":
     with open('results/llm_edge_list.txt', 'w') as f:
         f.write(str(list(dag.edges())))
     with open('results/unexplained_effect.txt', 'w') as f:
-        f.write(str(list(total_unexplained_effect)))
+        f.write(str(total_unexplained_effect.tolist()))
         f.write('\n')
-        f.write(str(list(total_ll)))
+        f.write(list(total_ll.tolist()))
 
     make_plot()
 
