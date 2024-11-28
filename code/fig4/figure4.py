@@ -35,7 +35,7 @@ def build_network():
             pval_threshold=0.05,
             effect_size_threshold=0.05,
             use_llm=True,
-            llm_model="gemini/gemini-1.5-pro",
+            llm_model="gemini/gemini-1.5-flash",
             variable_descriptions=descriptions,
             show_progress=True,
     )
@@ -43,7 +43,7 @@ def build_network():
 
 def build_ges():
     est = GES(get_adult_df())
-    dag, total_unexplained_effect, total_ll = est.estimate(scoring_method='bic-cg')
+    dag, total_unexplained_effect, total_ll = est.estimate(scoring_method='ll-cg', debug=True)
     return(dag, total_unexplained_effect, total_ll)
 
 if __name__ == "__main__":
@@ -54,6 +54,7 @@ if __name__ == "__main__":
         f.write(str(np.array(total_unexplained_effect).tolist())[1:-1])
         f.write('\n')
         f.write(str(np.array(total_ll).tolist())[1:-1])
+        f.write('\n')
 
     dag, total_unexplained_effect, total_ll = build_network()
     with open('results/llm_edge_list.txt', 'w') as f:
