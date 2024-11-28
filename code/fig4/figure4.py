@@ -46,17 +46,6 @@ def build_ges():
     dag, total_unexplained_effect, total_ll = est.estimate(scoring_method='bic-cg')
     return(dag, total_unexplained_effect, total_ll)
 
-def make_plot():
-    with open('results/ges_edge_list.txt', 'r') as f:
-        edge_list = literal_eval(f.readline())
-    bn = BayesianNetwork(edge_list)
-    bn.to_graphviz().draw('results/ges_adult.pdf', prog='dot')
-
-    with open('results/llm_edge_list.txt', 'r') as f:
-        edge_list = literal_eval(f.readline())
-    bn = BayesianNetwork(edge_list)
-    bn.to_graphviz().draw('results/expert_llm_adult.pdf', prog='dot')
-
 if __name__ == "__main__":
     dag, total_unexplained_effect, total_ll = build_ges()
     with open('results/ges_edge_list.txt', 'w') as f:
@@ -73,6 +62,4 @@ if __name__ == "__main__":
         f.write(str(np.array(total_unexplained_effect).tolist())[1:-1])
         f.write('\n')
         f.write(str(np.array(total_ll).tolist())[1:-1])
-
-    make_plot()
 
