@@ -155,4 +155,3 @@ descriptions = {'Age': 'The age of a person',
 dag = simulate_human(preprocess_data(), descriptions)
 with open('llm_adult.txt', 'w') as f:
     f.write(str(list(dag.edges())))
-dag.to_graphviz().draw('llm_adult.png', prog='dot')
