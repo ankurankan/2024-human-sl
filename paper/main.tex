@@ -269,8 +269,7 @@ Conditional Independence (CI) based model testing \cite{Ankan2023}. As DAGs
 imply CI statements that can be tested in the given data using statistical CI
 tests, we can verify whether the implied CIs are consistent with the data or
 not. If some of implied CIs are not valid in the given dataset, we can modify
-the model accordingly. Figure~\ref{fig:ci_testing} shows an example of model
-testing using CIs. However, this CI based testing has a few drawbacks: 1) CIs
+the model accordingly. However, this CI based testing has a few drawbacks: 1) CIs
 are implied only by missing edges in the model, so we can not test for already
 existing edges. 2) In high sample size scenarios, p-values can suggest a
 significant association between variables even if they have a very weak
@@ -305,48 +304,117 @@ in the previous paragraphs.
 % knowledge decide the direction of the edge. 
 
 \begin{figure}
-	\centering
+\centering
+\begin{subfigure}{0.5 \textwidth}
 	\begin{tikzpicture}
-		\begin{scope}[xshift=-2.5cm, yshift=0.7cm, scale=0.7]
-			\tikzstyle{every node}=[align=center, inner sep=1pt]
-			\node (sex) at (-0.7, -0.8) {Sex};
-			\node (age) at (-0.3, 0) {Age};
-			\node (ed) at (-1.8, -1.6) {Education};
-			\node (occ) at (1.8, 0) {Occupation};
-			\node (hrpw) at (1.3, -1.6) {Hours Per \\ Week};
-			\node (income) at (-0.7, -2.8) {Income};
-		
-			\draw[->]  (age) to[bend right=20] (ed);
-			\draw[->]  (sex) to (ed);
-			\draw[->]  (age) to (hrpw);
-			\draw[->]  (ed) to (hrpw);
-			\draw[->]  (sex) to (hrpw);
-			\draw[->]  (ed) to (income);
-			\draw[->]  (hrpw) to (income);
-			\draw[->]  (occ) to[out=300, in=0, looseness=1.4] (income.east);
-			\draw[->]  (sex) to (income);
-			\draw[->]  (ed) to[out=90, in=150, looseness=1.3] (occ);
-			\draw[->]  (sex) to (occ);	
-		\end{scope}
-		\begin{scope}[xshift=-3cm]
-			\draw[thick, ->, double, cyan] (2.5,0) -- (3,0);
-			\node[rectangle, align=center, inner sep=1pt] at (5, 0) {
-				\begin{minipage}{.2\textwidth}
-					\begin{equation*}
-						\begin{split}
-							\textnormal{Age} &\ci \textnormal{Incm} \rvert \textnormal{Edct, Hrpw, Sex} \\
-							\textnormal{Age} &\ci \textnormal{Occp} \rvert \textnormal{Edct, Sex} \\
-							\textnormal{Age} &\ci \textnormal{Sex} \\
-							\textnormal{Hrpw} &\ci \textnormal{Occp} \rvert \textnormal{Edct, Sex} \\
-						\end{split}
-					\end{equation*}
-				\end{minipage}
-				};
-		\end{scope}
-		\end{tikzpicture}
-		\caption{\todo[inline]{Generate this figure using a few different CI tests and also show the unoriented edges in some of them}}
-		\label{fig:intro}
+	\begin{scope}[xshift=-2.5cm, yshift=0.7cm]
+		\tikzstyle{every node}=[align=center, inner sep=1pt]
+		\node (sex) at (-0.7, -0.8) {Sex};
+		\node (age) at (-0.3, 0) {Age};
+		\node (ed) at (-1.8, -1.6) {Education};
+		\node (occ) at (1.8, 0) {Occupation};
+		\node (hrpw) at (1.3, -1.6) {Hours Per \\ Week};
+		\node (income) at (-0.7, -2.8) {Income};
+	
+		\draw[->]  (age) to[bend right=20] (ed);
+		\draw[->]  (sex) to (ed);
+		\draw[->]  (age) to (hrpw);
+		\draw[->]  (ed) to (hrpw);
+		\draw[->]  (sex) to (hrpw);
+		\draw[->]  (ed) to (income);
+		\draw[->]  (hrpw) to (income);
+		\draw[->]  (occ) to[out=300, in=0, looseness=1.4] (income.east);
+		\draw[->]  (sex) to (income);
+		\draw[->]  (ed) to[out=90, in=150, looseness=1.3] (occ);
+		\draw[->]  (sex) to (occ);	
+	\end{scope}
+	\end{tikzpicture}
+\end{subfigure}
+\begin{subfigure}{0.5 \textwidth}
+	\begin{tikzpicture}
+	\begin{scope}[xshift=-2.5cm, yshift=0.7cm]
+		\tikzstyle{every node}=[align=center, inner sep=1pt]
+		\node (wclass) at (0, 1) {WorkClass};
+		\node (sex) at (0, -0.8) {Sex};
+		\node (age) at (-0.3, 0) {Age};
+		\node (ed) at (-2, -1.6) {Education};
+		\node (occ) at (1.8, 0) {Occupation};
+		\node (hrpw) at (1, -2) {Hours Per \\ Week};
+		\node (income) at (-0.7, -2.3) {Income};
+		\node (marital) at (3, 1) {Marital \\ Status};
+		\node (reln) at (-3, 1) {Relationship};
+		\node (race) at (-4, 2) {Race};
+		\node (country) at (-4, 3) {Native \\ Country};
+
+		\draw[] (ed) to (income);
+		\draw[] (marital) to (reln);
+		\draw[] (occ) to (sex);
+		\draw[->] (reln) to (age);
+		\draw[->] (reln) to (marital);
+		\draw[] (reln) to (sex);
+		\draw[->] (reln) to (hrpw);
+		\draw[] (reln) to (income);
+		\draw[->] (income) to (ed);
+	\end{scope}
+	\end{tikzpicture}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+	\begin{tikzpicture}
+	\begin{scope}[xshift=-2.5cm, yshift=0.7cm]
+		\tikzstyle{every node}=[align=center, inner sep=1pt]
+		\node (wclass) at (0, 1) {WorkClass};
+		\node (sex) at (0, -0.8) {Sex};
+		\node (age) at (-0.3, 0) {Age};
+		\node (ed) at (-2, -1.6) {Education};
+		\node (occ) at (1.8, 0) {Occupation};
+		\node (hrpw) at (1, -2) {Hours Per \\ Week};
+		\node (income) at (-0.7, -2.3) {Income};
+		\node (marital) at (3, 1) {Marital \\ Status};
+		\node (reln) at (-3, 1) {Relationship};
+		\node (race) at (-4, 2) {Race};
+		\node (country) at (-4, 3) {Native \\ Country};
+
+		\draw[]   (wclass) to (ed);
+		\draw[]   (wclass) to (occ);
+		\draw[]   (wclass) to (race);
+		\draw[]   (wclass) to (income);
+		\draw[]   (ed) to (occ);
+		\draw[]   (ed) to (country);
+		\draw[]   (ed) to (income);
+		\draw[]   (marital) to (occ);
+		\draw[]   (marital) to (reln);
+		\draw[->] (marital) to (sex);
+		\draw[]   (marital) to (hrpw);
+		\draw[->] (occ) to (sex);
+		\draw[]   (occ) to (hrpw);
+		\draw[->] (reln) to (sex);
+		\draw[]   (reln) to (hrpw);
+		\draw[->] (income) to (occ);
+
+
+	\end{scope}
+	\end{tikzpicture}
+\end{subfigure}
+
+\caption{Markov Equivalence Class (MEC) learnt for Adult Income Dataset using (a) PC algorithm, (b) Hill-Climb Search with BIC score, (c) }
+\label{fig:intro}
 \end{figure}
+
+			% \begin{scope}[xshift=-3cm]
+			% 	\draw[thick, ->, double, cyan] (2.5,0) -- (3,0);
+			% 	\node[rectangle, align=center, inner sep=1pt] at (5, 0) {
+			% 		\begin{minipage}{.2\textwidth}
+			% 			\begin{equation*}
+			% 				\begin{split}
+			% 					\textnormal{Age} &\ci \textnormal{Incm} \rvert \textnormal{Edct, Hrpw, Sex} \\
+			% 					\textnormal{Age} &\ci \textnormal{Occp} \rvert \textnormal{Edct, Sex} \\
+			% 					\textnormal{Age} &\ci \textnormal{Sex} \\
+			% 					\textnormal{Hrpw} &\ci \textnormal{Occp} \rvert \textnormal{Edct, Sex} \\
+			% 				\end{split}
+			% 			\end{equation*}
+			% 		\end{minipage}
+			% 		};
+			% \end{scope}
 
 Our main contributions in this paper are as follows:
 \begin{enumerate}
@@ -635,8 +703,6 @@ can remove the edge.
 		unlike scoring methods.
 \end{itemize}
 
-\todo[inline]{Show an example where local changes can get stuck}
-
 \section{Web Tool}
 \label{sec:web}
 Based on the procedure outlined in the previous section, we built a web-based
@@ -695,7 +761,7 @@ further computation.
 		Hill-Climb Search return the Markov Equivalence Class (MEC), we
 		use the best and worst scoring orientation of the MEC to get
 		the range of values. The human drawn values are done for
-	multiple accuracy values of the oracle. \todo[inline]{Replace Hill-Climb with GES and improve the plot}}
+		multiple accuracy values of the oracle.}
 \end{figure}
 
 \begin{figure}
