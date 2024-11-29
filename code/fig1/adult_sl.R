@@ -356,9 +356,9 @@ var_types <- list(
 		NativeCountry = "cat"
 		)
 
-suffStat <- list(dm = d, adaptDF = F, test = "rf_q3", var_types = var_types)
-pc.skel <- pcalg::pc(
-		suffStat,
+suffStat_q3 <- list(dm = d, adaptDF = F, test = "rf_q3", var_types = var_types)
+pc.cpdag.q3 <- pcalg::pc(
+		suffStat_q3,
 		indepTest = sl.test,
 		alpha = 0.05,
 		labels = colnames(d),
@@ -368,4 +368,33 @@ pc.skel <- pcalg::pc(
 		verbose = F
 		)
 
-adj_mat <- pcalg::dag2cpdag(as(pc.skel, "amat")) # Use this to get the final model.
+suffStat_mxm <- list(dm = d, adaptDF = F, test = "mxm", var_types = var_types)
+pc.cpdag.mxm <- pcalg::pc(
+		suffStat_mxm,
+		indepTest = sl.test,
+		alpha = 0.05,
+		labels = colnames(d),
+		u2pd = "relaxed",
+		skel.method = "stable.fast",
+		numCores = 8,
+		verbose = F
+		)
+
+suffStat_mi <- list(dm = d, adaptDF = F, test = "mi_cg", var_types = var_types)
+pc.cpdag.mi <- pcalg::pc(
+		suffStat_mi,
+		indepTest = sl.test,
+		alpha = 0.05,
+		labels = colnames(d),
+		u2pd = "relaxed",
+		skel.method = "stable.fast",
+		numCores = 8,
+		verbose = F
+		)
+
+hc.cpdag <- bnlearn::cpdag(bnlearn::hc(d, score='bic-cg'))
+
+adj_mat_q3 <- pcalg::dag2cpdag(as(pc.skel.q3, "amat")) # Use this to get the final model.
+adj_mat_mxm <- pcalg::dag2cpdag(as(pc.skel.mxm, "amat")) # Use this to get the final model.
+adj_mat_mi <- pcalg::dag2cpdag(as(pc.skel.mi, "amat")) # Use this to get the final model.
+
