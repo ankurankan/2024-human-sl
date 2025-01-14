@@ -48,59 +48,59 @@
 % information below.
 %
 % Add authors
-\author[1]{\href{mailto:<jj@example.edu>?Subject=Your UAI 2025 paper}{Jane~J.~von~O'L\'opez}{}}
-\author[1]{Harry~Q.~Bovik}
-\author[1,2]{Further~Coauthor}
-\author[3]{Further~Coauthor}
-\author[1]{Further~Coauthor}
-\author[3]{Further~Coauthor}
-\author[3,1]{Further~Coauthor}
+\author[1]{\href{mailto:<ankur.ankan@ru.nl>?Subject=Your UAI 2025 paper}{Ankur~Ankan}{}}
+\author[1]{Johannes~Textor}
+
 % Add affiliations after the authors
 \affil[1]{%
-    Computer Science Dept.\\
-    Cranberry University\\
-    Pittsburgh, Pennsylvania, USA
+    Institute for Computing and Information Sciences\\
+    Radboud University\\
+    Nijmegen, The Netherlands
 }
-\affil[2]{%
-    Second Affiliation\\
-    Address\\
-    …
-}
-\affil[3]{%
-    Another Affiliation\\
-    Address\\
-    …
-  }
-
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
+% Causal discovery has received significant attention in the Directed Acyclic
+% Graphs (DAGs) literature, leading to the development of numerous automated
+% algorithms for learning DAGs from data. Despite these advancements, the
+% application of these algorithms in applied domains remains limited, with
+% researchers often preferring to manually construct DAGs based on their expert
+% knowledge. This preference stems due to some practical issues with these
+% algorithms such as making obvious mistakes, and outputting Markov Equivalence
+% Class (MEC). As a result of these issues users typically have to rely on post
+% hoc modifications to the model based on their expertise. Given this reliance on
+% manual model modification and construction, we propose an iterative method to
+% assist researchers in manually constructing DAGs by combining implied
+% Conditional Independence (CI) based model testing and utilizing their expert
+% knowledge. We present a novel measure of partial association for mixed data
+% that allows us to rank violations of implied CIs in the model. Using this
+% ranking users can prioritize modifications to the model while using their
+% expert knowledge to decide orientation of edges. Empirically, we show that
+% a greedy approach achieves performance comparable to automated algorithms, provided
+% the user can correctly determine the edge orientation in $ 1 $ out of $ 3 $ cases.
+% Additionally, we show that in the absence of an expert, a Large Language Model can
+% potentially be used for determining edge orientations.
+
 Causal discovery has received significant attention in the Directed Acyclic
 Graphs (DAGs) literature, leading to the development of numerous automated
-algorithms for learning DAGs from data. Despite these advancements, the
-application of these algorithms in applied domains remains limited, with
-researchers often preferring to manually construct DAGs based on their expert
-knowledge. This preference stems due to some practical issues with the
-automated algorithms such as they can make obvious mistakes, and they output
-the Markov Equivalence Class (MEC). Due to these issues, when using these
-algorithms, users typically have to rely on expert knowledge to fix the
-mistakes and to orient the MEC to a DAG. Given this reliance on manual model
-construction, we propose an iterative method to assist researchers in manually
-constructing DAGs by combining implied Conditional Independence (CI) based
-model testing and utilizing their expert knowledge. Our approach is inspired by
-specification search in Structural Equation Models (SEMs), where we utilize a
-novel measure of partial association for mixed data to rank violations of
-implied Conditional Independences in the model. Using this ranking users can
-prioritize the pair of variables which need to be corrected by either adding an
-edge between them or removing the edge based on their expertise to specify the
-correct orientation. Empirically, we demonstrate that a greedy approach (i.e.,
-fixing the worst violation first) achieves performance comparable to automated
-algorithms, provided the user can correctly determine the edge orientation in $
-1 $ out of $ 3 $ edge additions. Additionally, we show that in the absence of
-an expert, a Large Language Model (LLM) can potentially be used to determine
-edge orientations. 
+algorithms for learning DAGs from data. However, their adoption in applied
+domains remains limited, as researchers often prefer to construct DAGs manually
+based on their expert knowledge. This preference arises due to practical issues
+with these automated algorithms, such as making obvious errors and outputting
+Markov Equivalence Classes (MECs). To address these challenge, we propose an
+iterative method to assist researchers in manually constructing or modifying
+DAGs by combining implied Conditional Independence (CI) testing with expert
+knowledge. We introduce a novel measure of partial association for mixed data
+to rank violations of implied CIs, enabling users to prioritize model
+modifications while leveraging their expertise to decide the orientation of
+edges when making these modifications. Empirical results show that this
+approach achieves performance comparable to automated algorithms, assuming the
+user can correctly orient edges in one out of three cases. Additionally, we
+demonstrate that, in the absence of an expert, a Large Language Model can
+potentially determine edge orientations.
+
 \end{abstract}
 
 \section{Introduction}
@@ -134,7 +134,7 @@ Despite the many automated algorithms proposed for constructing DAGs, their
 adoption in applied research remains limited, with researchers often preferring
 to manually construct DAGs based on their domain expertise \citep{Tennant2020,
 Petersen2021}. We believe this preference persists due to several issues with
-these algorithms when applied in practical settings:
+these algorithms when applied in practical settings with finite sample size:
 
 \begin{enumerate}
 	\item \textbf{Lack of Trust:} Although most algorithms are
@@ -144,9 +144,9 @@ these algorithms when applied in practical settings:
 		chosen algorithm and their hyperparameters. Combined with the
 		lack of robust methods to test these algorithms' performance on
 		a given dataset, it can be difficult to trust their outputs.
-		Consequently, researchers usually have to rely on post-hoc
-		modifications to the model based on model testing and their
-		domain expertise.
+		Consequently, even when using these algorithms, users have to
+		rely on post hoc manual modifications to the model based on model
+		testing and their domain expertise.
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} Multiple
 		DAGs can be faithful to a given observational dataset. Thus,
 		using only observational data, algorithms can only recover the
@@ -154,7 +154,8 @@ these algorithms when applied in practical settings:
 		edges. However, most methods for downstream tasks, such as
 		identification or causal effect estimation, assume knowledge of
 		a fully oriented DAG. As a result, researchers have to manually
-		orient these edges before using them for analysis.
+		orient these edges based on their expert knowledge before using
+		them for analysis.
 \end{enumerate}
 
 Figure~\ref{fig:intro} shows an example to highlight some of these issues using 
@@ -165,31 +166,31 @@ Adult income dataset.
 % that we can use for further analysis. Hence, it is crucial to have tools to
 % guide this construction or modification process.
 
-One of the common ways to guide this post-hoc modification of DAGs is to use
-Conditional Independence (CI) based model testing \cite{Ankan2023}. As DAGs
-imply CI statements that can be tested in the given data using statistical CI
-tests, we can verify whether the implied CIs are consistent with the data or
-not. If some of implied CIs are not valid in the given dataset, we can modify
-the model accordingly. However, this CI based testing has a few drawbacks: 1) CIs
-are implied only by missing edges in the model, so we can not test for already
+As a result of these issues, whether constructing the model manually or using
+an algorithm, the user has to rely on their expertise to make modifications to
+the model. One of the common ways to guide this post hoc modification is to use
+implied CI based model testing \citep{Ankan2021, Ankan2023}. In this testing
+procedure, users test whether the implied CIs of the DAG hold in the dataset or
+not using statistical CI tests. Based on the results of these statistical
+tests, we can accordingly make modifications to the current model to fix the
+violations. However, this CI based testing also has a few drawbacks: 1) CIs are
+implied only by missing edges in the model, so we can not test for already
 existing edges. 2) In high sample size scenarios, p-values can suggest a
 significant association between variables even if they have a very weak
 relationship. 3) Number of implied CIs can be large making it difficult to
-manually go through each of them; for example,  in the moderately sized alarm
+manually go through each of them; for example, in the moderately sized alarm
 network with $ 37 $ node, there are $287$ implied CIs. 
 
-On the other hand, a common method for specification search is using
-\emph{modification indices}, which identify potential changes to the model
-structure that improve the model fit. These potential changes are then ranked
-by the ones that improve the fit the most. This ranking allows researchers to
-focus first on the suggestions that can improve the model the most and while
-integrating their expertise to choose the most optimal modifications. 
-
-Inspired by this ranking approach in modification indices, in this paper we
-develop a method to rank the CI tests. We utilize a measure of conditional
-association to do this ranking. Additionally, this measure of conditional
-association also allows us tackle other issues with CI based testing outlined
-in the previous paragraphs.
+To tackle these issues with CI based testing, we take inspiration from
+\emph{modification indices} in specification search. The modification indices
+method tries to identify and rank changes in the model such that modifications
+that improve the model fit the most are ranked higher.This ranking allows
+researchers to focus first on the suggestions that can improve the model the
+most and while integrating their expertise to choose the most optimal
+modifications. Analogous to this, in this paper we develop a measure for
+partial association for mixed data that allows us to rank the CI violations.
+Additionally, this measure of conditional association also allows us tackle
+other issues with CI based testing outlined in the previous paragraphs.
 
 % using a conditional measure of
 % association.  To deal with both this issues, in this paper, we develop a
@@ -205,96 +206,14 @@ in the previous paragraphs.
 % knowledge decide the direction of the edge. 
 
 \begin{figure}
-\centering
 \begin{subfigure}{0.5 \textwidth}
-	\begin{tikzpicture}
-	\begin{scope}[xshift=-2.5cm, yshift=0.7cm]
-		\tikzstyle{every node}=[align=center, inner sep=1pt]
-		\node (sex) at (-0.7, -0.8) {Sex};
-		\node (age) at (-0.3, 0) {Age};
-		\node (ed) at (-1.8, -1.6) {Education};
-		\node (occ) at (1.8, 0) {Occupation};
-		\node (hrpw) at (1.3, -1.6) {Hours Per \\ Week};
-		\node (income) at (-0.7, -2.8) {Income};
-	
-		\draw[->]  (age) to[bend right=20] (ed);
-		\draw[->]  (sex) to (ed);
-		\draw[->]  (age) to (hrpw);
-		\draw[->]  (ed) to (hrpw);
-		\draw[->]  (sex) to (hrpw);
-		\draw[->]  (ed) to (income);
-		\draw[->]  (hrpw) to (income);
-		\draw[->]  (occ) to[out=300, in=0, looseness=1.4] (income.east);
-		\draw[->]  (sex) to (income);
-		\draw[->]  (ed) to[out=90, in=150, looseness=1.3] (occ);
-		\draw[->]  (sex) to (occ);	
-	\end{scope}
-	\end{tikzpicture}
+	\includegraphics[page=1]{figures.pdf}
 \end{subfigure}
 \begin{subfigure}{0.5 \textwidth}
-	\begin{tikzpicture}
-	\begin{scope}[xshift=-2.5cm, yshift=0.7cm]
-		\tikzstyle{every node}=[align=center, inner sep=1pt]
-		\node (wclass) at (0, 1) {WorkClass};
-		\node (sex) at (0, -0.8) {Sex};
-		\node (age) at (-0.3, 0) {Age};
-		\node (ed) at (-2, -1.6) {Education};
-		\node (occ) at (1.8, 0) {Occupation};
-		\node (hrpw) at (1, -2) {Hours Per \\ Week};
-		\node (income) at (-0.7, -2.3) {Income};
-		\node (marital) at (3, 1) {Marital \\ Status};
-		\node (reln) at (-3, 1) {Relationship};
-		\node (race) at (-4, 2) {Race};
-		\node (country) at (-4, 3) {Native \\ Country};
-
-		\draw[] (ed) to (income);
-		\draw[] (marital) to (reln);
-		\draw[] (occ) to (sex);
-		\draw[->] (reln) to (age);
-		\draw[->] (reln) to (marital);
-		\draw[] (reln) to (sex);
-		\draw[->] (reln) to (hrpw);
-		\draw[] (reln) to (income);
-		\draw[->] (income) to (ed);
-	\end{scope}
-	\end{tikzpicture}
+	\includegraphics[page=2]{figures.pdf}
 \end{subfigure}
 \begin{subfigure}{0.5\textwidth}
-	\begin{tikzpicture}
-	\begin{scope}[xshift=-2.5cm, yshift=0.7cm]
-		\tikzstyle{every node}=[align=center, inner sep=1pt]
-		\node (wclass) at (0, 1) {WorkClass};
-		\node (sex) at (0, -0.8) {Sex};
-		\node (age) at (-0.3, 0) {Age};
-		\node (ed) at (-2, -1.6) {Education};
-		\node (occ) at (1.8, 0) {Occupation};
-		\node (hrpw) at (1, -2) {Hours Per \\ Week};
-		\node (income) at (-0.7, -2.3) {Income};
-		\node (marital) at (3, 1) {Marital \\ Status};
-		\node (reln) at (-3, 1) {Relationship};
-		\node (race) at (-4, 2) {Race};
-		\node (country) at (-4, 3) {Native \\ Country};
-
-		\draw[]   (wclass) to (ed);
-		\draw[]   (wclass) to (occ);
-		\draw[]   (wclass) to (race);
-		\draw[]   (wclass) to (income);
-		\draw[]   (ed) to (occ);
-		\draw[]   (ed) to (country);
-		\draw[]   (ed) to (income);
-		\draw[]   (marital) to (occ);
-		\draw[]   (marital) to (reln);
-		\draw[->] (marital) to (sex);
-		\draw[]   (marital) to (hrpw);
-		\draw[->] (occ) to (sex);
-		\draw[]   (occ) to (hrpw);
-		\draw[->] (reln) to (sex);
-		\draw[]   (reln) to (hrpw);
-		\draw[->] (income) to (occ);
-
-
-	\end{scope}
-	\end{tikzpicture}
+	\includegraphics[page=3]{figures.pdf}
 \end{subfigure}
 
 \caption{Markov Equivalence Class (MEC) learnt for Adult Income Dataset using (a) PC algorithm, (b) Hill-Climb Search with BIC score, (c) PC algorithm with MXM test}
