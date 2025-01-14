@@ -104,58 +104,55 @@ potentially determine edge orientations.
 \end{abstract}
 
 \section{Introduction}
-
 Understanding cause-and-effect relationships between variables is a fundamental
-goal in many scientific inquiries, as it reveals the underlying mechanisms of
-observed phenomena and help in determining effective interventions or policy
-decisions. \emph{Causal Discovery} methods aim to find these relationships
-among random variables from observational data. Methods for causal discovery
-have been developed in both the Directed Acyclic Graphs (DAGs) and Structural
-Equation Models (SEMs) literatures, each adopting a different approach. 
+objective in many scientific fields. These relationships reveal the mechanisms
+behind observed phenomena and guide effective interventions or policy
+decisions. \emph{Causal Discovery} methods aim to identify such relationships
+among random variables using observational data. Approaches to causal discovery
+have been developed within both the Directed Acyclic Graphs (DAGs) and
+Structural Equation Models (SEMs) frameworks, each adapting a different approach.
 
-In the DAG literature, the focus has primarily been on developing automated
-algorithms to learn causal structures from datasets. As a result of these
-efforts, many algorithms for causal discovery have been proposed, such as
-constraint-based methods like the PC algorithm \citep{Spirtes2001} and Fast
-Causal Inference (FCI) \citep{Spirtes2000}), score-based methods like
-Hill-Climb Search and Greedy Equivalence Search (GES) \citep{Chickering2002},
-and continuous optimization-based methods like NO TEARS \citep{Zheng2018} and
-DAGMA \citep{Bello2022}. In contrast, the SEM literature has focused more
-towards developing tools to assist researchers in manually constructing or
-modifying models. This approach allows experts to easily integrate their expert
-knowledge into the model-building process. Researchers typically develop an
-initial model based on their expertise and then use various tools to guide
-modifications to improve the model's fit to data. This model construction
-process is commonly known as \emph{Specification Search} \citep{Long1983} and
-uses method like modification indices, and Wald-based tests
-\citep{Marcoulides2018}.
+In the DAG literature, the primary focus has been on developing automated
+algorithms to learn causal structures from datasets. These efforts have led to
+numerous causal discovery algorithms, including constraint-based methods like
+the PC algorithm \citep{Spirtes2001} and Fast Causal Inference (FCI)
+\citep{Spirtes2000}), score-based methods such as Hill-Climb Search and Greedy
+Equivalence Search (GES) \citep{Chickering2002}, and continuous
+optimization-based methods like NO TEARS \citep{Zheng2018} and DAGMA
+\citep{Bello2022}. In contrast, the SEM literature has focused on developing
+tools to assist researchers in manually constructing or modifying models,
+enabling experts to incorporate their domain knowledge in the model building
+process. Researchers typically begin with an initial model based on their
+expertise and then use these tools to guide modifications that improve the
+model's fit to data. This process is commonly known as \emph{Specification
+Search} \citep{Long1983} and uses method such as modification indices, and
+Wald-based tests \citep{Marcoulides2018}.
 
-Despite the many automated algorithms proposed for constructing DAGs, their
-adoption in applied research remains limited, with researchers often preferring
-to manually construct DAGs based on their domain expertise \citep{Tennant2020,
-Petersen2021}. We believe this preference persists due to several issues with
-these algorithms when applied in practical settings with finite sample size:
+Despite the availability of many automated algorithms for constructing DAGs,
+their adoption in applied research remains limited. Researchers often prefer to
+manually construct DAGs based on their domain expertise \citep{Tennant2020,
+Petersen2021}. We believe this preference persists due to several challenges
+with these algorithms when applied in practical settings:
 
 \begin{enumerate}
-	\item \textbf{Lack of Trust:} Although most algorithms are
+	\item \textbf{Lack of Trust:} While most algorithms are
 		asymptotically consistent, their finite sample properties are
 		not well understood \todo{Is there any citation for this}.
-		Moreover, their output can vary significantly depending on the
-		chosen algorithm and their hyperparameters. Combined with the
+		Additionally, their output can vary significantly depending on
+		the chosen algorithm and their hyperparameters. Combined with a
 		lack of robust methods to test these algorithms' performance on
-		a given dataset, it can be difficult to trust their outputs.
-		Consequently, even when using these algorithms, users have to
-		rely on post hoc manual modifications to the model based on model
-		testing and their domain expertise.
-	\item \textbf{Outputs Markov Equivalence Class (MEC):} Multiple
-		DAGs can be faithful to a given observational dataset. Thus,
-		using only observational data, algorithms can only recover the
-		MECs that can contain a combination of directed and undirected
-		edges. However, most methods for downstream tasks, such as
-		identification or causal effect estimation, assume knowledge of
-		a fully oriented DAG. As a result, researchers have to manually
-		orient these edges based on their expert knowledge before using
-		them for analysis.
+		a given dataset, it can be difficult to trust their outputs. As
+		a result, even when using these algorithms are used,
+		researchers often rely on post hoc manual modifications to the
+		model based on model testing and their domain expertise.
+	\item \textbf{Outputs Markov Equivalence Class (MEC):} As multiple
+		DAGs can be faithful to a given observational dataset, the
+		algorithms can only recover the MECs. These MECs can contain a
+		combination of directed and undirected edges. However, most
+		methods for downstream tasks, such as identification or causal
+		effect estimation, assume knowledge of a fully oriented DAG. As
+		a result, researchers have to manually orient these edges based
+		on their expert knowledge before using them for analysis.
 \end{enumerate}
 
 Figure~\ref{fig:intro} shows an example to highlight some of these issues using 
@@ -166,9 +163,14 @@ Adult income dataset.
 % that we can use for further analysis. Hence, it is crucial to have tools to
 % guide this construction or modification process.
 
-As a result of these issues, whether constructing the model manually or using
-an algorithm, the user has to rely on their expertise to make modifications to
-the model. One of the common ways to guide this post hoc modification is to use
+As a result of these issues, expert knowledge integration is vital to get usable 
+results from these algorithms.
+% whether constructing the model manually or using
+% an algorithm, the user has to rely on their expertise to make modifications to
+% the model. 
+One way to do this to specify expert knowledge in terms of
+fixing edges, blacklisting edges, or specifying tiered knowledge.
+The other ways is to do post hoc modification to the learned model using
 implied CI based model testing \citep{Ankan2021, Ankan2023}. In this testing
 procedure, users test whether the implied CIs of the DAG hold in the dataset or
 not using statistical CI tests. Based on the results of these statistical
