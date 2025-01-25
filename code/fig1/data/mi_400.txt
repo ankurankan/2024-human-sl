@@ -1,0 +1,12 @@
+"Age" "Workclass" "Education" "MaritalStatus" "Occupation" "Relationship" "Race" "Sex" "HoursPerWeek" "NativeCountry" "Income"
+"Age" 0 0 0 0 0 0 0 0 0 0 0
+"Workclass" 0 0 0 0 0 0 0 0 0 0 0
+"Education" 0 0 0 0 1 0 0 0 0 0 1
+"MaritalStatus" 0 0 0 0 0 1 0 0 0 0 0
+"Occupation" 0 0 1 0 0 0 0 0 0 0 0
+"Relationship" 0 0 0 1 0 0 0 1 0 0 0
+"Race" 0 0 0 0 0 0 0 0 0 0 0
+"Sex" 0 0 0 0 0 1 0 0 0 0 0
+"HoursPerWeek" 0 0 0 0 0 0 0 0 0 0 0
+"NativeCountry" 0 0 0 0 0 0 0 0 0 0 0
+"Income" 0 0 1 0 0 0 0 0 0 0 0

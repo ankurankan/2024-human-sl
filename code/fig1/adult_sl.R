@@ -28,66 +28,80 @@ d$HoursPerWeek <- as.double(d$HoursPerWeek)
 education_levels <- c("Preschool", "1st-4th", "5th-6th", "7th-8th", "9th", "10th", "11th", "12th", "HS-grad", "Some-college", "Assoc-voc", "Assoc-acdm", "Bachelors", "Masters", "Prof-school", "Doctorate")
 d$Education <- factor(d$Education, levels = education_levels, ordered = T)
 
+set.seed(42)
 d <- d[complete.cases(d), ]
-d <- d[1:500, ]
 
-# Using bnlearn
-dag <- bnlearn::pc.stable(d)
+for (n_samples in c(400, 800)){
+	df <- d[sample(nrow(d), n_samples), ]
 
-# Using pcalg
-var_types <- list(
-		Age = "cont",
-		Workclass = "cat",
-		Education = "ord",
-		MaritalStatus = "cat",
-		Occupation = "cat",
-		Relationship = "cat",
-		Race = "cat",
-		Sex = "cat",
-		HoursPerWeek = "cont",
-		Income = "cat",
-		NativeCountry = "cat"
-		)
+	# Using pcalg
+	var_types <- list(
+			Age = "cont",
+			Workclass = "cat",
+			Education = "ord",
+			MaritalStatus = "cat",
+			Occupation = "cat",
+			Relationship = "cat",
+			Race = "cat",
+			Sex = "cat",
+			HoursPerWeek = "cont",
+			Income = "cat",
+			NativeCountry = "cat"
+			)
 
-suffStat_q3 <- list(dm = d, adaptDF = F, test = "rf_q3", var_types = var_types)
-pc.cpdag.q3 <- pcalg::pc(
-		suffStat_q3,
-		indepTest = sl.test,
-		alpha = 0.05,
-		labels = colnames(d),
-		u2pd = "relaxed",
-		skel.method = "stable.fast",
-		numCores = 8,
-		verbose = F
-		)
+	# Using our mixed data test
+	suffStat_q3 <- list(dm = df, adaptDF = F, test = "rf_q3", var_types = var_types)
+	cpdag.q3 <- pcalg::pc(
+			suffStat_q3,
+			indepTest = sl.test,
+			alpha = 0.05,
+			labels = colnames(df),
+			u2pd = "relaxed",
+			skel.method = "stable.fast",
+			numCores = 8,
+			verbose = F
+			)
+	
+	# Using likelihood ratio test
+	suffStat_mxm <- list(dm = df, adaptDF = F, test = "mxm", var_types = var_types)
+	cpdag.mxm <- pcalg::pc(
+			suffStat_mxm,
+			indepTest = sl.test,
+			alpha = 0.05,
+			labels = colnames(df),
+			u2pd = "relaxed",
+			skel.method = "stable.fast",
+			numCores = 8,
+			verbose = F
+			)
+	
+	# Using MI
+	suffStat_mi <- list(dm = df, adaptDF = F, test = "mi_cg", var_types = var_types)
+	cpdag.mi <- pcalg::pc(
+			suffStat_mi,
+			indepTest = sl.test,
+			alpha = 0.05,
+			labels = colnames(df),
+			u2pd = "relaxed",
+			skel.method = "stable.fast",
+			numCores = 8,
+			verbose = F
+			)
+	
+	# Using hill climb search BIC score
+	cpdag.bic <- bnlearn::cpdag(bnlearn::hc(df, score='bic-cg'))
 
-suffStat_mxm <- list(dm = d, adaptDF = F, test = "mxm", var_types = var_types)
-pc.cpdag.mxm <- pcalg::pc(
-		suffStat_mxm,
-		indepTest = sl.test,
-		alpha = 0.05,
-		labels = colnames(d),
-		u2pd = "relaxed",
-		skel.method = "stable.fast",
-		numCores = 8,
-		verbose = F
-		)
+	dir.create('data')
 
-suffStat_mi <- list(dm = d, adaptDF = F, test = "mi_cg", var_types = var_types)
-pc.cpdag.mi <- pcalg::pc(
-		suffStat_mi,
-		indepTest = sl.test,
-		alpha = 0.05,
-		labels = colnames(d),
-		u2pd = "relaxed",
-		skel.method = "stable.fast",
-		numCores = 8,
-		verbose = F
-		)
+	adj_mat_q3 <- as(cpdag.q3, "amat")
+	write.table(adj_mat_q3, file=paste0('data/q3_', n_samples, '.txt'), row.names=T, col.names=T)
 
-hc.cpdag <- bnlearn::cpdag(bnlearn::hc(d, score='bic-cg'))
+	adj_mat_mxm <- as(cpdag.mxm, "amat")
+	write.table(adj_mat_mxm, file=paste0('data/mxm_', n_samples, '.txt'), row.names=T, col.names=T)
 
-adj_mat_q3 <- pcalg::dag2cpdag(as(pc.skel.q3, "amat")) # Use this to get the final model.
-adj_mat_mxm <- pcalg::dag2cpdag(as(pc.skel.mxm, "amat")) # Use this to get the final model.
-adj_mat_mi <- pcalg::dag2cpdag(as(pc.skel.mi, "amat")) # Use this to get the final model.
+	adj_mat_mi <- as(cpdag.mi, "amat")
+	write.table(adj_mat_mi, file=paste0('data/mi_', n_samples, '.txt'), row.names=T, col.names=T)
 
+	adj_mat_bic <- bnlearn::amat(cpdag.bic)
+	write.table(adj_mat_bic, file=paste0('data/bic_', n_samples, '.txt'), row.names=T, col.names=T)
+}
