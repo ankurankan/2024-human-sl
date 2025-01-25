@@ -16,4 +16,4 @@ fig5:
 	cd ../code/fig5/ && python make_plots.py
 
 clean:
-	rm main.pdf main.aux main.bbl main.blg main.fdb_latexmk main.fls texput.fls texput.log
+	rm main.pdf main.aux main.bbl main.blg main.fdb_latexmk main.fls texput.fls texput.log figures.pdf

@@ -178,7 +178,9 @@ network with $ 37 $ node, there are $287$ implied CIs.
 
 There has been work on trying to come up with a single test to combine all
 these test to give a single answer \citep{Eulig2023, Shipley2000}. However,
-what is missing is the guide on how to how to fix these tests. To tackle these
+what is missing is the guide on how to how to fix these tests. Additionally
+there has been a lot of work to integrate expert knowledge into causal
+discovery algorithms which has shown significant improvement. To tackle these
 issues with CI based testing, we take inspiration from \emph{modification
 indices} in specification search. The modification indices method tries to
 identify and rank changes in the model such that modifications that improve the
@@ -204,14 +206,17 @@ testing outlined in the previous paragraphs.
 % knowledge decide the direction of the edge. 
 
 \begin{figure}
-\begin{subfigure}{0.5 \textwidth}
+\begin{subfigure}{0.25 \textwidth}
 	\includegraphics[page=1]{figures.pdf}
-\end{subfigure}
-\begin{subfigure}{0.5 \textwidth}
+\end{subfigure}%
+\begin{subfigure}{0.25 \textwidth}
 	\includegraphics[page=2]{figures.pdf}
 \end{subfigure}
-\begin{subfigure}{0.5\textwidth}
+\begin{subfigure}{0.25 \textwidth}
 	\includegraphics[page=3]{figures.pdf}
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+	\includegraphics[page=4]{figures.pdf}
 \end{subfigure}
 
 \caption{Markov Equivalence Class (MEC) learnt for Adult Income Dataset using (a) PC algorithm, (b) Hill-Climb Search with BIC score, (c) PC algorithm with MXM test}
