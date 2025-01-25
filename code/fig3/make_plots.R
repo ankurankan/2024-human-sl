@@ -195,7 +195,7 @@ make_plots_v2 <- function(filename, plot_type){
 		ylim(0, 40) +
 		guides(linetype='none', fill='none')
 
-	ggsave("shd_ribbon.pdf", p_shd, height=2.5, width=3.2, units='in')
+	ggsave("shd_ribbon.pdf", p_shd, height=2, width=3.2, units='in')
 
 
 	d_sid <- d %>% select(edge_prob, oracle_acc, ges_lower_sid_mean, ges_upper_sid_mean, ges_lower_sid_sd, ges_upper_sid_sd, hc_lower_sid_mean, hc_upper_sid_mean, hc_lower_sid_sd, hc_upper_sid_sd, pc_lower_sid_mean, pc_upper_sid_mean, pc_lower_sid_sd, pc_upper_sid_sd, human_sid_mean, human_sid_sd)
@@ -253,7 +253,7 @@ make_plots_v2 <- function(filename, plot_type){
 		ylim(0, 90) +
 		guides(linetype='none', fill='none')
 
-	ggsave("sid_ribbon.pdf", p_sid, height=2.5, width=3.2, units='in')
+	ggsave("sid_ribbon.pdf", p_sid, height=2, width=3.2, units='in')
 }
 
 make_plots_v2(filename='results/sl_results_mixed.csv', plot_type='ribbon')
