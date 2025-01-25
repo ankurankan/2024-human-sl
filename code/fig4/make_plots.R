@@ -18,22 +18,25 @@ d_ges$algo <- 'GES'
 
 d_results = rbind(d_expert, d_ges)
 
-
 p_unexplained_effect <- ggplot(d_results, aes(x=x, y=pillai, color=algo)) +
 	geom_line(alpha=0.6) +
 	geom_point(alpha=0.6, show.legend=F) +
 	theme_minimal(base_size=8) +
 	labs(x="Iteration No.") +
-	labs(y="Total Unexplained Effect")
+	labs(y="Total Unexplained Effect") + 
+	theme(legend.position='top',
+	      legend.title=element_blank(),
+	      legned.text=element_blank())
 
 p_ll <- ggplot(d_results, aes(x=x, y=ll, color=algo)) +
 	geom_line(alpha=0.6) +
 	geom_point(alpha=0.6, show.legend=F) +
 	theme_minimal(base_size=8) +
 	labs(x="Iteration No.") +
-	labs(y="Log-Likelihood")
+	labs(y="Log-Likelihood") +
+	theme(legend.position='top',
+	      legend.title=element_blank(),
+	      legned.text=element_blank())
 
-ggsave('unexplained_effect.pdf', p_unexplained_effect, height=2.5, width=3.2, units='in')
-ggsave('ll.pdf', p_ll, height=2.5, width=3.2, units='in')
-
-
+ggsave('unexplained_effect.pdf', p_unexplained_effect, height=2.5, width=1.6, units='in')
+ggsave('ll.pdf', p_ll, height=2.5, width=1.6, units='in')
