@@ -176,12 +176,14 @@ relationship. 3) Number of implied CIs can be large making it difficult to
 manually go through each of them; for example, in the moderately sized alarm
 network with $ 37 $ node, there are $287$ implied CIs. 
 
-There has been work on trying to come up with a single test to combine all
-these test to give a single answer \citep{Eulig2023, Shipley2000}. However,
-what is missing is the guide on how to how to fix these tests. Additionally
-there has been a lot of work to integrate expert knowledge into causal
-discovery algorithms which has shown significant improvement. To tackle these
-issues with CI based testing, we take inspiration from \emph{modification
+There has been work on integrating expert knowledge into model building process
+and has been quite successful such as tpc and background knowledge
+specification. There has been work on trying to come up with a single test to
+combine all these test to give a single answer \citep{Eulig2023, Shipley2000}.
+However, what is missing is the guide on how to how to fix these tests.
+Additionally there has been a lot of work to integrate expert knowledge into
+causal discovery algorithms which has shown significant improvement. To tackle
+these issues with CI based testing, we take inspiration from \emph{modification
 indices} in specification search. The modification indices method tries to
 identify and rank changes in the model such that modifications that improve the
 model fit the most are ranked higher.This ranking allows researchers to focus
