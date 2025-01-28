@@ -107,10 +107,11 @@ potentially determine edge orientations.
 Understanding cause-and-effect relationships between variables is a fundamental
 objective in many scientific fields. These relationships reveal the mechanisms
 behind observed phenomena and guide effective interventions or policy
-decisions. \emph{Causal Discovery} methods aim to identify such relationships
+decisions. \emph{Causal Discovery} methods aim to discover such relationships
 among random variables using observational data. Approaches to causal discovery
 have been developed within both the Directed Acyclic Graphs (DAGs) and
-Structural Equation Models (SEMs) frameworks, each adapting a different approach.
+Structural Equation Models (SEMs) frameworks, each adapting a different
+approach.
 
 In the DAG literature, the primary focus has been on developing automated
 algorithms to learn causal structures from datasets. These efforts have led to
@@ -126,7 +127,10 @@ process. Researchers typically begin with an initial model based on their
 expertise and then use these tools to guide modifications that improve the
 model's fit to data. This process is commonly known as \emph{Specification
 Search} \citep{Long1983} and uses method such as modification indices, and
-Wald-based tests \citep{Marcoulides2018}.
+Wald-based tests \citep{Marcoulides2018}. While there has been some effort in
+DAG literature as well towards allowing for expert knowledge but these methods
+focus towards providing the expert knowledge to the automated algorithms
+\citep{Bang2023, Meek1995}. \todo[inline]{Whether to keep this sentence?}
 
 Despite the availability of many automated algorithms for constructing DAGs,
 their adoption in applied research remains limited. Researchers often prefer to
@@ -155,14 +159,11 @@ with these algorithms when applied in practical settings:
 		on their expert knowledge before using them for analysis.
 \end{enumerate}
 
-Figure~\ref{fig:intro} shows an example to highlight some of these issues using 
-Adult income dataset.
+Figure~\ref{fig:intro} shows an example to highlight some of these issues using
+the Adult income dataset \citep{Becker1996}. As can be seen in the figure
+depending on the sample size and the algorithm used, we get vastly different
+results.
 
-These challenges highlight the need for methods that effectively combine
-automated tools with expert-driven model refinement.  As a result of these
-issues, expert knowledge integration is vital to get usable results from these
-algorithms. One way to do this to specify expert knowledge in terms of
-fixing edges, blacklisting edges, or specifying tiered knowledge.
 The other ways is to do post hoc modification to the learned model using
 implied CI based model testing \citep{Ankan2021, Ankan2023}. In this testing
 procedure, users test whether the implied CIs of the DAG hold in the dataset or
@@ -225,22 +226,6 @@ testing outlined in the previous paragraphs.
 \label{fig:intro}
 \end{figure}
 
-			% \begin{scope}[xshift=-3cm]
-			% 	\draw[thick, ->, double, cyan] (2.5,0) -- (3,0);
-			% 	\node[rectangle, align=center, inner sep=1pt] at (5, 0) {
-			% 		\begin{minipage}{.2\textwidth}
-			% 			\begin{equation*}
-			% 				\begin{split}
-			% 					\textnormal{Age} &\ci \textnormal{Incm} \rvert \textnormal{Edct, Hrpw, Sex} \\
-			% 					\textnormal{Age} &\ci \textnormal{Occp} \rvert \textnormal{Edct, Sex} \\
-			% 					\textnormal{Age} &\ci \textnormal{Sex} \\
-			% 					\textnormal{Hrpw} &\ci \textnormal{Occp} \rvert \textnormal{Edct, Sex} \\
-			% 				\end{split}
-			% 			\end{equation*}
-			% 		\end{minipage}
-			% 		};
-			% \end{scope}
-
 Our main contributions in this paper are as follows:
 \begin{enumerate}
 	\item We present a measure of (conditional) association for mixed data
@@ -281,14 +266,11 @@ between $ X $ and $ Y $ in the presence of a set of conditioning variables $
 \bm{Z} $. When $ Z = \emptyset $, this is equivalent to the marginal
 association between $ X $ and $ Y $.
 
-\subsection{Ranking using Correlation Coefficients}
-
-\subsection{Measures of (Conditional) Association}
-\todo[inline]{Complete this section}
+\subsection{Measures of Conditional Association}
 As our DAG construction procedure relies on a measure of conditional
 association between variables, in this section we list out some of the already
 known measures for specific data types. These measure of associations are
-typically the effect size of various conditional indepdnence tests but they
+typically the effect size of various conditional independence tests but they
 don't need to be. However, there are no generalized measure of association for
 mixed data, that we propose in the next section. This is by no means an
 exhaustive list, rather just to give an idea of what can be done.
@@ -308,22 +290,20 @@ this a simple correlation coefficient can be computed between $ R_X $ and $ R_Y 
 \paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete}
 
 In the case of discrete variables, Cramer\'s V has been typically used as a
-measure of association. When there are no conditional variables, $ \bm{Z} = \emptyset $,
-Cramer\'s V can be computed directly from the contingency table.
+measure of association. When there are no conditional variables, $ \bm{Z} =
+\emptyset $, Cramer\'s V can be computed directly from the contingency table.
 
 However, when conditional variables are present, we can iterate over all
 possible combinations of the conditional variables, compute the Cramer\'s V and
 then lastly combine them together. 
 
-\paragraph{$ X $ is ordinal and $ Y $ is continuous}
-Polyserial Correlation
-
-When $ \bm{Z} = \emptyset $, ordinal variable can be assumed to be coming from
-a thresholded normal distribution, estimate the thresholds and latent variable
-to compute the correlation coefficient.
-
-\paragraph{$ X $ and $ Y $ are ordinal}
-Polychoric Correlation
+\paragraph{$ X $ is ordinal and $ Y $ is continuous or ordinal}
+Polyserial Correlation (when one is oridinal and the other is continuous) and
+polychoric correlation (when both are ordinal) can be use. Here the assumption
+is made that $ X $ is a thresholded version of an underlying continuous normal
+variable. The method then tries to learn the thresholds for this latent
+variable while trying to maximize the correlation between $ X_{lat} $ and $ Y
+$. This gives us values that are Pearson's correlation coefficient.
 
 \section{A Measure of Association for Mixed Data}
 \label{sec:mixed_association}
@@ -672,7 +652,7 @@ direction of the edge.
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
 		\centering
-		\includegraphics[scale=0.3]{../code/plots/llm_adult.png}
+		\includegraphics[scale=0.3]{../code/fig5/llm_adult.png}
 		\caption{\todo[inline]{Change figure to have consistent style}}
 	\end{subfigure}
 \end{figure}
