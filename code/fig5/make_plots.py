@@ -1,6 +1,6 @@
 from pgmpy.models import BayesianNetwork
 
-with open('adult_llm.txt', 'r') as f:
+with open('llm_adult.txt', 'r') as f:
     edge_list = eval(f.readline())
 
 dag = BayesianNetwork(edge_list)
