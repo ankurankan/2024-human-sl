@@ -5,14 +5,15 @@
 \usepackage{amsmath}
 \usepackage{bm}
 \usetikzlibrary{positioning,calc,arrows,arrows.meta}
+\tikzset{font=\small}
 
 \begin{document}
 
 	% PC algorithm MI test 400 samples
 	\begin{tikzpicture}
-	\begin{scope}
+	\begin{scope}[xscale=0.9]
 		\tikzstyle{every node}=[align=center, inner sep=1pt]
-		\node (ms) at (0, 0) {MS};
+		\node (ms) at (0, 0) {\small{MS}};
 		\node (rln) at (0, -0.8) {Rln.};
 		\node (sex) at (0, -1.6) {Sex};
 		\node (hrpw) at (0, -2.4) {HrPW};
@@ -26,16 +27,16 @@
 		\node (race) at (3, -0.8) {Race};
 		\node (edu) at (3, -1.6) {Edu.};
 
-		\draw [] (ms) to (rln);
-		\draw [] (rln) to (sex);
-		\draw [] (inc) to (edu);
-		\draw [] (occ) to (edu);
+		\draw [thick] (ms) to (rln);
+		\draw [thick] (rln) to (sex);
+		\draw [thick] (inc) to (edu);
+		\draw [thick] (occ) to (edu);
 	\end{scope}
 	\end{tikzpicture}
 
 	% PC algorithm MI test 800 samples
 	\begin{tikzpicture}
-	\begin{scope}
+	\begin{scope}[xscale=0.9]
 		\tikzstyle{every node}=[align=center, inner sep=1pt]
 		\node (ms) at (0, 0) {MS};
 		\node (rln) at (0, -0.8) {Rln.};
@@ -51,7 +52,7 @@
 		\node (race) at (3, -0.8) {Race};
 		\node (edu) at (3, -1.6) {Edu.};
 
-		\draw [] (ms) to (rln);
+		\draw [thick] (ms) to (rln);
 		\draw [-{Stealth}] (sex) to (rln);
 		\draw [-{Stealth}] (sex) to (occ);
 		\draw [-{Stealth}] (occ) to (wc);
@@ -63,7 +64,7 @@
 
 	% PC algorithm Q3 test 400 samples
 	\begin{tikzpicture}
-	\begin{scope}
+	\begin{scope}[xscale=0.9]
 		\tikzstyle{every node}=[align=center, inner sep=1pt]
 		\node (ms) at (0, 0) {MS};
 		\node (rln) at (0, -0.8) {Rln.};
@@ -79,7 +80,7 @@
 		\node (race) at (3, -0.8) {Race};
 		\node (edu) at (3, -1.6) {Edu.};
 
-		\draw [] (ms) to (rln);
+		\draw [thick] (ms) to (rln);
 		\draw [-{Stealth}] (sex) to (rln);
 		\draw [-{Stealth}] (sex) to (hrpw);
 		\draw [-{Stealth}] (sex) to (wc);
@@ -93,13 +94,13 @@
 		\draw [-{Stealth}] (occ) to (ms);
 		\draw [-{Stealth}] (occ) to (ms);
 
-		\draw [] (nc) to (race);
+		\draw [thick] (nc) to (race);
 	\end{scope}
 	\end{tikzpicture}
 
 	% PC algorithm Q3 test 400 samples
 	\begin{tikzpicture}
-	\begin{scope}
+	\begin{scope}[xscale=0.9]
 		\tikzstyle{every node}=[align=center, inner sep=1pt]
 		\node (ms) at (0, 0) {MS};
 		\node (rln) at (0, -0.8) {Rln.};
@@ -115,7 +116,7 @@
 		\node (race) at (3, -0.8) {Race};
 		\node (edu) at (3, -1.6) {Edu.};
 
-		\draw [] (ms) to (rln);
+		\draw [thick] (ms) to (rln);
 		\draw [-{Stealth}] (rln) to (sex);
 		\draw [-{Stealth}] (rln) to[bend right=40] (hrpw);
 		\draw [-{Stealth}] (rln) to (age);
@@ -136,7 +137,7 @@
 
 	% Hill Climb with BIC Score Q3 test 400 samples
 	\begin{tikzpicture}
-	\begin{scope}
+	\begin{scope}[xscale=0.9]
 		\tikzstyle{every node}=[align=center, inner sep=1pt]
 		\node (ms) at (0, 0) {MS};
 		\node (rln) at (0, -0.8) {Rln.};
@@ -152,19 +153,19 @@
 		\node (race) at (3, -0.8) {Race};
 		\node (edu) at (3, -1.6) {Edu.};
 
-		\draw [] (ms) to (rln);
-		\draw [] (rln) to (sex);
+		\draw [thick] (ms) to (rln);
+		\draw [thick] (rln) to (sex);
 		\draw [-{Stealth}] (sex) to (hrpw);
 
 		\draw [-{Stealth}] (ms) to (age);
-		\draw [] (rln) to (inc);
-		\draw [] (sex) to (occ);
+		\draw [thick] (rln) to (inc);
+		\draw [thick] (sex) to (occ);
 	\end{scope}
 	\end{tikzpicture}
 
 	% Hill Climb with BIC Score Q3 test 800 samples
 	\begin{tikzpicture}
-	\begin{scope}
+	\begin{scope}[xscale=0.9]
 		\tikzstyle{every node}=[align=center, inner sep=1pt]
 		\node (ms) at (0, 0) {MS};
 		\node (rln) at (0, -0.8) {Rln.};
@@ -180,13 +181,13 @@
 		\node (race) at (3, -0.8) {Race};
 		\node (edu) at (3, -1.6) {Edu.};
 
-		\draw [] (ms) to (rln);
-		\draw [] (rln) to (sex);
+		\draw [thick] (ms) to (rln);
+		\draw [thick] (rln) to (sex);
 		\draw [-{Stealth}] (rln) to[bend right=40] (hrpw);
 
 		\draw [-{Stealth}] (ms) to (age);
-		\draw [] (rln) to (inc);
-		\draw [] (sex) to (occ);
+		\draw [thick] (rln) to (inc);
+		\draw [thick] (sex) to (occ);
 	\end{scope}
 	\end{tikzpicture}
 \end{document}
