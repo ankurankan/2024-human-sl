@@ -207,6 +207,13 @@ testing outlined in the previous paragraphs.
 	\caption{PC algorithm $ \chi^2 $ test. $ N=800$ }
 \end{subfigure}
 \begin{subfigure}{0.25 \textwidth}
+	\includegraphics[page=5]{figures.pdf}
+	\caption{Hill Climb Search BIC Score. $ N=400$ }
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+	\includegraphics[page=6]{figures.pdf}
+	\caption{Hill Climb Search BIC Score. $ N=800$ }
+\begin{subfigure}{0.25 \textwidth}
 	\includegraphics[page=3]{figures.pdf}
 	\caption{PC algorithm residualization test. $ N=400$ }
 \end{subfigure}%
@@ -214,16 +221,9 @@ testing outlined in the previous paragraphs.
 	\includegraphics[page=4]{figures.pdf}
 	\caption{PC algorithm residualization test. $ N=800$ }
 \end{subfigure}
-\begin{subfigure}{0.25 \textwidth}
-	\includegraphics[page=5]{figures.pdf}
-	\caption{Hill Climb Search BIC Score. $ N=400$ }
-\end{subfigure}%
-\begin{subfigure}{0.25\textwidth}
-	\includegraphics[page=6]{figures.pdf}
-	\caption{Hill Climb Search BIC Score. $ N=800$ }
 \end{subfigure}
 
-\caption{Markov Equivalence Class (MEC) learnt for Adult Income Dataset using (a) PC algorithm, (b) Hill-Climb Search with BIC score, (c) PC algorithm with MXM test}
+\caption{Markov Equivalence Class (MEC) learned for Adult Income Dataset using (a) PC algorithm with chi-squared test, (b) Hill-Climb Search with BIC score, (c) PC algorithm with residualization based test. There is significant variation in the learned model depending on the sample size and the algorithm used. Additionally, all of them make some mistakes.}
 \label{fig:intro}
 \end{figure}
 
