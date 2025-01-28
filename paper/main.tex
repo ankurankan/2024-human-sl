@@ -159,10 +159,9 @@ with these algorithms when applied in practical settings:
 		on their expert knowledge before using them for analysis.
 \end{enumerate}
 
-Figure~\ref{fig:intro} shows an example to highlight some of these issues using
-the Adult income dataset \citep{Becker1996}. As can be seen in the figure
-depending on the sample size and the algorithm used, we get vastly different
-results.
+Fig.~\ref{fig:intro} highlights some of these issues using the Adult income
+dataset \citep{Becker1996}. As can be seen in the figure depending on the
+sample size and the algorithm used, we get vastly different results.
 
 The other ways is to do post hoc modification to the learned model using
 implied CI based model testing \citep{Ankan2021, Ankan2023}. In this testing
@@ -211,15 +210,27 @@ testing outlined in the previous paragraphs.
 \begin{figure}
 \begin{subfigure}{0.25 \textwidth}
 	\includegraphics[page=1]{figures.pdf}
+	\caption{PC algorithm $ \chi^2 $ test. $ N=400$ }
 \end{subfigure}%
 \begin{subfigure}{0.25 \textwidth}
 	\includegraphics[page=2]{figures.pdf}
+	\caption{PC algorithm $ \chi^2 $ test. $ N=800$ }
 \end{subfigure}
 \begin{subfigure}{0.25 \textwidth}
 	\includegraphics[page=3]{figures.pdf}
+	\caption{PC algorithm residualization test. $ N=400$ }
 \end{subfigure}%
 \begin{subfigure}{0.25\textwidth}
 	\includegraphics[page=4]{figures.pdf}
+	\caption{PC algorithm residualization test. $ N=800$ }
+\end{subfigure}
+\begin{subfigure}{0.25 \textwidth}
+	\includegraphics[page=5]{figures.pdf}
+	\caption{Hill Climb Search BIC Score. $ N=400$ }
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+	\includegraphics[page=6]{figures.pdf}
+	\caption{Hill Climb Search BIC Score. $ N=800$ }
 \end{subfigure}
 
 \caption{Markov Equivalence Class (MEC) learnt for Adult Income Dataset using (a) PC algorithm, (b) Hill-Climb Search with BIC score, (c) PC algorithm with MXM test}
