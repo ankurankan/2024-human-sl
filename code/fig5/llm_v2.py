@@ -58,6 +58,6 @@ descriptions = {'Age': 'The age of a person',
                 "Income": "The income i.e. amount of money the person makes"
                 }
 
-dag = ExpertInLoop(preprocess_data()).estimate(variable_descriptions=descriptions, effect_size_threshold=0.05)
+dag = ExpertInLoop(preprocess_data()).estimate(variable_descriptions=descriptions, effect_size_threshold=0.1)
 with open('llm_adult.txt', 'w') as f:
     f.write(str(list(dag.edges())))
