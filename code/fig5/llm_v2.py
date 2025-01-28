@@ -9,7 +9,10 @@ from pgmpy.base import DAG
 
 
 def preprocess_data():
-    df = pd.read_csv("../utils/adult_proc.csv", index_col=0)
+    df = pd.read_csv("../utils/adult_unproc.csv")
+    df = df.dropna()
+    df = df.drop(['Fnlwgt', 'EducationNum', 'CapitalGain', 'CaptialLoss'], axis=1)
+    df = df.iloc[:1000, :]
     df.Education = pd.Categorical(
         df.Education,
         categories=[
@@ -55,6 +58,6 @@ descriptions = {'Age': 'The age of a person',
                 "Income": "The income i.e. amount of money the person makes"
                 }
 
-dag = ExpertInLoop(preprocess_data()).estimate(variable_descriptions=descriptions, effect_size_threshold=0.1)
+dag = ExpertInLoop(preprocess_data()).estimate(variable_descriptions=descriptions, effect_size_threshold=0.05)
 with open('llm_adult.txt', 'w') as f:
     f.write(str(list(dag.edges())))
