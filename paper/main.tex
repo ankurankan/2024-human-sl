@@ -87,15 +87,15 @@ Causal discovery has received significant attention in the Directed Acyclic
 Graphs (DAGs) literature, leading to the development of numerous automated
 algorithms for learning DAGs from data. However, their adoption in applied
 domains remains limited, as researchers often prefer to construct DAGs manually
-based on their expert knowledge. This preference arises due to practical issues
-with these automated algorithms, such as making obvious errors and outputting
-Markov Equivalence Classes (MECs). To address these challenge, we propose an
-iterative method to assist researchers in manually constructing or modifying
-DAGs by combining implied Conditional Independence (CI) testing with expert
-knowledge. We introduce a novel measure of partial association for mixed data
-to rank violations of implied CIs, enabling users to prioritize model
-modifications while leveraging their expertise to decide the orientation of
-edges when making these modifications. Empirical results show that this
+based on their expert knowledge. This preference arises due to several
+practical issues with these automated algorithms, such as making obvious errors
+and outputting Markov Equivalence Classes (MECs). To address these challenges,
+we propose an iterative method to assist researchers in manually constructing
+or modifying DAGs by combining implied Conditional Independence (CI) testing
+with expert knowledge. We introduce a novel measure of partial association for
+mixed data to rank violations of implied CIs, enabling users to prioritize
+model modifications while leveraging their expertise to decide the orientation
+of edges when making these modifications. Empirical results show that this
 approach achieves performance comparable to automated algorithms, assuming the
 user can correctly orient edges in one out of three cases. Additionally, we
 demonstrate that, in the absence of an expert, a Large Language Model can
@@ -163,18 +163,20 @@ Fig.~\ref{fig:intro} highlights some of these issues using the Adult income
 dataset \citep{Becker1996}. As can be seen in the figure depending on the
 sample size and the algorithm used, we get vastly different results.
 
-The other ways is to do post hoc modification to the learned model using
-implied CI based model testing \citep{Ankan2021, Ankan2023}. In this testing
-procedure, users test whether the implied CIs of the DAG hold in the dataset or
-not using statistical CI tests. Based on the results of these statistical
-tests, we can accordingly make modifications to the current model to fix the
-violations. However, this CI based testing also has a few drawbacks: 1) CIs are
-implied only by missing edges in the model, so we can not test for already
-existing edges. 2) In high sample size scenarios, p-values can suggest a
-significant association between variables even if they have a very weak
-relationship. 3) Number of implied CIs can be large making it difficult to
-manually go through each of them; for example, in the moderately sized alarm
-network with $ 37 $ node, there are $287$ implied CIs. 
+As a result of these challenges users have relied on model testing approaches
+along with their expert knowledge to construct these models. The other ways is
+to do post hoc modification to the learned model using implied CI based model
+testing \citep{Ankan2021, Ankan2023}. In this testing procedure, users test
+whether the implied CIs of the DAG hold in the dataset or not using statistical
+CI tests. Based on the results of these statistical tests, we can accordingly
+make modifications to the current model to fix the violations. However, this CI
+based testing also has a few drawbacks: 1) CIs are implied only by missing
+edges in the model, so we can not test for already existing edges. 2) In high
+sample size scenarios, p-values can suggest a significant association between
+variables even if they have a very weak relationship. 3) Number of implied CIs
+can be large making it difficult to manually go through each of them; for
+example, in the moderately sized alarm network with $ 37 $ node, there are
+$287$ implied CIs. 
 
 There has been work on integrating expert knowledge into model building process
 and has been quite successful such as tpc and background knowledge
@@ -193,19 +195,6 @@ to this, in this paper we develop a measure for partial association for mixed
 data that allows us to rank the CI violations. Additionally, this measure of
 conditional association also allows us tackle other issues with CI based
 testing outlined in the previous paragraphs.
-
-% using a conditional measure of
-% association.  To deal with both this issues, in this paper, we develop a
-% measure of partial association which can be using in combination of the CI test
-% to rank the violations in these CI tests. On the other hand, in Structural
-% Equation Models (SEMs) literature, more emphasis has been placed on developing
-% tools to help researchers manually construct models while integrating their
-% domain expertise. Our proposed approach uses the measure of association to find
-% correlated variables in the data that are not explained by the current model.
-% Using the measure, we can then rank the pair of variables between which adding
-% an edge would improve the explanation the most. Based on this information, the
-% user can select a potential pair of variables and based on their expert
-% knowledge decide the direction of the edge. 
 
 \begin{figure}
 \begin{subfigure}{0.25 \textwidth}
