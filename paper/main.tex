@@ -31,7 +31,7 @@
 \usepackage{bm}
 \usepackage{subcaption}
 \usepackage{fancyvrb}
-% \usepackage[ruled]{algorithm2e}
+\usepackage[ruled]{algorithm2e}
 
 \def\ci{\perp\!\!\!\!\!\perp}
 
@@ -640,6 +640,35 @@ expert gets stuck at incorrect graph structures as it does not do any
 backtracking to fix its earlier mistakes. This procedure is outlined in the
 Algorithm 1.
 \todo[inline]{Show an algorithm of how this expert method is working}
+
+\begin{verbatim}
+	Input: Dataset $ D $ on variables $ \bm{X} $
+	Output: Learned DAG G.
+	
+	function compute_effects(G):
+		pvalues <- dict()
+		effects <- dict()
+		for X_i, X_j in X:
+			if edge between X_i, X_j:
+				p_values[(X_i, X_j)] <- pvalue(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
+				effects[(X_i, X_j)] <- \phi(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
+			else:
+				p_values[(X_i, X_j)] <- pvalue(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
+				effects[(X_i, X_j)] <- \phi(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
+		return p_values, effects
+	
+	$ G $ <- Empty Graph
+	p_values, effects <- compute_effects(G)
+
+\end{verbatim}
+
+\begin{algorithm}
+	\KwData{Data set $ D $ on variables $ \bm{X} $, pthres, effectthres}
+	\KwResult{The learned DAG: $ G $}
+	\BlankLine
+	$ G \leftarrow $ Empty Graph
+\end{algorithm}
+
 
 \subsection{Using Large Language Models as Experts}
 A lot of recent work has focused on finding pairwise causal direction among
