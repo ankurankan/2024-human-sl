@@ -253,41 +253,36 @@ modification process works.
 \section{Background and Related Work}
 \label{sec:background}
 \subsection{Notations}
-We consider random variables $ X $ and $ Y $ with a possible multi-dimensional
-variable $ \bm{Z} = \{ Z_1, \cdots, Z_k \} $. We consider these variables in
-the mixed data setting where these variables can be any combination of
-continuous, categorical, or ordinal unless specified. We also assume all
-variables to be observed. We use $ \rvert \bm{Z} \rvert $ to represent the
-cardinality of the variable $ \bm{Z} $. We write $ \bm{x} = (x_1, \cdots, x_n)
-$ for a sample from $ X $ of size $ n $. We write the expectation of a variable
-$ X $ as $ \mathbb{E}[X] $, conditional expectations as $ \mathbb{E}[X |
-\bm{Z}] $.
+We denote random variables with uppercase letters $ X $, and a set of random
+variables as $ \bm{X} = \{X_1, \cdots, X_k\} $ with $ \rvert \bm{X} \rvert = k
+$. A sample from the random variable $ X $ is denoted as $ x $ and from a set
+of random variables $ \bm{X} $ is denoted as $ \bm{x} $. In this paper, we
+consider random variables in the mixed data setting where each of the random
+variables can be continuous, categorical, or ordinal unless specified. 
 
-We consider the problem of estimating the partial (or conditional) association
-between $ X $ and $ Y $ in the presence of a set of conditioning variables $
-\bm{Z} $. When $ Z = \emptyset $, this is equivalent to the marginal
-association between $ X $ and $ Y $.
+We write the expectation of a variable $ X $ as $ \mathbb{E}[X] $, conditional
+expectations as $ \mathbb{E}[X | \bm{Z}] $.
 
 \subsection{Measures of Conditional Association}
-As our DAG construction procedure relies on a measure of conditional
-association between variables, in this section we list out some of the already
-known measures for specific data types. These measure of associations are
-typically the effect size of various conditional independence tests but they
-don't need to be. However, there are no generalized measure of association for
-mixed data, that we propose in the next section. This is by no means an
-exhaustive list, rather just to give an idea of what can be done.
+Our proposed method for iterative DAG construction relies on a measure of
+conditional association between variables. We are interested in measuring the
+association between variables $ X $ and $ Y $ when conditioned on a set of
+variables $ \bm{Z} $ which is potentially an empty set, $ \bm{Z} = \emptyset $.
+Depending on the type of $ X $, $ Y $, and $ \bm{Z} $ various measures of
+associations have been used. Typically, these are the effect size measures of
+the conditional independence test $ X \ci Y \rvert \bm{Z} $. Here, we give an
+overview of some of the commonly used measures for different data types.
 
-\paragraph{Both $ X $ and $ Y $ are continuous}
-Where there are no conditional variables, $ \bm{Z} = \emptyset $, Pearson's
-correlation coefficient can be used as a measure of association between the
-variables. This does make various assumptions such as linearity between the
-variables, normal distribution for $ X $ and $ Y $, and homoscedasticity.
-
-In the case when $ \bm{Z} \neq \emptyset $, then partial correlations can be
-used. This requires using two linear regression models: $ E_X: X \sim \bm{Z} $
-and $ E_Y: Y \sim \bm{Z} $. Then computing the residuals using these two
-regressions as: $ R_X = X - E_X(\bm{Z}) $ and $ R_Y = Y - E_Y(\bm{Y}) $. After
-this a simple correlation coefficient can be computed between $ R_X $ and $ R_Y $.
+\subsubsection{Both $ X $ and $ Y $ are continuous}
+In the case when both $ X $ and $ Y $ are continuous variables with the
+assumptions of normality and linearly relationship, typically Pearson's
+correction coefficients are used. In the case when $ \bm{Z} = \emptyset $, the
+correlation coefficient can be directly computed. When $ \bm{Z} \neq \emptyset
+$, partial correlations are used. One of the ways to estimate it is to use two
+linear regression models: $ E_X: x \sim \bm{z} $, and $ E_Y: y \sim \bm{z} $.
+Then we take the compute the Pearson's correlation coefficient between the
+residuals of these two regressions: $ R_X = x - E_X(\bm{z}) $, $ R_Y = y -
+E_Y(\bm{z}) $.
 
 \paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete}
 
@@ -307,26 +302,28 @@ variable. The method then tries to learn the thresholds for this latent
 variable while trying to maximize the correlation between $ X_{lat} $ and $ Y
 $. This gives us values that are Pearson's correlation coefficient.
 
-\section{A Measure of Association for Mixed Data}
+\section{A Generalized Measure of Conditional Association}
 \label{sec:mixed_association}
 
-In this section, we introduce a novel measure of partial association for mixed
+As there are no generalized measures of association for mixed data, in this
+section, we first introduce a novel measure of partial association for mixed
 data by extending the concept of partial correlations \citep{Whittaker2009}
 \todo{Verify this citation} to handle mixed data types. To compute partial
 correlations, we have two key steps: 1) a residualization method, and 2) a
 measure of associations between the residuals. When both $ X $ and $ Y $ are
 continuous variables, residuals are typically computed using a regression-based
-method, and Pearson's correlation coefficient is used to measure the association
-between these residuals. To extend this approach to mixed data, we combine a mixed
-data residualization method \citep{Ankan2023} with a multivariate measure of
-association based on canonical correlations, Pillai's Trace \citep{Pillai1955}. 
+method, and Pearson's correlation coefficient is used to measure the
+association between these residuals. To extend this approach to mixed data, we
+combine a mixed data residualization method \citep{Ankan2023} with a
+multivariate measure of association based on canonical correlations, Pillai's
+Trace \citep{Pillai1955}. 
 
 Given $ n $ samples $ D = (x, y, \bm{z}) $ of variables $ X $, $ Y $, and $
-\bm{Z} $, we aim to estimate the conditional
-association $ \rho(X, Y; \bm{Z}) $ between $ X $ and $ Y $ conditioned on $
-\bm{Z} $. We use the residualization approach from \citet{Ankan2023} to compute 
-the residuals. The residuals are defined as follows, depending on the type of 
-dependent variable:
+\bm{Z} $, we aim to estimate the conditional association $ \rho(X, Y; \bm{Z}) $
+between $ X $ and $ Y $ conditioned on $ \bm{Z} $. We use the residualization
+approach from \citet{Ankan2023} to compute the residuals. For each of the
+variable $ X $ and $ Y $, we compute the residual $ R_X $ and $R_Y$
+respectively as follows depending on their type.
 
 \begin{enumerate}
 	\item \textbf{Continuous:} We train a regression model, $ E_X: x \sim
