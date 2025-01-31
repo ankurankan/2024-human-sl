@@ -27,10 +27,10 @@
 		\node (race) at (3, -0.8) {Race};
 		\node (edu) at (3, -1.6) {Edu.};
 
-		\draw [thick] (ms) to (rln);
-		\draw [thick] (rln) to (sex);
-		\draw [thick] (inc) to (edu);
-		\draw [thick] (occ) to (edu);
+		\draw [] (ms) to (rln);
+		\draw [] (rln) to (sex);
+		\draw [] (inc) to (edu);
+		\draw [] (occ) to (edu);
 	\end{scope}
 	\end{tikzpicture}
 
@@ -52,13 +52,13 @@
 		\node (race) at (3, -0.8) {Race};
 		\node (edu) at (3, -1.6) {Edu.};
 
-		\draw [thick] (ms) to (rln);
-		\draw [-{Stealth}] (sex) to (rln);
-		\draw [-{Stealth}] (sex) to (occ);
-		\draw [-{Stealth}] (occ) to (wc);
-		\draw [-{Stealth}] (occ) to (edu);
-		\draw [-{Stealth}] (wc) to (edu);
-		\draw [-{Stealth}] (wc) to[bend right=40] (inc);
+		\draw [] (ms) to (rln);
+		\draw [->, >=stealth] (sex) to (rln);
+		\draw [->, >=stealth] (sex) to (occ);
+		\draw [->, >=stealth] (occ) to (wc);
+		\draw [->, >=stealth] (occ) to (edu);
+		\draw [->, >=stealth] (wc) to (edu);
+		\draw [->, >=stealth] (wc) to[bend right=40] (inc);
 	\end{scope}
 	\end{tikzpicture}
 
@@ -80,21 +80,21 @@
 		\node (race) at (3, -0.8) {Race};
 		\node (edu) at (3, -1.6) {Edu.};
 
-		\draw [thick] (ms) to (rln);
-		\draw [-{Stealth}] (sex) to (rln);
-		\draw [-{Stealth}] (sex) to (hrpw);
-		\draw [-{Stealth}] (sex) to (wc);
-		\draw [-{Stealth}] (ms) to (age);
-		\draw [-{Stealth}] (rln) to (age);
+		\draw [] (ms) to (rln);
+		\draw [->, >=stealth] (sex) to (rln);
+		\draw [->, >=stealth] (sex) to (hrpw);
+		\draw [->, >=stealth] (sex) to (wc);
+		\draw [->, >=stealth] (ms) to (age);
+		\draw [->, >=stealth] (rln) to (age);
 
-		\draw [-{Stealth}] (inc) to (age);
-		\draw [-{Stealth}] (inc) to (edu);
-		\draw [-{Stealth}] (occ) to (sex);
-		\draw [-{Stealth}] (occ) to (hrpw);
-		\draw [-{Stealth}] (occ) to (ms);
-		\draw [-{Stealth}] (occ) to (ms);
+		\draw [->, >=stealth] (inc) to (age);
+		\draw [->, >=stealth] (inc) to (edu);
+		\draw [->, >=stealth] (occ) to (sex);
+		\draw [->, >=stealth] (occ) to (hrpw);
+		\draw [->, >=stealth] (occ) to (ms);
+		\draw [->, >=stealth] (occ) to (ms);
 
-		\draw [thick] (nc) to (race);
+		\draw [] (nc) to (race);
 	\end{scope}
 	\end{tikzpicture}
 
@@ -116,22 +116,22 @@
 		\node (race) at (3, -0.8) {Race};
 		\node (edu) at (3, -1.6) {Edu.};
 
-		\draw [thick] (ms) to (rln);
-		\draw [-{Stealth}] (rln) to (sex);
-		\draw [-{Stealth}] (rln) to[bend right=40] (hrpw);
-		\draw [-{Stealth}] (rln) to (age);
-		\draw [-{Stealth}] (hrpw) to (sex);
-		\draw [-{Stealth}] (hrpw) to (edu);
+		\draw [] (ms) to (rln);
+		\draw [->, >=stealth] (rln) to (sex);
+		\draw [->, >=stealth] (rln) to[bend right=40] (hrpw);
+		\draw [->, >=stealth] (rln) to (age);
+		\draw [->, >=stealth] (hrpw) to (sex);
+		\draw [->, >=stealth] (hrpw) to (edu);
 		
-		\draw [-{Stealth}] (age) to (ms);
-		\draw [-{Stealth}] (inc) to (age);
-		\draw [-{Stealth}] (inc) to (occ);
-		\draw [-{Stealth}] (inc) to (edu);
-		\draw [-{Stealth}] (occ) to (rln);
-		\draw [-{Stealth}] (occ) to (sex);
-		\draw [-{Stealth}] (occ) to (hrpw);
-		\draw [-{Stealth}] (occ) to (wc);
-		\draw [-{Stealth}] (occ) to (edu);
+		\draw [->, >=stealth] (age) to (ms);
+		\draw [->, >=stealth] (inc) to (age);
+		\draw [->, >=stealth] (inc) to (occ);
+		\draw [->, >=stealth] (inc) to (edu);
+		\draw [->, >=stealth] (occ) to (rln);
+		\draw [->, >=stealth] (occ) to (sex);
+		\draw [->, >=stealth] (occ) to (hrpw);
+		\draw [->, >=stealth] (occ) to (wc);
+		\draw [->, >=stealth] (occ) to (edu);
 	\end{scope}
 	\end{tikzpicture}
 
@@ -153,13 +153,13 @@
 		\node (race) at (3, -0.8) {Race};
 		\node (edu) at (3, -1.6) {Edu.};
 
-		\draw [thick] (ms) to (rln);
-		\draw [thick] (rln) to (sex);
-		\draw [-{Stealth}] (sex) to (hrpw);
+		\draw [] (ms) to (rln);
+		\draw [] (rln) to (sex);
+		\draw [->, >=stealth] (sex) to (hrpw);
 
-		\draw [-{Stealth}] (ms) to (age);
-		\draw [thick] (rln) to (inc);
-		\draw [thick] (sex) to (occ);
+		\draw [->, >=stealth] (ms) to (age);
+		\draw [] (rln) to (inc);
+		\draw [] (sex) to (occ);
 	\end{scope}
 	\end{tikzpicture}
 
@@ -181,13 +181,180 @@
 		\node (race) at (3, -0.8) {Race};
 		\node (edu) at (3, -1.6) {Edu.};
 
-		\draw [thick] (ms) to (rln);
-		\draw [thick] (rln) to (sex);
-		\draw [-{Stealth}] (rln) to[bend right=40] (hrpw);
+		\draw [] (ms) to (rln);
+		\draw [] (rln) to (sex);
+		\draw [->, >=stealth] (rln) to[bend right=40] (hrpw);
 
-		\draw [-{Stealth}] (ms) to (age);
-		\draw [thick] (rln) to (inc);
-		\draw [thick] (sex) to (occ);
+		\draw [->, >=stealth] (ms) to (age);
+		\draw [] (rln) to (inc);
+		\draw [] (sex) to (occ);
 	\end{scope}
 	\end{tikzpicture}
+
+	% Example  a
+	\begin{tikzpicture}
+	\begin{scope}
+		\tikzstyle{every node}=[align=center, inner sep=1pt]
+		\node (x1) at (0, 0) {$X_1$};
+		\node (x2) at (0, -2) {$X_2$};
+		\node (x3) at (0, -1) {$X_3$};
+		\node (x4) at (2, 0) {$X_4$};
+		\node (x5) at (2, -2) {$X_5$};
+		\node (x6) at (1, 0.8) {$X_6$};
+
+		\draw[dashed, line width=0.5mm   ](x1) -- (x3);
+		\draw[dashed, line width=0.5mm   ](x1) -- (x4);
+		\draw[dashed, line width=0.25mm  ](x1) -- (x5);
+		\draw[dashed, line width=0.5mm   ](x1) -- (x6);
+		\draw[dashed, line width=0.5mm   ](x2) -- (x3);
+		\draw[dashed, line width=0.25mm  ](x2) -- (x4);
+		\draw[dashed, line width=0.25mm  ](x2) -- (x5);	
+		\draw[dashed, line width=0.625mm ](x3) -- (x4);
+		\draw[dashed, line width=0.5mm   ](x3) -- (x5);
+		\draw[dashed, line width=0.25mm  ](x3) -- (x6);
+		\draw[dashed, line width=0.3125mm](x4) -- (x5);
+		\draw[dashed, line width=0.625mm ](x4) -- (x6);
+		\draw[dashed, line width=0.125mm ](x5) -- (x6);
+	\end{scope}
+	\end{tikzpicture}
+
+		
+	% Example  b
+	\begin{tikzpicture}
+	\begin{scope}
+		\tikzstyle{every node}=[align=center, inner sep=1pt]
+		\node (x1) at (0, 0) {$X_1$};
+		\node (x2) at (0, -2) {$X_2$};
+		\node (x3) at (0, -1) {$X_3$};
+		\node (x4) at (2, 0) {$X_4$};
+		\node (x5) at (2, -2) {$X_5$};
+		\node (x6) at (1, 0.8) {$X_6$};
+
+		\draw[dashed, line width=0.5mm   ](x1) -- (x3);
+		\draw[dashed, line width=0.277mm ](x1) -- (x4);
+		\draw[dashed, line width=0.25mm  ](x1) -- (x5);
+		\draw[dashed, line width=0.5mm   ](x1) -- (x6);
+		\draw[dashed, line width=0.5mm   ](x2) -- (x3);
+		\draw[dashed, line width=0.1mm   ](x2) -- (x4);
+		\draw[dashed, line width=0.25mm  ](x2) -- (x5);	
+		\draw[->]                         (x3) -- (x4);
+		\draw[dashed, line width=0.5mm   ](x3) -- (x5);
+		\draw[dashed, line width=0.25mm  ](x3) -- (x6);
+		\draw[dashed, line width=0.625mm ](x4) -- (x6);
+		\draw[dashed, line width=0.125mm ](x5) -- (x6);
+	\end{scope}
+	\end{tikzpicture}
+
+	% Example  c
+	\begin{tikzpicture}
+	\begin{scope}
+		\tikzstyle{every node}=[align=center, inner sep=1pt]
+		\node (x1) at (0, 0) {$X_1$};
+		\node (x2) at (0, -2) {$X_2$};
+		\node (x3) at (0, -1) {$X_3$};
+		\node (x4) at (2, 0) {$X_4$};
+		\node (x5) at (2, -2) {$X_5$};
+		\node (x6) at (1, 0.8) {$X_6$};
+
+		\draw[dashed, line width=0.5mm   ](x1) -- (x3);
+		\draw[dashed, line width=0.25mm  ](x1) -- (x5);
+		\draw[dashed, line width=0.5mm   ](x1) -- (x6);
+		\draw[dashed, line width=0.5mm   ](x2) -- (x3);
+		\draw[dashed, line width=0.25mm  ](x2) -- (x5);	
+		\draw[->                         ](x3) -- (x4);
+		\draw[dashed, line width=0.5mm   ](x3) -- (x5);
+		\draw[dashed, line width=0.25mm  ](x3) -- (x6);
+		\draw[->                         ](x6) -- (x4);
+		\draw[dashed, line width=0.125mm ](x5) -- (x6);
+	\end{scope}
+	\end{tikzpicture}
+
+	% Example  d
+	\begin{tikzpicture}
+	\begin{scope}
+		\tikzstyle{every node}=[align=center, inner sep=1pt]
+		\node (x1) at (0, 0) {$X_1$};
+		\node (x2) at (0, -2) {$X_2$};
+		\node (x3) at (0, -1) {$X_3$};
+		\node (x4) at (2, 0) {$X_4$};
+		\node (x5) at (2, -2) {$X_5$};
+		\node (x6) at (1, 0.8) {$X_6$};
+
+		\draw[->                         ](x1) -- (x3);
+		\draw[dashed, line width=0.25mm  ](x1) -- (x5);
+		\draw[dashed, line width=0.5mm   ](x1) -- (x6);
+		\draw[dashed, line width=0.58mm  ](x2) -- (x3);
+		\draw[dashed, line width=0.25mm  ](x2) -- (x5);	
+		\draw[->                         ](x3) -- (x4);
+		\draw[dashed, line width=0.45mm  ](x3) -- (x5);
+		\draw[->                         ](x6) -- (x4);
+		\draw[dashed, line width=0.125mm ](x5) -- (x6);
+	\end{scope}
+	\end{tikzpicture}
+
+	% Example  e
+	\begin{tikzpicture}
+	\begin{scope}
+		\tikzstyle{every node}=[align=center, inner sep=1pt]
+		\node (x1) at (0, 0) {$X_1$};
+		\node (x2) at (0, -2) {$X_2$};
+		\node (x3) at (0, -1) {$X_3$};
+		\node (x4) at (2, 0) {$X_4$};
+		\node (x5) at (2, -2) {$X_5$};
+		\node (x6) at (1, 0.8) {$X_6$};
+
+		\draw[->                         ](x1) -- (x3);
+		\draw[dashed, line width=0.25mm  ](x1) -- (x5);
+		\draw[dashed, line width=0.5mm   ](x1) -- (x6);
+		\draw[->                         ](x2) -- (x3);
+		\draw[dashed, line width=0.25mm  ](x2) -- (x5);	
+		\draw[->                         ](x3) -- (x4);
+		\draw[dashed, line width=0.38mm  ](x3) -- (x5);
+		\draw[->                         ](x6) -- (x4);
+		\draw[dashed, line width=0.125mm ](x5) -- (x6);
+	\end{scope}
+	\end{tikzpicture}
+
+	% Example  f
+	\begin{tikzpicture}
+	\begin{scope}
+		\tikzstyle{every node}=[align=center, inner sep=1pt]
+		\node (x1) at (0, 0) {$X_1$};
+		\node (x2) at (0, -2) {$X_2$};
+		\node (x3) at (0, -1) {$X_3$};
+		\node (x4) at (2, 0) {$X_4$};
+		\node (x5) at (2, -2) {$X_5$};
+		\node (x6) at (1, 0.8) {$X_6$};
+
+		\draw[->                         ](x1) -- (x3);
+		\draw[dashed, line width=0.25mm  ](x1) -- (x5);
+		\draw[->                         ](x1) -- (x6);
+		\draw[->                         ](x2) -- (x3);
+		\draw[dashed, line width=0.25mm  ](x2) -- (x5);	
+		\draw[->                         ](x3) -- (x4);
+		\draw[dashed, line width=0.38mm  ](x3) -- (x5);
+		\draw[->                         ](x6) -- (x4);
+	\end{scope}
+	\end{tikzpicture}
+
+	% Example  g
+	\begin{tikzpicture}
+	\begin{scope}
+		\tikzstyle{every node}=[align=center, inner sep=1pt]
+		\node (x1) at (0, 0) {$X_1$};
+		\node (x2) at (0, -2) {$X_2$};
+		\node (x3) at (0, -1) {$X_3$};
+		\node (x4) at (2, 0) {$X_4$};
+		\node (x5) at (2, -2) {$X_5$};
+		\node (x6) at (1, 0.8) {$X_6$};
+
+		\draw[->                         ](x1) -- (x3);
+		\draw[->                         ](x1) -- (x6);
+		\draw[->                         ](x2) -- (x3);
+		\draw[->                         ](x3) -- (x4);
+		\draw[->                         ](x3) -- (x5);
+		\draw[->                         ](x6) -- (x4);
+	\end{scope}
+	\end{tikzpicture}
+
 \end{document}
