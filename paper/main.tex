@@ -524,6 +524,8 @@ can remove the edge.
 		\includegraphics[page=6]{example.pdf}
 		\caption{Orient $ X_3 \rightarrow X_5 $}
 	\end{subfigure}
+	\caption{An example showing a greedy approach for causal discovery using the mixed data measure of association. We start with an empty graph (b) where all the variables in the model are associated with each other. The strength of association is denoted using the thickness of the dotted edges. We select the pair of variables with the highest association, for example, $X_1$ and $X_3$, and orient it based on our domain knowledge. We continue the process till we have a DAG.
+	}
 \end{figure}
 
 \section{Connection to Score Based Methods}
@@ -759,6 +761,7 @@ Income: The income i.e. amount of money the
 \section{Conclusions}
 Future work:
 \begin{itemize}
+	\item Add latent variables; extend to ADMGs.
 	\item Can potentially be combined with pairwise orientation methods.
 	\item Improvements in the web-interface.
 \end{itemize}
