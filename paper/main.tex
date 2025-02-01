@@ -121,7 +121,8 @@ the PC algorithm \citep{Spirtes2001} and Fast Causal Inference (FCI)
 \citep{Spirtes2000}), score-based methods such as Hill-Climb Search and Greedy
 Equivalence Search (GES) \citep{Chickering2002}, and continuous
 optimization-based methods like NO TEARS \citep{Zheng2018} and DAGMA
-\citep{Bello2022}. In contrast, the SEM literature has focused on developing
+\citep{Bello2022}. While DAG-based methods focus on automated discovery,
+SEM-based methods emphasize expert-driven model specification. This includes
 tools to assist researchers in manually constructing or modifying models,
 enabling experts to incorporate their domain knowledge in the model building
 process. Researchers typically begin with an initial model based on their
@@ -130,23 +131,23 @@ model's fit to data. This process is commonly known as \emph{Specification
 Search} \citep{Long1983} and uses method such as modification indices, and
 Wald-based tests \citep{Marcoulides2018}. 
 
-Despite the availability of many automated algorithms for constructing DAGs,
-their adoption in applied research remains limited. Researchers often prefer to
-manually construct DAGs based on their domain expertise \citep{Tennant2020,
-Petersen2021}. We believe this preference persists due to several challenges
-with these algorithms when applied in practical settings:
+Despite significant progress in automated causal discovery, their adoption in
+applied research has been limited. Researchers often prefer to manually
+construct DAGs based on their domain expertise \citep{Tennant2020,
+Petersen2021}. We attribute this preference to several challenges with existing
+causal discovery algorithms in practical settings:
 
 \begin{enumerate}
-	\item \textbf{Lack of Trust:} While most algorithms are
-		asymptotically consistent, their finite sample properties are
-		not well understood \todo{Is there any citation for this}.
-		Additionally, their output can vary significantly depending on
-		the chosen algorithm and their hyperparameters. Combined with a
-		lack of robust methods to test these algorithms' performance on
-		a given dataset, it can be difficult to trust their outputs. As
-		a result, even when using these algorithms are used,
-		researchers often rely on post hoc manual modifications to the
-		model based on model testing and their domain expertise.
+	\item \textbf{Lack of Trust:} While most algorithms are asymptotically
+		consistent, their behavior on finite samples is not well
+		understood. Additionally, their output can vary significantly
+		depending on the choice of algorithm and hyperparameters,
+		making it difficult to assess reliability. The absence of
+		robust performance evaluation methods further reduce the
+		confidence in their outputs. As a result, even when using these
+		algorithms are used, researchers often rely on post hoc manual
+		modifications to the model based on model testing and their
+		domain expertise.
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} As multiple
 		DAGs can be faithful to a given observational dataset, the
 		algorithms can only recover the MECs. These MECs can contain a
@@ -178,21 +179,23 @@ weak relationship. 3) Number of implied CIs can be large making it difficult to
 manually go through each of them; for example, in the moderately sized alarm
 network with $ 37 $ node, there are $287$ implied CIs. 
 
-There has been work on trying to come up with a single test to combine all
-these test to give a single answer \citep{Eulig2023, Shipley2000}. However,
-what is missing is the guide on how to how to fix these tests. Additionally
-there has been a lot of work to integrate expert knowledge into causal
-discovery algorithms which has shown significant improvement. To tackle these
-issues with CI based testing, we take inspiration from \emph{modification
-indices} in specification search. The modification indices method tries to
-identify and rank changes in the model such that modifications that improve the
-model fit the most are ranked higher.This ranking allows researchers to focus
-first on the suggestions that can improve the model the most and while
-integrating their expertise to choose the most optimal modifications. Analogous
-to this, in this paper we develop a measure for partial association for mixed
-data that allows us to rank the CI violations. Additionally, this measure of
-conditional association also allows us tackle other issues with CI based
-testing outlined in the previous paragraphs.
+% There has been work on trying to come up with a single test to combine all
+% these test to give a single answer \citep{Eulig2023, Shipley2000}. However,
+% what is missing is the guide on how to how to fix these tests. Additionally
+% there has been a lot of work to integrate expert knowledge into causal
+% discovery algorithms which has shown significant improvement. 
+
+To tackle these issues with CI based testing, we take inspiration from
+\emph{modification indices} in specification search. The modification indices
+method tries to identify and rank changes in the model such that modifications
+that improve the model fit the most are ranked higher.This ranking allows
+researchers to focus first on the suggestions that can improve the model the
+most and while integrating their expertise to choose the most optimal
+modifications. Analogous to this, we develop a method for ranking CI test
+violations. This ranking method utilizes both p-values and a measure of
+association that we develop in this paper. Using this ranking we present a
+procedure for iteratively modifying the DAG while integrating expert knowledge
+into it.
 
 \begin{figure}
 \begin{subfigure}{0.25 \textwidth}
