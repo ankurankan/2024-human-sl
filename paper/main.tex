@@ -278,21 +278,33 @@ are interested in measuring the association between variables $ X $ and $ Y $
 when conditioned on a set of variables $ \bm{Z} $ which is potentially an empty
 set, $ \bm{Z} = \emptyset $. Many special case measures of conditional
 association have been used in literature depending on the type of $ X $, $ Y $,
-and $ \bm{Z} $. Typically, these are the effect size measures of the
-conditional independence test $ X \ci Y \rvert \bm{Z} $. In this section, we
-give an overview of some of the commonly used measures for different data
-types.
+and $ \bm{Z} $. Typically, these are the effect size measures of the CI test $
+X \ci Y \rvert \bm{Z} $. In this section, we give an overview of some of the
+commonly used measures for different data types.
 
 \subsubsection{Both $ X $ and $ Y $ are continuous}
-In the case when both $ X $ and $ Y $ are continuous variables with the
-assumptions of normality and linearly relationship, typically Pearson's
-correction coefficients are used. In the case when $ \bm{Z} = \emptyset $, the
-correlation coefficient can be directly computed. When $ \bm{Z} \neq \emptyset
-$, partial correlations are used. One of the ways to estimate it is to use two
-linear regression models: $ E_X: x \sim \bm{z} $, and $ E_Y: y \sim \bm{z} $.
-Then we take the compute the Pearson's correlation coefficient between the
-residuals of these two regressions: $ R_X = x - E_X(\bm{z}) $, $ R_Y = y -
-E_Y(\bm{z}) $.
+When both $ X $ and $ Y $ are continuous variables, Pearson's correlation
+coefficient is typically used.  In the case when $ \bm{Z} = \emptyset $, the
+correlation coefficient is:
+
+$$ \rho_{X, Y} = \frac{cov(X, Y)}{\sigma_X \sigma_Y} $$
+
+
+When $ \bm{Z} \neq \emptyset $, partial correlation coefficient can be used. 
+One of the ways to estimate it is to use two linear regression models: 
+
+\begin{equation}
+	\begin{split}
+		E_X &: X \sim \bm{Z} \\
+		E_Y &: Y \sim \bm{Z} \\
+		\rho_{X, Y; \bm{Z}} &= \frac{cov((X - E_X), (Y - E_Y))}{\sigma_{(X - E_X)} \sigma_{(Y-E_Y)}}
+	\end{split}
+\end{equation}
+
+$ E_X: x \sim \bm{z} $,
+and $ E_Y: y \sim \bm{z} $. Then we take the compute the Pearson's correlation
+coefficient between the residuals of these two regressions: $ R_X = x -
+E_X(\bm{z}) $, $ R_Y = y - E_Y(\bm{z}) $.
 
 \paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete}
 
@@ -550,7 +562,7 @@ can remove the edge.
 	}
 \end{figure}
 
-\section{Connection to Score Based Methods}
+\subsection{Connection to Score Based Methods}
 \begin{itemize}
 	\item The process of iteratively adding and removing edges in very similar to
 		Greedy Equivalence Search (GES).
