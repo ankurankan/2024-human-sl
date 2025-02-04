@@ -342,25 +342,36 @@ $. This gives us values that are Pearson's correlation coefficient.
 \section{A Generalized Measure of Conditional Association}
 \label{sec:mixed_association}
 
-As there are no generalized measures of association for mixed data, in this
-section, we first introduce a novel measure of partial association for mixed
-data by extending the concept of partial correlations \citep{Whittaker2009}
-\todo{Verify this citation} to handle mixed data types. To compute partial
-correlations, we have two key steps: 1) a residualization method, and 2) a
-measure of associations between the residuals. When both $ X $ and $ Y $ are
-continuous variables, residuals are typically computed using a regression-based
-method, and Pearson's correlation coefficient is used to measure the
-association between these residuals. To extend this approach to mixed data, we
-combine a mixed data residualization method \citep{Ankan2023} with a
-multivariate measure of association based on canonical correlations, Pillai's
-Trace \citep{Pillai1955}. 
+As we saw in the previous section, depending on the type of variable, different
+conditional measures of association are used. However, no generalized measure
+of association exists for mixed data. In this section, we present a novel
+measure of partial association for mixed data. This measure of association is
+analogous to partial correlation coefficient where a residualization method is
+combined with Pearson correlation coefficient. Here, we use a mixed data
+residualization method \citep{Ankan2023} and combine it with a multivariate
+measure of association based on canonical correlations called Pillai's Trace
+{Pillai1955}.
+ 
+% As there are no generalized measures of association for mixed data, in this
+% section, we first introduce a novel measure of partial association for mixed
+% data by extending the concept of partial correlations \citep{Whittaker2009}
+% \todo{Verify this citation} to handle mixed data types. To compute partial
+% correlations, we have two key steps: 1) a residualization method, and 2) a
+% measure of associations between the residuals. When both $ X $ and $ Y $ are
+% continuous variables, residuals are typically computed using a regression-based
+% method, and Pearson's correlation coefficient is used to measure the
+% association between these residuals. To extend this approach to mixed data, we
+% combine a mixed data residualization method \citep{Ankan2023} with a
+% multivariate measure of association based on canonical correlations, Pillai's
+% Trace \citep{Pillai1955}. 
 
 Given $ n $ samples $ D = (x, y, \bm{z}) $ of variables $ X $, $ Y $, and $
 \bm{Z} $, we aim to estimate the conditional association $ \rho(X, Y; \bm{Z}) $
-between $ X $ and $ Y $ conditioned on $ \bm{Z} $. We use the residualization
-approach from \citet{Ankan2023} to compute the residuals. For each of the
-variable $ X $ and $ Y $, we compute the residual $ R_X $ and $R_Y$
-respectively as follows depending on their type.
+between $ X $ and $ Y $ conditioned on $ \bm{Z} $. We first use the
+residualization approach from \citet{Ankan2023} to compute the residual
+matrices for both $ X $ and $ Y $. For each of the variable $ X $ and $ Y $, we
+compute the residual $ R_X $ and $R_Y$ respectively as follows depending on
+their type.
 
 \begin{enumerate}
 	\item \textbf{Continuous:} We train a regression model, $ E_X: x \sim
@@ -381,12 +392,12 @@ respectively as follows depending on their type.
 
 \todo[inline]{Fix notations above}
 
-We repeat the above step for the variable $ Y $ and compute its residual $ R_Y
-$. Here, we have the option to choose the estimators based on the properties of
-the data. Non-parametric ensemble estimators such as Random Forest and XGBoost
-can handle any combination of data types while performing reasonably well. For
-linear datasets, we can also choose variants of linear regression depending on
-the type of data. 
+We repeat the above steps for both the variables $ X $ and  $ Y $ to get
+residuals $ R_X $ and $ R_Y $. Here, we have the option to choose the
+estimators based on the properties of the data. Non-parametric ensemble
+estimators such as Random Forest and XGBoost can handle any combination of data
+types while performing reasonably well. For linear datasets, we can also choose
+variants of linear regression depending on the type of data. 
 
 After the above steps are repeated for both $ X $ and $ Y $, we end up with two
 residual matrices: $ R_X $ and $ R_Y $. The type of the variable determines the
@@ -441,12 +452,9 @@ canonical correlations when $ p = q = 1 $.
 Many measures of association based on canonical correlation have been used in
 multivariate statistics, each with slightly different properties.
 \begin{itemize}
-	\item Wilks' Lambda:
-		$$ \Lambda = \prod_{i}^{\min(p, q)} (1 - \phi_i^2) $$
-	\item Roy's Largest Root: 
-		$$ \theta = \max_i(\phi_i^2) $$
-	\item Pillai's Trace: 
-		$$ \tau = \sum_{i=1}^{\min(p, q)} \phi_i^2 $$
+	\item Wilks' Lambda: $\Lambda = \prod_{i}^{\min(p, q)} (1 - \phi_i^2) $
+	\item Roy's Largest Root: $ \theta = \max_i(\phi_i^2) $
+	\item Pillai's Trace: $ \tau = \sum_{i=1}^{\min(p, q)} \phi_i^2 $
 \end{itemize}
 
 We use Pillai's Trace for our purpose for two main reasons: 1) It uses all the
