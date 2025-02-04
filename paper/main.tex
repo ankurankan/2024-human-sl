@@ -768,58 +768,12 @@ direction of the edge.
 
 \begin{figure}[t!]
 	\centering
-	\begin{subfigure}{0.5\textwidth}
-		\begin{Verbatim}[fontsize=\footnotesize]
-You are an expert in Social Science. Following
-are the descriptions of two variables:
-
-<A>: {description of variable A}
-<B>: {description of variable B}
-
-Which of the following two options is the most 
-likely causal direction between these variables:
-
-1. <A> causes <B>
-2. <B> causes <A>
-
-Return a single letter answer between the 
-choices above; Do not provide any reasoning 
-in the answer; Do not add any text formatting 
-to the answer.
-		\end{Verbatim}
-	\caption{Prompt used for the LLM}
-	\end{subfigure}
-	\begin{subfigure}{0.5 \textwidth}
-		\begin{Verbatim}[fontsize=\footnotesize]
-Age: The age of a person
-Workclass: The workplace where the person is 
-     employed such as Private industry, 
-     or self employed
-Education: The highest level of education the 
-     person has finished
-MaritalStatus: The marital status of the person
-Occupation: The kind of job the person does. 
-     For example, sales, craft repair, clerical.
-Relationship: The relationship status of 
-     the person
-Race: The ethnicity of the person
-Sex: The sex or gender of the person
-HoursPerWeek: The number of hours per week the 
-     person works
-NativeCountry: The native country of the person
-Income: The income i.e. amount of money the 
-     person makes
-		\end{Verbatim}
-	\caption{Variable descriptions used for prompting the LLM}
-	\end{subfigure}
-	\begin{subfigure}{0.5\textwidth}
-		\centering
-		\includegraphics[scale=0.3]{../code/fig5/llm_adult.png}
-		\caption{The learned DAG}
-	\end{subfigure}
+	\includegraphics[scale=0.3]{../code/fig5/llm_adult.png}
+	\caption{The learned DAG}
 \end{figure}
 
 \section{Conclusions}
+Points:
 \begin{itemize}
 	\item As researchers prefer to anyways build models by hand, this is like a companion tool to help them in deciding the method.
 	\item Solves all the $ 3 $ issues outlined in the introduction.
@@ -833,6 +787,9 @@ Future work:
 	\item Improvements in the web-interface.
 \end{itemize}
 
-\newpage
 \bibliography{references}
+
+\newpage
+
+\include{appendix}
 \end{document}

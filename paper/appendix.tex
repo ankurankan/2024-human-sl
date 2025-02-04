@@ -1,0 +1,47 @@
+\onecolumn
+\title{Expert-In-The-Loop Causal Discovery: Iterative Model Refinement Using Expert Knowledge \\ (Supplementary Material)}
+\maketitle
+\appendix
+
+\section{Prompts Used for LLM}
+
+\begin{figure}[ht!]
+	\centering
+	\begin{Verbatim}
+You are an expert in Social Science. Following are the descriptions of two variables:
+
+<A>: {description of variable A}
+<B>: {description of variable B}
+
+Which of the following two options is the most likely causal direction between these 
+variables:
+
+1. <A> causes <B>
+2. <B> causes <A>
+
+Return a single letter answer between the choices above; Do not provide any reasoning 
+in the answer; Do not add any text formatting to the answer.
+	\end{Verbatim}
+	\caption{Prompt used for the LLM. Here the variable descriptions are replaced with description provided in Fig.~\ref{fig:var_description}}
+	\label{fig:prompt}
+\end{figure}
+
+\begin{figure}[ht!]
+	\begin{Verbatim}
+          Age: The age of a person
+    Workclass: The workplace where the person is employed such as Private industry, 
+     	       or self employed
+    Education: The highest level of education the person has finished.
+MaritalStatus: The marital status of the person
+   Occupation: The kind of job the person does. For example, sales, craft repair, 
+   		clerical.
+ Relationship: The relationship status of the person.
+         Race: The ethnicity of the person.
+          Sex: The sex or gender of the person.
+ HoursPerWeek: The number of hours per week the person works.
+NativeCountry: The native country of the person.
+       Income: The income i.e. amount of money the person makes.
+	\end{Verbatim}
+	\caption{Variable descriptions used for prompting the LLM}
+	\label{fig:var_description}
+\end{figure}
