@@ -758,19 +758,25 @@ Algorithm 1.
 
 
 \subsection{Using LLMs as Experts}
-Recently, there has been a lot of work towards utilizing LLMs for causal
-discovery including approaches ranging from determining pairwise edge
-orientation \citep{Kiciman2023, Jin2024} to full causal discovery
-\citep{Naik2023, Vashishtha2023}, and counterfactual reasoning
-tasks\citep{Kiciman2023} (see \citet{Liu2024} for an overview) As our approach
-utilizes expert knowledge for determining the orientation of the edges, this
-opened up an opportunity to use an LLM for determining this. We tried applying
-our procedure for causal discovery with using GEMINI as the expert. We used a
-greedy approach where the pair of variables with the highest unexplained
+Recently, there has been a lot of work towards using LLMs for causal discovery,
+with tasks ranging from determining pairwise edge orientation
+\citep{Kiciman2023, Jin2024} to full causal structure learning \citep{Naik2023,
+Vashishtha2023} and counterfactual reasoning tasks\citep{Kiciman2023} (see
+\citet{Liu2024} for an overview).
+
+Since our approach utilizes expert knowledge to determine edge orientations, we
+investigated the potential of using an LLM for this task. We applied our causal
+discovery procedure with using Gemini 1.5 flash model as the expert. Our method
+uses a greedy approach where the pair of variables with the highest unexplained
 correlation is oriented first. The prompt used to determine the orientation is
 provided in Appendix~\ref{section:llms}. Our LLM prompt utilizes variable
 description to determine the edge orientation. We applied this approach to the
-adult income dataset and the output is shown in Fig.~\ref{fig:adult_llm}.
+adult income dataset and the output is shown in Fig.~\ref{fig:adult_llm}. 
+
+Unlike the other approaches to utilize LLM for doing full causal discovery, we 
+used a combination of statistical tests and LLMs. This greatly reduces the
+amount of information that we need from the LLM. Our approach is also able to 
+ask exact questions about the variables unlike some of the other approaches.
 
 \begin{figure}[t!]
 	\centering
