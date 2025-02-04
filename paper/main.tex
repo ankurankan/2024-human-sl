@@ -245,28 +245,33 @@ DAGs while integrating their domain knowledge in the model building procedure.
 
 Our main contributions in this paper are as follows:
 \begin{enumerate}
-	\item We propose a novel measure of conditional association for mixed data
-		based on canonical correlations. This measure of association
-		generalizes some of the commonly used special case measures of 
-		association to mixed data.
-	\item Using this conditional association measure, we present a procedure to
-		manually construct DAGs by ranking violation of implied CIs in the 
-		model. This iterative procedure allows users to integrate their
-		domain knowledge in the model construction procedure.
-	\item Lastly, to allow researchers to easily apply this method on their
+	\item We propose a novel measure of conditional association for mixed
+		data based on canonical correlations
+		(Section~\ref{sec:mixed_association}. This measure of
+		association generalizes some of the commonly used special case
+		measures of association to mixed data.
+	\item Using this conditional association measure, we present a
+		procedure to manually construct DAGs by ranking violation of
+		implied CIs in the model (Section~\ref{sec:modification}. This
+		iterative procedure allows users to integrate their domain
+		knowledge in the model construction procedure.
+	\item To allow researchers to easily apply this method on their
 		datasets, we present a web-browser based interactive tool as well
-		as implementation in a Python package.
+		as implementation in a Python package (Section~\ref{sec:web}).
+	\item Lastly, we compare the manual DAG construction method with automated
+		causal discovery algorithms (Section~\ref{sec:empirical}).
+
 \end{enumerate}
 
-The rest of the paper is structured as follows. In
-Section~\ref{sec:background}, we give a background on the commonly used
-measures of association for various data types. In
-Section~\ref{sec:mixed_association}, we present our generalized measure of
-conditional association for mixed data. Section~\ref{sec:modification} provides
-details on the procedure for using the measure of association for constructing
-DAGs. Section~\ref{sec:web} presents our web-browser based tool and lastly in
-Section~\ref{sec:empirical}, we show some empirical results to compare this
-manual DAG construction approach to automated algorithms.
+% The rest of the paper is structured as follows. In
+% Section~\ref{sec:background}, we give a background on the commonly used
+% measures of association for various data types. In
+% Section~\ref{sec:mixed_association}, we present our generalized measure of
+% conditional association for mixed data. Section~\ref{sec:modification} provides
+% details on the procedure for using the measure of association for constructing
+% DAGs. Section~\ref{sec:web} presents our web-browser based tool and lastly in
+% Section~\ref{sec:empirical}, we show some empirical results to compare this
+% manual DAG construction approach to automated algorithms.
 
 \section{Background and Related Work}
 \label{sec:background}
