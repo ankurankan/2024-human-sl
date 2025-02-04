@@ -90,7 +90,7 @@ algorithms for learning DAGs from data. However, their adoption in applied
 domains remain limited, as researchers often prefer to construct DAGs manually
 based on their domain knowledge. This preference arises due to several
 practical issues with automated algorithms, such as they make obvious errors
-and out Markov Equivalence Classes (MECs). To address these challenges, we
+and output Markov Equivalence Classes (MECs). To address these challenges, we
 propose an iterative method to assist researchers in manually constructing or
 improving an existing DAG by combining implied Conditional Independence (CI)
 testing with expert knowledge. Our proposed method utilizes a novel measure of
@@ -98,11 +98,11 @@ partial association for mixed data to rank violations of implied CIs in a given
 DAG, enabling users to prioritize modifications while utilizing their domain
 knowledge to decide the orientation of new edges. Empirical results show that
 this manual model construction approach achieves performance comparable to
-automated algorithms even if the user is able to decide the edge orientation
-correctly in one out of three cases. Additionally, we demonstrate that, in the
-absence of an expert, a Large Language Model (LLM) can be potentially determine
-edge orientations. We provide the implementation of our approach in both a web 
-tool at: <redacted for review> and a Python package <redacted for review>.
+automated algorithms if the user is able correctly orientation edges in one out
+of three cases. Additionally, we demonstrate that, in the absence of an expert,
+a Large Language Model (LLM) can be potentially determine edge orientations. We
+provide the implementation of our approach in both a web tool at: <redacted for
+review> and a Python package <redacted for review>.
 
 \end{abstract}
 
@@ -147,32 +147,33 @@ causal discovery algorithms in practical settings:
 		making it difficult to assess reliability. The absence of
 		robust performance evaluation methods for any given dataset
 		further reduce the confidence in their outputs. 
-		% As a result,
-		% even when using these algorithms are used, researchers often
-		% rely on post hoc manual modifications to the model based on
-		% model testing and their domain expertise.
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} As multiple
 		DAGs can be faithful to a given observational dataset, automated 
 		algorithms can only recover the MECs. These MECs can contain a
 		combination of directed and undirected edges. However, most
 		methods for downstream tasks, such as identification or causal
 		effect estimation, assume knowledge of a fully oriented DAG. 
-		% As
-		% a result, researchers have to manually orient these edges based
-		% on their expert knowledge before using them for analysis.
 \end{enumerate}
 
-\todo[inline]{The following three paragraphs need work.}
+Fig.~\ref{fig:intro} highlights some of these issues. When constructing models
+manually it is important to test whether the constructed DAG is representative
+of the dataset or not. Based on this testing and domain knowledge further
+modifications can be made to the DAG. One of the approaches to test and modify
+DAGs is by testing whether the implied CI tests of the DAG are true in the data
+or not \citep{Ankan2021}. If some of the tests are violated in the data,
+researchers can use their domain knowledge to make modifications to the DAG.
 
-Fig.~\ref{fig:intro} highlights some of these issues. To deal with these issues
-methods for integrating expert knowledge have been developed. The two main
-methods to integrate expert knowledge in the model construction process is to:
-1. Provide all the expert knowledge to the causal discovery algorithm for
-example in the form of required and forbidden edges \citep{Meek1995}, or
-temporal information \citep{Bang2023} and let the algorithm use it to construct
-the model. 2. Utilize conditional independence (CI) testing to identify issues in
-the model, and manually fix them based on expert knowledge \citep{Ankan2021}.
-We focus on this second approach in this paper.
+This CI testing 
+
+% To deal with these issues
+% methods for integrating expert knowledge have been developed. The two main
+% methods to integrate expert knowledge in the model construction process is to:
+% 1. Provide all the expert knowledge to the causal discovery algorithm for
+% example in the form of required and forbidden edges \citep{Meek1995}, or
+% temporal information \citep{Bang2023} and let the algorithm use it to construct
+% the model. 2. Utilize conditional independence (CI) testing to identify issues in
+% the model, and manually fix them based on expert knowledge \citep{Ankan2021}.
+% We focus on this second approach in this paper.
 
 In this CI testing procedure, users test whether the implied CIs of the DAG
 hold in the dataset or not using statistical CI tests. Based on the results of
@@ -281,6 +282,8 @@ association have been used in literature depending on the type of $ X $, $ Y $,
 and $ \bm{Z} $. Typically, these are the effect size measures of the CI test $
 X \ci Y \rvert \bm{Z} $. In this section, we give an overview of some of the
 commonly used measures for different data types.
+
+\todo[inline]{Remove or move equations to appendix if no space}
 
 \subsubsection{Both $ X $ and $ Y $ are continuous}
 When both $ X $ and $ Y $ are continuous variables, Pearson's correlation
@@ -575,15 +578,22 @@ can remove the edge.
 
 \section{Web Tool}
 \label{sec:web}
-Based on the procedure outlined in the previous section, we built a web-based
-tool that allows us to interactively create/modify their model. The user
-starts by uploading their dataset and optionally the initial DAG. If no initial
-DAG is provided an empty graph is initialized. The tool also computes the
-Shipley's C value at any point. The web-tool would automatically show all
-unexplained associations in the DAG by adding red edges between them. The edge
-weight of the edge represents how high this strength is. Users can also set the
-threshold for p-value and association to control how many edges are shown at a
-time. Based on these shown potential edges, the user can select the edge that
+
+To allow users to apply this method to their own dataset, we also built an
+interactive web browser based tool to allow them to interactively construct
+models. The user starts by uploading their dataset which initializes an empty
+DAG on the variables in the dataset. Users can then set the desired p-value
+and measure of association threshold. The tools then shows a red edge between
+all the variables that are correlated in the data but the correlation is not
+explained by the current DAG. The thickness of the edge represents the strength
+of this correlation, which would help the user in prioritizing edges to add.
+
+The tool also computes the
+Shipley's C value at any point. 
+
+The edge
+weight of the edge represents how high this strength is. 
+Based on these shown potential edges, the user can select the edge that
 they want to add and decide the direction for it. If the tool detects an
 incorrect edge in the graph, it is shown in black. Once the user is happy with
 the graph they have they can export it into different formats to use it for
