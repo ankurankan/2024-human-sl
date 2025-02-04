@@ -163,7 +163,15 @@ DAGs is by testing whether the implied CI tests of the DAG are true in the data
 or not \citep{Ankan2021}. If some of the tests are violated in the data,
 researchers can use their domain knowledge to make modifications to the DAG.
 
-This CI testing 
+However, this CI testing approach also has a few drawbacks: 1) CIs are implied
+only by missing edges in the model, so we can not test whether the existing
+edges are correct or not. 2) The decision whether a CI holds in the data or not
+is based on a p-value threshold. But we can get significant p-values for even
+very weak relationship if the sample size is high. 3) Lastly, the number of
+implied CIs can be large making it difficult to go through all of them; for 
+example, in the moderately sized alarm network \citep{Beinlich1989} with $ 37 $
+nodes, there are $ 287 $ implied CIs.
+
 
 % To deal with these issues
 % methods for integrating expert knowledge have been developed. The two main
@@ -175,16 +183,16 @@ This CI testing
 % the model, and manually fix them based on expert knowledge \citep{Ankan2021}.
 % We focus on this second approach in this paper.
 
-In this CI testing procedure, users test whether the implied CIs of the DAG
-hold in the dataset or not using statistical CI tests. Based on the results of
-these statistical tests, we can accordingly make modifications to the current
-model to fix the violations. However, this CI based testing also has a few
-drawbacks: 1) CIs are implied only by missing edges in the model, so we can not
-test for already existing edges. 2) In high sample size scenarios, p-values can
-suggest a significant association between variables even if they have a very
-weak relationship. 3) Number of implied CIs can be large making it difficult to
-manually go through each of them; for example, in the moderately sized alarm
-network with $ 37 $ node, there are $287$ implied CIs. 
+% In this CI testing procedure, users test whether the implied CIs of the DAG
+% hold in the dataset or not using statistical CI tests. Based on the results of
+% these statistical tests, we can accordingly make modifications to the current
+% model to fix the violations. However, this CI based testing also has a few
+% drawbacks: 1) CIs are implied only by missing edges in the model, so we can not
+% test for already existing edges. 2) In high sample size scenarios, p-values can
+% suggest a significant association between variables even if they have a very
+% weak relationship. 3) Number of implied CIs can be large making it difficult to
+% manually go through each of them; for example, in the moderately sized alarm
+% network with $ 37 $ node, there are $287$ implied CIs. 
 
 % There has been work on trying to come up with a single test to combine all
 % these test to give a single answer \citep{Eulig2023, Shipley2000}. However,
@@ -195,16 +203,16 @@ network with $ 37 $ node, there are $287$ implied CIs.
 To tackle these issues with CI based testing, we take inspiration from
 \emph{modification indices} in specification search. The modification indices
 method tries to identify and rank changes in the model such that modifications
-that improve the model fit the most are ranked higher.This ranking allows
+that improve the model fit the most are ranked higher. This ranking allows
 researchers to focus first on the suggestions that can improve the model the
 most and while integrating their expertise to choose the most optimal
-modifications. Analogous to this, we develop a method for ranking CI test
-violations. This ranking method utilizes both p-values and a measure of
-association that we develop in this paper. Using this ranking we present a
-procedure for iteratively modifying the DAG while integrating expert knowledge
-into it.
+modifications. Analogous to this, we develop a procedure for ranking CI test
+violations allowing researchers to focus on the worst violations in the model.
+This ranking method utilizes both p-values and a measure of conditional
+association. Utilizing this procedure researchers can iteratively construct
+DAGs while integrating their domain knowledge in the model building procedure.
 
-\begin{figure}
+\begin{figure}[t!]
 \begin{subfigure}{0.25 \textwidth}
 	\includegraphics[page=1]{figures.pdf}
 	\caption{$ N = 400 $}
@@ -234,9 +242,10 @@ into it.
 \label{fig:intro}
 \end{figure}
 
+
 Our main contributions in this paper are as follows:
 \begin{enumerate}
-	\item We present a measure of conditional association for mixed data
+	\item We propose a novel measure of conditional association for mixed data
 		based on canonical correlations. This measure of association
 		generalizes some of the commonly used special case measures of 
 		association to mixed data.
@@ -257,7 +266,7 @@ conditional association for mixed data. Section~\ref{sec:modification} provides
 details on the procedure for using the measure of association for constructing
 DAGs. Section~\ref{sec:web} presents our web-browser based tool and lastly in
 Section~\ref{sec:empirical}, we show some empirical results to compare this
-manual approach to automated algorithms.
+manual DAG construction approach to automated algorithms.
 
 \section{Background and Related Work}
 \label{sec:background}
@@ -536,7 +545,7 @@ can remove the edge.
 	being recovered. \todo[inline]{Reword and add proof}
 \end{theorem}
 
-\begin{figure}
+\begin{figure}[t!]
 	\begin{subfigure}{0.17 \textwidth}
 		\includegraphics[page=1]{example.pdf}
 		\caption{True DAG}
@@ -599,7 +608,7 @@ incorrect edge in the graph, it is shown in black. Once the user is happy with
 the graph they have they can export it into different formats to use it for
 further computation.
 
-\begin{figure}
+\begin{figure}[t!]
 	\centering
 	\includegraphics[scale=0.4]{../code/plots/web_tool_full.png}
 	\caption{A screenshot of the web tool for constructing the model. Users
@@ -625,7 +634,7 @@ further computation.
 \section{Empirical Analysis}
 \label{sec:empirical}
 
-\begin{figure}
+\begin{figure}[t!]
 	\centering
 	\begin{subfigure}{0.5\textwidth}
 		\centering
@@ -645,7 +654,7 @@ further computation.
 		multiple accuracy values of the oracle.}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[t!]
 	\begin{subfigure}{0.25\textwidth}
 		\centering
 		\includegraphics{../code/fig4/unexplained_effect.pdf}
@@ -749,7 +758,7 @@ memorized many of these models, we encoded the variable names using a random
 string and provided the description of the variable to let it decide the
 direction of the edge.
 
-\begin{figure}
+\begin{figure}[t!]
 	\centering
 	\begin{subfigure}{0.5\textwidth}
 		\begin{Verbatim}[fontsize=\footnotesize]
