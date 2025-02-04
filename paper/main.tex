@@ -125,13 +125,13 @@ Equivalence Search (GES) \citep{Chickering2002}, and continuous
 optimization-based methods like NO TEARS \citep{Zheng2018} and DAGMA
 \citep{Bello2022}. While DAG-based methods focus on automated discovery,
 SEM-based methods emphasize expert-driven model specification. This includes
-tools to assist researchers in manually constructing or modifying models,
-enabling experts to incorporate their domain knowledge in the model building
-process. Researchers typically begin with an initial model based on their
-expertise and then use these tools to guide modifications that improve the
-model's fit to data. This process is commonly known as \emph{Specification
-Search} \citep{Long1983} and uses method such as modification indices, and
-Wald-based tests \citep{Marcoulides2018}. 
+tools to assist researchers in manually constructing models, enabling them to
+incorporate their domain knowledge in the model building process. Researchers
+typically begin with an initial model based on their expertise and then use
+these tools to guide modifications that improve the model's fit to data. This
+process is commonly known as \emph{Specification Search} \citep{Long1983} and
+uses method such as modification indices, and Wald-based tests
+\citep{Marcoulides2018}. 
 
 Despite significant progress in automated causal discovery, their adoption in
 applied research has been limited. Researchers often prefer to manually
@@ -145,19 +145,21 @@ causal discovery algorithms in practical settings:
 		understood. Additionally, their output can vary significantly
 		depending on the choice of algorithm and hyperparameters,
 		making it difficult to assess reliability. The absence of
-		robust performance evaluation methods further reduce the
-		confidence in their outputs. As a result, even when using these
-		algorithms are used, researchers often rely on post hoc manual
-		modifications to the model based on model testing and their
-		domain expertise.
+		robust performance evaluation methods for any given dataset
+		further reduce the confidence in their outputs. 
+		% As a result,
+		% even when using these algorithms are used, researchers often
+		% rely on post hoc manual modifications to the model based on
+		% model testing and their domain expertise.
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} As multiple
-		DAGs can be faithful to a given observational dataset, the
+		DAGs can be faithful to a given observational dataset, automated 
 		algorithms can only recover the MECs. These MECs can contain a
 		combination of directed and undirected edges. However, most
 		methods for downstream tasks, such as identification or causal
-		effect estimation, assume knowledge of a fully oriented DAG. As
-		a result, researchers have to manually orient these edges based
-		on their expert knowledge before using them for analysis.
+		effect estimation, assume knowledge of a fully oriented DAG. 
+		% As
+		% a result, researchers have to manually orient these edges based
+		% on their expert knowledge before using them for analysis.
 \end{enumerate}
 
 Fig.~\ref{fig:intro} highlights some of these issues. To deal with these issues
@@ -225,32 +227,34 @@ into it.
 	\caption{$ N = 800$ }
 \end{subfigure}
 
-\caption{A comparison of Markov Equivalence Classes (MEC) learned using Adult Income Dataset \citep{Becker1996} using (a \& b) PC algorithm using a mutual information based test, (c \& d) Hill Climb Search with Bayesian Information Criterion (BIC) score, (e \& f) PC algorithm with a residualization based test \citep{Ankan2023}. The learned model structure varies significantly depending on the algorithm, the CI test, and the sample size used.}
+\caption{A comparison of Markov Equivalence Class (MEC) learned using Adult Income Dataset \citep{Becker1996} using (a \& b) PC algorithm using a mutual information based test, (c \& d) Hill Climb Search with Bayesian Information Criterion (BIC) score, (e \& f) PC algorithm with a residualization based test \citep{Ankan2023}. The learned model structure varies significantly depending on the algorithm, the CI test, and the sample size used.}
 \label{fig:intro}
 \end{figure}
 
 Our main contributions in this paper are as follows:
 \begin{enumerate}
-	\item We present a measure of (conditional) association for mixed data
+	\item We present a measure of conditional association for mixed data
 		based on canonical correlations. This measure of association
-		generalizes the widely used partial correlation to mixed data
-		setting.
-	\item Using this partial association measure, we present a procedure to
-		rank CI tests. This ranking can be used to prioritize addition
-		or deletion of edges from the model.
-	\item We present both a web-browser based tool and an implementation in
-		the Python package to allow researchers to apply this method to
-		their own datasets.
+		generalizes some of the commonly used special case measures of 
+		association to mixed data.
+	\item Using this conditional association measure, we present a procedure to
+		manually construct DAGs by ranking violation of implied CIs in the 
+		model. This iterative procedure allows users to integrate their
+		domain knowledge in the model construction procedure.
+	\item Lastly, to allow researchers to easily apply this method on their
+		datasets, we present a web-browser based interactive tool as well
+		as implementation in a Python package.
 \end{enumerate}
 
 The rest of the paper is structured as follows. In
-Section~\ref{sec:background}, we give a background on the measures of
-association for various data types. In Section~\ref{sec:mixed_association}, we
-present our method for computing mixed data association. In
-Section~\ref{sec:modification} and Section~\ref{sec:web}, we present how to use
-this method to make modifications and the web tool, and lastly in
-Section~\ref{sec:empirical}, we show some empirical analysis on how well this
-modification process works.
+Section~\ref{sec:background}, we give a background on the commonly used
+measures of association for various data types. In
+Section~\ref{sec:mixed_association}, we present our generalized measure of
+conditional association for mixed data. Section~\ref{sec:modification} provides
+details on the procedure for using the measure of association for constructing
+DAGs. Section~\ref{sec:web} presents our web-browser based tool and lastly in
+Section~\ref{sec:empirical}, we show some empirical results to compare this
+manual approach to automated algorithms.
 
 \section{Background and Related Work}
 \label{sec:background}
