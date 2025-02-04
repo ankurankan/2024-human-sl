@@ -296,14 +296,18 @@ commonly used measures for different data types.
 
 \subsubsection{Both $ X $ and $ Y $ are continuous}
 When both $ X $ and $ Y $ are continuous variables, Pearson's correlation
-coefficient is typically used.  In the case when $ \bm{Z} = \emptyset $, the
-correlation coefficient is:
+coefficient is typically used. In the case when $ \bm{Z} = \emptyset $, the
+correlation coefficient is given as:
 
-$$ \rho_{X, Y} = \frac{cov(X, Y)}{\sigma_X \sigma_Y} $$
+\begin{equation}
+\rho_{X, Y} = \frac{\mathrm{cov}(X, Y)}{\sigma_X \sigma_Y}
+\end{equation}
 
-
-When $ \bm{Z} \neq \emptyset $, partial correlation coefficient can be used. 
-One of the ways to estimate it is to use two linear regression models: 
+where $ \mathrm{cov}(X, Y) $ is the covariance between $ X $ and $ Y $, and $
+\sigma_X $ and $ \sigma_Y $ are the standard deviations of $ X $ and $ Y $
+respectively. When $ \bm{Z} \neq \emptyset $, partial correlation coefficient
+can be used. One of the ways to estimate it is to use two linear regression
+models: 
 
 \begin{equation}
 	\begin{split}
@@ -313,10 +317,9 @@ One of the ways to estimate it is to use two linear regression models:
 	\end{split}
 \end{equation}
 
-$ E_X: x \sim \bm{z} $,
-and $ E_Y: y \sim \bm{z} $. Then we take the compute the Pearson's correlation
-coefficient between the residuals of these two regressions: $ R_X = x -
-E_X(\bm{z}) $, $ R_Y = y - E_Y(\bm{z}) $.
+$ E_X: x \sim \bm{z} $, and $ E_Y: y \sim \bm{z} $. Then we take the compute
+the Pearson's correlation coefficient between the residuals of these two
+regressions: $ R_X = x - E_X(\bm{z}) $, $ R_Y = y - E_Y(\bm{z}) $.
 
 \paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete}
 
