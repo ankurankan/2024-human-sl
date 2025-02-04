@@ -342,15 +342,14 @@ $. This gives us values that are Pearson's correlation coefficient.
 \section{A Generalized Measure of Conditional Association}
 \label{sec:mixed_association}
 
-As we saw in the previous section, depending on the type of variable, different
-conditional measures of association are used. However, no generalized measure
-of association exists for mixed data. In this section, we present a novel
-measure of partial association for mixed data. This measure of association is
-analogous to partial correlation coefficient where a residualization method is
-combined with Pearson correlation coefficient. Here, we use a mixed data
-residualization method \citep{Ankan2023} and combine it with a multivariate
-measure of association based on canonical correlations called Pillai's Trace
-{Pillai1955}.
+In the previous section, we discussed how different types of variables require
+different conditional measures of association. However, no unified measure
+exists for mixed data. In this section, we introduce a novel measure of partial
+association for mixed data, by extending the idea of partial correlation
+coefficient to mixed data. Specifically, our approach combines a mixed data
+residualization method \citep{Ankan2023} with Pillai's Trace
+\citep{Pillai1955}, a multivariate measure of association based on canonical
+correlations.
  
 % As there are no generalized measures of association for mixed data, in this
 % section, we first introduce a novel measure of partial association for mixed
@@ -598,26 +597,23 @@ can remove the edge.
 
 \section{Web Tool}
 \label{sec:web}
+To enable users to apply this method to their own datasets, we developed an
+interactive web-based tool (shown in Fig.~\ref{fig:web}) for constructing
+models. Users begin by uploading their dataset, which initializes an empty DAG
+with nodes corresponding to the dataset\'s variables. They can then specify a
+p-value threshold and a measure of association threshold.
 
-To allow users to apply this method to their own dataset, we also built an
-interactive web browser based tool to allow them to interactively construct
-models. The user starts by uploading their dataset which initializes an empty
-DAG on the variables in the dataset. Users can then set the desired p-value
-and measure of association threshold. The tools then shows a red edge between
-all the variables that are correlated in the data but the correlation is not
-explained by the current DAG. The thickness of the edge represents the strength
-of this correlation, which would help the user in prioritizing edges to add.
-
-The tool also computes the
-Shipley's C value at any point. 
-
-The edge
-weight of the edge represents how high this strength is. 
-Based on these shown potential edges, the user can select the edge that
-they want to add and decide the direction for it. If the tool detects an
-incorrect edge in the graph, it is shown in black. Once the user is happy with
-the graph they have they can export it into different formats to use it for
-further computation.
+Using the specified thresholds, the tool visually highlights unexplained
+correlations by displaying red edges between variables where correlation exists
+in the data but the current DAG is not able to explain. The thickness of these
+edges represents the strength of the correlation, helping users prioritize
+which edges to add. Similarly, if an edge in the graph is detected to be
+unnecessary, it is highlighted in black. Based on this information, users can
+select to remove unnecessary edge or select a potential edge to add and specify
+the orientation of the edge. The tool computes Shipley’s C \citep{Shipley2000}
+value at each change to determine the overall fit of the model to the data.
+Once satisfied with the constructed DAG, users can export the model for further
+analysis.
 
 \begin{figure}[t!]
 	\centering
@@ -629,6 +625,7 @@ further computation.
 		association represented using edge width. Users can then add
 		edges to the model (shown in green). Unnecessary edges are shown in 
 		black.}
+	\label{fig:web}
 \end{figure}
 
 % \begin{figure}
