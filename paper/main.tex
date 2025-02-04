@@ -162,6 +162,8 @@ causal discovery algorithms in practical settings:
 		% on their expert knowledge before using them for analysis.
 \end{enumerate}
 
+\todo[inline]{The following three paragraphs need work.}
+
 Fig.~\ref{fig:intro} highlights some of these issues. To deal with these issues
 methods for integrating expert knowledge have been developed. The two main
 methods to integrate expert knowledge in the model construction process is to:
@@ -264,20 +266,23 @@ variables as $ \bm{X} = \{X_1, \cdots, X_k\} $ with $ \rvert \bm{X} \rvert = k
 $. A sample from the random variable $ X $ is denoted as $ x $ and from a set
 of random variables $ \bm{X} $ is denoted as $ \bm{x} $. In this paper, we
 consider random variables in the mixed data setting where each of the random
-variables can be continuous, categorical, or ordinal unless specified. 
+variables can be either of continuous, categorical, or ordinal unless
+specified. 
 
 We write the expectation of a variable $ X $ as $ \mathbb{E}[X] $, conditional
 expectations as $ \mathbb{E}[X | \bm{Z}] $.
 
 \subsection{Measures of Conditional Association}
 Our proposed method for iterative DAG construction relies on a measure of
-conditional association between variables. We are interested in measuring the
-association between variables $ X $ and $ Y $ when conditioned on a set of
-variables $ \bm{Z} $ which is potentially an empty set, $ \bm{Z} = \emptyset $.
-Depending on the type of $ X $, $ Y $, and $ \bm{Z} $ various measures of
-associations have been used. Typically, these are the effect size measures of
-the conditional independence test $ X \ci Y \rvert \bm{Z} $. Here, we give an
-overview of some of the commonly used measures for different data types.
+conditional association also known as partial association between variables. We
+are interested in measuring the association between variables $ X $ and $ Y $
+when conditioned on a set of variables $ \bm{Z} $ which is potentially an empty
+set, $ \bm{Z} = \emptyset $. Many special case measures of conditional
+association have been used in literature depending on the type of $ X $, $ Y $,
+and $ \bm{Z} $. Typically, these are the effect size measures of the
+conditional independence test $ X \ci Y \rvert \bm{Z} $. In this section, we
+give an overview of some of the commonly used measures for different data
+types.
 
 \subsubsection{Both $ X $ and $ Y $ are continuous}
 In the case when both $ X $ and $ Y $ are continuous variables with the
