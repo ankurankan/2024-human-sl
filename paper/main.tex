@@ -250,14 +250,14 @@ conditional expectations as $ \mathbb{E}[X | \bm{Z}] $. We denote a graph $ G =
 observed variables, and linear measure of association.
 
 \subsection{Measures of Conditional Association}
-Our proposed method for iterative DAG construction relies on a measure of
-conditional association, also commonly known as partial association, between
-variables. Specifically, we are interested in quantifying the association
-between variables $ X $ and $ Y $ when conditioned on a set of variables $
-\bm{Z} $, which may be empty ($ \bm{Z} = \emptyset $). Various measures of
-conditional association have been used in the literature, depending on the type
+Our approach for ranking CI tests is based on a measure of conditional
+association -- also known as partial association -- between variables.
+Specifically, we are interested in quantifying the association between
+variables $ X $ and $ Y $ when conditioned on a set of variables $ \bm{Z} $
+(which may be empty, i.e., $ \bm{Z} = \emptyset $). Various measures of
+conditional association have been used for this purpose depending on the type
 of $ X $, $ Y $, and $ \bm{Z} $. These measures are often based on the effect
-size of the CI test $ X \ci Y \rvert \bm{Z} $. In this section, we provide an
+size of the CI test $ X \ci Y \rvert \bm{Z} $. In this section, we give an
 overview of some of the commonly used measures for different data types.
 
 \subsubsection{Both $ X $ and $ Y $ are continuous}
