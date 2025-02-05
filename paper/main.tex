@@ -407,14 +407,14 @@ Here, we have the option to choose the estimators based on the properties
 ensemble estimators such as Random Forest and XGBoost can handle any
 combination of data types while performing reasonably well on a wide range of
 distributions and relationship types. For linear relationships, we can also
-choose simpler models such as linear regression.
+choose simpler models such as linear regression and its variants.
 
-Repeating the above residualization method for both $ X $ and  $ Y $, we obtain
-residual matrices $ R_X $ and $ R_Y $. The type of the variable determines the
-shape for these matrices. If the variable is continuous or ordinal, the
-residual matrix is of shape $ ( n \times 1 ) $ and if the variable is
-categorical, we have a residual matrix of shape $ ( x \times (k-1)) $ where $ k
-$ is the number of categories of the variable. 
+Repeating the above residualization process for both $ X $ and  $ Y $, we
+obtain residual matrices $ R_X $ and $ R_Y $. The type of the variable
+determines the shape for these matrices. If the variable is continuous or
+ordinal, the residual matrix is of shape $ ( n \times 1 ) $ and if the variable
+is categorical, we have a residual matrix of shape $ ( x \times (k-1)) $ where
+$ k $ is the number of categories of the variable. 
 
 The next step is to quantify the association between these residual matrices.
 For this purpose we use canonical correlations that have been widely used to
@@ -451,11 +451,11 @@ multivariate statistics, each with slightly different properties.
 	\item Pillai's Trace: $ \tau = \sum_{i=1}^{\min(p, q)} \phi_i^2 $
 \end{itemize}
 
-We use Pillai's Trace for our purpose for two main reasons: 1) It uses all the
-canonical correlation values, 2) Its interpretation is similar to correlation
-coefficient, i.e., $ 0 $ signifies no association and $ 1 $ signifies perfect
-linear relationship. This gives us the following partial measure of
-association:
+We use a slightly modified version of Pillai's Trace for our purpose for two
+main reasons: 1) It uses all the canonical correlation values, 2) Its
+interpretation is similar to correlation coefficient, i.e., $ 0 $ signifies no
+association and $ 1 $ signifies perfect linear relationship. This gives us the
+following partial measure of association:
 
 \begin{equation}
 	\rho(X, Y; \bm{Z}) = \frac{1}{\min(\rvert R_X \rvert, \rvert R_Y \rvert)}
@@ -470,9 +470,7 @@ well-suited for our application:
 		association) to $ 1 $ (perfect linear association). This bounded
 		nature simplifies the interpretation and allows for easy 
 		comparisons across multiple values.
-	\item \textbf{Independent of Sample Size: } The measure remains consistent
-		regardless of the sample size ensuring reliability across 
-		studies with different sample sizes.
+	\item \textbf{Independent of Sample Size: } 
 	\item \textbf{Invariant to the Dummy Encoding: } We use dummy encoding 
 		to compute the residual matrix for categorical variables. Since
 		canonical correlations identify linear combinations across
