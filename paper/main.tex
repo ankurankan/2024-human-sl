@@ -160,14 +160,15 @@ limitations:
 To tackle these limitations, we draw inspiration from modification indices in
 specification search. Modification indices provide ranking for potential model
 modification based on their impact on the model's fit, allowing us to
-prioritize most meaningful modifications. Similarly, we propose a method for
+prioritize most meaningful modifications.  Similarly, we propose a method for
 ranking CI test violations to help us focus on the most critical
 inconsistencies in the model. To determine this ranking we utilize a measure of
 conditional association between variables in combination with p-values from the
-CI test. This approach helps us in tackling all the three issues outlined
-above. The measure of association allows us to test for existing edges, as well
-as not only rely on p-value to make decision whether a CI test holds. The
-ranking helps us in focusing on the most critical violations. 
+CI test. This approach addresses all three of the issues outlined above. The
+measure of association allows us to evaluate the validity of existing edges. It
+reduces our reliance on p-values alone for deciding whether the CI test holds.
+The ranking helps us prioritize the most critical violations, making it feasible 
+to focus on the areas that most improve the model's fit.
 
 \begin{figure}[t!]
     \begin{subfigure}{0.25 \textwidth}
