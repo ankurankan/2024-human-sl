@@ -74,7 +74,7 @@ errors and output Markov Equivalence Classes (MECs) rather than a DAG. To
 address these challenges, we propose an iterative method that guides
 researchers in manually constructing or improving the fit of an existing DAG.
 Our approach combines implied Conditional Independence (CI) testing with a
-novel measure of conditional association between variables to rank violations
+measure of conditional association between variables to rank violations
 of implied CIs in a given DAG. This ranking helps prioritize modifications to
 the DAG to improve its fit to the data while utilizing expert knowledge to
 decide the orientation of new edges. Empirical results show that this guided
@@ -157,67 +157,71 @@ limitations:
 	\citep{Beinlich1989} with $ 37 $ nodes, implies $ 287 $ CIs.
 \end{enumerate}
 
-To tackle these issues with CI based testing, we take inspiration from
-modification indices in specification search. The modification indices
-method tries to identify and rank changes in the model such that modifications
-that improve the model fit the most are ranked higher. This ranking allows
-researchers to focus first on the suggestions that can improve the model the
-most and while integrating their expertise to choose the most optimal
-modifications. Analogous to this, we develop a procedure for ranking CI test
-violations allowing researchers to focus on the worst violations in the model.
-This ranking method utilizes both p-values and a measure of conditional
-association. Utilizing this procedure researchers can iteratively construct
-DAGs while integrating their domain knowledge in the model building procedure.
+To tackle these limitations, we draw inspiration from modification indices in
+specification search. Modification indices provide ranking for potential model
+modification based on their impact on the model's fit, allowing us to
+prioritize most meaningful modifications. Similarly, we propose a method for
+ranking CI test violations to help us focus on the most critical
+inconsistencies in the model. To determine this ranking we utilize a measure of
+conditional association between variables in combination with p-values from the
+CI test. This approach helps us in tackling all the three issues outlined
+above. The measure of association allows us to test for existing edges, as well
+as not only rely on p-value to make decision whether a CI test holds. The
+ranking helps us in focusing on the most critical violations. 
 
 \begin{figure}[t!]
-\begin{subfigure}{0.25 \textwidth}
-	\includegraphics[page=1]{figures.pdf}
-	\caption{$ N = 400 $}
-\end{subfigure}%
-\begin{subfigure}{0.25 \textwidth}
-	\includegraphics[page=2]{figures.pdf}
-	\caption{$ N = 800$ }
-\end{subfigure}
-\begin{subfigure}{0.25 \textwidth}
-	\includegraphics[page=5]{figures.pdf}
-	\caption{$ N = 400 $ }
-\end{subfigure}%
-\begin{subfigure}{0.25\textwidth}
-	\includegraphics[page=6]{figures.pdf}
-	\caption{ $ N = 800$ }
-\end{subfigure}
-\begin{subfigure}{0.25 \textwidth}
-	\includegraphics[page=3]{figures.pdf}
-	\caption{ $ N = 400$ }
-\end{subfigure}%
-\begin{subfigure}{0.25\textwidth}
-	\includegraphics[page=4]{figures.pdf}
-	\caption{$ N = 800$ }
-\end{subfigure}
+    \begin{subfigure}{0.25 \textwidth}
+    	\includegraphics[page=1]{figures.pdf}
+    	\caption{$ N = 400 $}
+    \end{subfigure}%
+    \begin{subfigure}{0.25 \textwidth}
+    	\includegraphics[page=2]{figures.pdf}
+    	\caption{$ N = 800$ }
+    \end{subfigure}
+    \begin{subfigure}{0.25 \textwidth}
+    	\includegraphics[page=5]{figures.pdf}
+    	\caption{$ N = 400 $ }
+    \end{subfigure}%
+    \begin{subfigure}{0.25\textwidth}
+    	\includegraphics[page=6]{figures.pdf}
+    	\caption{ $ N = 800$ }
+    \end{subfigure}
+    \begin{subfigure}{0.25 \textwidth}
+    	\includegraphics[page=3]{figures.pdf}
+    	\caption{ $ N = 400$ }
+    \end{subfigure}%
+    \begin{subfigure}{0.25\textwidth}
+    	\includegraphics[page=4]{figures.pdf}
+    	\caption{$ N = 800$ }
+    \end{subfigure}
 
-\caption{A comparison of Markov Equivalence Class (MEC) learned using Adult Income Dataset \citep{Becker1996} using (a \& b) PC algorithm using a mutual information based test, (c \& d) Hill Climb Search with Bayesian Information Criterion (BIC) score, (e \& f) PC algorithm with a residualization based test \citep{Ankan2023}. The learned model structure varies significantly depending on the algorithm, the CI test, and the sample size used.}
-\label{fig:intro}
+    \caption{A comparison of Markov Equivalence Class (MEC) learned using Adult
+	     Income Dataset \citep{Becker1996} using (a \& b) PC algorithm
+	     using a mutual information based test, (c \& d) Hill Climb Search
+	     with Bayesian Information Criterion (BIC) score, (e \& f) PC
+	     algorithm with a residualization based test \citep{Ankan2023}. The
+	     learned model structure varies significantly depending on the
+     	     algorithm, the CI test, and the sample size used.}
+    \label{fig:intro}
 \end{figure}
 
 
 Our main contributions in this paper are as follows:
-\begin{enumerate}
-	\item We propose a novel measure of conditional association for mixed
-		data based on canonical correlations
-		(Section~\ref{sec:mixed_association}. This measure of
-		association generalizes some of the commonly used special case
-		measures of association to mixed data.
-	\item Using this conditional association measure, we present a
-		procedure to manually construct DAGs by ranking violation of
-		implied CIs in the model (Section~\ref{sec:modification}. This
-		iterative procedure allows users to integrate their domain
-		knowledge in the model construction procedure.
-	\item To allow researchers to easily apply this method on their
-		datasets, we present a web-browser based interactive tool as well
-		as implementation in a Python package (Section~\ref{sec:web}).
-	\item Lastly, we compare the manual DAG construction method with automated
-		causal discovery algorithms (Section~\ref{sec:empirical}).
 
+\begin{enumerate}
+    \item We propose a novel measure of conditional association for mixed data
+	    based on canonical correlations
+	    (Section~\ref{sec:mixed_association}). This measure generalizes
+	    several commonly used special case measures of association to mixed
+	    data.
+    \item Using this measure of conditional association, we develop a procedure
+	    to rank violations of implied CIs. Using this ranking helps us
+	    prioritize modifications to DAG to improve its fit while allowing
+	    us to integrate expert knowledge when adding new edges (Section~\ref{sec:modification}).
+    \item We provide a web-based interactive tool and a Python package to allow 
+	    researchers to easily apply this method to their datasets (Section~\ref{sec:web}).
+    \item Lastly, we compare the manual DAG construction method with automated
+	    causal discovery algorithms (Section~\ref{sec:empirical}).
 \end{enumerate}
 
 % The rest of the paper is structured as follows. In
@@ -322,19 +326,6 @@ data residualization method \citep{Ankan2023} with Pillai's Trace
 \citep{Pillai1955}, a multivariate measure of association based on canonical
 correlations.
  
-% As there are no generalized measures of association for mixed data, in this
-% section, we first introduce a novel measure of partial association for mixed
-% data by extending the concept of partial correlations \citep{Whittaker2009}
-% \todo{Verify this citation} to handle mixed data types. To compute partial
-% correlations, we have two key steps: 1) a residualization method, and 2) a
-% measure of associations between the residuals. When both $ X $ and $ Y $ are
-% continuous variables, residuals are typically computed using a regression-based
-% method, and Pearson's correlation coefficient is used to measure the
-% association between these residuals. To extend this approach to mixed data, we
-% combine a mixed data residualization method \citep{Ankan2023} with a
-% multivariate measure of association based on canonical correlations, Pillai's
-% Trace \citep{Pillai1955}. 
-
 Given a dataset $ D = (x, y, \bm{z}) $ on variables $ X $, $ Y $, and $ \bm{Z}
 $, we goal to estimate the conditional association $ \rho(X, Y; \bm{Z}) $ . We
 achieve this by first computing the residuals $ R_X $ and $ R_Y $ for $ X $ 
