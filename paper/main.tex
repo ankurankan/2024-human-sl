@@ -283,19 +283,21 @@ $. A sample from the random variable $ X $ is denoted as $ x $ and from a set
 of random variables $ \bm{X} $ is denoted as $ \bm{x} $. In this paper, we
 consider random variables in the mixed data setting where each of the random
 variables can be either of continuous, categorical, or ordinal unless
-specified. We write the expectation of a variable $ X $ as $ \mathbb{E}[X] $, conditional
-expectations as $ \mathbb{E}[X | \bm{Z}] $.
+specified. We write the expectation of a variable $ X $ as $ \mathbb{E}[X] $,
+conditional expectations as $ \mathbb{E}[X | \bm{Z}] $. We denote a graph $ G =
+(V, E) $ which nodes $ V$ and edges $ E $. In this paper we focus on all
+observed variables, and linear measure of association.
 
 \subsection{Measures of Conditional Association}
 Our proposed method for iterative DAG construction relies on a measure of
-conditional association also known as partial association between variables. We
-are interested in measuring the association between variables $ X $ and $ Y $
-when conditioned on a set of variables $ \bm{Z} $ which is potentially an empty
-set, $ \bm{Z} = \emptyset $. Many special case measures of conditional
-association have been used in literature depending on the type of $ X $, $ Y $,
-and $ \bm{Z} $. Typically, these are the effect size measures of the CI test $
-X \ci Y \rvert \bm{Z} $. In this section, we give an overview of some of the
-commonly used measures for different data types.
+conditional association, also commonly known as partial association, between
+variables. Specifically, we are interested in quantifying the association
+between variables $ X $ and $ Y $ when conditioned on a set of variables $
+\bm{Z} $, which may be empty ($ \bm{Z} = \emptyset $). Various measures of
+conditional association have been used in the literature, depending on the type
+of $ X $, $ Y $, and $ \bm{Z} $. These measures are often based on the effect
+size of the CI test $ X \ci Y \rvert \bm{Z} $. In this section, we provide an
+overview of some of the commonly used measures for different data types.
 
 \todo[inline]{Remove or move equations to appendix if no space}
 
@@ -311,38 +313,48 @@ correlation coefficient is given as:
 where $ \mathrm{cov}(X, Y) $ is the covariance between $ X $ and $ Y $, and $
 \sigma_X $ and $ \sigma_Y $ are the standard deviations of $ X $ and $ Y $
 respectively. When $ \bm{Z} \neq \emptyset $, partial correlation coefficient
-can be used. One of the ways to estimate it is to use two linear regression
-models: 
+can be used. One of the ways to estimate it is to use two regression
+models $ E_X: X \sim \bm{Z} $, $ E_Y: Y \sim \bm{Z} $, and compute the Pearson's 
+correlation coefficient between the residuals of these regression models: 
 
 \begin{equation}
 	\begin{split}
-		E_X &: X \sim \bm{Z} \\
-		E_Y &: Y \sim \bm{Z} \\
-		\rho_{X, Y; \bm{Z}} &= \frac{cov((X - E_X), (Y - E_Y))}{\sigma_{(X - E_X)} \sigma_{(Y-E_Y)}}
+		R_X &= X - E_X(\bm{Z})  \;\;\;\;\;\;\;\;  R_Y = Y - E_Y(\bm{Z}) \\
+		\rho_{X, Y; \bm{Z}} &= \frac{\mathrm{cov}(R_X, R_Y)}{\sigma_{R_X} \sigma_{R_Y}}
 	\end{split}
 \end{equation}
 
-$ E_X: x \sim \bm{z} $, and $ E_Y: y \sim \bm{z} $. Then we take the compute
-the Pearson's correlation coefficient between the residuals of these two
-regressions: $ R_X = x - E_X(\bm{z}) $, $ R_Y = y - E_Y(\bm{z}) $.
-
 \paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete}
 
-In the case of discrete variables, Cramer\'s V has been typically used as a
-measure of association. When there are no conditional variables, $ \bm{Z} =
-\emptyset $, Cramer\'s V can be computed directly from the contingency table.
+In the case of all discrete variables, Cram\'er's V can used as a measure of
+association. When $ \bm{Z} = \emptyset $, Cram\'er's V can be computed from the 
+chi-squared test statistic as:
 
-However, when conditional variables are present, we can iterate over all
-possible combinations of the conditional variables, compute the Cramer\'s V and
-then lastly combine them together. 
+\begin{equation}
+	\mathbb{V_{X, Y}} = \sqrt{\frac{\chi^2 / n}{\mathrm{min}(k-1, r-1)}}
+\end{equation}
+
+where $ \chi^2 $ is the chi-squared test statistic for $ X $ and $ Y $, $ n $ 
+is the sample size and $ k $ and $ r $ are the number of categories of $ X $ and 
+$ Y $.
+
+However, when $ \bm{Z} \neq \emptyset $, we first split the dataset by unique
+values of $ \bm{Z} $, $ D = \{D_{\bm{Z} = \bm{Z_1}}, D_{\bm{Z} = \bm{Z_2}},
+\cdots, \} $  and then combine them as:
+
+\begin{equation}
+	\mathbb{V_{X, Y; Z}} = \sum_{D_{\bm{Z} = \bm{Z_i}}} \mathbb{V}_{X_{D_i}, Y_{D_i}}
+\end{equation}
 
 \paragraph{$ X $ is ordinal and $ Y $ is continuous or ordinal}
-Polyserial Correlation (when one is oridinal and the other is continuous) and
-polychoric correlation (when both are ordinal) can be use. Here the assumption
-is made that $ X $ is a thresholded version of an underlying continuous normal
-variable. The method then tries to learn the thresholds for this latent
-variable while trying to maximize the correlation between $ X_{lat} $ and $ Y
-$. This gives us values that are Pearson's correlation coefficient.
+When one of the variables is ordinal and the other is continuous polyserial
+correlation can be used. When both the variables are ordinal polychoric
+correlation can be used. Both polychoric and polyserial correlation make the
+assumption that the ordinal variable has an underlying normal distributed
+continuous variable, and the ordinal variable has been generated by
+thresholding this latent variable. The method then tries to maximize the
+likelihood of data given polychoric or polyserial correlation coefficient. This
+method gives us values that are Pearson's correlation coefficient.
 
 \section{A Generalized Measure of Conditional Association}
 \label{sec:mixed_association}
@@ -496,7 +508,7 @@ This measure of association has many desired properties:
 		effect size is equivalent to polychoric and polyserial
 		correlation. As both of them recover the Pearson correlation
 		coefficient.
-	\item \textbf{Related to Cramer\'s V: } 
+	\item \textbf{Related to Cram\'ers V: } 
 \end{enumerate}
 
 So, in a sense this measure generalized currently used measures of associations
