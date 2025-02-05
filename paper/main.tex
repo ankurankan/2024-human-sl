@@ -63,26 +63,6 @@
 \maketitle
 
 \begin{abstract}
-% Causal discovery has received significant attention in the Directed Acyclic
-% Graphs (DAGs) literature, leading to the development of numerous automated
-% algorithms for learning DAGs from data. Despite these advancements, the
-% application of these algorithms in applied domains remains limited, with
-% researchers often preferring to manually construct DAGs based on their expert
-% knowledge. This preference stems due to some practical issues with these
-% algorithms such as making obvious mistakes, and outputting Markov Equivalence
-% Class (MEC). As a result of these issues users typically have to rely on post
-% hoc modifications to the model based on their expertise. Given this reliance on
-% manual model modification and construction, we propose an iterative method to
-% assist researchers in manually constructing DAGs by combining implied
-% Conditional Independence (CI) based model testing and utilizing their expert
-% knowledge. We present a novel measure of partial association for mixed data
-% that allows us to rank violations of implied CIs in the model. Using this
-% ranking users can prioritize modifications to the model while using their
-% expert knowledge to decide orientation of edges. Empirically, we show that
-% a greedy approach achieves performance comparable to automated algorithms, provided
-% the user can correctly determine the edge orientation in $ 1 $ out of $ 3 $ cases.
-% Additionally, we show that in the absence of an expert, a Large Language Model can
-% potentially be used for determining edge orientations.
 
 Causal discovery has received significant attention in the Directed Acyclic
 Graphs (DAGs) literature, leading to the development of numerous automated
@@ -111,7 +91,7 @@ at: <redacted for review> and a Python package <redacted for review>.
 Understanding cause-and-effect relationships between variables is a fundamental
 objective in many scientific fields. These relationships reveal the mechanisms
 behind observed phenomena and guide effective interventions or policy
-decisions. \emph{Causal Discovery} methods aim to discover such relationships
+decisions. Causal discovery methods aim to discover such relationships
 among random variables using observational data. Approaches to causal discovery
 have been developed within both the Directed Acyclic Graphs (DAGs) and
 Structural Equation Models (SEMs) frameworks, each adapting a different
@@ -119,20 +99,19 @@ approach.
 
 In the DAG literature, the primary focus has been on developing automated
 algorithms to learn causal structures from datasets. These efforts have led to
-numerous causal discovery algorithms, including constraint-based methods like
-the PC algorithm \citep{Spirtes2001} and Fast Causal Inference (FCI)
-\citep{Spirtes2000}), score-based methods such as Hill-Climb Search and Greedy
-Equivalence Search (GES) \citep{Chickering2002}, and continuous
-optimization-based methods like NO TEARS \citep{Zheng2018} and DAGMA
-\citep{Bello2022}. While DAG-based methods focus on automated discovery,
-SEM-based methods emphasize expert-driven model specification. This includes
-tools to assist researchers in manually constructing models, enabling them to
-incorporate their domain knowledge in the model building process. Researchers
-typically begin with an initial model based on their expertise and then use
-these tools to guide modifications that improve the model's fit to data. This
-process is commonly known as \emph{Specification Search} \citep{Long1983} and
-uses method such as modification indices, and Wald-based tests
-\citep{Marcoulides2018}. 
+numerous causal discovery algorithms, such as constraint-based methods like PC
+algorithm \citep{Spirtes2001} and Fast Causal Inference \citep{Spirtes2000}),
+score-based methods such as Hill-Climb Search and Greedy Equivalence Search
+\citep{Chickering2002}, and continuous optimization-based methods like NO TEARS
+\citep{Zheng2018} and DAGMA \citep{Bello2022}. While DAG-based methods focus on
+automated discovery, SEM-based methods emphasize expert driven model
+specification. This includes tools to assist researchers in manually
+constructing models, enabling them to incorporate their domain knowledge in the
+model building process. Researchers typically begin with an initial model based
+on their domain knowledge and then use these tools to guide modifications that
+improve the model's fit to data. This process is commonly known as
+Specification Search \citep{Long1983} and uses method such as modification
+indices, and Wald-based tests \citep{Marcoulides2018}. 
 
 Despite significant progress in automated causal discovery, their adoption in
 applied research has been limited. Researchers often prefer to manually
@@ -143,9 +122,9 @@ causal discovery algorithms in practical settings:
 \begin{enumerate}
 	\item \textbf{Lack of Trust:} While most algorithms are asymptotically
 		consistent, their behavior on finite samples is not well
-		understood. Additionally, their output can vary significantly
-		depending on the choice of algorithm and hyperparameters,
-		making it difficult to assess reliability. The absence of
+		understood. Their output can vary significantly depending on
+		the choice of algorithm and hyperparameters, making it
+		difficult to assess reliability. Additionally, the absence of
 		robust performance evaluation methods for any given dataset
 		further reduce the confidence in their outputs. 
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} As multiple
@@ -156,53 +135,30 @@ causal discovery algorithms in practical settings:
 		effect estimation, assume knowledge of a fully oriented DAG. 
 \end{enumerate}
 
-Fig.~\ref{fig:intro} highlights some of these issues. When constructing models
-manually it is important to test whether the constructed DAG is representative
-of the dataset or not. Based on this testing and domain knowledge further
-modifications can be made to the DAG. One of the approaches to test and modify
-DAGs is by testing whether the implied CI tests of the DAG are true in the data
-or not \citep{Ankan2021}. If some of the tests are violated in the data,
-researchers can use their domain knowledge to make modifications to the DAG.
+Figure~\ref{fig:intro} highlights some of these issues. 
 
-However, this CI testing approach also has a few drawbacks: 1) CIs are implied
-only by missing edges in the model, so we can not test whether the existing
-edges are correct or not. 2) The decision whether a CI holds in the data or not
-is based on a p-value threshold. But we can get significant p-values for even
-very weak relationship if the sample size is high. 3) Lastly, the number of
-implied CIs can be large making it difficult to go through all of them; for 
-example, in the moderately sized alarm network \citep{Beinlich1989} with $ 37 $
-nodes, there are $ 287 $ implied CIs.
+When manually constructing models, it is important to test whether the
+resulting DAG accurately represents the dataset. Based on this evaluation and
+domain knowledge, we can make further modification to the model. One common
+approach for assessing DAGs is to check whether the Conditional Independences
+(CIs) implied by the DAG hold in the data \citep{Ankan2021}. If we find
+violations to these CIs, we can use our domain knowledge to make appropriate
+modifications to the DAG. However, this CI testing approach has a few
+limitations:
 
-
-% To deal with these issues
-% methods for integrating expert knowledge have been developed. The two main
-% methods to integrate expert knowledge in the model construction process is to:
-% 1. Provide all the expert knowledge to the causal discovery algorithm for
-% example in the form of required and forbidden edges \citep{Meek1995}, or
-% temporal information \citep{Bang2023} and let the algorithm use it to construct
-% the model. 2. Utilize conditional independence (CI) testing to identify issues in
-% the model, and manually fix them based on expert knowledge \citep{Ankan2021}.
-% We focus on this second approach in this paper.
-
-% In this CI testing procedure, users test whether the implied CIs of the DAG
-% hold in the dataset or not using statistical CI tests. Based on the results of
-% these statistical tests, we can accordingly make modifications to the current
-% model to fix the violations. However, this CI based testing also has a few
-% drawbacks: 1) CIs are implied only by missing edges in the model, so we can not
-% test for already existing edges. 2) In high sample size scenarios, p-values can
-% suggest a significant association between variables even if they have a very
-% weak relationship. 3) Number of implied CIs can be large making it difficult to
-% manually go through each of them; for example, in the moderately sized alarm
-% network with $ 37 $ node, there are $287$ implied CIs. 
-
-% There has been work on trying to come up with a single test to combine all
-% these test to give a single answer \citep{Eulig2023, Shipley2000}. However,
-% what is missing is the guide on how to how to fix these tests. Additionally
-% there has been a lot of work to integrate expert knowledge into causal
-% discovery algorithms which has shown significant improvement. 
+\begin{enumerate}
+\item As CIs are only implied by missing edges in the model, this approach does 
+	not test whether the existing edges are correct.
+\item Determining whether a CI holds in data is based on a p-value threshold. This can 
+	be unreliable, for example, we get a significant p-value for even very weak 
+	relationship if the sample size is high.
+\item The number of implied CIs can be large making it difficult to manually
+	check all of them. For example, a moderately sized alarm network
+	\citep{Beinlich1989} with $ 37 $ nodes, implies $ 287 $ CIs.
+\end{enumerate}
 
 To tackle these issues with CI based testing, we take inspiration from
-\emph{modification indices} in specification search. The modification indices
+modification indices in specification search. The modification indices
 method tries to identify and rank changes in the model such that modifications
 that improve the model fit the most are ranked higher. This ranking allows
 researchers to focus first on the suggestions that can improve the model the
