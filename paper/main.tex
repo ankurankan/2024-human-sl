@@ -361,10 +361,10 @@ method gives us values that are Pearson's correlation coefficient.
 
 In the previous section, we discussed how different types of variables require
 different conditional measures of association. However, no unified measure
-exists for mixed data. In this section, we introduce a novel measure of partial
-association for mixed data, by extending the idea of partial correlation
-coefficient to mixed data. Specifically, our approach combines a mixed data
-residualization method \citep{Ankan2023} with Pillai's Trace
+exists for mixed data. In this section, we introduce a novel measure of
+conditional association for mixed data by extending the idea of partial
+correlation coefficient to mixed data. Specifically, our approach combines a
+mixed data residualization method \citep{Ankan2023} with Pillai's Trace
 \citep{Pillai1955}, a multivariate measure of association based on canonical
 correlations.
  
@@ -381,53 +381,49 @@ correlations.
 % multivariate measure of association based on canonical correlations, Pillai's
 % Trace \citep{Pillai1955}. 
 
-Given $ n $ samples $ D = (x, y, \bm{z}) $ of variables $ X $, $ Y $, and $
-\bm{Z} $, we aim to estimate the conditional association $ \rho(X, Y; \bm{Z}) $
-between $ X $ and $ Y $ conditioned on $ \bm{Z} $. We first use the
-residualization approach from \citet{Ankan2023} to compute the residual
-matrices for both $ X $ and $ Y $. For each of the variable $ X $ and $ Y $, we
-compute the residual $ R_X $ and $R_Y$ respectively as follows depending on
-their type.
+Given a dataset $ D = (x, y, \bm{z}) $ on variables $ X $, $ Y $, and $ \bm{Z}
+$, we aim to estimate the conditional association $ \rho(X, Y; \bm{Z}) $
+between $ X $ and $ Y $ conditioned on $ \bm{Z} $. We first use a mixed data
+residualization approach \citep{Ankan2023} to compute residuals $R_X$ and $R_Y$
+for $ X $ and $ Y $. The method for computing these residuals depend on the 
+type of variable:
 
 \begin{enumerate}
-	\item \textbf{Continuous:} We train a regression model, $ E_X: x \sim
-		\bm{z} $. The residuals are then defined as the difference
+	\item \textbf{Continuous:} We train a model, $ E_X: x \sim
+		\bm{z} $. The residuals are then computed by taking the difference
 		between the true and the predicted values using $ E_X $. 
 		$$ R_{x_i} = x_i - E_X(\bm{z}_i) $$
 	\item \textbf{Ordinal:} We start by training a probability estimator, $
-		p_X: x \sim \bm{z} $, and obtain probability predictions 
-		$ \hat{p}_X: \hat{p}_X(\bm{Z}) $. Then, we compute the residuals
-		as follows \citep{Li2012}:
-		$$ R_{x_i} = \hat{p}(\hat{x}_i > x_i) - \hat{p}(\hat{x}_i < x_i) $$
+		p_X: x \sim \bm{z} $, and then use the estimated probabilities, 
+		$ \hat{p}_X(x) $ to compute the residuals:
+		$$ R_{x_i} = \hat{p}_X(X < x_i) - \hat{p}_X(X > x_i) $$
 	\item \textbf{Categorical:} We again start by training a probability
 		estimator $ p_X: X \sim \bm{Z} $, and obtain probability
-		estimates $ \hat{p}_X: p_Z(\bm{Z}) $. Next, we dummy encode the
+		estimates $ \hat{p}_X: p_X(\bm{Z}) $. Next, we dummy encode the
 		categorical variable and then compute the residuals as follows: 
 		$$ R_X = x_i - \hat{p}(\bm{z}_i) $$
 \end{enumerate}
 
-\todo[inline]{Fix notations above}
-
 We repeat the above steps for both the variables $ X $ and  $ Y $ to get
 residuals $ R_X $ and $ R_Y $. Here, we have the option to choose the
-estimators based on the properties of the data. Non-parametric ensemble
-estimators such as Random Forest and XGBoost can handle any combination of data
-types while performing reasonably well. For linear datasets, we can also choose
-variants of linear regression depending on the type of data. 
+estimators based on the properties (distribution, type of relationship, and so
+on) of the data. Non-parametric ensemble estimators such as Random Forest and
+XGBoost can handle any combination of data types while performing reasonably
+well on a wide range of distributions and relationship types. For linear
+relationships, we can also choose simpler models such as linear regression.
 
-After the above steps are repeated for both $ X $ and $ Y $, we end up with two
-residual matrices: $ R_X $ and $ R_Y $. The type of the variable determines the
-shape for these matrices. If the variable is continuous, we get a residual
-matrix of shape $ ( n \times 1 ) $ and if the variable is categorical, we have
-a residual matrix of shape $ ( x \times (k -1)) $ where one of the dummy encoded
-variables is dropped to avoid multicollinearity.
+After the above residualization steps are repeated for both $ X $ and $ Y $, we
+end up with two residual matrices: $ R_X $ and $ R_Y $. The type of the
+variable determines the shape for these matrices. If the variable is continuous
+or ordinal, we get a residual matrix of shape $ ( n \times 1 ) $ and if the
+variable is categorical, we have a residual matrix of shape $ ( x \times (k-1))
+$ where one of the dummy encoded variables is dropped to avoid
+multicollinearity.
 
 We now have two continuous-valued residual matrices. The next step is
-to quantify the association between these residuals. In multivariate
-statistics, canonical correlation based measures have been used to measure
-the association between two sets of variables. We can treat our residuals
-as sets of variables and use canonical correlations to quantify the association
-between them.
+to quantify the association between these residuals. For this purpose
+we use canonical correlations that have been used to measure the association
+between two sets of random variables.
 
 \begin{definition} 
 
@@ -435,15 +431,6 @@ between them.
 	and $ \bm{V} = (V_1, V_2, \cdots, V_q) $, canonical correlation between
 	them, $\rho(\bm{U}, \bm{V}) $ is defined as:
 		
-	% \begin{equation}
-	% 	\phi(\bm{U}, \bm{V}) = \sup_{a, b} \frac{a^T \Sigma_{\bm{U}\bm{V}} b}{\sqrt{a^T \Sigma_{\bm{U}\bm{U}} a} \sqrt{b^T \Sigma_{\bm{V}\bm{V}} b}}
-	% \end{equation}
-
-% \begin{equation}
-% 	\begin{split}
-% 		\bm{\rho}(\bm{U}, \bm{V}) &= \sqrt{\mathrm{E} \left( \Sigma_{\bm{UU}}^{-1} \Sigma_{\bm{UV}} \Sigma_{\bm{VV}}^{-1} \Sigma_{\bm{VU}} \right)}
-% 	\end{split}
-% \end{equation}
 	\begin{equation}
 		\rho(\bm{U}, \bm{V}) = \max_{a, b} Corr(a^T \bm{U}, b^T \bm{V})
 	\end{equation}
@@ -452,18 +439,14 @@ between them.
 	between the linear combinations of $ a^T \bm{U} $ and $ b^T \bm{V} $.
 \end{definition}
 
-% where $ \mathrm{E}(\Sigma) $ denotes the eigenvalues of the matrix $ \Sigma $.
-% $ \Sigma_{UU} $ and $ \Sigma_{VV} $ are the covariance matrices of $ \bm{U} $
-% and $ \bm{V} $, and $ \Sigma_{UV} $ and $ \Sigma_{VU} $ are the
-% cross-covariance matrices.
-	
-Canonical correlations generalize correlations to multi-dimensional variables. They
-find orthogonal linear transformations $ a $ and $ b $ of $ \bm{U} $ and $ \bm{V} $
-such that the correlation between the transformed variables $ a^T \bm{U} $ and 
-$ b^T \bm{V} $ is maximized. This yields a vector of correlation values of 
-size $ \min(p, q) $, representing the correlation coefficient of each pair of 
-transformed variables. Pearson's correlation coefficient is a special case of 
-canonical correlations when $ p = q = 1 $.
+Canonical correlations generalize correlation coefficients to multi-dimensional
+variables. They find orthogonal linear transformations $ a $ and $ b $ of $
+\bm{U} $ and $ \bm{V} $ such that the correlation coefficient between the
+transformed variables $ a^T \bm{U} $ and $ b^T \bm{V} $ is maximized. This
+yields a vector of correlation coefficient values of size $ \min(p, q) $,
+representing the correlation coefficient of each pair of transformed variables.
+Pearson's correlation coefficient is a special case of canonical correlations
+when $ p = q = 1 $.
 
 Many measures of association based on canonical correlation have been used in
 multivariate statistics, each with slightly different properties.
@@ -484,7 +467,7 @@ association:
 	\sum_{i=1}^{\min(\rvert R_X \rvert, \rvert R_Y \rvert)} (\phi_i(R_X, R_Y))^2
 \end{equation}
 
-This measure of association has many desired properties:
+This measure of association has many desired properties for our application:
 
 \begin{enumerate}
 	\item \textbf{Bounded: } $ \rho $ is bounded between $ 0 $ and $ 1 $,
