@@ -88,21 +88,22 @@ Causal discovery has received significant attention in the Directed Acyclic
 Graphs (DAGs) literature, leading to the development of numerous automated
 algorithms for learning DAGs from data. However, their adoption in applied
 domains remain limited, as researchers often prefer to construct DAGs manually
-based on their domain knowledge. This preference arises due to several
-practical issues with automated algorithms, such as they make obvious errors
-and output Markov Equivalence Classes (MECs). To address these challenges, we
-propose an iterative method to assist researchers in manually constructing or
-improving an existing DAG by combining implied Conditional Independence (CI)
-testing with expert knowledge. Our proposed method utilizes a novel measure of
-partial association for mixed data to rank violations of implied CIs in a given
-DAG, enabling users to prioritize modifications while utilizing their domain
-knowledge to decide the orientation of new edges. Empirical results show that
-this manual model construction approach achieves performance comparable to
-automated algorithms if the user is able correctly orientation edges in one out
-of three cases. Additionally, we demonstrate that, in the absence of an expert,
-a Large Language Model (LLM) can be potentially determine edge orientations. We
-provide the implementation of our approach in both a web tool at: <redacted for
-review> and a Python package <redacted for review>.
+based on domain knowledge. This preference arises due to several practical
+challenges with automated algorithms, such as their tendency to make obvious
+errors and output Markov Equivalence Classes (MECs) rather than a DAG. To
+address these challenges, we propose an iterative method that guides
+researchers in manually constructing or improving the fit of an existing DAG.
+Our approach combines implied Conditional Independence (CI) testing with a
+novel measure of conditional association between variables to rank violations
+of implied CIs in a given DAG. This ranking helps prioritize modifications to
+the DAG to improve its fit to the data while utilizing expert knowledge to
+decide the orientation of new edges. Empirical results show that this guided
+manual model construction approach achieves performance comparable to automated
+algorithms if we are able to correctly decide the orientation of new edges in
+one out of three cases. Additionally, we demonstrate that, in the absence of an
+expert, a Large Language Model (LLM) can be potentially used to determine edge
+orientations. We provide the implementation of our approach in both a web tool
+at: <redacted for review> and a Python package <redacted for review>.
 
 \end{abstract}
 
