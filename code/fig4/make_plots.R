@@ -36,7 +36,7 @@ p_ll <- ggplot(d_results, aes(x=x, y=ll, color=algo)) +
 	labs(y="Log-Likelihood") +
 	theme(legend.position='top',
 	      legend.title=element_blank(),
-	      legned.text=element_blank())
+	      legend.text=element_blank())
 
 ggsave('unexplained_effect.pdf', p_unexplained_effect, height=2.5, width=1.6, units='in')
 ggsave('ll.pdf', p_ll, height=2.5, width=1.6, units='in')
