@@ -350,8 +350,9 @@ is computed as follows:
 	\item \textbf{Categorical:} We again start by training a probability
 		estimator $ p_X: x \sim \bm{z} $, and obtain probability
 		estimates $ \hat{p}_X: p_X(\bm{z}) $. Next, we dummy encode the
-		categorical variable and then compute the residuals as follows: 
-		$$ R_{x_i} = x_i - \hat{p}(\bm{z}_i) $$
+		categorical variable, resulting in a binary vector and then
+		compute the residuals as follows: 
+		$$ R_{x_i} = x_i - \hat{p}_X(\bm{z}_i) $$
 \end{enumerate}
 
 We have the option here to choose the estimators based on the characteristics
@@ -361,7 +362,7 @@ for diverse data types and complex relationships. For linear relationships,
 simpler models such as linear regression and its variants may suffice.
 
 We repeat the above residualization step for both the variables $ X $ and $ Y $
-obtaining residual matrices $ R_X $ and $ R_Y $. The type of variable determines
+obtaining residual matrices $ R_x $ and $ R_y $. The type of variable determines
 the shape of these matrices. If the variable is continuous or ordinal, the 
 residual matrix is of shape $ (n \times 1 ) $ and if the variable is categorical,
 we get a residual matrix of shape $ (x \times (k - 1)) $, where $ k $ is the number
@@ -404,8 +405,8 @@ Several measures of association have been derived from canonical correlations, s
 We use a normalized version of Pillai's Trace for our purpose, given as:
 
 \begin{equation}
-	\rho(X, Y; \bm{Z}) = \frac{1}{\min(\rvert R_X \rvert, \rvert R_Y \rvert)}
-	\sum_{i=1}^{\min(\rvert R_X \rvert, \rvert R_Y \rvert)} (\nu_i(R_X, R_Y))^2
+	\rho(X, Y; \bm{Z}) = \frac{1}{\min(\rvert R_x \rvert, \rvert R_y \rvert)}
+	\sum_{i=1}^{\min(\rvert R_x \rvert, \rvert R_y \rvert)} (\nu_i(R_x, R_y))^2
 \end{equation}
 
 
