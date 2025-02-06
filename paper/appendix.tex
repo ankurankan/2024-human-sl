@@ -46,3 +46,129 @@ NativeCountry: The native country of the person.
 	\caption{Variable descriptions used for prompting the LLM}
 	\label{fig:var_description}
 \end{figure}
+
+\section{A Generalized Measure of Conditional Association}
+\label{sec:mixed_association}
+
+In the previous section, we discussed how different types of variables require
+different measures of conditional association. However, there is no unified
+measure that handles mixed data. In this section, we introduce a measure of conditional
+association for mixed data by extending the concept of partial correlation
+coefficient (commonly used for continuous variables) to mixed data. Similar to
+partial correlation coefficient, our method integrates a mixed data
+residualization method \citep{Ankan2023} with Pillai's Trace
+\citep{Pillai1955}, a multivariate measure of association based on canonical
+correlations.
+ 
+Given a dataset $ D = (x, y, \bm{z}) $ on variables $ X $, $ Y $, and $ \bm{Z}
+$, our goal is to estimate the conditional association $ \phi_{X, Y; \bm{Z}} $. 
+In the first step, we compute the residuals $ R_X $ and $ R_Y $ for variables
+$ X $ and $ Y $ respectively. Depending on the type of variable the residual
+is computed as follows:
+
+\begin{enumerate}
+	\item \textbf{Continuous:} We train a model, $ E_X: x \sim
+		\bm{z} $. The residuals are then computed by taking the difference
+		between the true and the predicted values using $ E_X $. 
+		$$ R_{x_i} = x_i - E_X(\bm{z}_i) $$
+	\item \textbf{Ordinal:} We start by training a probability estimator, $
+		p_X: x \sim \bm{z} $, and then use the estimated probabilities, 
+		$ \hat{p}_X(x) $ to compute the residuals:
+		$$ R_{x_i} = \hat{p}_X(X < x_i) - \hat{p}_X(X > x_i) $$
+	\item \textbf{Categorical:} We again start by training a probability
+		estimator $ p_X: x \sim \bm{z} $, and obtain probability
+		estimates $ \hat{p}_X: p_X(\bm{z}) $. Next, we dummy encode the
+		categorical variable, resulting in a binary vector and then
+		compute the residuals as follows: 
+		$$ R_{x_i} = x_i - \hat{p}_X(\bm{z}_i) $$
+\end{enumerate}
+
+We have the option here to choose the estimators based on the characteristics
+such as distribution, type of relationship, and so on of our dataset.
+Non-parametric ensemble estimators such as Random Forest and XGBoost are robust 
+for diverse data types and complex relationships. For linear relationships,
+simpler models such as linear regression and its variants may suffice.
+
+We repeat the above residualization step for both the variables $ X $ and $ Y $
+obtaining residual matrices $ R_x $ and $ R_y $. The type of variable determines
+the shape of these matrices. If the variable is continuous or ordinal, the 
+residual matrix is of shape $ (n \times 1 ) $ and if the variable is categorical,
+we get a residual matrix of shape $ (x \times (k - 1)) $, where $ k $ is the number
+of categories of the variable.
+
+The second step is to quantify the association between these residual matrices.
+For this purpose we use canonical correlations \citep{Hotelling1936} that have been widely used to
+measure the association between sets of random variables.
+
+\begin{definition}
+	Given two sets of random variables $ \bm{U} = (U_1, U_2, \cdots, U_p) $
+	and $ \bm{V} = (V_1, V_2, \cdots, V_q) $, canonical correlation between
+	them, $\rho_{\bm{U}, \bm{V}} $ is defined as:
+		
+	\begin{equation}
+		% \nu_{\bm{U}, \bm{V}}= \max_{a, b} \mathrm{corr}(a^T \bm{U}, b^T \bm{V})
+		\rho_{\bm{U}, \bm{V}} = \max_{a, b} \frac{a^T \Sigma_{\bm{UV}} b}{\sqrt{a^T \Sigma_{\bm{UU}} a \cdot b^T \Sigma_{\bm{VV}} b}}
+	\end{equation}
+
+	where $ a $ and $ b $ are vectors of coefficients that maximize the correlations
+	between the linear combinations of $ a^T \bm{U} $ and $ b^T \bm{V} $.
+\end{definition}
+
+Canonical correlations generalize the concept of correlation coefficients to
+multi-dimensional variables. It finds orthogonal linear transformations $ a $
+and $ b $ that maximized the correlation between the transformed variables $
+a^T \bm{U} $ and $ b^T \bm{V} $. This yields a vector of correlation
+coefficient values of size $ \min(p, q) $, representing the correlation
+coefficient of each pair of transformed variables. Notably, Pearson's
+correlation coefficient is a special case of canonical correlations when $ p =
+q = 1 $.
+
+Several measures of association have been derived from canonical correlations, such as:
+\begin{itemize}
+	\item Wilks' Lambda: $\Lambda = \prod_{i}^{\min(p, q)} (1 - \rho_i^2) $
+	\item Roy's Largest Root: $ \theta = \max_i(\rho_i^2) $
+	\item Pillai's Trace: $ \tau = \sum_{i=1}^{\min(p, q)} \rho_i^2 $
+\end{itemize}
+
+We use a normalized version of Pillai's Trace for our purpose, given as:
+
+\begin{equation}
+	\tau_{X, Y; \bm{Z}} = \frac{1}{\min(\rvert R_x \rvert, \rvert R_y \rvert)}
+	\sum_{i=1}^{\min(\rvert R_x \rvert, \rvert R_y \rvert)} (\rho_{R_x, R_y})_i^2
+\end{equation}
+
+
+We use Pillai's Trace because: 1) It uses all the canonical correlation values,
+capturing the full extent of association, 2) Its interpretation is similar to
+Pearson's correlation coefficient, i.e., $ 0 $ signifies no association and $ 1
+$ signifies perfect linear relationship. We use a normalized version because
+when comparing between pair of variables with different number of categories.
+Our proposed measure has several desirable properties that make it well-suited
+for our application:
+
+\begin{enumerate}
+	\item \textbf{Bounded: } The measure is bounded between $ 0 $ (no
+		association) to $ 1 $ (perfect linear association), simplifying
+		interpretation.
+	% \item \textbf{Independent of Sample Size: } 
+	\item \textbf{Invariant to the Dummy Encoding: } For categorical
+		variables, residuals are computed using dummy encoding. Since
+		canonical correlations identifies linear combinations across
+		columns, this measure is invariant to the specific dummy
+		encoding scheme used.
+	\item \textbf{Equivalent to Partial Correlation for Continuous Variables: }
+		When both $ X $ and $ Y $ are continuous variables, our measure
+		is equivalent to the absolute value of partial correlation coefficient.
+	\item \textbf{Equivalent to polychoric and polyserial correlation for
+			ordinal and continuous variables: }
+		Under the assumption that the ordinal variable is generated by
+		discretizing an underlying gaussian continuous variable, this
+		effect size is equivalent to polychoric and polyserial
+		correlation. As both of them recover the Pearson correlation
+		coefficient.
+		\todo[inline]{Verify if this is correct}
+	\item \textbf{Related to Cram\'er's V: } 
+\end{enumerate}
+
+In essence, our measure of conditional association extends existing metrics to mixed data, providing 
+a unified measure that is interpretable.
