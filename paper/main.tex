@@ -356,8 +356,8 @@ is computed as follows:
 		$ \hat{p}_X(x) $ to compute the residuals:
 		$$ R_{x_i} = \hat{p}_X(X < x_i) - \hat{p}_X(X > x_i) $$
 	\item \textbf{Categorical:} We again start by training a probability
-		estimator $ p_X: X \sim \bm{Z} $, and obtain probability
-		estimates $ \hat{p}_X: p_X(\bm{Z}) $. Next, we dummy encode the
+		estimator $ p_X: x \sim \bm{z} $, and obtain probability
+		estimates $ \hat{p}_X: p_X(\bm{z}) $. Next, we dummy encode the
 		categorical variable and then compute the residuals as follows: 
 		$$ R_{x_i} = x_i - \hat{p}(\bm{z}_i) $$
 \end{enumerate}
