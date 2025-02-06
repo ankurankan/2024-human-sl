@@ -409,18 +409,19 @@ Several measures of association have been derived from canonical correlations, s
 	\item Pillai's Trace: $ \tau = \sum_{i=1}^{\min(p, q)} \nu_i^2 $
 \end{itemize}
 
-We use a slightly modified version of Pillai's Trace for our purpose for two
-main reasons: 1) It uses all the canonical correlation values, capturing the
-full extent of association, 2) Its interpretation is similar to Pearson's
-correlation coefficient, i.e., $ 0 $ signifies no association and $ 1 $
-signifies perfect linear relationship. This leads to our proposed measure of
-conditional association: We divide to make the measure normalized when comparing
-between pair of variables with different number of categories.
+We use a normalized version of Pillai's Trace for our purpose, given as:
 
 \begin{equation}
 	\rho(X, Y; \bm{Z}) = \frac{1}{\min(\rvert R_X \rvert, \rvert R_Y \rvert)}
 	\sum_{i=1}^{\min(\rvert R_X \rvert, \rvert R_Y \rvert)} (\nu_i(R_X, R_Y))^2
 \end{equation}
+
+
+We use Pillai's Trace because: 1) It uses all the canonical correlation values,
+capturing the full extent of association, 2) Its interpretation is similar to
+Pearson's correlation coefficient, i.e., $ 0 $ signifies no association and $ 1
+$ signifies perfect linear relationship. We use a normalized version because
+when comparing between pair of variables with different number of categories.
 
 Our proposed measure has several desirable properties that make it well-suited
 for our application:
