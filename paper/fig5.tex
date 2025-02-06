@@ -11,11 +11,11 @@
 	\begin{tikzpicture}
 	\begin{scope}
 		\tikzstyle{every node}=[align=center, inner sep=1pt]
-		\node (race) at (0, 0) {Race};
+		\node (race) at (0.3, 0) {Race};
 		\node (native) at (0.3, -1) {Native \\ Country};
 
 		\node (sex) at (-4, -1) {Sex};
-		\node (age) at (-2.5, -0.5) {Age};
+		\node (age) at (-2.8, -0.5) {Age};
 		\node (edu) at (3, -1.5) {Education};
 
 		\node (ms) at (-2.8, -2.3) {Marital Status};
@@ -33,13 +33,13 @@
 		\draw[->, >=stealth](native) -- (occ);
 		
 		\draw[->, >=stealth](sex) to[bend right=40] (rln);
-		\draw[->, >=stealth](sex) to[bend left=18] (occ);
+		\draw[->, >=stealth](sex.east) to[bend left=18] (occ);
 		\draw[->, >=stealth](sex) -- (ms);
 		\draw[->, >=stealth](age) -- (ms);
 		\draw[->, >=stealth](edu) -- (ms);
 		\draw[->, >=stealth](edu) -- (rln);
 		\draw[->, >=stealth](edu) -- (inc);
-		\draw[->, >=stealth](edu) to[bend right=13] (occ);
+		\draw[->, >=stealth](edu) to[bend right=15] (occ);
 		\draw[->, >=stealth](edu) -- (wc);
 
 		\draw[->, >=stealth](ms) -- (rln);

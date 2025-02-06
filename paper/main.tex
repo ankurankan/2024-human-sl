@@ -453,6 +453,9 @@ a unified measure that is interpretable.
 \section{Using Measure of Association for DAG Construction}
 \label{sec:modification}
 
+Using the mixed data measure of association presented in the last section, we 
+now present a method to rank modifications to a given DAG.
+
 Using this mixed data measure of association, we now propose a method for
 iteratively constructing DAGs while incorporating expert knowledge. This
 approach is based on implied CI based testing where we use the measure of
@@ -754,7 +757,7 @@ ask exact questions about the variables unlike some of the other approaches.
 \begin{figure}[t!]
 	\centering
 	\includegraphics[page=1]{fig5.pdf}
-	\caption{DAG learned using the adult income dataset using an LLM (GEMINI-1.5-flash) as the expert.}
+	\caption{DAG learned using the adult income dataset using an LLM (GEMINI-1.5-flash) as the expert. The p-value threshold used is $ 0.05 $ and the measure of association threshold is $ 0. 1 $}
 	\label{fig:adult_llm}
 \end{figure}
 
