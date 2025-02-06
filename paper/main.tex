@@ -171,22 +171,18 @@ The ranking helps us prioritize the most critical violations, making it feasible
 to focus on the areas that most improve the model's fit.
 
 \begin{figure}[t!]
-    \begin{subfigure}{0.25 \textwidth}
+    \begin{subfigure}{0.5 \textwidth}
 	\centering
     	\includegraphics[page=1]{figures_v2.pdf}
-    	\caption{$ N = 400 $}
+    	\caption{PC algorithm with mutual information test. Red edges: $ N=400 $, Blue edges: $ N=800 $}
     \end{subfigure}
-    \begin{subfigure}{0.25\textwidth}
+    \begin{subfigure}{0.5\textwidth}
     	\includegraphics[page=2]{figures_v2.pdf}
-    	\caption{ $ N = 800$ }
+    	\caption{PC algorithm with a residualization based test. Red edges $N=400$, Blue edges: $ N=800 $}
     \end{subfigure}
-    \begin{subfigure}{0.25 \textwidth}
+    \begin{subfigure}{0.5\textwidth}
     	\includegraphics[page=3]{figures_v2.pdf}
-    	\caption{ $ N = 400$ }
-    \end{subfigure}%
-    \begin{subfigure}{0.25\textwidth}
-    	\includegraphics[page=4]{figures_v2.pdf}
-    	\caption{$ N = 800$ }
+    	\caption{PC algorithm with Hill Climb Search with BIC score}
     \end{subfigure}
 
     \caption{A comparison of Markov Equivalence Class (MEC) learned using Adult
@@ -445,11 +441,11 @@ for our application:
 In essence, our measure of conditional association extends existing metrics to mixed data, providing 
 a unified measure that is interpretable.
 
-\section{Using Measure of Association for DAG Construction}
+\section{Using Measure of Association for Ranking and DAG Construction}
 \label{sec:modification}
 
-Using the mixed data measure of association presented in the last section, we 
-now present a method to rank modifications to a given DAG.
+Using the mixed data measure of association presented in the last section, we
+now present a method to rank modifications to a given DAG. 
 
 Using this mixed data measure of association, we now propose a method for
 iteratively constructing DAGs while incorporating expert knowledge. This
