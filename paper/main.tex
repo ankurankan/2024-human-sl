@@ -263,7 +263,7 @@ typically used. When $ \bm{Z} = \emptyset $, the correlation
 coefficient is defined as:
 
 \begin{equation}
-	\rho_{X, Y} = \frac{\mathrm{cov}(X, Y)}{\sigma_X \sigma_Y}
+	r_{X, Y} = \frac{\mathrm{cov}(X, Y)}{\sigma_X \sigma_Y}
 \end{equation}
 
 When $ \bm{Z} \neq \emptyset $, partial correlation coefficient can be used.
@@ -273,7 +273,7 @@ R_Y = Y - E_Y(\bm{Y}) $, and then computing the correlation between the
 residuals:
 
 \begin{equation}
-	\rho_{X, Y; \bm{Z}} = \rho_{R_X, R_Y}
+	r_{X, Y; \bm{Z}} = r_{R_X, R_Y}
 \end{equation}
 
 \paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete}
@@ -310,13 +310,13 @@ Using the estimated covariance matrix, $ \Sigma $ we can the compute Pearson's
 correlation coefficient. When $ \bm{Z} = \emptyset $,
 
 \begin{equation}
-	\rho_{X, Y} = \frac{\Sigma_{XY}}{\sqrt{\Sigma_{XX} \Sigma_{YY}}}
+	r_{X, Y} = \frac{\Sigma_{XY}}{\sqrt{\Sigma_{XX} \Sigma_{YY}}}
 \end{equation}
 
 When $ \bm{Z} \neq \emptyset $, 
 
 \begin{equation}
-	\rho_{X, Y; \bm{Z}} = - \frac{\Sigma^{-1}_{XY}}{\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}}
+	r_{X, Y; \bm{Z}} = - \frac{\Sigma^{-1}_{XY}}{\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}}
 \end{equation}
 
 \section{A Generalized Measure of Conditional Association}
@@ -375,7 +375,7 @@ measure the association between sets of random variables.
 \begin{definition}
 	Given two sets of random variables $ \bm{U} = (U_1, U_2, \cdots, U_p) $
 	and $ \bm{V} = (V_1, V_2, \cdots, V_q) $, canonical correlation between
-	them, $\upsilon(\bm{U}, \bm{V}) $ is defined as:
+	them, $\rho_{\bm{U}, \bm{V}} $ is defined as:
 		
 	\begin{equation}
 		% \nu_{\bm{U}, \bm{V}}= \max_{a, b} \mathrm{corr}(a^T \bm{U}, b^T \bm{V})
@@ -397,16 +397,16 @@ q = 1 $.
 
 Several measures of association have been derived from canonical correlations, such as:
 \begin{itemize}
-	\item Wilks' Lambda: $\Lambda = \prod_{i}^{\min(p, q)} (1 - \nu_i^2) $
-	\item Roy's Largest Root: $ \theta = \max_i(\nu_i^2) $
-	\item Pillai's Trace: $ \tau = \sum_{i=1}^{\min(p, q)} \nu_i^2 $
+	\item Wilks' Lambda: $\Lambda = \prod_{i}^{\min(p, q)} (1 - \rho_i^2) $
+	\item Roy's Largest Root: $ \theta = \max_i(\rho_i^2) $
+	\item Pillai's Trace: $ \tau = \sum_{i=1}^{\min(p, q)} \rho_i^2 $
 \end{itemize}
 
 We use a normalized version of Pillai's Trace for our purpose, given as:
 
 \begin{equation}
-	\rho(X, Y; \bm{Z}) = \frac{1}{\min(\rvert R_x \rvert, \rvert R_y \rvert)}
-	\sum_{i=1}^{\min(\rvert R_x \rvert, \rvert R_y \rvert)} (\nu_i(R_x, R_y))^2
+	\tau_{X, Y; \bm{Z}} = \frac{1}{\min(\rvert R_x \rvert, \rvert R_y \rvert)}
+	\sum_{i=1}^{\min(\rvert R_x \rvert, \rvert R_y \rvert)} (\rho_{R_x, R_y})_i^2
 \end{equation}
 
 
