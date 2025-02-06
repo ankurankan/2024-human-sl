@@ -1,4 +1,4 @@
-all : fig3 fig4 fig5.pdf figures.pdf example.pdf main.pdf
+all : fig3 fig4 fig5.pdf figures.pdf figures_v2.pdf example.pdf main.pdf
 
 ms : main.pdf
 
@@ -8,6 +8,9 @@ fig5.pdf : fig5.tex
 	latexmk -use-make -pdf $<
 
 figures.pdf : figures.tex
+	latexmk -use-make -pdf $<
+
+figures_v2.pdf : figures_v2.tex
 	latexmk -use-make -pdf $<
 
 example.pdf : example.tex
