@@ -487,67 +487,6 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 \end{proof} 
 
 
-Using the mixed data measure of association presented in the last section, we
-now present a method to rank modifications to a given DAG. 
-
-Using this mixed data measure of association, we now propose a method for
-iteratively constructing DAGs while incorporating expert knowledge. This
-approach is based on implied CI based testing where we use the measure of
-association to rank the failing CI tests. This ranking allows us to prioritize
-adding edges between pair of variables that have the most severe problems.
-
-Given a DAG $ G $ (potentially empty), a dataset $ D $, a p-value threshold $
-\alpha $ and a measure of association threshold $ \beta $, our construction
-procedure works as follows:
-
-\begin{enumerate}
-	\item For each pair of variables $ X $ and $ Y $ in $ G $:
-		\begin{itemize}
-			\item If there is an edge between $ X $ and $ Y $, remove the edge to obtain the DAG $ G' $, and compute the measure of association $ \phi(X, Y \rvert G'_{pa}(X) \cup G'_{pa}(Y)) $
-			\item If there is no edge between $ X $ and $ Y $, compute the measure of association $ \phi(X, Y \rvert G_{pa}(X) \cup \underline{G}_{pa}(Y) $.
-		\end{itemize}
-	\item If for any pair $ X $ and $ Y $, if there is an edge between them with p-value $ > \alpha $ and $ \phi < \beta $, remove the edge between them.
-	\item For the remaining $ X $ and $ Y $ pairs with p-value $ \geq \alpha $, sort them by $ \beta $. Select the pair with highest $ \beta $, ask the user to specify the direction between $ X $ and $ Y $ and add the edge to $ G $.
-\end{enumerate}
-
-For a pair of variables $ X $ and $ Y $, if there is an edge present between
-them, the interpretation of this partial association measure is similar to path
-coefficients in SEMs, i.e. how strong is the edge between the variables. Hence,
-we can use this to identify potential edges that can be removed from the model.
-In the case when there is no edge between the variables, the value of this
-partial measure of association can be interpreted as - given the current
-structure of the model how much of the observed correlation between the
-variables $ X $ and $ Y $ in data is not explained by the model. To modify the
-model based on this, we can look at the pair of variables that have an edge
-between them. If any of these pair have a p-value greater than partial
-association below our chosen threshold, we can remove that edge as it is
-redundant.
-
-The measure of association also gives us a way to rank the potential
-modifications. The smallest values (below the threshold) of the association
-measure are the worst offending ones and for when the edges are not present the
-largest values would add the most amount of explainability to the model. Using
-this ranking the user can decide which pair of variables to focus on.
-
-We can then use this to rank pair of variables which have very high unexplained
-association between them. Based on the domain expertise, we can then choose one
-of these suggested pair of variables, decide the direction of the edge between
-the variables, and add it to the model. Once the new edge is added we can
-recompute the association of all other variables and $ X $ and $ Y $.
-
-Additionally, in each iteration of modification, for each pair of variable in $
-G $, that has an edge between them in we compute the partial association
-measure: $ \rho(X, Y; pa_{\underline{G}}(X) \cup pa_{\underline{G}}(Y) $. This
-measure of association can be interpreted as the strength of the edge between
-the variables. If the value of this association below a certain threshold, we
-can remove the edge.
-
-\begin{theorem}
-	If we have access to an oracle that can give correct edge directions, taking a
-	greedy approach with the procedure above results in the correct graph
-	being recovered. \todo[inline]{Reword and add proof}
-\end{theorem}
-
 \begin{figure}[t!]
 	\begin{subfigure}{0.17 \textwidth}
 		\includegraphics[page=1]{example.pdf}
