@@ -64,7 +64,7 @@ async function send(){
 	const a = await fetch('http://127.0.0.1:8000/getassoc?dag='+encodeURIComponent(g.toString())+'&threshold='+document.getElementById('thres_txt').value+'&pval='+document.getElementById('pval_txt').value)
 	const b = await a.json()
 
-	const fisher = await fetch('http://127.0.0.1:8000/getfisher?dag='+encodeURIComponent(g.toString()))
+	const fisher = await fetch('http://127.0.0.1:8000/rmsea?dag='+encodeURIComponent(g.toString()))
 	const pval = await fisher.json()
 	document.getElementById('fisherc').innerHTML = pval;
 

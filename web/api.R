@@ -104,8 +104,8 @@ run_citests <- function( req, res, dag, threshold, pval ){
 }
 
 #* @param dag
-#* @get /getfisher
-compute_fisher <- function( dag ){
+#* @get /rmsea
+rmsea <- function( dag ){
 	g <- dagitty::dagitty(dag)
 	pvalues <- c()
 	nodes <- names(g)
@@ -123,4 +123,5 @@ compute_fisher <- function( dag ){
 	}
 	fisherc <- -2 * sum(log(pvalues))
 	return (pchisq(fisherc, 2*length(pvalues), lower.tail=F))
+	return(sqrt( (fisherc**2 - 2*length(pvalues)) / (2*length(pvalues)) / nrow(dataset) ))
 }
