@@ -598,21 +598,9 @@ value for the DAG. We compare the learned DAG to the original DAG using two
 metrics: Structural Hamming Distance (SHD) and Structural Intervention Distance
 (SID) \citep{Peters2015}.
 
-
-As both PC and Hill-Climb Search can only give us a CPDAG, we
-
-we use simulated data from
-a known DAG and compare how well the algorithm is able to recover the original
-model using two metrics: Structural Hamming Distance (SHD) and Structural
-Intervention Distance (SID). To simulate the data, we start with a randomly
-generated DAG on $ 10 $ nodes and use linear models with random effects to
-generate the data. 
-
-We vary the edge probability of the DAG to generate DAGs with varying density.
-We repeat the data generation $ 30 $ times for each density value for the DAG.
-As both PC and Hill-Climb Search can only give us a CPDAG, we compare the
-orientation of these CPDAG which result in the best and worst case scores on
-SHD and SID.
+As the automated algorithms can only recover the CPDAG from data, and our method
+recovers the DAG. To compare them fairly, we computed the SHD and SID for all
+possible orientations of the CPDAG and show them in the Figure.
 
 To use our proposed approach, we need an expert to tell us the direction of the
 edges. We simulated an expert using this assisted model construction approach,
