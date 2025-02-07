@@ -499,25 +499,29 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 	\end{subfigure}%
 	\begin{subfigure}{0.17 \textwidth}
 		\includegraphics[page=2]{example.pdf}
-		\caption{No edges}
+		\caption{No edges.}
 	\end{subfigure}%
 	\begin{subfigure}{0.17 \textwidth}
 		\includegraphics[page=3]{example.pdf}
-		\caption{Orient $ X_1 \rightarrow X_3 $}
+		\caption{Orient $ X_1 \rightarrow X_4 $}
 	\end{subfigure}
 	\begin{subfigure}{0.17 \textwidth}
 		\includegraphics[page=4]{example.pdf}
-		\caption{Orient $ X_2 \rightarrow X_3 $}
+		\caption{Orient $ X_1 \rightarrow X_2 $}
 	\end{subfigure}%
 	\begin{subfigure}{0.17 \textwidth}
 		\includegraphics[page=5]{example.pdf}
-		\caption{Orient $ X_3 \rightarrow X_4 $}
+		\caption{Orient $ X_1 \rightarrow X_3 $}
 	\end{subfigure}%
 	\begin{subfigure}{0.17 \textwidth}
 		\includegraphics[page=6]{example.pdf}
-		\caption{Orient $ X_3 \rightarrow X_5 $}
+		\caption{Orient $ X_2 \rightarrow X_4 $}
 	\end{subfigure}
-	\caption{An example showing a greedy approach for causal discovery using the mixed data measure of association. We start with an empty graph (b) where all the variables in the model are associated with each other. The strength of association is denoted using the thickness of the dotted edges. We select the pair of variables with the highest association, for example, $X_1$ and $X_3$, and orient it based on our domain knowledge. We continue the process till we have a DAG.
+	\begin{subfigure}{0.17 \textwidth}
+		\includegraphics[page=7]{example.pdf}
+		\caption{Expand $ X_3 \rightarrow X_4 $. Prune $ X_1 \rightarrow X_4 $.}
+	\end{subfigure}
+	\caption{An example showing the steps of \textit{ExpertInLoop} algorithm. The dashed edges show all the potential edges that \textit{Expand} algorithm could add in each step.
 	}
 \end{figure}
 
