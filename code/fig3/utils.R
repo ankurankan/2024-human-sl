@@ -23,7 +23,14 @@ gen_linear_data <- function(n_nodes, edge_prob){
 	
 	dag <- pcalg::randomDAG(n=n_nodes, prob=edge_prob, lB=1, uB=1, V=varnames)
 	dag <- pcalg::pcalg2dagitty(as(dag, "matrix"), labels = varnames, type = "dag")
-	sim_data <- dagitty::simulateSEM(dag, N=500)
+
+	repeat{
+		sim_data <- try(dagitty::simulateSEM(dag, N=500))
+		if (!(inherits(sim_data, "try-error"))){
+			break
+		}
+	}
+
 	true_adj <- dag_to_adjmatrix(dag)
 
 	var_types <- list()
