@@ -521,32 +521,6 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 	}
 \end{figure}
 
-\subsection{Connection to Score Based Methods}
-
-Our procedure closely resembles certain score-based automated causal discovery
-methods, such as Greedy Equivalence Search (GES), where the algorithm
-iteratively adds or removes edges that improve the scoring metric the most.
-Similarly, a greedy version of our approach would involve adding an edge
-between the pair of variables with the highest unexplained correlation. While
-both methods aim to find modifications that most improve the model at each
-step, a key distinction lies in the nature of the evaluation criteria: unlike
-standard scoring metrics, our measure of association is not decomposable. A key
-property of scoring metrics is that they should be decomposible, i.e., they can
-be expressed as the sum of scores of nodes given its parents. This means adding
-or removing an edge affects only a localized part of the model. In contrast,
-our measure of association is global, meaning that modifying an edge in one
-part of the model can influence association values elsewhere.
-
-Another major difference is in the interpretability of the evaluation metric.
-Most scoring metrics are based on log-likelihood with a penalty for model
-complexity. These score metrics allow for relative comparisons between models
-but do not provide an absolute measure of model fit. That is, they indicate
-which model is better for a given dataset but do not reveal how well the model
-explains the data in an absolute sense. In contrast, summing our measure of
-association across all variables provides a direct fitness measure—this sum
-approaches zero when the model perfectly accounts for all observed correlations
-in the data. This property enables an absolute assessment of model quality,
-rather than just a relative comparison between models.
 
 
 % \begin{figure}
@@ -676,6 +650,33 @@ Algorithm 1.
 	\BlankLine
 	$ G \leftarrow $ Empty Graph
 \end{algorithm}
+
+\subsection{Connection to Score Based Methods}
+
+Our procedure closely resembles certain score-based automated causal discovery
+methods, such as Greedy Equivalence Search (GES), where the algorithm
+iteratively adds or removes edges that improve the scoring metric the most.
+Similarly, a greedy version of our approach would involve adding an edge
+between the pair of variables with the highest unexplained correlation. While
+both methods aim to find modifications that most improve the model at each
+step, a key distinction lies in the nature of the evaluation criteria: unlike
+standard scoring metrics, our measure of association is not decomposable. A key
+property of scoring metrics is that they should be decomposible, i.e., they can
+be expressed as the sum of scores of nodes given its parents. This means adding
+or removing an edge affects only a localized part of the model. In contrast,
+our measure of association is global, meaning that modifying an edge in one
+part of the model can influence association values elsewhere.
+
+Another major difference is in the interpretability of the evaluation metric.
+Most scoring metrics are based on log-likelihood with a penalty for model
+complexity. These score metrics allow for relative comparisons between models
+but do not provide an absolute measure of model fit. That is, they indicate
+which model is better for a given dataset but do not reveal how well the model
+explains the data in an absolute sense. In contrast, summing our measure of
+association across all variables provides a direct fitness measure—this sum
+approaches zero when the model perfectly accounts for all observed correlations
+in the data. This property enables an absolute assessment of model quality,
+rather than just a relative comparison between models.
 
 
 \subsection{Using LLMs as Experts}
