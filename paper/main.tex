@@ -176,10 +176,12 @@ to focus on the areas that most improve the model's fit.
     	\caption{}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
+	\centering
     	\includegraphics[page=2]{figures_v2.pdf}
     	\caption{}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
+	\centering
     	\includegraphics[page=3]{figures_v2.pdf}
     	\caption{}
     \end{subfigure}
@@ -253,7 +255,7 @@ of $ X $, $ Y $, and $ \bm{Z} $. These measures are often based on the effect
 size of the CI test $ X \ci Y \rvert \bm{Z} $. In this section, we give an
 overview of some of the commonly used measures for different data types.
 
-\subsubsection{Both $ X $ and $ Y $ are continuous}
+\paragraph{Both $ X $ and $ Y $ are continuous: }
 When both $ X $ and $ Y $ are continuous, Pearson's correlation coefficient is
 typically used. When $ \bm{Z} = \emptyset $, the correlation
 coefficient is defined as:
@@ -272,7 +274,7 @@ residuals:
 	r_{X, Y; \bm{Z}} = r_{R_X, R_Y}
 \end{equation}
 
-\paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete}
+\paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete: }
 
 When all variables are discrete, Cram\'er's V can used as a measure of
 association. When $ \bm{Z} = \emptyset $, Cram\'er's V is derived from the 
@@ -294,7 +296,7 @@ and combine them as follows:
 	\mathbf{V}_{X, Y; \bm{Z}} = \sum_{i=1}^{k} \left[ \mathbf{V}_{X, Y} \right]_{D_{\bm{Z} = \bm{Z}_i}} 
 \end{equation}
 
-\paragraph{$ X $ is ordinal, and $ Y $ and $ Z $  are continuous or ordinal}
+\paragraph{$ X $ is ordinal, and $ Y $ and $ Z $  are continuous or ordinal: }
 
 Polyserial (when one is ordinal and the other is continuous) and Polychoric
 (when both are ordinal) correlation have been used to estimate the covariance

@@ -78,15 +78,15 @@
 		\draw [blue,->, >=stealth, transform canvas={yshift=-0.15em}] (age) to (ms);
 
 		\draw [red, ->, >=stealth, transform canvas={yshift=0em}] (rln) to (age);
-		\draw [blue,->, >=stealth, transform canvas={yshift=-0.3em}] (rln) to (age);
+		\draw [blue,->, >=stealth, transform canvas={yshift=-0.3em, xshift=0.1em}] (rln) to (age);
 
 		\draw [red, ->, >=stealth, transform canvas={xshift=0.15em}] (inc) to (age);
 		\draw [blue,->, >=stealth, transform canvas={xshift=-0.15em}] (inc) to (age);
-		\draw [red, ->, >=stealth, transform canvas={xshift=0.15em, yshift=0.15em}] (inc) to (edu);
+		\draw [red, ->, >=stealth, transform canvas={yshift=0.15em}] (inc) to (edu);
 		\draw [blue,->, >=stealth, transform canvas={xshift=-0.15em, yshift=-0.15em}] (inc) to (edu);
 
-		\draw [red, ->, >=stealth, transform canvas={yshift=0.15em}] (occ) to (hrpw);
-		\draw [blue,->, >=stealth, transform canvas={yshift=-0.15em}] (occ) to (hrpw);
+		\draw [red, ->, >=stealth, transform canvas={yshift=0.15em}] (occ.-170) to (hrpw.15);
+		\draw [blue,->, >=stealth, transform canvas={yshift=-0.15em, xshift=0.1em}] (occ.-170) to (hrpw.15);
 		
 		\draw [red, ->, >=stealth, transform canvas={yshift=0.15em}] (occ) to (sex);
 		\draw [blue,->, >=stealth, transform canvas={yshift=-0.15em}] (occ) to (sex);
@@ -97,7 +97,7 @@
 		\draw [red] (nc) to (race);
 
 		\draw [blue,->, >=stealth] (rln) to[bend right=50] (hrpw);
-		\draw [blue,->, >=stealth] (hrpw) to[bend right=25] (edu);
+		\draw [blue,->, >=stealth] (hrpw) to[bend right=30] (edu);
 		
 		\draw [blue,->, >=stealth] (inc) to (occ);
 		\draw [blue,->, >=stealth] (occ) to (rln);
