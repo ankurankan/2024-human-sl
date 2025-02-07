@@ -588,9 +588,18 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 \end{figure}
 
 We analyzed the performance of \textit{ExpertInLoop} algorithm by comparing it
-with three commonly used automated algorithms: PC, Hill-Climb Search, and
-Greedy Equivalence Search (GES). For the analysis, we simulated data from known
-DAG structures and 
+with three other automated algorithms: PC, Hill-Climb Search, and Greedy
+Equivalence Search (GES). For the analysis, we simulated data from known DAG
+structures and use the algorithms to recover the original DAG. We start by
+generating a random DAG on $10$ nodes and use linear models with random effects
+to generate the data. We vary the edge probability of the DAG to generate DAGs
+with varying density. We repeat the data generation $30$ times for each density
+value for the DAG. We compare the learned DAG to the original DAG using two
+metrics: Structural Hamming Distance (SHD) and Structural Intervention Distance
+(SID) \citep{Peters2015}.
+
+
+As both PC and Hill-Climb Search can only give us a CPDAG, we
 
 we use simulated data from
 a known DAG and compare how well the algorithm is able to recover the original
