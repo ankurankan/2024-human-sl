@@ -493,33 +493,40 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 
 
 \begin{figure}[t!]
-	\begin{subfigure}{0.17 \textwidth}
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
 		\includegraphics[page=1]{example.pdf}
 		\caption{True DAG}
 	\end{subfigure}%
-	\begin{subfigure}{0.17 \textwidth}
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
 		\includegraphics[page=2]{example.pdf}
 		\caption{No edges.}
 	\end{subfigure}%
-	\begin{subfigure}{0.17 \textwidth}
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
 		\includegraphics[page=3]{example.pdf}
-		\caption{Orient $ X_1 \rightarrow X_4 $}
-	\end{subfigure}
-	\begin{subfigure}{0.17 \textwidth}
+		\caption{$ X_1 \rightarrow X_4 $}
+	\end{subfigure}%
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
 		\includegraphics[page=4]{example.pdf}
-		\caption{Orient $ X_1 \rightarrow X_2 $}
-	\end{subfigure}%
-	\begin{subfigure}{0.17 \textwidth}
-		\includegraphics[page=5]{example.pdf}
-		\caption{Orient $ X_1 \rightarrow X_3 $}
-	\end{subfigure}%
-	\begin{subfigure}{0.17 \textwidth}
-		\includegraphics[page=6]{example.pdf}
-		\caption{Orient $ X_2 \rightarrow X_4 $}
+		\caption{$ X_1 \rightarrow X_2 $}
 	\end{subfigure}
-	\begin{subfigure}{0.17 \textwidth}
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
+		\includegraphics[page=5]{example.pdf}
+		\caption{$ X_1 \rightarrow X_3 $}
+	\end{subfigure}%
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
+		\includegraphics[page=6]{example.pdf}
+		\caption{$ X_2 \rightarrow X_4 $}
+	\end{subfigure}%
+	\begin{subfigure}{0.250 \textwidth}
+		\centering
 		\includegraphics[page=7]{example.pdf}
-		\caption{Expand $ X_3 \rightarrow X_4 $. Prune $ X_1 \rightarrow X_4 $.}
+		\caption{$ X_3 \rightarrow X_4 $. $ X_1 \not \rightarrow X_4 $.}
 	\end{subfigure}
 	\caption{An example showing the steps of \textit{ExpertInLoop} algorithm. The dashed edges show all the potential edges that \textit{Expand} algorithm could add in each step.
 	}
@@ -580,13 +587,17 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 	}
 \end{figure}
 
-We analyzed the performance of this manual approach by comparing it with two
-automated algorithms: PC and Greedy Equivalence Search (GES). For the
-comparison we use simulated data from a known DAG and compare how well the
-algorithm is able to recover the original model using two metrics: Structural
-Hamming Distance (SHD) and Structural Intervention Distance (SID). To simulate
-the data, we start with a randomly generated DAG on $ 10 $ nodes and use linear
-models with random effects to generate the data. 
+We analyzed the performance of \textit{ExpertInLoop} algorithm by comparing it
+with three commonly used automated algorithms: PC, Hill-Climb Search, and
+Greedy Equivalence Search (GES). For the analysis, we simulated data from known
+DAG structures and 
+
+we use simulated data from
+a known DAG and compare how well the algorithm is able to recover the original
+model using two metrics: Structural Hamming Distance (SHD) and Structural
+Intervention Distance (SID). To simulate the data, we start with a randomly
+generated DAG on $ 10 $ nodes and use linear models with random effects to
+generate the data. 
 
 We vary the edge probability of the DAG to generate DAGs with varying density.
 We repeat the data generation $ 30 $ times for each density value for the DAG.
