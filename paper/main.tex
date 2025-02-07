@@ -173,24 +173,25 @@ to focus on the areas that most improve the model's fit.
     \begin{subfigure}{0.5 \textwidth}
 	\centering
     	\includegraphics[page=1]{figures_v2.pdf}
-    	\caption{PC algorithm with mutual information test. Red edges: $ N=400 $, Blue edges: $ N=800 $}
+    	\caption{}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
     	\includegraphics[page=2]{figures_v2.pdf}
-    	\caption{PC algorithm with a residualization based test. Red edges $N=400$, Blue edges: $ N=800 $}
+    	\caption{}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
     	\includegraphics[page=3]{figures_v2.pdf}
-    	\caption{PC algorithm with Hill Climb Search with BIC score}
+    	\caption{}
     \end{subfigure}
 
     \caption{A comparison of Markov Equivalence Class (MEC) learned using Adult
-	     Income Dataset \citep{Becker1996} using (a \& b) PC algorithm
-	     using a mutual information based test, (c \& d) Hill Climb Search
-	     with Bayesian Information Criterion (BIC) score, (e \& f) PC
-	     algorithm with a residualization based test \citep{Ankan2023}. The
-	     learned model structure varies significantly depending on the
-     	     algorithm, the CI test, and the sample size used.}
+	    Income Dataset \citep{Becker1996} using different algorithms and
+	    sample sizes. Edge colour represents the sample size used: Red
+	    ($N=400$), and blue ($N=800$). (a) PC algorithm with a mutual
+	    information based CI test, (b) PC algorithm with a residualization
+	    based test \citep{Ankan2023}, (c) Hill Climb Search with Bayesian
+	    Information Criterion (BIC) score. The learned model structure
+	    varies significantly in each case.}
     \label{fig:intro}
 \end{figure}
 
