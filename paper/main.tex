@@ -30,8 +30,7 @@
 \usepackage{todonotes}
 \usepackage{bm}
 \usepackage{subcaption}
-% \usepackage{fancyvrb}
-\usepackage[ruled]{algorithm2e}
+\usepackage[linesnumbered, ruled]{algorithm2e}
 
 \def\ci{\perp\!\!\!\!\!\perp}
 
@@ -316,8 +315,177 @@ When $ \bm{Z} \neq \emptyset $,
 \end{equation}
 
 
-\section{Using Measure of Association for Ranking and DAG Construction}
+\section{DAG Structure Learning using Ancestral Oracles}
 \label{sec:modification}
+
+Our approach to causal structure learning combines domain knowledge with data-driven
+insights in a manner that is based on the following base assumptions: 
+(1) Domain experts are good at determining causal directions between variables if 
+there is a clear causal direction between them. (2) Domain experts are less good
+at identifying cases where there is no causal relationship between the variables,
+since \emph{potential} causal relationships can often be argued for anyway.
+(3) Domain experts are even less good at distinguishing direct from indirect 
+effects, since the question whether a direct effect exists between two variables
+depends on all other variables present in the graph. 
+
+We therefore consider the following two models of a domain experts: Given two variables
+\emph{X} and \emph{Y} that are part of an unknown causal DAG $G$, an \emph{strong ancestral oracle} 
+$\mathcal{A}_G$ is defined as:
+$$\mathcal{A}_G(X,Y)=\begin{cases}
+ X \to Y & \textrm{if } X \in \textrm{An}_G(Y) \\
+ X \gets Y & \textrm{if } Y \in \textrm{An}_G(X) \\
+ \textrm{None} & \textrm{otherwise} \\
+\end{cases}$$
+
+whereas a \emph{weak ancestral oracle} is defined as:
+$$
+\mathcal{A}_G(X,Y)=\begin{cases}
+ X \to Y & \textrm{if } X \in \textrm{An}_G(Y) \\
+ X \gets Y & \textrm{if } Y \in \textrm{An}_G(X) \\
+ \textrm{rand}(X \gets Y, X \to Y) & \textrm{otherwise} \\
+\end{cases}
+$$
+
+That is, our ancestral oracles never distinguish whether the relationships between variables is
+direct or indirect; and the weak ancestral oracle is even unable to detect cases where there is no
+cause-effect relationship between two variables. Using such oracles for DAG construction therefore
+inherently risks that superfluous edges are created. In our approach, such superfluous edges will
+be detected and removed by utilizing the data. 
+
+To model how our learning procedure interacts with the data, we
+assume that we have access to a second oracle $\mathcal{D}_G$ than can answer
+d-separation queries with respect to the unknown target graph: 
+$\mathcal{D}_G(X,Y,\mathbf{Z})=1$ iff $X \ci_G Y \mid \mathbf{Z}$. 
+These are the standard oracles considered in constraint-based structure learning algorithms,
+such as the PC algorithm \cite{Kalisch2012}. Based on this oracle, we now define two procedures
+that iteratively change a current DAG structure.
+
+Our structure learning algorithm is based on two core procedures. \textsc{Expand} 
+(Algorithm~\ref{algo:expand}) uses conditional independence information to search for
+missing edges in the graph and then uses domain knowledge to orient them. 
+\textsc{Prune} (Algorithm~\ref{algo:prune}) uses conditional independence information
+to remove superfluous edges from the graph.
+
+\begin{algorithm}[h]
+\DontPrintSemicolon
+\SetAlgoLined
+\SetKwFunction{Expand}{Expand}
+\SetKw{KwGoTo}{go to}
+\SetKwProg{Fn}{Function}{:}{}
+\Fn{{\sc Expand}($V,E,\mathcal{D}_G,\mathcal{A}_G$,$B=\emptyset$,$k=\infty$)}{
+    let $L \gets \{\}$\;
+    \ForEach{$X, Y$ where $X \to Y \notin E$ and $Y \to X \notin E$ and 
+	$\{X,Y\} \notin B$}{
+        let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
+        \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
+            $L \gets L \cup \mathcal{A}_G(X, Y)$ \;
+        }
+	\If{$|L|\geq k$}{\KwGoTo 12\;}
+    }
+    add all edges in $L$ to $E$\;
+    \Return{$(V,E)$}\;
+}
+\caption{Adding edges based on data an domain knowledge}
+\label{algo:expand}
+\end{algorithm}
+
+The function $\textsc{Expand}$ takes an initial list of edges and searches for 
+any vertex pairs that are not connected but where the d-separation oracle 
+indicates  that there is still a residual association not explained by the other variables.
+An optional parameter $B$, the empty set by default, allows to specify a ``black list''
+of vertex pairs that must not be connected, and another optional parameter $k$
+specifies the maximum amount of edges to be added by this procedure.
+
+\begin{proposition}
+For a conditional independence oracle
+ $\mathcal{D}_G$ and a strong ancestral oracle $\mathcal{A}_G$, 
+$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G)=G^+$.
+\end{proposition}
+
+\begin{proposition}
+For a conditional independence oracle
+ $\mathcal{D}_G$ and a weak ancestral oracle $\mathcal{A}_G$, 
+$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G)\supseteq G^+$.
+\end{proposition}
+
+
+\begin{algorithm}[h]
+\DontPrintSemicolon
+\SetAlgoLined
+
+\SetKwProg{Fn}{Function}{:}{}
+\Fn{{\sc Prune}($V$,$E$,$\mathcal{D}_G$)}{
+    let $L \gets \{\}$\;
+    \ForEach{$X \to Y \in E$}{
+        remove $X \to Y$ from $E$\;
+        let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
+        \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 1$}{
+            $L \gets L \cup  \{X \to Y\}$ \;
+        }
+    }
+    remove all edges in $L$ from $G$\;
+    \Return{$(V,E)$}\;
+}
+\caption{Pruning superfluous edges}
+\label{algo:prune}
+\end{algorithm}
+
+
+
+
+\begin{proposition}
+Consider two DAGs $G=(V,E)$ and $G'=(V,E')$ where $E \subseteq E'$. 
+Then $\textsc{Prune}(G',\mathcal{D}_G)=G$.
+\label{prop:prune}
+\end{proposition}
+
+By combining the previous three propositions, we immediately obtain the following:
+
+\begin{theorem}
+Given a d-separation oracle $\mathcal{D}_G$ and a strong or weak 
+ancestral oracle $\mathcal{A}_G$, 
+$\textsc{Prune}(\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_G),\mathcal{D}_G)=G.$
+\end{theorem}
+
+Since we require expert knowledge only in the $\textsc{Expand}$ operation, we may try
+to be more economical by asking fewer questions at a time and interleaving expansion and
+pruning steps. This leads us to the following, more incremental DAG construction algorithm.
+
+\begin{algorithm}[h]
+\DontPrintSemicolon
+\SetAlgoLined
+\SetKwProg{Fn}{Function}{:}{}
+
+\Fn{{\sc ExpertInLoop}($V,\mathcal{D}_G,\mathcal{A}_G$)}{
+$E_p \gets \emptyset$ \tcc{Current edges} 
+$B \gets \emptyset$ \tcc{Edges that were pruned} 
+\Repeat{ $E=E_p$ }{
+	$E \gets E_p$ \;
+	$(V,E) \gets \textsc{Expand}(V,E,\mathcal{D}_G,\mathcal{A}_G,B,1)$ \;
+	$(V,E_p) \gets \textsc{Prune}(V,E,\mathcal{D}_G)$ \;
+	$B \gets B \cup \{ E_p \setminus E \} $
+}
+\Return{(V,E)}
+}
+
+\caption{Iterative structure learning with expert in the loop}
+\label{algo:expert}
+\end{algorithm} 
+
+\begin{theorem}
+Let $G=(V,^*E)$ be a DAG, $\mathcal{D}_G$ a d-separation oracle for $G$, and 
+$\mathcal{A}_G$ a strong or weak ancestral oracle for $G$. Then 
+$\textsc{ExpertInLoop}(V,\mathcal{D}_G,\mathcal{A}_G)=G$.
+\end{theorem}
+
+\begin{proof}
+The loop in Algorithm~\ref{algo:expert} terminates if and only if $E=E^*$. If the loop does not 
+terminate, then a new edge has been added in line 6, or one or more edges were pruned in line 7.
+Every edge can be added at 
+most once and pruned at most once. Therefore, the algorithm always terminates
+after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ in the skeleton of $G$, $\mathcal{D}_G(X,Y,\mathbf{Z})=0$ irrespective of $\mathbf{Z}$. Therefore, $e$ must be added to $E$ in some iteration, and can never be pruned afterwards. Therefore, after some iteration, $(V,E)$ must be a supergraph of $G$ after executing line 6, and this will be pruned to the real graph $G$ in line 7 (Proposition~\ref{prop:prune}). In the next iteration, no further changes are made, and the loop terminates.
+\end{proof} 
+
 
 Using the mixed data measure of association presented in the last section, we
 now present a method to rank modifications to a given DAG. 
