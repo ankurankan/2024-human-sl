@@ -16,6 +16,24 @@ gen_mixed_data <- function(n_nodes, edge_prob){
 	return (list(true_dag=dag, true_adj=true_adj, sim_data=sim_data$d, var_types=sim_data$var_types))
 }
 
+gen_linear_data <- function(n_nodes, edge_prob){
+	varnames <- sapply(1:n_nodes, function(v) {
+	    paste0("x", v)
+	})
+	
+	dag <- pcalg::randomDAG(n=n_nodes, prob=edge_prob, lB=1, uB=1, V=varnames)
+	dag <- pcalg::pcalg2dagitty(as(dag, "matrix"), labels = varnames, type = "dag")
+	sim_data <- dagitty::simulateSEM(dag, N=500)
+	true_adj <- dag_to_adjmatrix(dag)
+
+	var_types <- list()
+	for (variable in varnames){
+		var_types[[variable]] <- "cont"
+	}
+	return (list(true_dag=dag, true_adj=true_adj, sim_data=sim_data, var_types=var_types))
+}
+
+
 # Takes a dagitty DAG and returns an adjacency matrix representation.
 dag_to_adjmatrix <- function(daggity_obj) {
   	edg <- dagitty:::edges(daggity_obj)

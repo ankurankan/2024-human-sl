@@ -97,7 +97,7 @@ simulate_human_sl <- function(sim_data, true_dag, oracle_acc, max_iter=1e4){
 }
 
 run_single_exp_hc <- function(n_nodes, edge_prob){
-	d <- gen_mixed_data(n_nodes=n_nodes, edge_prob=edge_prob)
+	d <- gen_linear_data(n_nodes=n_nodes, edge_prob=edge_prob)
 	true_adj <- d$true_adj
 	sim_data <- d$sim_data
 	var_types <- d$var_types
@@ -140,7 +140,7 @@ run_single_exp_hc <- function(n_nodes, edge_prob){
 }
 
 run_single_exp_pc <- function(n_nodes, edge_prob){
-	d <- gen_mixed_data(n_nodes=n_nodes, edge_prob=edge_prob)
+	d <- gen_linear_data(n_nodes=n_nodes, edge_prob=edge_prob)
 	true_adj <- d$true_adj
 	sim_data <- d$sim_data
 
@@ -179,15 +179,19 @@ run_single_exp_pc <- function(n_nodes, edge_prob){
 }
 
 run_single_exp_ges <- function(n_nodes, edge_prob){
-	d <- gen_mixed_data(n_nodes=n_nodes, edge_prob=edge_prob)
+	d <- gen_linear_data(n_nodes=n_nodes, edge_prob=edge_prob)
 	true_adj <- d$true_adj
 	sim_data <- d$sim_data
 
-	rand_str <- stringi::stri_rand_strings(1, 5)
-	write.csv(sim_data, paste0("temp/", rand_str,".csv"), row.names=F)
-	system(paste0("python sl_ges.py temp/", rand_str, ".csv"), intern=T)
-	
-	ges_adj <- as.matrix(read.csv(paste0("temp/adj_", rand_str, ".csv"), row.names=1))
+	# rand_str <- stringi::stri_rand_strings(1, 5)
+	# write.csv(sim_data, paste0("temp/", rand_str,".csv"), row.names=F)
+	# system(paste0("python sl_ges.py temp/", rand_str, ".csv"), intern=T)
+	# 
+	# ges_adj <- as.matrix(read.csv(paste0("temp/adj_", rand_str, ".csv"), row.names=1))
+
+	score <- new("GaussL0penObsScore", sim_data)
+	ges.cpdag <- pcalg::ges(score)$essgraph
+	ges_adj <- as(ges.cpdag, 'matrix')
 
 	### Temp code block #################################################
 	# shd <- causalDisco::shd(ges_adj, true_adj)
@@ -212,7 +216,7 @@ run_single_exp_ges <- function(n_nodes, edge_prob){
 }
 
 run_single_exp_human <- function(n_nodes, edge_prob, oracle_acc){
-	d <- gen_mixed_data(n_nodes=n_nodes, edge_prob=edge_prob)
+	d <- gen_linear_data(n_nodes=n_nodes, edge_prob=edge_prob)
 	true_dag <- d$true_dag
 	true_adj <- d$true_adj
 	sim_data <- d$sim_data
