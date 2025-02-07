@@ -349,25 +349,27 @@ $$
 \end{cases}
 $$
 
-That is, our ancestral oracles never distinguish whether the relationships between variables is
-direct or indirect; and the weak ancestral oracle is even unable to detect cases where there is no
-cause-effect relationship between two variables. Using such oracles for DAG construction therefore
-inherently risks that superfluous edges are created. In our approach, such superfluous edges will
-be detected and removed by utilizing the data. 
+That is, our ancestral oracles never distinguish whether the relationships
+between variables is direct or indirect; and the weak ancestral oracle is even
+unable to detect cases where there is no cause-effect relationship between two
+variables. Using such oracles for DAG construction therefore inherently risks
+that superfluous edges are created. In our approach, such superfluous edges
+will be detected and removed by utilizing the data. 
 
-To model how our learning procedure interacts with the data, we
-assume that we have access to a second oracle $\mathcal{D}_G$ than can answer
-d-separation queries with respect to the unknown target graph: 
-$\mathcal{D}_G(X,Y,\mathbf{Z})=1$ iff $X \ci_G Y \mid \mathbf{Z}$. 
-These are the standard oracles considered in constraint-based structure learning algorithms,
-such as the PC algorithm \cite{Kalisch2012}. Based on this oracle, we now define two procedures
-that iteratively change a current DAG structure.
+To model how our learning procedure interacts with the data, we assume that we
+have access to a second oracle $\mathcal{D}_G$ than can answer d-separation
+queries with respect to the unknown target graph:
+$\mathcal{D}_G(X,Y,\mathbf{Z})=1$ iff $X \ci_G Y \mid \mathbf{Z}$. These are
+the standard oracles considered in constraint-based structure learning
+algorithms, such as the PC algorithm \cite{Spirtes2001}. Based on this oracle,
+we now define two procedures that iteratively change a current DAG structure.
 
-Our structure learning algorithm is based on two core procedures. \textsc{Expand} 
-(Algorithm~\ref{algo:expand}) uses conditional independence information to search for
-missing edges in the graph and then uses domain knowledge to orient them. 
-\textsc{Prune} (Algorithm~\ref{algo:prune}) uses conditional independence information
-to remove superfluous edges from the graph.
+Our structure learning algorithm is based on two core procedures.
+\textsc{Expand} (Algorithm~\ref{algo:expand}) uses conditional independence
+information to search for missing edges in the graph and then uses domain
+knowledge to orient them. \textsc{Prune} (Algorithm~\ref{algo:prune}) uses
+conditional independence information to remove superfluous edges from the
+graph.
 
 \begin{algorithm}[h]
 \DontPrintSemicolon
@@ -388,7 +390,7 @@ to remove superfluous edges from the graph.
     add all edges in $L$ to $E$\;
     \Return{$(V,E)$}\;
 }
-\caption{Adding edges based on data an domain knowledge}
+\caption{Adding edges based on data and domain knowledge}
 \label{algo:expand}
 \end{algorithm}
 
