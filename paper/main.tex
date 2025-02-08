@@ -70,7 +70,7 @@ domains remain limited, as researchers often prefer to construct DAGs manually
 based on domain knowledge. This preference arises due to several practical
 challenges with automated algorithms, such as their tendency to make obvious
 errors and output Markov Equivalence Classes (MECs) rather than a DAG. To
-address these challenges, we propose an iterative DAG construction that
+address these challenges, we propose an iterative DAG construction method that
 combines domain knowledge with data-driven insights. Our approach iteratively
 identifies pair of variables with a missing edge in the DAG, and asks for the
 orientation of the edge from an expert. We also propose a method to rank these
@@ -141,40 +141,44 @@ causal discovery algorithms in practical settings:
 		effect estimation, assume knowledge of a fully oriented DAG. 
 \end{enumerate}
 
-Figure~\ref{fig:intro} highlights some of these issues. 
+Figure~\ref{fig:intro} highlights some of these issues. To assist researchers
+in constructing DAGs manually, we propose an iterative model construction
+method that combines domain knowledge with data-driven insights. Our approach 
+iteratively identifies pairs of variables with a missing edge in the DAG and
 
-When manually constructing models, it is important to test whether the
-resulting DAG accurately represents the dataset. Based on this evaluation and
-domain knowledge, we can make further modification to the model. One common
-approach for assessing DAGs is to check whether the Conditional Independences
-(CIs) implied by the DAG hold in the data \citep{Ankan2021}. If we find
-violations to these CIs, we can use our domain knowledge to make appropriate
-modifications to the DAG. However, this CI testing approach has a few
-limitations:
 
-\begin{enumerate}
-\item As CIs are only implied by missing edges in the model, this approach does 
-	not test whether the existing edges are correct.
-\item Determining whether a CI holds in data is based on a p-value threshold. This can 
-	be unreliable, for example, we get a significant p-value for even very weak 
-	relationship if the sample size is high.
-\item The number of implied CIs can be large making it difficult to manually
-	check all of them. For example, a moderately sized alarm network
-	\citep{Beinlich1989} with $ 37 $ nodes, implies $ 287 $ CIs.
-\end{enumerate}
-
-To tackle these limitations, we draw inspiration from modification indices in
-specification search. Modification indices provide ranking for potential model
-modification based on their impact on the model's fit, allowing us to
-prioritize most meaningful modifications.  Similarly, we propose a method for
-ranking CI test violations to help us focus on the most critical
-inconsistencies in the model. To determine this ranking we utilize a measure of
-conditional association between variables in combination with p-values from the
-CI test. This approach addresses all three of the issues outlined above. The
-measure of association allows us to evaluate the validity of existing edges. It
-reduces our reliance on p-values alone for deciding whether the CI test holds.
-The ranking helps us prioritize the most critical violations, making it feasible 
-to focus on the areas that most improve the model's fit.
+% When manually constructing models, it is important to test whether the
+% resulting DAG accurately represents the dataset. Based on this evaluation and
+% domain knowledge, we can make further modification to the model. One common
+% approach for assessing DAGs is to check whether the Conditional Independences
+% (CIs) implied by the DAG hold in the data \citep{Ankan2021}. If we find
+% violations to these CIs, we can use our domain knowledge to make appropriate
+% modifications to the DAG. However, this CI testing approach has a few
+% limitations:
+% 
+% \begin{enumerate}
+% \item As CIs are only implied by missing edges in the model, this approach does 
+% 	not test whether the existing edges are correct.
+% \item Determining whether a CI holds in data is based on a p-value threshold. This can 
+% 	be unreliable, for example, we get a significant p-value for even very weak 
+% 	relationship if the sample size is high.
+% \item The number of implied CIs can be large making it difficult to manually
+% 	check all of them. For example, a moderately sized alarm network
+% 	\citep{Beinlich1989} with $ 37 $ nodes, implies $ 287 $ CIs.
+% \end{enumerate}
+% 
+% To tackle these limitations, we draw inspiration from modification indices in
+% specification search. Modification indices provide ranking for potential model
+% modification based on their impact on the model's fit, allowing us to
+% prioritize most meaningful modifications.  Similarly, we propose a method for
+% ranking CI test violations to help us focus on the most critical
+% inconsistencies in the model. To determine this ranking we utilize a measure of
+% conditional association between variables in combination with p-values from the
+% CI test. This approach addresses all three of the issues outlined above. The
+% measure of association allows us to evaluate the validity of existing edges. It
+% reduces our reliance on p-values alone for deciding whether the CI test holds.
+% The ranking helps us prioritize the most critical violations, making it feasible 
+% to focus on the areas that most improve the model's fit.
 
 \begin{figure}[t!]
     \begin{subfigure}{0.5 \textwidth}
@@ -250,6 +254,8 @@ where $ \mathrm{cov}(X, Y) $ is the covariance between $ X $ and $ Y $, $ \mathr
 \sigma_X $ and $ \sigma_Y $ are the standard deviations of $ X $ and $ Y $
 respectively.  Covariance matrix using $ \Sigma $ and the entry corresponding to
 covariance between $ X $ and $ Y $ in the matrix using $ \Sigma_{XY} $.
+
+\subsection{Integrating domain knowledge in causal discovery}
 
 \subsection{Measures of Conditional Association}
 Our approach for ranking CI tests is based on a measure of conditional
