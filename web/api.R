@@ -124,5 +124,5 @@ rmsea <- function( dag ){
 
 	fisherc <- -2 * sum(log(pvalues))
 	# return (pchisq(fisherc, 2*length(pvalues), lower.tail=F))
-	return(sqrt( max(fisherc**2 - 2*length(pvalues), 0) / (2*length(pvalues) * (nrow(dataset) - 1) )))
+	return(sqrt( max(fisherc - 2*length(pvalues), 0) / (2*length(pvalues) * (nrow(dataset) - 1) )))
 }
