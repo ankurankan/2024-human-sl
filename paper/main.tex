@@ -560,12 +560,11 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 		\includegraphics{../code/fig3/sid_ribbon.pdf}
 		\caption{}
 	\end{subfigure}
-	\caption{Comparison of PC and Hill-Climb Search algorithms against
-		manually drawn DAGs using the assistance method. As PC and
-		Hill-Climb Search return the Markov Equivalence Class (MEC), we
-		use the best and worst scoring orientation of the MEC to get
-		the range of values. The human drawn values are done for
-		multiple accuracy values of the oracle.}
+	\caption{Comparison of PC, Hill-Climb Search, and GES algorithms against
+		\textit{ExpertInLoop} algorithm. As automated algorithms only recover
+		the CPDAG, we use the best and worst scoring orientation of the CPDAG 
+		to get the range. The \textit{ExpertInLoop} shows values for various
+		$ \alpha_{\textit{eff}} $ values corresponding to $ \alpha = \{0.1, 0.3, 0.5, 0.7, 0.9\} $.}
 	\label{fig:shd_sid}
 \end{figure}
 
@@ -622,6 +621,10 @@ of the oracle, the oracle returns:
 			\textnormal{rand}(M \rightarrow Y, M \leftarrow Y, None) & \textnormal{otherwise} \\
 				\end{cases} \\
 	\end{split}
+\end{equation}
+
+\begin{equation}
+	\alpha_{\mathrm{eff}} = \alpha + (1 - \alpha) / 3
 \end{equation}
 
 If the oracle returns None for any pair of variables, an edge between this pair
