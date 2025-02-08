@@ -566,6 +566,7 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 		use the best and worst scoring orientation of the MEC to get
 		the range of values. The human drawn values are done for
 		multiple accuracy values of the oracle.}
+	\label{fig:shd_sid}
 \end{figure}
 
 \begin{figure}[t!]
@@ -585,6 +586,7 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 	sum of effect size between variables that don't have an edge between them. (b)
 	Shows the log-likelihood of the overall model.
 	}
+	\label{fig:unexplained_ll}
 \end{figure}
 
 We analyzed the performance of \textit{ExpertInLoop} algorithm by comparing it
@@ -683,7 +685,7 @@ explains the data in an absolute sense. In contrast, summing our measure of
 association across all variables provides a direct fitness measure—this sum
 approaches zero when the model perfectly accounts for all observed correlations
 in the data. This property enables an absolute assessment of model quality,
-rather than just a relative comparison between models.
+rather than just a relative comparison between models. Figure~\ref{fig:unexplained_ll}
 
 
 \subsection{Using LLMs as Experts}
