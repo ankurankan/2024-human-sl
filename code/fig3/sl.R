@@ -26,7 +26,7 @@ oracle <- function(u, v, true_dag, accuracy=1){
 		}
 	}
 	else{
-		return(list(c(u, v), c(v, u))[[sample(1:2, 1)]]) } }
+		return(list(c(u, v), c(v, u), NULL)[[sample(1:3, 1)]]) } }
 
 
 # Simulate a human structure learning based on CI tests.
