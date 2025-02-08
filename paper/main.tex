@@ -751,9 +751,9 @@ or removing an edge affects only a localized part of the model. In contrast,
 our measure of association is global, meaning that modifying an edge in one
 part of the model can influence association values elsewhere.
 
-Given a DAG $ G = (V, E) $, the total unexplained correlation in define as:
+Given a DAG $ G = (V, E) $, the total unexplained correlation, $\tau$ in define as:
 \begin{equation}
-	= \sum_{\{ (X, Y) \in V | X \rightarrow Y, Y \rightarrow X \not \in E \} } \phi(X, Y, \mathrm{pa}_G(X) \cup \mathrm{pa}_G(Y)))
+	\tau = \sum_{\{ (X, Y) \in V | \\ X \rightarrow Y \not \in E \wedge Y \rightarrow X \not \in E \} } \phi(X, Y, \mathrm{pa}_G(X) \cup \mathrm{pa}_G(Y)))
 \end{equation}
 
 Another major difference is in the interpretability of the evaluation metric.
