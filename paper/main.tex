@@ -71,18 +71,26 @@ based on domain knowledge. This preference arises due to several practical
 challenges with automated algorithms, such as their tendency to make obvious
 errors and output Markov Equivalence Classes (MECs) rather than a DAG. To
 address these challenges, we propose an iterative method that guides
-researchers in manually constructing or improving the fit of an existing DAG.
-Our approach combines implied Conditional Independence (CI) testing with a
-measure of conditional association between variables to rank violations
-of implied CIs in a given DAG. This ranking helps prioritize modifications to
-the DAG to improve its fit to the data while utilizing expert knowledge to
-decide the orientation of new edges. Empirical results show that this guided
-manual model construction approach achieves performance comparable to automated
-algorithms if we are able to correctly decide the orientation of new edges in
-one out of three cases. Additionally, we demonstrate that, in the absence of an
-expert, a Large Language Model (LLM) can be potentially used to determine edge
-orientations. We provide the implementation of our approach in both a web tool
-at: <redacted for review> and a Python package <redacted for review>.
+researchers in manually constructing or improving the fit of an existing DAG
+while incorporating their expert knowledge. Compared to other expert knowledge
+specification methods, this method explicitly asks for the causal ordering
+between two specific variables in each step. Additionally, we provide a way to
+rank the potential new edge addition that improves the model fit the most in
+each step. Empirical results show that this guided manual model construction
+approach achieves performance comparable to automated algorithms if we are able
+to correctly decide the orientation of new edges in one out of three cases.
+Additionally, we demonstrate that, in the absence of an expert, a Large
+Language Model (LLM) can be potentially used to determine edge orientations. We
+provide the implementation of our approach in both a web tool at: <redacted for
+review> and a Python package <redacted for review>.
+
+
+% Our approach combines implied Conditional Independence (CI) testing with a
+% measure of conditional association between variables to rank violations
+% of implied CIs in a given DAG. This ranking helps prioritize modifications to
+% the DAG to improve its fit to the data while utilizing expert knowledge to
+% decide the orientation of new edges. 
+
 
 \end{abstract}
 
