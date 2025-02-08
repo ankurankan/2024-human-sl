@@ -141,17 +141,26 @@ causal discovery algorithms in practical settings:
 		effect estimation, assume knowledge of a fully oriented DAG. 
 \end{enumerate}
 
-Figure~\ref{fig:intro} highlights some of these issues. To assist researchers
-in constructing DAGs manually, we propose an iterative model construction
-method that combines domain knowledge with data-driven insights. Our approach
-utilizes conditional independence testing to identify pair of variables in the
-DAG that are missing an edge or have a superfluous edge. Based on this
-information, in each iteration we present one such pair of variables to an
-expert who then decides the orientation of the edge between the variables based
-on their domain knowledge. The method also iteratively prunes all superfluous
-edges in each iteration. As a result this approach guides the expert in
-constructing their model while ensuring that the model is consistent with the
-data.
+Figure~\ref{fig:intro} highlights some of these issues.   When manually
+constructing models, it is important to test whether the resulting DAG
+accurately represents the dataset. Based on this evaluation and domain
+knowledge, we can make further modification to the model. One common approach
+for assessing DAGs is to check whether the Conditional Independences (CIs)
+implied by the DAG hold in the data \citep{Ankan2021}. If we find violations to
+these CIs, we can use our domain knowledge to make appropriate changes to the
+model.
+
+In this paper we present a method that utilizes this idea of CI testing to
+assist researchers during the DAG construction instead of testing the final
+model. We propose an iterative model construction method that combines domain
+knowledge with data-driven insights. Our approach utilizes conditional
+independence testing to identify pair of variables in the DAG that are missing
+an edge or have a superfluous edge. Based on this information, in each
+iteration we present one such pair of variables to an expert who then decides
+the orientation of the edge between the variables based on their domain
+knowledge. The method also iteratively prunes all superfluous edges in each
+iteration. As a result this approach guides the expert in constructing their
+model while ensuring that the model is consistent with the data.
 
 % When manually constructing models, it is important to test whether the
 % resulting DAG accurately represents the dataset. Based on this evaluation and
@@ -218,15 +227,15 @@ data.
 Our main contributions in this paper are as follows:
 
 \begin{enumerate}
-    \item We propose a novel measure of conditional association for mixed data
-	    based on canonical correlations
-	    (Section~\ref{sec:mixed_association}). This measure generalizes
-	    several commonly used special case measures of association to mixed
-	    data.
-    \item Using this measure of conditional association, we develop a procedure
-	    to rank violations of implied CIs. Using this ranking helps us
-	    prioritize modifications to DAG to improve its fit while allowing
-	    us to integrate expert knowledge when adding new edges (Section~\ref{sec:modification}).
+%     \item We propose a novel measure of conditional association for mixed data
+% 	    based on canonical correlations
+% 	    (Section~\ref{sec:mixed_association}). This measure generalizes
+% 	    several commonly used special case measures of association to mixed
+% 	    data.
+    \item We develop an iterative method based on CI testing to assist researchers in 
+	    constructing DAGs using their domain knowledge (Section~\ref{sec:modification}).
+    \item We develop a ranking method to prioritize potential modifications in the DAG that 
+    	    can help in improving the model's fit quickly (Section~\ref{sec:ranking}).
     \item We provide a web-based interactive tool and a Python package to allow 
 	    researchers to easily apply this method to their datasets (Section~\ref{sec:web}).
     \item Lastly, we compare the manual DAG construction method with automated
@@ -573,6 +582,9 @@ In this section, we give some of the practical aspects of the
 causal discovery algorithms.
 
 \subsection{Ranking Potential New Edges}
+\label{sec:ranking}
+
+
 \begin{algorithm}[h]
 \DontPrintSemicolon
 \SetAlgoLined
