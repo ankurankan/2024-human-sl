@@ -70,19 +70,18 @@ domains remain limited, as researchers often prefer to construct DAGs manually
 based on domain knowledge. This preference arises due to several practical
 challenges with automated algorithms, such as their tendency to make obvious
 errors and output Markov Equivalence Classes (MECs) rather than a DAG. To
-address these challenges, we propose an iterative method that guides
-researchers in manually constructing or improving the fit of an existing DAG
-while incorporating their expert knowledge. Compared to other expert knowledge
-specification methods, this method explicitly asks for the causal ordering
-between two specific variables in each step. Additionally, we provide a way to
-rank the potential new edge addition that improves the model fit the most in
-each step. Empirical results show that this guided manual model construction
-approach achieves performance comparable to automated algorithms if we are able
-to correctly decide the orientation of new edges in one out of three cases.
-Additionally, we demonstrate that, in the absence of an expert, a Large
-Language Model (LLM) can be potentially used to determine edge orientations. We
-provide the implementation of our approach in both a web tool at: <redacted for
-review> and a Python package <redacted for review>.
+address these challenges, we propose an iterative DAG construction that
+combines domain knowledge with data-driven insights. Our approach iteratively
+identifies pair of variables with a missing edge in the DAG, and asks for the
+orientation of the edge from an expert. We also propose a method to rank these
+potential new edges based on their impact on the model fit. Empirical results
+show that this iterative model construction approach achieves performance
+comparable to automated algorithms if we are able to correctly decide the
+orientation of new edges in one out of three cases. Additionally, we
+demonstrate that, in the absence of an expert, a Large Language Model (LLM) can
+be used to determine edge orientations. We provide the implementation of our
+approach in both a web tool at: <redacted for review> and a Python package
+<redacted for review>.
 
 
 % Our approach combines implied Conditional Independence (CI) testing with a
@@ -753,7 +752,7 @@ part of the model can influence association values elsewhere.
 
 Given a DAG $ G = (V, E) $, the total unexplained correlation, $\tau$ in define as:
 \begin{equation}
-	\tau = \sum_{\{ (X, Y) \in V | \\ X \rightarrow Y \not \in E \wedge Y \rightarrow X \not \in E \} } \phi(X, Y, \mathrm{pa}_G(X) \cup \mathrm{pa}_G(Y)))
+	\tau = \sum_{\{ (X, Y) \in V | X \rightarrow Y \not \in E \wedge Y \rightarrow X \not \in E \} } \phi(X, Y, \mathrm{pa}_G(X) \cup \mathrm{pa}_G(Y)))
 \end{equation}
 
 Another major difference is in the interpretability of the evaluation metric.
