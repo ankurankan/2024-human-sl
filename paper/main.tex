@@ -347,7 +347,7 @@ effects, since the question whether a direct effect exists between two variables
 depends on all other variables present in the graph. 
 
 We therefore consider the following two models of a domain experts: Given two variables
-\emph{X} and \emph{Y} that are part of an unknown causal DAG $G$, an \emph{strong ancestral oracle} 
+$ X $ and $ Y $ that are part of an unknown causal DAG $G$, an \emph{strong ancestral oracle} 
 $\mathcal{A}_G$ is defined as:
 $$\mathcal{A}_G(X,Y)=\begin{cases}
  X \to Y & \textrm{if } X \in \textrm{An}_G(Y) \\
@@ -543,7 +543,7 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 		\includegraphics[page=7]{example.pdf}
 		\caption{$ X_3 \rightarrow X_4 $. $ X_1 \not \rightarrow X_4 $.}
 	\end{subfigure}
-	\caption{An example showing each iteration of the \emph{ExpertInLoop} algorithm. The dashed edges show all the potential edges that \emph{Expand} step could add in each iteration.}
+	\caption{An example showing each iteration of the \textsc{ExpertInLoop} algorithm. The dashed edges show all the potential edges that \textsc{Expand} step could add in each iteration.}
 \end{figure}
 
 
@@ -563,7 +563,7 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 \label{sec:empirical}
 
 In this section, we give some of the practical aspects of the
-\emph{ExpertInLoop} algorithm, and then compare the algorithm with automated
+\textsc{ExpertInLoop} algorithm, and then compare the algorithm with automated
 causal discovery algorithms.
 
 \subsection{Ranking Potential New Edges}
@@ -625,10 +625,10 @@ Section~\ref{sec:background} depending on the data type of the variables.
 		\caption{}
 	\end{subfigure}
 	\caption{Comparison of PC, Hill-Climb Search, and GES algorithms against
-		\emph{ExpertInLoop} algorithm. As automated algorithms only
+		\textsc{ExpertInLoop} algorithm. As automated algorithms only
 		recover the CPDAG, we use the best and worst scoring
 		orientation of the CPDAG to get the range. We test
-		\emph{ExpertInLoop} with varying values of expert accuracy, $ \alpha = \{0.1, 0.3, 0.5, 0.7, 0.9\} $. The corresponding
+		\textsc{ExpertInLoop} with varying values of expert accuracy, $ \alpha = \{0.1, 0.3, 0.5, 0.7, 0.9\} $. The corresponding
 		$\alpha_{\textrm{eff}} $ is shown in the plot.}
 	\label{fig:shd_sid}
 \end{figure}
@@ -653,7 +653,7 @@ Section~\ref{sec:background} depending on the data type of the variables.
 	\label{fig:unexplained_ll}
 \end{figure}
 
-The \emph{ExpertInLoop} algorithm requires two oracles, one that can answer
+The \textsc{ExpertInLoop} algorithm requires two oracles, one that can answer
 d-separation queries and an ancestral oracle that can give the orientation or
 non-existence of edges between pairs of variables. For answering the
 d-separation queries, we use a CI test, the partial correlation test with a
@@ -692,7 +692,7 @@ $ 3 $ chance that the answer is correct. The effective accuracy is:
 \end{equation}
 
 
-We analyzed the performance of \emph{ExpertInLoop} algorithm by comparing it
+We analyzed the performance of \textsc{ExpertInLoop} algorithm by comparing it
 with three other automated algorithms: PC, Hill-Climb Search, and Greedy
 Equivalence Search (GES). For the analysis, we simulated $ 500 $ samples from
 known DAGs and use the algorithms to recover the original DAG. We start by
@@ -709,9 +709,9 @@ As the automated algorithms can only recover the CPDAG from data, and our
 method recovers the DAG. To compare them fairly, we computed the SHD and SID
 for all possible orientations of the CPDAG to show the best and worst case
 scenarios. The results are shown in Figure~\ref{fig:shd_sid}. For SHD, the
-performance of \emph{ExpertInLoop} is comparable to the automated algorithms
+performance of \textsc{ExpertInLoop} is comparable to the automated algorithms
 for $ \alpha = 0.3 (\alpha_{\textrm{eff}} = 0.53 $, and performs better for
-higher $ \alpha $ values. For SID, the \emph{ExpertInLoop} performs better in
+higher $ \alpha $ values. For SID, the \textsc{ExpertInLoop} performs better in
 denser DAGs.
 
 % \begin{verbatim}
