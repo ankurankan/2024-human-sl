@@ -528,8 +528,7 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 		\includegraphics[page=7]{example.pdf}
 		\caption{$ X_3 \rightarrow X_4 $. $ X_1 \not \rightarrow X_4 $.}
 	\end{subfigure}
-	\caption{An example showing the steps of \textit{ExpertInLoop} algorithm. The dashed edges show all the potential edges that \textit{Expand} algorithm could add in each step.
-	}
+	\caption{An example showing each iteration of the \emph{ExpertInLoop} algorithm. The dashed edges show all the potential edges that \emph{Expand} step could add in each iteration.}
 \end{figure}
 
 
@@ -561,10 +560,11 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 		\caption{}
 	\end{subfigure}
 	\caption{Comparison of PC, Hill-Climb Search, and GES algorithms against
-		\textit{ExpertInLoop} algorithm. As automated algorithms only recover
-		the CPDAG, we use the best and worst scoring orientation of the CPDAG 
-		to get the range. The \textit{ExpertInLoop} shows values for various
-		$ \alpha_{\textit{eff}} $ values corresponding to $ \alpha = \{0.1, 0.3, 0.5, 0.7, 0.9\} $.}
+		\emph{ExpertInLoop} algorithm. As automated algorithms only
+		recover the CPDAG, we use the best and worst scoring
+		orientation of the CPDAG to get the range. We test
+		\emph{ExpertInLoop} with varying values of expert accuracy, $ \alpha = \{0.1, 0.3, 0.5, 0.7, 0.9\} $. The corresponding
+		$\alpha_{\textrm{eff}} $ is shown in the plot.}
 	\label{fig:shd_sid}
 \end{figure}
 
@@ -588,10 +588,49 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 	\label{fig:unexplained_ll}
 \end{figure}
 
-We analyzed the performance of \textit{ExpertInLoop} algorithm by comparing it
+The \emph{ExpertInLoop} algorithm requires two oracles, one that can answer
+d-separation queries and an ancestral oracle that can give the orientation or
+non-existence of edges between pairs of variables. For answering the
+d-separation queries, we use a CI test, the partial correlation test with a
+p-value threshold of $ 0.05 $. Secondly, to tell the direction between edges or
+non-existence of edges, we simulate an expert with accuracy $ \alpha $ as
+follows:
+
+\begin{equation}
+	\begin{split}
+		x &= \textrm{rand}([0, 1]) \\
+		E(\alpha) &= \begin{cases} 
+			\mathrm{TrueDir}(X, Y),  & \textrm{if  } x <= \alpha \\
+			\textrm{rand}(X \rightarrow Y, Y \leftarrow X, \textrm{None}) & \textrm{otherwise} \\
+				\end{cases} \\
+	\end{split}
+\end{equation}
+
+where given the true DAG, $ G $:
+
+\begin{equation}
+	\begin{split}
+	\mathrm{TrueDir}(X, Y) &= \begin{cases}
+					X \rightarrow Y, & \textrm{if } X \rightarrow Y \in G \\
+					Y \rightarrow X, & \textrm{if } Y \rightarrow X \in G \\
+					\textrm{None}, & \textrm{otherwise }
+				  \end{cases}
+	\end{split}
+\end{equation}
+
+An important point to note here is that the effective accuracy of $ E $ is
+higher than $ \alpha $ as even when giving a random answer, there is a $ 1 $ in
+$ 3 $ chance that the answer is correct. The effective accuracy is:
+
+\begin{equation}
+	\alpha_{\mathrm{eff}} = \alpha + (1 - \alpha) / 3
+\end{equation}
+
+
+We analyzed the performance of \emph{ExpertInLoop} algorithm by comparing it
 with three other automated algorithms: PC, Hill-Climb Search, and Greedy
-Equivalence Search (GES). For the analysis, we simulated data from known DAG
-structures and use the algorithms to recover the original DAG. We start by
+Equivalence Search (GES). For the analysis, we simulated $ 500 $ samples from
+known DAGs and use the algorithms to recover the original DAG. We start by
 generating a random DAG on $10$ nodes and use linear models with random effects
 to generate the data. We vary the edge probability of the DAG to generate DAGs
 with varying density. We repeat the data generation $30$ times for each density
@@ -603,37 +642,12 @@ metrics: Structural Hamming Distance (SHD) and Structural Intervention Distance
 
 As the automated algorithms can only recover the CPDAG from data, and our
 method recovers the DAG. To compare them fairly, we computed the SHD and SID
-for all possible orientations of the CPDAG to show the best and worst case scenarios.
-
-To use the \textit{ExpertInLoop} algorithm, we need two oracles: a d-separation
-oracle and an ancestral oracle. We use a conditional independence test (partial
-correlation if using linear data) for determining the d-separation with a
-p-value threshold of $ 0.05 $. For the ancestral oracle, we simulated the
-strong ancestral oracle. We vary the accuracy of our oracle to test the
-performance for varying oracle accuracies. Given an accuracy level $ \alpha $
-of the oracle, the oracle returns:
-
-\begin{equation}
-	\begin{split}
-		x &= \textnormal{rand}([0, 1]) \\
-		O(\alpha) &= \begin{cases} 
-			M \rightarrow Y, & \textnormal{if  } x <= \alpha \\
-			\textnormal{rand}(M \rightarrow Y, M \leftarrow Y, None) & \textnormal{otherwise} \\
-				\end{cases} \\
-	\end{split}
-\end{equation}
-
-\begin{equation}
-	\alpha_{\mathrm{eff}} = \alpha + (1 - \alpha) / 3
-\end{equation}
-
-If the oracle returns None for any pair of variables, an edge between this pair
-is not suggested to the oracle in future iterations. We also make sure that
-only edges which do not form a cyclic in the graph are used to select the next
-potential edge. There is a possibility that this greedy expert gets stuck at
-incorrect graph structures as it does not do any backtracking to fix its
-earlier mistakes. This procedure is outlined in the Algorithm 1.
-\todo[inline]{Show an algorithm of how this expert method is working}
+for all possible orientations of the CPDAG to show the best and worst case
+scenarios. The results are shown in Figure~\ref{shd_sid}. For SHD, the
+performance of \emph{ExpertInLoop} is comparable to the automated algorithms
+for $ \alpha = 0.3 (\alpha_{\textrm{eff}} = 0.53 $, and performs better for
+higher $ \alpha $ values. For SID, the \emph{ExpertInLoop} performs better in
+denser DAGs.
 
 % \begin{verbatim}
 % 	Input: Dataset $ D $ on variables $ \bm{X} $
