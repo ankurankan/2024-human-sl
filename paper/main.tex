@@ -555,7 +555,21 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 \section{Empirical Analysis}
 \label{sec:empirical}
 
+In this section, we give some of the practical aspects of the
+\emph{ExpertInLoop} algorithm, and then compare the algorithm with automated
+causal discovery algorithms.
+
 \subsection{Ranking Potential New Edges}
+In Algorithm~\ref{algo:expert}, in each step we add a single edge to the DAG
+and remove any edges that can be pruned. In practice, we use a slightly
+modified version of the Algorithm~\ref{algo:expand} for adding new edges as
+given in Algorithm~\ref{algo:ranked_expand}. Rather than choosing the first
+potential edge addition, this algorithm ranks all potential new edges based on
+the conditional association between the variables. The edge with the highest
+conditional association is then added to the graph. This modification allows us
+to prioritize edges that would help in the explaining the observed correlation
+in the data the highest. For this purpose, we use a measure of conditional
+association measure, $\phi$ between variables.
 
 \begin{algorithm}[h]
 \DontPrintSemicolon
@@ -569,8 +583,8 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 	$\{X,Y\} \notin B$}{
         let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
         \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
-		\If{$\phi(X, Y, \mathbf{Z}) > \phi_{\max}$}{
-			$ \phi_{\max} \gets \phi(X, Y, \mathbf{Z})$ \;
+		\If{$\lvert \phi(X, Y, \mathbf{Z}) \rvert > \phi_{\max}$}{
+			$ \phi_{\max} \gets \lvert \phi(X, Y, \mathbf{Z}) \rvert $ \;
 			$ L_{\max} \gets \mathcal{A}_G(X, Y)$ \;
 		}
         }
