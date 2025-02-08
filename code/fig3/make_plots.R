@@ -176,6 +176,7 @@ make_plots_v2 <- function(filename, plot_type){
 	d_shd$lower <- as.double(d_shd$lower)
 	d_shd$upper <- as.double(d_shd$upper)
 
+	d_shd$line_labels <- round(as.numeric(d_shd$line_labels) + ((1 - as.numeric(d_shd$line_labels))/3), 2)
 	p_shd <- ggplot(d_shd, aes(x=edge_prob, y=mean_val, 
 				   ymin=lower, ymax=upper, 
 				   group=grp, color=algo, 
@@ -195,7 +196,7 @@ make_plots_v2 <- function(filename, plot_type){
 		ylim(0, 40) +
 		guides(linetype='none', fill='none')
 
-	ggsave("shd_ribbon.pdf", p_shd, height=2, width=3.2, units='in')
+	ggsave("shd_ribbon.pdf", p_shd, height=2, width=3.4, units='in')
 
 
 	d_sid <- d %>% select(edge_prob, oracle_acc, ges_lower_sid_mean, ges_upper_sid_mean, ges_lower_sid_sd, ges_upper_sid_sd, hc_lower_sid_mean, hc_upper_sid_mean, hc_lower_sid_sd, hc_upper_sid_sd, pc_lower_sid_mean, pc_upper_sid_mean, pc_lower_sid_sd, pc_upper_sid_sd, human_sid_mean, human_sid_sd)
@@ -235,6 +236,7 @@ make_plots_v2 <- function(filename, plot_type){
 	d_sid$lower <- as.double(d_sid$lower)
 	d_sid$upper <- as.double(d_sid$upper)
 
+	d_sid$line_labels <- round(as.numeric(d_sid$line_labels) + ((1 - as.numeric(d_sid$line_labels))/3), 2)
 	p_sid <- ggplot(d_sid, aes(x=edge_prob, y=mean_val, 
 				   ymin=lower, ymax=upper, 
 				   group=grp, color=algo, 
@@ -253,7 +255,7 @@ make_plots_v2 <- function(filename, plot_type){
 		ylim(0, 90) +
 		guides(linetype='none', fill='none')
 
-	ggsave("sid_ribbon.pdf", p_sid, height=2, width=3.2, units='in')
+	ggsave("sid_ribbon.pdf", p_sid, height=2, width=3.4, units='in')
 }
 
 make_plots_v2(filename='results/sl_results_linear.csv', plot_type='ribbon')
