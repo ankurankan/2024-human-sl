@@ -117,13 +117,12 @@ rmsea <- function( dag ){
 	
 			if (!(nodes[i] %in% pa_j) & !(nodes[j] %in% pa_i)){
 				tst <- dagitty::ciTest(X=nodes[i], Y=nodes[j], Z=union(pa_i, pa_j), dataset, type="cis.pillai")
-				pvalues <- c(pvalues, max(tst[,"p.value"], 1e-20))
+				pvalues <- c(pvalues, max(tst[,"p.value"], 1e-40))
 			}
 		}
 	}
 
 	fisherc <- -2 * sum(log(pvalues))
 	# return (pchisq(fisherc, 2*length(pvalues), lower.tail=F))
-	print(pvalues)
-	return(sqrt( max(fisherc**2 - 2*length(pvalues), 0) / (2*length(pvalues) * nrow(dataset) )))
+	return(sqrt( max(fisherc**2 - 2*length(pvalues), 0) / (2*length(pvalues) * (nrow(dataset) - 1) )))
 }
