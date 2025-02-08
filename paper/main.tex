@@ -706,6 +706,13 @@ rather than just a relative comparison between models. Figure~\ref{fig:unexplain
 
 
 \subsection{Using LLMs as Experts}
+ 
+\begin{figure}[t!]
+	\centering
+	\includegraphics[page=1]{fig5.pdf}
+	\caption{DAG learned from the adult income dataset using an LLM (GEMINI-1.5-flash) as the expert. The p-value threshold used is $ 0.05 $ and the measure of association threshold is $ 0. 1 $}
+	\label{fig:adult_llm}
+\end{figure}
 Recently, there has been a lot of work towards using LLMs for causal discovery,
 with tasks ranging from determining pairwise edge orientation
 \citep{Kiciman2023, Jin2024} to full causal structure learning \citep{Naik2023,
@@ -728,6 +735,21 @@ ask exact questions about the variables unlike some of the other approaches.
 
 \section{Web Tool}
 \label{sec:web}
+
+\begin{figure}[t!]
+	\centering
+	\includegraphics[scale=0.4]{../code/plots/web_tool_full_new.png}
+	\caption{A screenshot of the web tool for constructing the model. Users
+		can upload their dataset after which the tool creates an empty
+		graph and shows all pair of variables which are associated in
+		the model using undirected red edges with the strength of
+		association represented using edge width. Users can then
+		iteratively add edges to the model (shown in green) while
+		deciding the edge orientation based on domain knowledge.
+		Unnecessary edges are shown in black.}
+	\label{fig:web}
+\end{figure}
+
 To enable users to apply this method to their own datasets, we developed an
 interactive web-based tool (shown in Fig.~\ref{fig:web}) for constructing
 models. Users begin by uploading their dataset, which initializes an empty DAG
@@ -746,26 +768,6 @@ value at each change to determine the overall fit of the model to the data.
 Once satisfied with the constructed DAG, users can export the model for further
 analysis.
 
-\begin{figure}[t!]
-	\centering
-	\includegraphics[scale=0.4]{../code/plots/web_tool_full_new.png}
-	\caption{A screenshot of the web tool for constructing the model. Users
-		can upload their dataset after which the tool creates an empty
-		graph and shows all pair of variables which are associated in
-		the model using undirected red edges with the strength of
-		association represented using edge width. Users can then
-		iteratively add edges to the model (shown in green) while
-		deciding the edge orientation based on domain knowledge.
-		Unnecessary edges are shown in black.}
-	\label{fig:web}
-\end{figure}
-
-\begin{figure}[t!]
-	\centering
-	\includegraphics[page=1]{fig5.pdf}
-	\caption{DAG learned using the adult income dataset using an LLM (GEMINI-1.5-flash) as the expert. The p-value threshold used is $ 0.05 $ and the measure of association threshold is $ 0. 1 $}
-	\label{fig:adult_llm}
-\end{figure}
 
 \section{Conclusions}
 
