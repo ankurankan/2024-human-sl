@@ -751,6 +751,11 @@ or removing an edge affects only a localized part of the model. In contrast,
 our measure of association is global, meaning that modifying an edge in one
 part of the model can influence association values elsewhere.
 
+Given a DAG $ G = (V, E) $, the total unexplained correlation in define as:
+\begin{equation}
+	= \sum_{\{ (X, Y) \in V | X \rightarrow Y, Y \rightarrow X \not \in E \} } \phi(X, Y, \mathrm{pa}_G(X) \cup \mathrm{pa}_G(Y)))
+\end{equation}
+
 Another major difference is in the interpretability of the evaluation metric.
 Most scoring metrics are based on log-likelihood with a penalty for model
 complexity. These score metrics allow for relative comparisons between models
@@ -812,7 +817,8 @@ To enable users to apply this method to their own datasets, we developed an
 interactive web-based tool (shown in Fig.~\ref{fig:web}) for constructing
 models. Users begin by uploading their dataset, which initializes an empty DAG
 with nodes corresponding to the dataset\'s variables. They can then specify a
-p-value threshold and a measure of association threshold.
+p-value threshold and a measure of association threshold. We use the measure of 
+conditional association shown in Appendix~\ref{sec:mixed_association}. 
 
 Using the specified thresholds, the tool visually highlights unexplained
 correlations by displaying red edges between variables where correlation exists
