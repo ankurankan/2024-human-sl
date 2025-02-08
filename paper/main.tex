@@ -557,6 +557,31 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 
 \subsection{Ranking Potential New Edges}
 
+\begin{algorithm}[h]
+\DontPrintSemicolon
+\SetAlgoLined
+\SetKwFunction{RankedExpand}{RankedExpand}
+\SetKw{KwGoTo}{go to}
+\SetKwProg{Fn}{Function}{:}{}
+\Fn{{\sc RankedExpand}($V,E,\mathcal{D}_G,\mathcal{A}_G$,$\phi$,$B=\emptyset$)}{
+    let $\phi_{\max} \gets 0 $\;
+    \ForEach{$X, Y$ where $X \to Y \notin E$ and $Y \to X \notin E$ and 
+	$\{X,Y\} \notin B$}{
+        let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
+        \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
+		\If{$\phi(X, Y, \mathbf{Z}) > \phi_{\max}$}{
+			$ \phi_{\max} \gets \phi(X, Y, \mathbf{Z})$ \;
+			$ L_{\max} \gets \mathcal{A}_G(X, Y)$ \;
+		}
+        }
+    }
+    add $L_{\max}$ to $E$\;
+    \Return{$(V,E)$}\;
+}
+\caption{Adding an edge between variables with the highest correlation}
+\label{algo:ranked_expand}
+\end{algorithm}
+
 \subsection{Comparison to Automated Algorithms}
 \begin{figure}[t!]
 	\centering
@@ -654,7 +679,7 @@ metrics: Structural Hamming Distance (SHD) and Structural Intervention Distance
 As the automated algorithms can only recover the CPDAG from data, and our
 method recovers the DAG. To compare them fairly, we computed the SHD and SID
 for all possible orientations of the CPDAG to show the best and worst case
-scenarios. The results are shown in Figure~\ref{shd_sid}. For SHD, the
+scenarios. The results are shown in Figure~\ref{fig:shd_sid}. For SHD, the
 performance of \emph{ExpertInLoop} is comparable to the automated algorithms
 for $ \alpha = 0.3 (\alpha_{\textrm{eff}} = 0.53 $, and performs better for
 higher $ \alpha $ values. For SID, the \emph{ExpertInLoop} performs better in
