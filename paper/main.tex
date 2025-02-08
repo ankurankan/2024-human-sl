@@ -560,17 +560,6 @@ In this section, we give some of the practical aspects of the
 causal discovery algorithms.
 
 \subsection{Ranking Potential New Edges}
-In Algorithm~\ref{algo:expert}, in each step we add a single edge to the DAG
-and remove any edges that can be pruned. In practice, we use a slightly
-modified version of the Algorithm~\ref{algo:expand} for adding new edges as
-given in Algorithm~\ref{algo:ranked_expand}. Rather than choosing the first
-potential edge addition, this algorithm ranks all potential new edges based on
-the conditional association between the variables. The edge with the highest
-conditional association is then added to the graph. This modification allows us
-to prioritize edges that would help in the explaining the observed correlation
-in the data the highest. For this purpose, we use a measure of conditional
-association measure, $\phi$ between variables.
-
 \begin{algorithm}[h]
 \DontPrintSemicolon
 \SetAlgoLined
@@ -595,6 +584,25 @@ association measure, $\phi$ between variables.
 \caption{Adding an edge between variables with the highest correlation}
 \label{algo:ranked_expand}
 \end{algorithm}
+
+In Algorithm~\ref{algo:expert}, in each iteration we add a new edge to the DAG
+chosen by Algorithm~\ref{algo:expand}. This edge is chosen at random depending
+on the order of iteration in Algoirthm~\ref{algo:expand}. A more optimal way to
+add these edges would be to choose the pairs of variables that could help
+improve the fit the most in each step. One potential greedy approach to do this
+would be to select the variable pair $ X $ and $ Y $ that have the highest
+amount of observed conditional correlation in the data. In
+Algorithm~\ref{algo:ranked_expand}, we slightly modify
+Algorithm~\ref{algo:expand} to show this approach. In this case we first go
+through all potential edges that can be added to the DAG in each step, and rank
+them based on the conditional association between them given the current DAG.
+This gives us a measure of how much of the observed correlation between them is
+not explained by the current model. We then choose the pair of variables the
+highest conditional association. This modification allows us to prioritize pair
+of variables to quickly improve the fit of the model. For the conditional
+measure of association, we use a measures outlined in
+Section~\ref{sec:background} depending on the data type of the variables.
+
 
 \subsection{Comparison to Automated Algorithms}
 \begin{figure}[t!]
