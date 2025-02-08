@@ -598,19 +598,19 @@ value for the DAG. We compare the learned DAG to the original DAG using two
 metrics: Structural Hamming Distance (SHD) and Structural Intervention Distance
 (SID) \citep{Peters2015}.
 
-As the automated algorithms can only recover the CPDAG from data, and our method
-recovers the DAG. To compare them fairly, we computed the SHD and SID for all
-possible orientations of the CPDAG and show them in the Figure.
+\todo[inline]{Add equation for data generation method once the plot is finalized}
 
-To use our proposed approach, we need an expert to tell us the direction of the
-edges. We simulated an expert using this assisted model construction approach,
-we start with an empty model and take a greedy approach to add edges to this
-model. At any point, we select the pair of variables that has significant
-correlation and the highest unexplained correlation, i.e., highest conditional
-association. We then use an oracle to decide the direction of the edge between
-the variables. Given an accuracy of the oracle, $ \alpha $, the oracle either
-gives the correct direction, incorrect direction, or returns None representing
-that it does not know the direction.
+As the automated algorithms can only recover the CPDAG from data, and our
+method recovers the DAG. To compare them fairly, we computed the SHD and SID
+for all possible orientations of the CPDAG to show the best and worst case scenarios.
+
+To use the \textit{ExpertInLoop} algorithm, we need two oracles: a d-separation
+oracle and an ancestral oracle. We use a conditional independence test (partial
+correlation if using linear data) for determining the d-separation with a
+p-value threshold of $ 0.05 $. For the ancestral oracle, we simulated the
+strong ancestral oracle. We vary the accuracy of our oracle to test the
+performance for varying oracle accuracies. Given an accuracy level $ \alpha $
+of the oracle, the oracle returns:
 
 \begin{equation}
 	\begin{split}
@@ -625,43 +625,38 @@ that it does not know the direction.
 If the oracle returns None for any pair of variables, an edge between this pair
 is not suggested to the oracle in future iterations. We also make sure that
 only edges which do not form a cyclic in the graph are used to select the next
-potential edge. After adding each edge, we also check if the p-value of any
-existing edge shows independence. If that happens we remove that edge and
-blacklist that edge, i.e., that edge is not prompted again during the run of
-the algorithm. We repeat this procedure till the model explains all
-correlations between the variables. There is a possibility that this greedy
-expert gets stuck at incorrect graph structures as it does not do any
-backtracking to fix its earlier mistakes. This procedure is outlined in the
-Algorithm 1.
+potential edge. There is a possibility that this greedy expert gets stuck at
+incorrect graph structures as it does not do any backtracking to fix its
+earlier mistakes. This procedure is outlined in the Algorithm 1.
 \todo[inline]{Show an algorithm of how this expert method is working}
 
-\begin{verbatim}
-	Input: Dataset $ D $ on variables $ \bm{X} $
-	Output: Learned DAG G.
-	
-	function compute_effects(G):
-		pvalues <- dict()
-		effects <- dict()
-		for X_i, X_j in X:
-			if edge between X_i, X_j:
-				p_values[(X_i, X_j)] <- pvalue(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
-				effects[(X_i, X_j)] <- \phi(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
-			else:
-				p_values[(X_i, X_j)] <- pvalue(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
-				effects[(X_i, X_j)] <- \phi(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
-		return p_values, effects
-	
-	$ G $ <- Empty Graph
-	p_values, effects <- compute_effects(G)
-	while (p_values > p_thres, 
-\end{verbatim}
-
-\begin{algorithm}
-	\KwData{Data set $ D $ on variables $ \bm{X} $, pthres, effectthres}
-	\KwResult{The learned DAG: $ G $}
-	\BlankLine
-	$ G \leftarrow $ Empty Graph
-\end{algorithm}
+% \begin{verbatim}
+% 	Input: Dataset $ D $ on variables $ \bm{X} $
+% 	Output: Learned DAG G.
+% 	
+% 	function compute_effects(G):
+% 		pvalues <- dict()
+% 		effects <- dict()
+% 		for X_i, X_j in X:
+% 			if edge between X_i, X_j:
+% 				p_values[(X_i, X_j)] <- pvalue(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
+% 				effects[(X_i, X_j)] <- \phi(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
+% 			else:
+% 				p_values[(X_i, X_j)] <- pvalue(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
+% 				effects[(X_i, X_j)] <- \phi(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
+% 		return p_values, effects
+% 	
+% 	$ G $ <- Empty Graph
+% 	p_values, effects <- compute_effects(G)
+% 	while (p_values > p_thres, 
+% \end{verbatim}
+% 
+% \begin{algorithm}
+% 	\KwData{Data set $ D $ on variables $ \bm{X} $, pthres, effectthres}
+% 	\KwResult{The learned DAG: $ G $}
+% 	\BlankLine
+% 	$ G \leftarrow $ Empty Graph
+% \end{algorithm}
 
 \subsection{Connection to Score Based Methods}
 
