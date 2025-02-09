@@ -130,17 +130,17 @@ practical settings:
 		effect estimation, assume knowledge of a fully oriented DAG. 
 \end{enumerate}
 
-Figure~\ref{fig:intro} highlights some of these issues. Constructing DAG
-manually, on the other hand, can also be error prone as it can be difficult to
-distinguish various scenarios such as direct or indirect effects, mediation,
-and so on. This makes it important to test the consistency of our DAG against
-our dataset. One of the methods for testing this is to check whether the
-implied CIs of the DAG hold in the dataset or not \citep{Ankan2021}. Each pair
-of variables with a missing edge between them in the DAG implies a CI
-statement, we can use a statistical test to check whether the statement holds
-in our dataset or not. If we find any violations we can also modify our DAG
-based on this and utilizing our domain knowledge to find a suitable orientation
-for the edge between the pair of variables.
+Figure~\ref{fig:intro} highlights some of these issues. On the other hand,
+constructing DAG based solely on domain expertise can be error prone as it
+requires us to distinguish between different causal structures, such as direct
+or indirect effects or causal mediation. Given these complexities, it is
+important to validate the consistency of a DAG against our dataset. One way to
+test this consistency is by testing whether the CI statements implied by the
+DAG hold in the data \citep{Ankan2021}. Specifically, each missing edge between
+a pair of variables in the DAG implies a CI statement, which can be tested in
+the dataset using a statistical test. If we find any violation to a CI
+statement, we can fix it by adding an edge between the variables in the DAG. We
+also need to decide the orientation of this edge based on domain expertise.
 
 % While DAG-based methods focus on
 % automated discovery, SEM-based methods emphasize expert driven model
@@ -152,21 +152,19 @@ for the edge between the pair of variables.
 % Specification Search \citep{Long1983} and uses method such as modification
 % indices, and Wald-based tests \citep{Marcoulides2018}. 
 
-In this paper we present a method that utilizes this idea of CI testing to
-assist researchers during the DAG construction instead of testing the final
-model. We propose an iterative model construction method that combines domain
-knowledge with data-driven insights. Our approach utilizes conditional
-independence testing to identify pair of variables in the DAG that are missing
-an edge or have a superfluous edge. Based on this information, in each
-iteration we present one such pair of variables to an expert who then decides
-the orientation of the edge between the variables based on their domain
-knowledge. The method also iteratively prunes all superfluous edges in each
-iteration. As a result this approach guides the expert in constructing their
-model while ensuring that the model is consistent with the data.
-
-As at any iteration, multiple changes to the DAG are possible. We also give a
-way to rank potential new edges additions to the DAG using effect size measures
-for CI tests.
+In this paper, we propose a method that leverages this CI testing approach to
+assist researchers during the DAG construction process, rather than just
+validating the model. Our approach follows an iterative model-building strategy
+that integrates domain expertise with CI testing on data. At each iterations,
+we use CI testing to identify pairs of variables where an edge is either
+missing or superfluous. These pairs are then presented to the expert, who
+determines whether to add or remove these edges. The orientation of the edge
+when adding is determined based on the domain expertise. As at any iteration,
+multiple changes to the DAG are possible. We also give a way to rank potential
+new edges additions to the DAG using effect size measures for CI tests to
+address the most severe violations of CI tests first. As a result this approach
+acts like a guide to the expert when manually constructing their model while
+ensuring that the model is consistent with the data. 
 
 % When manually constructing models, it is important to test whether the
 % resulting DAG accurately represents the dataset. Based on this evaluation and
