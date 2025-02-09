@@ -130,12 +130,14 @@ practical settings:
 		effect estimation, assume knowledge of a fully oriented DAG. 
 \end{enumerate}
 
-Figure~\ref{fig:intro} highlights some of these issues. When constructing DAGs
-manually, it is important to test how consistent our DAG is to our dataset. One
-of the methods for checking the consistency is by testing whether the implied
-CIs of the DAG hold in the dataset or not \citep{Ankan2021}. As each pair of
-variables that do not have an edge between them in the DAG implies a CI
-statement, we can use a statistical test to check whether that statement holds
+Figure~\ref{fig:intro} highlights some of these issues. Constructing DAG
+manually, on the other hand, can also be error prone as it can be difficult to
+distinguish various scenarios such as direct or indirect effects, mediation,
+and so on. This makes it important to test the consistency of our DAG against
+our dataset. One of the methods for testing this is to check whether the
+implied CIs of the DAG hold in the dataset or not \citep{Ankan2021}. Each pair
+of variables with a missing edge between them in the DAG implies a CI
+statement, we can use a statistical test to check whether the statement holds
 in our dataset or not. If we find any violations we can also modify our DAG
 based on this and utilizing our domain knowledge to find a suitable orientation
 for the edge between the pair of variables.
