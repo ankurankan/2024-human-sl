@@ -107,23 +107,12 @@ numerous causal discovery algorithms, such as constraint-based methods like PC
 algorithm \citep{Spirtes2001} and Fast Causal Inference \citep{Spirtes2000}),
 score-based methods such as Hill-Climb Search and Greedy Equivalence Search
 \citep{Chickering2002}, and continuous optimization-based methods like NO TEARS
-\citep{Zheng2018} and DAGMA \citep{Bello2022}. 
-
-% While DAG-based methods focus on
-% automated discovery, SEM-based methods emphasize expert driven model
-% specification. This includes tools to assist researchers in manually
-% constructing models, enabling them to incorporate their domain knowledge in the
-% model building process. Researchers typically begin with an initial model based
-% on their domain knowledge and then use these tools to guide modifications that
-% improve the model's fit to data. This process is commonly known as
-% Specification Search \citep{Long1983} and uses method such as modification
-% indices, and Wald-based tests \citep{Marcoulides2018}. 
-
-Despite significant progress in automated causal discovery, their adoption in
-applied research has been limited. Researchers often prefer to manually
-construct DAGs based on their domain expertise \citep{Tennant2020,
-Petersen2021}. We attribute this preference to several challenges with existing
-causal discovery algorithms in practical settings:
+\citep{Zheng2018} and DAGMA \citep{Bello2022}. Despite significant progress in
+automated causal discovery, their adoption in applied research has been
+limited. Researchers often prefer to manually construct DAGs based on their
+domain expertise \citep{Tennant2020, Petersen2021}. We attribute this
+preference to several challenges with existing causal discovery algorithms in
+practical settings:
 
 \begin{enumerate}
 	\item \textbf{Lack of Trust:} While most algorithms are asymptotically
@@ -141,14 +130,27 @@ causal discovery algorithms in practical settings:
 		effect estimation, assume knowledge of a fully oriented DAG. 
 \end{enumerate}
 
-Figure~\ref{fig:intro} highlights some of these issues.   When manually
-constructing models, it is important to test whether the resulting DAG
-accurately represents the dataset. Based on this evaluation and domain
-knowledge, we can make further modification to the model. One common approach
-for assessing DAGs is to check whether the Conditional Independences (CIs)
-implied by the DAG hold in the data \citep{Ankan2021}. If we find violations to
-these CIs, we can use our domain knowledge to make appropriate changes to the
-model.
+Figure~\ref{fig:intro} highlights some of these issues. Constructing DAG
+manually, on the other hand, can also be error prone as it can be difficult to
+distinguish various scenarios such as direct or indirect effects, mediation,
+and so on. This makes it important to test the consistency of our DAG against
+our dataset. One of the methods for testing this is to check whether the
+implied CIs of the DAG hold in the dataset or not \citep{Ankan2021}. Each pair
+of variables with a missing edge between them in the DAG implies a CI
+statement, we can use a statistical test to check whether the statement holds
+in our dataset or not. If we find any violations we can also modify our DAG
+based on this and utilizing our domain knowledge to find a suitable orientation
+for the edge between the pair of variables.
+
+% While DAG-based methods focus on
+% automated discovery, SEM-based methods emphasize expert driven model
+% specification. This includes tools to assist researchers in manually
+% constructing models, enabling them to incorporate their domain knowledge in the
+% model building process. Researchers typically begin with an initial model based
+% on their domain knowledge and then use these tools to guide modifications that
+% improve the model's fit to data. This process is commonly known as
+% Specification Search \citep{Long1983} and uses method such as modification
+% indices, and Wald-based tests \citep{Marcoulides2018}. 
 
 In this paper we present a method that utilizes this idea of CI testing to
 assist researchers during the DAG construction instead of testing the final
@@ -217,13 +219,13 @@ for CI tests.
     \end{subfigure}
 
     \caption{A comparison of Markov Equivalence Class (MEC) learned using Adult
-	    Income Dataset \citep{Becker1996} using different algorithms and
-	    sample sizes. Edge colour represents the sample size used: Red
-	    ($N=400$), and blue ($N=800$). (a) PC algorithm with a mutual
-	    information based CI test, (b) PC algorithm with a residualization
-	    based test \citep{Ankan2023}, (c) Hill Climb Search with Bayesian
-	    Information Criterion (BIC) score. The learned model structure
-	    varies significantly in each case.}
+	     Income Dataset \citep{Becker1996} using different causal discovery
+	     algorithms and sample sizes. Edge colour represents the sample size
+	     used: red ($N=400$), and blue ($N=800$). (a) PC algorithm with a
+	     mutual information based CI test, (b) PC algorithm with a
+    	     residualization based test \citep{Ankan2023}, (c) Hill Climb Search with
+	     Bayesian Information Criterion (BIC) score. The learned model structure varies
+             significantly in each case.}
     \label{fig:intro}
 \end{figure}
 
