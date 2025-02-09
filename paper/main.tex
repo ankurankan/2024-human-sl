@@ -71,8 +71,8 @@
 	preference arises due to several practical challenges with automated
 	algorithms, such as their tendency to make obvious errors and output
 	Markov Equivalence Classes (MECs) rather than a DAG. To assist
-	researchers in constructing DAGs manually, we propose an iterative DAG
-	construction approach that combines domain knowledge with data-driven
+	researchers in constructing DAGs manually, we propose an iterative 
+	structure learning approach that combines domain knowledge with data-driven
 	insights. Our method leverages Conditional Independence (CI) testing to
 	iteratively identify variable pairs where an edge is either missing or
 	superfluous. Based on this information, we can choose to add missing
@@ -175,19 +175,20 @@ also need to decide the orientation of this edge based on domain expertise.
     \label{fig:intro}
 \end{figure}
 
-In this paper, we propose a method that leverages this CI testing approach to
-assist researchers during the DAG construction process, rather than just
-validating the model. Our approach follows an iterative model-building strategy
-that integrates domain expertise with CI testing on data. At each iterations,
-we use CI testing to identify pairs of variables where an edge is either
-missing or superfluous. These pairs are then presented to the expert, who
-determines whether to add or remove these edges. The orientation of the edge
-when adding is determined based on the domain expertise. As at any iteration,
-multiple changes to the DAG are possible. We also give a way to rank potential
-new edges additions to the DAG using effect size measures for CI tests to
-address the most severe violations of CI tests first. As a result this approach
-acts like a guide to the expert when manually constructing their model while
-ensuring that the model is consistent with the data. 
+In this paper, we propose a structure learning method that leverages this CI
+testing approach to assist researchers during the DAG construction process,
+rather than just validating the model. Our approach follows an iterative
+model-building strategy that integrates domain expertise with CI testing on
+data. At each iterations, we use CI testing to identify pairs of variables
+where an edge is either missing or superfluous. These pairs are then presented
+to the expert, who determines whether to add or remove these edges. The
+orientation of the edge when adding is determined based on the domain
+expertise. As at any iteration, multiple changes to the DAG are possible. We
+also give a way to rank potential new edges additions to the DAG using effect
+size measures for CI tests to address the most severe violations of CI tests
+first. As a result this approach acts like a guide to the expert when manually
+constructing their model while ensuring that the model is consistent with the
+data. 
 
 % When manually constructing models, it is important to test whether the
 % resulting DAG accurately represents the dataset. Based on this evaluation and
@@ -253,11 +254,7 @@ where $ \mathrm{cov}(X, Y) $ is the covariance between $ X $ and $ Y $, $ \mathr
 respectively.  Covariance matrix using $ \Sigma $ and the entry corresponding to
 covariance between $ X $ and $ Y $ in the matrix using $ \Sigma_{XY} $.
 
-\subsection{Integrating domain knowledge in causal discovery}
-Multiple ways to integrate, originally using forbidden and required edges. Or
-temporal algorithms by specifying causal tiers.
-
-\subsection{Measures of Conditional Association}
+\subsection{CI Tests and Measures of Conditional Association}
 Our DAG structure learning approach relies on using CI tests and a measure of
 conditional association between variables -- also known as partial association
 -- between variables. Specifically, firstly we are interested in testing a CI
@@ -329,6 +326,8 @@ When $ \bm{Z} \neq \emptyset $,
 \begin{equation}
 	r_{X, Y; \bm{Z}} = - \frac{\Sigma^{-1}_{XY}}{\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}}
 \end{equation}
+
+\subsection{Improving DAGs using CI Testing}
 
 
 \section{DAG Structure Learning using Ancestral Oracles}
@@ -585,19 +584,6 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 	\end{subfigure}
 	\caption{An example showing each iteration of the \textsc{ExpertInLoop} algorithm. The dashed edges show all the potential edges that \textsc{Expand} step could add in each iteration.}
 \end{figure}
-
-
-
-% \begin{figure}
-% 	\centering
-% 	\begin{subfigure}{0.5\textwidth}
-% 		\includegraphics[scale=0.25]{../../presentations/2024_05_das/2.png}
-% 	\end{subfigure}%
-% 	\begin{subfigure}{0.5\textwidth}
-% 		\includegraphics[scale=0.25]{../../presentations/2024_05_das/5.png}
-% 	\end{subfigure}
-% 	\caption{Screenshots of the web-tool. \todo[inline]{Insert screenshots of the web-tool}}
-% \end{figure}
 
 \section{Empirical Analysis}
 \label{sec:empirical}
