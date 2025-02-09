@@ -704,7 +704,10 @@ value for the DAG. We compare the learned DAG to the original DAG using two
 metrics: Structural Hamming Distance (SHD) and Structural Intervention Distance
 (SID) \citep{Peters2015}.
 
-\todo[inline]{Add equation for data generation method once the plot is finalized}
+\begin{equation}
+	Y = \bm{\beta} \mathrm{Pa}_G(Y) + \mathcal{N}(0, 1)
+\end{equation}
+
 
 As the automated algorithms can only recover the CPDAG from data, and our
 method recovers the DAG. To compare them fairly, we computed the SHD and SID
