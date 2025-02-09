@@ -166,6 +166,10 @@ knowledge. The method also iteratively prunes all superfluous edges in each
 iteration. As a result this approach guides the expert in constructing their
 model while ensuring that the model is consistent with the data.
 
+As at any iteration, multiple changes to the DAG are possible. We also give a
+way to rank potential new edges additions to the DAG using effect size measures
+for CI tests.
+
 % When manually constructing models, it is important to test whether the
 % resulting DAG accurately represents the dataset. Based on this evaluation and
 % domain knowledge, we can make further modification to the model. One common
