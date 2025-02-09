@@ -63,33 +63,29 @@
 
 \begin{abstract}
 
-Causal discovery has received significant attention in the Directed Acyclic
-Graphs (DAGs) literature, leading to the development of numerous automated
-algorithms for learning DAGs from data. However, their adoption in applied
-domains remain limited, as researchers often prefer to construct DAGs manually
-based on domain knowledge. This preference arises due to several practical
-challenges with automated algorithms, such as their tendency to make obvious
-errors and output Markov Equivalence Classes (MECs) rather than a DAG. To
-address these challenges, we propose an iterative DAG construction method that
-combines domain knowledge with data-driven insights. Our approach iteratively
-identifies pair of variables with a missing edge in the DAG, and asks for the
-orientation of the edge from an expert. We also propose a method to rank these
-potential new edges based on their impact on the model fit. Empirical results
-show that this iterative model construction approach achieves performance
-comparable to automated algorithms if we are able to correctly decide the
-orientation of new edges in one out of three cases. Additionally, we
-demonstrate that, in the absence of an expert, a Large Language Model (LLM) can
-be used to determine edge orientations. We provide the implementation of our
-approach in both a web tool at: <redacted for review> and a Python package
-<redacted for review>.
-
-
-% Our approach combines implied Conditional Independence (CI) testing with a
-% measure of conditional association between variables to rank violations
-% of implied CIs in a given DAG. This ranking helps prioritize modifications to
-% the DAG to improve its fit to the data while utilizing expert knowledge to
-% decide the orientation of new edges. 
-
+	Causal discovery has received significant attention in the Directed
+	Acyclic Graphs (DAGs) literature, leading to the development of
+	numerous automated algorithms for learning DAGs from data. However,
+	their adoption in applied domains remain limited, as researchers often
+	prefer to construct DAGs manually based on domain knowledge. This
+	preference arises due to several practical challenges with automated
+	algorithms, such as their tendency to make obvious errors and output
+	Markov Equivalence Classes (MECs) rather than a DAG. To assist
+	researchers in constructing DAGs manually, we propose an iterative DAG
+	construction approach that combines domain knowledge with data-driven
+	insights. Our method leverages Conditional Independence (CI) testing to
+	iteratively identify variable pairs where an edge is either missing or
+	superfluous. Based on this information, we can choose to add missing
+	edges with appropriate orientation based on domain knowledge or remove
+	unnecessary ones. We also give a method to rank potential new edges
+	based on their impact on the overall model fit. Empirical results show
+	that this iterative approach achieves performance comparable to
+	automated algorithms if the orientation of new edges is correctly
+	determined in at least one out of two cases. Additionally, we show
+	that, in the absence of an expert, a Large Language Model (LLM) can be
+	used to determine edge orientations. We provide an implementation of
+	our approach as both a webtool: <redacted for review> and a Python
+	package <redacted for review>.
 
 \end{abstract}
 
@@ -98,10 +94,12 @@ Understanding cause-and-effect relationships between variables is a fundamental
 objective in many scientific fields. These relationships reveal the mechanisms
 behind observed phenomena and guide effective interventions or policy
 decisions. Causal discovery methods aim to discover such relationships
-among random variables using observational data. Approaches to causal discovery
-have been developed within both the Directed Acyclic Graphs (DAGs) and
-Structural Equation Models (SEMs) frameworks, each adapting a different
-approach.
+among random variables using observational data. 
+
+% Approaches to causal discovery
+% have been developed within both the Directed Acyclic Graphs (DAGs) and
+% Structural Equation Models (SEMs) frameworks, each adapting a different
+% approach.
 
 In the DAG literature, the primary focus has been on developing automated
 algorithms to learn causal structures from datasets. These efforts have led to
@@ -109,15 +107,17 @@ numerous causal discovery algorithms, such as constraint-based methods like PC
 algorithm \citep{Spirtes2001} and Fast Causal Inference \citep{Spirtes2000}),
 score-based methods such as Hill-Climb Search and Greedy Equivalence Search
 \citep{Chickering2002}, and continuous optimization-based methods like NO TEARS
-\citep{Zheng2018} and DAGMA \citep{Bello2022}. While DAG-based methods focus on
-automated discovery, SEM-based methods emphasize expert driven model
-specification. This includes tools to assist researchers in manually
-constructing models, enabling them to incorporate their domain knowledge in the
-model building process. Researchers typically begin with an initial model based
-on their domain knowledge and then use these tools to guide modifications that
-improve the model's fit to data. This process is commonly known as
-Specification Search \citep{Long1983} and uses method such as modification
-indices, and Wald-based tests \citep{Marcoulides2018}. 
+\citep{Zheng2018} and DAGMA \citep{Bello2022}. 
+
+% While DAG-based methods focus on
+% automated discovery, SEM-based methods emphasize expert driven model
+% specification. This includes tools to assist researchers in manually
+% constructing models, enabling them to incorporate their domain knowledge in the
+% model building process. Researchers typically begin with an initial model based
+% on their domain knowledge and then use these tools to guide modifications that
+% improve the model's fit to data. This process is commonly known as
+% Specification Search \citep{Long1983} and uses method such as modification
+% indices, and Wald-based tests \citep{Marcoulides2018}. 
 
 Despite significant progress in automated causal discovery, their adoption in
 applied research has been limited. Researchers often prefer to manually
@@ -161,6 +161,10 @@ the orientation of the edge between the variables based on their domain
 knowledge. The method also iteratively prunes all superfluous edges in each
 iteration. As a result this approach guides the expert in constructing their
 model while ensuring that the model is consistent with the data.
+
+As at any iteration, multiple changes to the DAG are possible. We also give a
+way to rank potential new edges additions to the DAG using effect size measures
+for CI tests.
 
 % When manually constructing models, it is important to test whether the
 % resulting DAG accurately represents the dataset. Based on this evaluation and
@@ -890,9 +894,14 @@ analysis.
 
 Points:
 \begin{itemize}
-	\item As researchers prefer to anyways build models by hand, this is like a companion tool to help them in deciding the method.
-	\item Solves all the $ 3 $ issues outlined in the introduction.
-	\item Compared to other expert knowledge specification methods, users don't need to guess what information then need to provide as exact questions are asked. Also enables us to ask an LLM for it.
+	\item As researchers prefer to build models by hand, we present a tool
+		to assist them in construction using CI testing.
+	\item In practice as many edges are possible for any given DAG, we provide
+		a ranking method to find the best edge addition.
+	\item Compared to other expert knowledge specification methods, users
+		don't need to guess what information then need to provide as
+		exact questions are asked. Also enables us to ask an LLM for
+		it.
 \end{itemize}
 
 Future work:
