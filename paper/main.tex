@@ -451,11 +451,12 @@ easily proved facts.
 For a conditional independence oracle
  $\mathcal{D}_G$ and a strong ancestral oracle $\mathcal{A}_G$, 
 $\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G, \emptyset, \infty)=G^+$.
+\label{prop:strongexpand}
 \end{proposition}
 
 \begin{proof}
 Since we start from an empty graph, every pair of vertices $X, Y$ where
- $X \in \tetxrm{An}_G(Y)$ is d-separated by the empty set and is
+ $X \in \textrm{An}_G(Y)$ is d-separated by the empty set and is
  connected by the edge $X \to Y$. No other edges are added. Therefore, 
 the result is $G^+$. 
 \end{proof}
@@ -465,11 +466,12 @@ For a conditional independence oracle
  $\mathcal{D}_G$ and a weak ancestral oracle $\mathcal{A}_G$, 
 $\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G, \emptyset, \infty)
 \supseteq G^+$.
+\label{prop:weakexpand}
 \end{proposition}
 
 \begin{proof}
 Every pair of vertices $X, Y$ that are $d$-connected in $G$ are now connected by an edge 
-during $\textsc{Expand}$. For $X \in \tetxrm{An}_G(Y)$, the edge is 
+during $\textsc{Expand}$. For $X \in \textrm{An}_G(Y)$, the edge is 
 $X \to Y$ just like when using a strong ancestral oracle; since only correctly oriented
 edges are added between ancestor-descendant pairs, such additions never create cycles.
 For $X, Y$ that are only $d$-connected throug common ancestors, an arbitrary 
@@ -508,12 +510,23 @@ Then $\textsc{Prune}(G',\mathcal{D}_G)=G$.
 \label{prop:prune}
 \end{proposition}
 
-By combining the previous three propositions, we immediately obtain the following:
+\begin{proof}
+For an edge $X \to Y$ in the skeleton of $G$, $\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$ regardless 
+of $\mathbf{Z}$, so all edges in the skeleton are retained after {\sc Prune}. Conversely, if 
+ $X \to Y$ is not in the skeleton of $G$, let $\mathbf{Z}$ be the $d$-separating set chosen 
+in line~5 of {\sc Prune} (there is at least one such $\mathbf{Z}$, the union of the parents of 
+$X$ and $Y$). Since  $\mathbf{Z}$ $d$-separates all paths from $X$ to $Y$ in $G'$, it does the same 
+in $G$ which contains a subset of these paths. Therefore, all edges not in the skeleton of $G$ are 
+removed.
+\end{proof}
+
+By combining Propositions~\ref{prop:strongexpand}, \ref{prop:weakexpand} and 
+\ref{prop:prune}, we immediately obtain the following:
 
 \begin{theorem}
 Given a d-separation oracle $\mathcal{D}_G$ and a strong or weak 
 ancestral oracle $\mathcal{A}_G$, 
-$\textsc{Prune}(\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_G),\mathcal{D}_G)=G.$
+$\textsc{Prune}(\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_G,\emptyset,\infty),\mathcal{D}_G)=G.$
 \end{theorem}
 
 Since we require expert knowledge only in the $\textsc{Expand}$ operation, we may try
@@ -549,10 +562,11 @@ $\textsc{ExpertInLoop}(V,\mathcal{D}_G,\mathcal{A}_G)=G$.
 
 \begin{proof}
 The loop in Algorithm~\ref{algo:expert} terminates if and only if $E=E^*$. If the loop does not 
-terminate, then a new edge has been added in line 6, or one or more edges were pruned in line 7.
+terminate, a new edge has been added in line 6, and/or one or more edges were pruned in line 7; the pruned 
+edges never include the edge added in line 6 in the same iteration.
 Every edge can be added at 
 most once and pruned at most once. Therefore, the algorithm always terminates
-after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ in the skeleton of $G$, $\mathcal{D}_G(X,Y,\mathbf{Z})=0$ irrespective of $\mathbf{Z}$. Therefore, $e$ must be added to $E$ in some iteration, and can never be pruned afterwards. Therefore, after some iteration, $(V,E)$ must be a supergraph of $G$ after executing line 6, and this will be pruned to the real graph $G$ in line 7 (Proposition~\ref{prop:prune}). In the next iteration, no further changes are made, and the loop terminates.
+after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ in the skeleton of $G$, $\mathcal{D}_G(X,Y,\mathbf{Z})=0$ irrespective of $\mathbf{Z}$, and $e$ must be added to $E$ in some iteration, and can never be pruned afterwards. Therefore, after some iteration, $(V,E)$ must be a supergraph of $G$ after executing line 6, and this will be pruned to the real graph $G$ in line 7 (Proposition~\ref{prop:prune}). In the next iteration, no further changes are made, and the loop terminates.
 \end{proof} 
 
 
