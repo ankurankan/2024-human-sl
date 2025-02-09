@@ -335,14 +335,14 @@ When $ \bm{Z} \neq \emptyset $,
 \label{sec:modification}
 
 Our approach to causal structure learning combines domain knowledge with data-driven
-insights in a manner that is based on the following base assumptions: 
-(1) Domain experts are good at determining causal directions between variables if 
-there is a clear causal direction between them. (2) Domain experts are less good
+insights in a manner that is based on the following considerations: 
+(1) A domain experts is possibly good at determining causal directions between variables if 
+there is a clear causal direction between them. (2) A domain expert may be less good
 at identifying cases where there is no causal relationship between the variables,
 since \emph{potential} causal relationships can often be argued for anyway.
-(3) Domain experts are even less good at distinguishing direct from indirect 
-effects, since the question whether a direct effect exists between two variables
-depends on all other variables present in the graph. 
+(3) Many domain experts could struggle to distinguish direct from indirect 
+effects, since the presence of a direct effect between two variables
+of interest depends on all other variables present in the graph. 
 
 We therefore consider the following two models of a domain experts: Given two variables
 $ X $ and $ Y $ that are part of an unknown causal DAG $G$, an \emph{strong ancestral oracle} 
@@ -362,25 +362,25 @@ $$
 \end{cases}
 $$
 
-That is, our ancestral oracles never distinguish whether the relationships
-between variables is direct or indirect; and the weak ancestral oracle is even
-unable to detect cases where there is no cause-effect relationship between two
-variables. Using such oracles for DAG construction therefore inherently risks
-that superfluous edges are created. In our approach, such superfluous edges
+That is, our ancestral oracles only provide information on the direction of cause-effect
+relationships, and do not distinguish between direct and indirect effects. 
+The weak ancestral oracle is even unable to detect cases where there is no cause-effect
+relationship between two variables. Using such oracles for DAG construction therefore 
+inherently risks that superfluous edges are created. In our approach, such superfluous edges
 will be detected and removed by utilizing the data. 
 
 To model how our learning procedure interacts with the data, we assume that we
-have access to a second oracle $\mathcal{D}_G$ than can answer d-separation
+additionally have access to a second oracle $\mathcal{D}_G$ than can answer d-separation
 queries with respect to the unknown target graph:
-$\mathcal{D}_G(X,Y,\mathbf{Z})=1$ iff $X \ci_G Y \mid \mathbf{Z}$. These are
-the standard oracles considered in constraint-based structure learning
-algorithms, such as the PC algorithm \cite{Spirtes2001}. Based on this oracle,
-we now define two procedures that iteratively change a current DAG structure.
+$\mathcal{D}_G(X,Y,\mathbf{Z})=1$ iff $X$ and $Y$ are $d$-separated by $\mathbf{Z}$ in 
+$G$. These are the standard oracles considered in constraint-based structure learning
+algorithms, such as the PC algorithm \cite{Spirtes2001}. 
 
-Our structure learning algorithm is based on two core procedures.
+Based on these two oracles, we now define two core procedures that we will use to 
+iteratively change a current DAG structure. The procedure 
 \textsc{Expand} (Algorithm~\ref{algo:expand}) uses conditional independence
 information to search for missing edges in the graph and then uses domain
-knowledge to orient them. \textsc{Prune} (Algorithm~\ref{algo:prune}) uses
+knowledge to orient them. The procedure \textsc{Prune} (Algorithm~\ref{algo:prune}) uses
 conditional independence information to remove superfluous edges from the
 graph.
 
@@ -390,20 +390,25 @@ graph.
 \SetKwFunction{Expand}{Expand}
 \SetKw{KwGoTo}{go to}
 \SetKwProg{Fn}{Function}{:}{}
-\Fn{{\sc Expand}($V,E,\mathcal{D}_G,\mathcal{A}_G$,$B=\emptyset$,$k=\infty$)}{
+\Fn{{\sc Expand}($V,E,\mathcal{D}_G,\mathcal{A}_G$,$B$,$k$)}{
     let $L \gets \{\}$\;
     \ForEach{$X, Y$ where $X \to Y \notin E$ and $Y \to X \notin E$ and 
 	$\{X,Y\} \notin B$}{
         let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
         \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
-            $L \gets L \cup \mathcal{A}_G(X, Y)$ \;
+	    $e \gets \mathcal{A}_G(X, Y)$ \;
+	    \uIf{ $(V,E \cup L \cup e)$ is acyclic }{
+            	$L \gets L \cup  \{ e \} $\;
+	    } \Else {
+            	$L \gets L \cup  \{ \textrm{reverse}(e) \} $\;
+	    }
         }
 	\If{$|L|\geq k$}{\KwGoTo 12\;}
     }
     add all edges in $L$ to $E$\;
     \Return{$(V,E)$}\;
 }
-\caption{Adding edges based on data and domain knowledge}
+\caption{Adding edges based on data and domain knowledge.}
 \label{algo:expand}
 \end{algorithm}
 
@@ -414,17 +419,40 @@ An optional parameter $B$, the empty set by default, allows to specify a ``black
 of vertex pairs that must not be connected, and another optional parameter $k$
 specifies the maximum amount of edges to be added by this procedure.
 
+Let $G^+$ denote the transitive closure of $G$, that is, the graph in which 
+there is a direct edge $X \to Y$ whenever $X \in \textrm{An}_G(Y)$. The transitive
+closure is related to the result of $\textsc{Expand}$ by the following two 
+easily proved facts.
+
 \begin{proposition}
 For a conditional independence oracle
  $\mathcal{D}_G$ and a strong ancestral oracle $\mathcal{A}_G$, 
-$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G)=G^+$.
+$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G, \emptyset, \infty)=G^+$.
 \end{proposition}
+
+\begin{proof}
+Since we start from an empty graph, every pair of vertices $X, Y$ where
+ $X \in \tetxrm{An}_G(Y)$ is d-separated by the empty set and is
+ connected by the edge $X \to Y$. No other edges are added. Therefore, 
+the result is $G^+$. 
+\end{proof}
 
 \begin{proposition}
 For a conditional independence oracle
  $\mathcal{D}_G$ and a weak ancestral oracle $\mathcal{A}_G$, 
-$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G)\supseteq G^+$.
+$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G, \emptyset, \infty)
+\supseteq G^+$.
 \end{proposition}
+
+\begin{proof}
+Every pair of vertices $X, Y$ that are $d$-connected in $G$ are now connected by an edge 
+during $\textsc{Expand}$. For $X \in \tetxrm{An}_G(Y)$, the edge is 
+$X \to Y$ just like when using a strong ancestral oracle; since only correctly oriented
+edges are added between ancestor-descendant pairs, such additions never create cycles.
+For $X, Y$ that are only $d$-connected throug common ancestors, an arbitrary 
+edge is added in a manner that preserves acyclicity. The result is a supergraph
+of $G^+$.
+\end{proof}
 
 
 \begin{algorithm}[h]
@@ -448,8 +476,8 @@ $\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G)\supseteq G^+$.
 \label{algo:prune}
 \end{algorithm}
 
-
-
+Unlike our ancestral oracles, the pruning operation is quite effective at distinguishing
+direct and indirect effects, as shown by the following result.
 
 \begin{proposition}
 Consider two DAGs $G=(V,E)$ and $G'=(V,E')$ where $E \subseteq E'$. 
