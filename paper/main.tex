@@ -63,25 +63,29 @@
 
 \begin{abstract}
 
-Causal discovery has received significant attention in the Directed Acyclic
-Graphs (DAGs) literature, leading to the development of numerous automated
-algorithms for learning DAGs from data. However, their adoption in applied
-domains remain limited, as researchers often prefer to construct DAGs manually
-based on domain knowledge. This preference arises due to several practical
-challenges with automated algorithms, such as their tendency to make obvious
-errors and output Markov Equivalence Classes (MECs) rather than a DAG. To
-address these challenges, we propose an iterative DAG construction method that
-combines domain knowledge with data-driven insights. Our approach iteratively
-identifies pair of variables with a missing edge in the DAG, and asks for the
-orientation of the edge from an expert. We also propose a method to rank these
-potential new edges based on their impact on the model fit. Empirical results
-show that this iterative model construction approach achieves performance
-comparable to automated algorithms if we are able to correctly decide the
-orientation of new edges in one out of three cases. Additionally, we
-demonstrate that, in the absence of an expert, a Large Language Model (LLM) can
-be used to determine edge orientations. We provide the implementation of our
-approach in both a web tool at: <redacted for review> and a Python package
-<redacted for review>.
+	Causal discovery has received significant attention in the Directed
+	Acyclic Graphs (DAGs) literature, leading to the development of
+	numerous automated algorithms for learning DAGs from data. However,
+	their adoption in applied domains remain limited, as researchers often
+	prefer to construct DAGs manually based on domain knowledge. This
+	preference arises due to several practical challenges with automated
+	algorithms, such as their tendency to make obvious errors and output
+	Markov Equivalence Classes (MECs) rather than a DAG. To assist
+	researchers in constructing DAGs manually, we propose an iterative DAG
+	construction approach that combines domain knowledge with data-driven
+	insights. Our method leverages Conditional Independence (CI) testing to
+	iteratively identify variable pairs where an edge is either missing or
+	superfluous. Based on this information, we can choose to add missing
+	edges with appropriate orientation based on domain knowledge or remove
+	unnecessary ones. We also give a method to rank potential new edges
+	based on their impact on the overall model fit. Empirical results show
+	that this iterative approach achieves performance comparable to
+	automated algorithms if the orientation of new edges is correctly
+	determined in at least one out of two cases. Additionally, we show
+	that, in the absence of an expert, a Large Language Model (LLM) can be
+	used to determine edge orientations. We provide an implementation of
+	our approach as both a webtool: <redacted for review> and a Python
+	package <redacted for review>.
 
 
 % Our approach combines implied Conditional Independence (CI) testing with a
