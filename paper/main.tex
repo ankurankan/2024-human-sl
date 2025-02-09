@@ -96,11 +96,6 @@ behind observed phenomena and guide effective interventions or policy
 decisions. Causal discovery methods aim to discover such relationships
 among random variables using observational data. 
 
-% Approaches to causal discovery
-% have been developed within both the Directed Acyclic Graphs (DAGs) and
-% Structural Equation Models (SEMs) frameworks, each adapting a different
-% approach.
-
 In the DAG literature, the primary focus has been on developing automated
 algorithms to learn causal structures from datasets. These efforts have led to
 numerous causal discovery algorithms, such as constraint-based methods like PC
@@ -152,6 +147,34 @@ also need to decide the orientation of this edge based on domain expertise.
 % Specification Search \citep{Long1983} and uses method such as modification
 % indices, and Wald-based tests \citep{Marcoulides2018}. 
 
+\begin{figure}[t!]
+    \begin{subfigure}{0.5 \textwidth}
+	\centering
+    	\includegraphics[page=1]{figures_v2.pdf}
+    	\caption{}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+	\centering
+    	\includegraphics[page=2]{figures_v2.pdf}
+    	\caption{}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+	\centering
+    	\includegraphics[page=3]{figures_v2.pdf}
+    	\caption{}
+    \end{subfigure}
+
+    \caption{A comparison of Markov Equivalence Class (MEC) learned using Adult
+	     Income Dataset \citep{Becker1996} using different causal discovery
+	     algorithms and sample sizes. Edge colour represents the sample size
+	     used: red ($N=400$), and blue ($N=800$). (a) PC algorithm with a
+	     mutual information based CI test, (b) PC algorithm with a
+    	     residualization based test \citep{Ankan2023}, (c) Hill Climb Search with
+	     Bayesian Information Criterion (BIC) score. The learned model structure varies
+             significantly in each case.}
+    \label{fig:intro}
+\end{figure}
+
 In this paper, we propose a method that leverages this CI testing approach to
 assist researchers during the DAG construction process, rather than just
 validating the model. Our approach follows an iterative model-building strategy
@@ -199,43 +222,9 @@ ensuring that the model is consistent with the data.
 % The ranking helps us prioritize the most critical violations, making it feasible 
 % to focus on the areas that most improve the model's fit.
 
-\begin{figure}[t!]
-    \begin{subfigure}{0.5 \textwidth}
-	\centering
-    	\includegraphics[page=1]{figures_v2.pdf}
-    	\caption{}
-    \end{subfigure}
-    \begin{subfigure}{0.5\textwidth}
-	\centering
-    	\includegraphics[page=2]{figures_v2.pdf}
-    	\caption{}
-    \end{subfigure}
-    \begin{subfigure}{0.5\textwidth}
-	\centering
-    	\includegraphics[page=3]{figures_v2.pdf}
-    	\caption{}
-    \end{subfigure}
-
-    \caption{A comparison of Markov Equivalence Class (MEC) learned using Adult
-	     Income Dataset \citep{Becker1996} using different causal discovery
-	     algorithms and sample sizes. Edge colour represents the sample size
-	     used: red ($N=400$), and blue ($N=800$). (a) PC algorithm with a
-	     mutual information based CI test, (b) PC algorithm with a
-    	     residualization based test \citep{Ankan2023}, (c) Hill Climb Search with
-	     Bayesian Information Criterion (BIC) score. The learned model structure varies
-             significantly in each case.}
-    \label{fig:intro}
-\end{figure}
-
-
 Our main contributions in this paper are as follows:
 
 \begin{enumerate}
-%     \item We propose a novel measure of conditional association for mixed data
-% 	    based on canonical correlations
-% 	    (Section~\ref{sec:mixed_association}). This measure generalizes
-% 	    several commonly used special case measures of association to mixed
-% 	    data.
     \item We develop an iterative method based on CI testing to assist researchers in 
 	    constructing DAGs using their domain knowledge (Section~\ref{sec:modification}).
     \item We develop a ranking method to prioritize potential modifications in the DAG that 
@@ -245,16 +234,6 @@ Our main contributions in this paper are as follows:
     \item Lastly, we compare the manual DAG construction method with automated
 	    causal discovery algorithms (Section~\ref{sec:empirical}).
 \end{enumerate}
-
-% The rest of the paper is structured as follows. In
-% Section~\ref{sec:background}, we give a background on the commonly used
-% measures of association for various data types. In
-% Section~\ref{sec:mixed_association}, we present our generalized measure of
-% conditional association for mixed data. Section~\ref{sec:modification} provides
-% details on the procedure for using the measure of association for constructing
-% DAGs. Section~\ref{sec:web} presents our web-browser based tool and lastly in
-% Section~\ref{sec:empirical}, we show some empirical results to compare this
-% manual DAG construction approach to automated algorithms.
 
 \section{Background and Related Work}
 \label{sec:background}
@@ -279,15 +258,15 @@ Multiple ways to integrate, originally using forbidden and required edges. Or
 temporal algorithms by specifying causal tiers.
 
 \subsection{Measures of Conditional Association}
-Our approach for ranking CI tests is based on a measure of conditional
-association -- also known as partial association -- between variables.
-Specifically, we are interested in quantifying the association between
-variables $ X $ and $ Y $ when conditioned on a set of variables $ \bm{Z} $
-(which may be empty, i.e., $ \bm{Z} = \emptyset $). Various measures of
-conditional association have been used for this purpose depending on the type
-of $ X $, $ Y $, and $ \bm{Z} $. These measures are often based on the effect
-size of the CI test $ X \ci Y \rvert \bm{Z} $. In this section, we give an
-overview of some of the commonly used measures for different data types.
+Our DAG structure learning approach relies on using CI tests and a measure of
+conditional association between variables -- also known as partial association
+-- between variables. Specifically, firstly we are interested in testing a CI
+test: $ X \ci Y \bm{Z} $, i.e., whether the variables $ X $ and $ Y $ are
+independent when conditioned on $ \bm{Z} $. Secondly, we are interested in
+quantifying the strength of relationship between $ X $ and $ Y $ conditioned on
+$ \bm{Z} $. We can quantify this using the effect size measures of the CI
+tests. In this section, we give an overview of some of the commonly used CI
+tests for various data types and their effect size measures.
 
 \paragraph{Both $ X $ and $ Y $ are continuous: }
 When both $ X $ and $ Y $ are continuous, Pearson's correlation coefficient is
