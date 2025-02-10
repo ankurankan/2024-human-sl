@@ -79,7 +79,7 @@
 	these missing edges based on their impact on the overall model fit.
 	In a simulation study, we find that this iterative approach to leverage domain 
 	knowledge already starts outperforming purely data-driven structure learning if 
-	the orientation of new edge is correctly determined in at least one out of two cases.
+	the orientation of new edge is correctly determined in at least two out of three cases.
 	We present a proof-of-concept implementation using a large language 
 	model as a domain expert and a graphical user interface designed to 
 	assist human experts with DAG construction.
@@ -108,7 +108,7 @@ causal discovery algorithms in practice include but are not limited to:
 		on  finite samples. These mistakes can be severe and contradict
 		obvious domain knowledge (think of edges going into unmodifiable
 		attributes such as Age). The choice of algorithm and hyperparameters
-		significantly aa=ffect the output, making it
+		significantly affects the output, making it
 		difficult to assess reliability. Additionally, the absence of
 		robust performance evaluation methods for any given dataset
 		further reduce the confidence in their outputs. A recent paper
@@ -118,7 +118,7 @@ causal discovery algorithms in practice include but are not limited to:
 		DAGs can be faithful to a given observational dataset, automated 
 		algorithms can only recover the MECs. These MECs can contain a
 		combination of directed and undirected edges. This structural uncertainty
-		can make difficult or impossible to apply the learned model for downstream
+		can make it difficult or impossible to apply the learned model for downstream
 		tasks, such as identification or causal
 		effect estimation \citep{Maathuis_2009,PerkovicTKM17}.
 \end{enumerate}
@@ -185,7 +185,7 @@ model-building strategy that integrates domain expertise with CI testing on
 data. At each iteration, we use CI testing to identify pairs of variables that
 lack (direct or indirect) connections or are connected by a superfluous edge.
  We then use this information
-along with domain expertise to determine which changes.
+along with domain expertise to determine which changes to make.
 The orientation of the edge when adding is determined based on the domain
 expertise; critically, this does not require the domain expert to distinguish 
 between direct and indirect effects. Our resulting approach can be 
