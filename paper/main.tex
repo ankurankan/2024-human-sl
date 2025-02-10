@@ -732,13 +732,13 @@ with three other automated algorithms: PC, Hill-Climb Search, and Greedy
 Equivalence Search (GES). For the analysis, we simulated data from known DAGs
 and use the algorithms to recover the original DAG. We start by generating a
 random DAG on $10$ nodes and use linear models with random effects to simulate
-$ 500 $ samples from it. We simulate each variable $ Y_i $ in the DAG as:
+$ 500 $ samples from it. We simulate each variable $ V_i $ in the DAG as:
 
 
 \begin{equation}
 	\begin{split}
 		\beta &= \mathrm{Uniform}([-0.6, 0.6]) \\
-		Y_i &= \bm{\beta} \mathrm{Pa}_G(Y_i) + \mathcal{N}(0, 1)
+		V_i &= \bm{\beta} \mathrm{Pa}_G(V_i) + \mathcal{N}(0, 1)
 	\end{split}
 \end{equation}
 
