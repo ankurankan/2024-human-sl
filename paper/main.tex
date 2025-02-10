@@ -220,15 +220,15 @@ respectively.  Covariance matrix using $ \Sigma $ and the entry corresponding to
 covariance between $ X $ and $ Y $ in the matrix using $ \Sigma_{XY} $.
 
 \subsection{CI Tests and Measures of Conditional Association}
-Our DAG structure learning approach relies on using CI tests and a measure of
-conditional association between variables -- also known as partial association
--- between variables. Specifically, firstly we are interested in testing a CI
-test: $ X \ci Y \bm{Z} $, i.e., whether the variables $ X $ and $ Y $ are
-independent when conditioned on $ \bm{Z} $. Secondly, we are interested in
-quantifying the strength of relationship between $ X $ and $ Y $ conditioned on
-$ \bm{Z} $. We can quantify this using the effect size measures of the CI
-tests. In this section, we give an overview of some of the commonly used CI
-tests for various data types and their effect size measures.
+Our structure learning approach relies on using CI tests and a measure of
+conditional association between variables -- also known as partial association.
+Specifically, we are interested in testing CI tests: $ X \ci Y \bm{Z} $, i.e.,
+whether the variables $ X $ and $ Y $ are independent when conditioned on $
+\bm{Z} $. Secondly, we are interested in quantifying the strength of
+relationship between $ X $ and $ Y $ conditioned on $ \bm{Z} $. We can use
+the effect size measures of the CI tests for this quantification. In this 
+section, we give an overview of some of the commonly used CI tests for 
+various data types and their effect size measures.
 
 \paragraph{Both $ X $ and $ Y $ are continuous: }
 When both $ X $ and $ Y $ are continuous, Pearson's correlation coefficient is
@@ -293,6 +293,10 @@ When $ \bm{Z} \neq \emptyset $,
 \end{equation}
 
 \subsection{Model Testing Using CI Tests}
+Our structure learning algorithm relies on suggesting modifications to the
+expert based on CI testing. In this section, we show an example of how this
+works. Our structure learning algorithm can be thought of an iterative
+application of this model testing approach.
 
 \section{DAG Structure Learning using Ancestral Oracles}
 \label{sec:modification}
