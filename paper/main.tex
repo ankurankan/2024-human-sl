@@ -219,10 +219,12 @@ are denoted as $ \textrm{Pa}_G(X) $, and its ancestors and descendants as $
 \pi(X, Y) = \{ X, V_0, V_1, \cdots, V_k, Y \} $ between $ X $ and $ Y $ in $ G
 $ where each consecutive pair of variables in $ \pi $ are connected through an
 edge. We say $ X $ and $ Y $ are d-connected in $ G $ given a conditioning set
-$ \bm{Z} \subseteq V - \{X, Y\} $, if for a path $ \pi(X, Y) $ (i) every collider 
-structure ($ V_1 \rightarrow V_2 \leftarrow V_3 $) on $ \pi(X, Y) $, $ \bm{Z} \cap \{ V_2, \textrm{De}_G(V_2) \} \ne \emptyset $, and (ii) for every non-collider structure
-($ V_1 \rightarrow V_2 \rightarrow V_3 $, $ V_1 \leftarrow V_2 \rightarrow V_3 $), $ V_2 \not \in \bm{Z} $. $ X $ and $ Y $ are d-separated given $ G $ if no d-connecting
-path exists between them.
+$ \bm{Z} \subseteq V - \{X, Y\} $, if for a path $ \pi(X, Y) $ (i) for every
+collider structure ($ V_1 \rightarrow V_2 \leftarrow V_3 $) on $ \pi(X, Y) $, $
+\bm{Z} \cap \{ V_2, \textrm{De}_G(V_2) \} \ne \emptyset $, and (ii) for every
+non-collider structure ($ V_1 \rightarrow V_2 \rightarrow V_3 $, $ V_1
+\leftarrow V_2 \rightarrow V_3 $), $ V_2 \not \in \bm{Z} $. $ X $ and $ Y $ are
+d-separated given $ \bm{Z} $ if no d-connecting path exists between them.
 
 \subsection{Testing DAGs Using CI Tests}
 Our structure learning algorithm uses the idea of testing DAGs using CI tests.
