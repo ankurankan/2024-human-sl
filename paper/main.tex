@@ -226,7 +226,7 @@ non-collider structure ($ V_1 \rightarrow V_2 \rightarrow V_3 $, $ V_1
 \leftarrow V_2 \rightarrow V_3 $), $ V_2 \not \in \bm{Z} $. $ X $ and $ Y $ are
 d-separated given $ \bm{Z} $ if no d-connecting path exist between them.
 
-\subsection{Testing DAGs Using CI Tests}
+\subsection{Testing DAG Using CI Tests}
 Our structure learning algorithm uses the idea of testing DAGs using CI tests.
 In this section, we give an example of how this model testing works in
 practice. We take the example of the MEC learned by the PC algorithm in
@@ -236,6 +236,23 @@ we only have one undirected edge between Marital Status and Relationship. We
 orient the edge as Marital Status to Relationship. We then proceed to test
 each of the implied CI of the model using a statistical test. We show the result
 of some of these tests in Figure.
+
+\todo[inline]{Add a table here}
+% \begin{figure}
+% 	\centering
+% 	\begin{tabular}{llrr}
+% 		\multicolumn{4}{c}{Z=Age, Sex} \\
+% 		$X$ & $Y$ & \bm{Z} & p \\
+% 		\hline
+% 		Edct & Wrkc & 1.00  \\
+% 		Occp & Wrkc & 1.00  \\
+% 		Rltn & HrPW &  .99  \\
+% 		Incm & Occp & .08   \\
+% 		Incm & Wrkc &  .50  \\
+% 		Incm & HrPW & .003  \\
+% 		\hline
+% 	\end{tabular}
+% \end{figure}
 
 Using these statistical tests we can determine the pair of variables that
 should have edge between them. We can think of our proposed approach to be an
@@ -279,27 +296,20 @@ matrix between them \citep{Poon1987}. Both methods make the assumption that the
 observed ordinal variable is a result of thresholding a latent normally
 distributed continuous variable. Under this assumption, the methods then try to
 estimate the covariance matrix while maximizing the likelihood of the dataset.
-Using the estimated covariance matrix, $ \Sigma $ we can the compute Pearson's
-correlation coefficient to use as the effect size as well as for testing. When
-$ \bm{Z} = \emptyset $,
+Using the estimated covariance matrix, $ \Sigma $ we can perform the CI test and compute 
+the Pearson's correlation coefficient as the effect size:
 
 \begin{equation}
-	r_{X, Y} = \frac{\Sigma_{XY}}{\sqrt{\Sigma_{XX} \Sigma_{YY}}}
-\end{equation}
-
-When $ \bm{Z} \neq \emptyset $, 
-
-\begin{equation}
-	r_{X, Y \rvert \bm{Z}} = - \frac{\Sigma^{-1}_{XY}}{\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}}
+	r_{X, Y \rvert \bm{Z} = \emptyset} = \frac{\Sigma_{XY}}{\sqrt{\Sigma_{XX} \Sigma_{YY}}}; \;\;\; \; r_{X, Y \rvert \bm{Z}} = - \frac{\Sigma^{-1}_{XY}}{\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}}
 \end{equation}
 
 \paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete (ordinal or categorical): }
 
 In the case when we have a combination of ordinal and categorical variables, we
-can use the residualization based CI test from \citep{Ankan2023}. This test
-gives a chi-square distributed test statistic, that can be used for computing
-an effect size such as Root Mean Squared Error of Approximation (RMSEA). Given
-a chi-squared test statistic, $ \chi^2 $, with $ \textrm{df} $ degrees of
+can use a residualization based CI test \citep{Ankan2023}. This test gives a
+chi-square distributed test statistic, that can be used for computing an effect
+size such as the Root Mean Squared Error of Approximation (RMSEA). Given a
+chi-squared test statistic, $ \chi^2 $, with $ \textrm{df} $ degrees of
 freedom, the RMSEA is defined as:
 
 \begin{equation}
