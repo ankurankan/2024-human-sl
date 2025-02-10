@@ -621,24 +621,25 @@ causal discovery algorithms.
 \label{algo:ranked_expand}
 \end{algorithm}
 
-In Algorithm~\ref{algo:expert}, in each iteration we add a new edge to the DAG
-chosen by Algorithm~\ref{algo:expand}. This edge is chosen at random depending
-on the order of iteration in Algoirthm~\ref{algo:expand}. A more optimal way to
-add these edges would be to choose the pairs of variables that could help
-improve the fit the most in each step. One potential greedy approach to do this
-would be to select the variable pair $ X $ and $ Y $ that have the highest
-amount of observed conditional correlation in the data. In
-Algorithm~\ref{algo:ranked_expand}, we slightly modify
-Algorithm~\ref{algo:expand} to show this approach. In this case we first go
-through all potential edges that can be added to the DAG in each step, and rank
-them based on the conditional association between them given the current DAG.
-This gives us a measure of how much of the observed correlation between them is
-not explained by the current model. We then choose the pair of variables the
-highest conditional association. This modification allows us to prioritize pair
-of variables to quickly improve the fit of the model. For the conditional
-measure of association, we use a measures outlined in
-Section~\ref{sec:background} depending on the data type of the variables.
+The \textsc{ExpertInLoop} algorithm adds a new edge in each iteration. The edge
+to be added is selected using the \textsc{Expand} algorithm, which returns a
+potential edge at random based on the iteration order in the algorithm.
+However, if the residual association between the selected variables is low,
+adding the edge may result in only a marginal improvement in the model's
+overall fit. As the algorithm requires manual intervention in each iteration in
+terms of domain knowledge, it would be beneficial to prioritize the edges that
+improve the model's fit the most.
 
+Therefore, an alternative to selecting an edge at random is to rank potential
+edges based on the residual association between the variables given the DAG.
+For quantifying the residual association between variables, we can use the
+effect size measures of the CI test. So, for a d-separation query $ D_G(X, Y,
+\mathbf{Z}) $, we can quantify the residual association between $ X $ and $ Y $
+conditioned on $ \mathbf{Z} $ as the effect size of the CI test $ X \ci Y |
+\mathbf{Z} $. A greedy approach could be to choose the edge that has the
+highest residual association between the variables.
+Algorithm~\ref{algo:ranked_expand} outlines this approach. This approach has
+the benefit that it prioritizes edges that improve the model fit the most.
 
 \subsection{Comparison to Automated Algorithms}
 \begin{figure}[t!]
