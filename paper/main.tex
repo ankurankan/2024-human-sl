@@ -739,7 +739,7 @@ $ 500 $ samples from it. We simulate each variable $ Y_i $ in the DAG as:
 
 \begin{equation}
 	\begin{split}
-		\beta &= \mathcal{N}(\bm{0}, \bm{I}) \\
+		\beta &= \mathrm{Uniform}([-0.6, 0.6]) \\
 		Y_i &= \bm{\beta} \mathrm{Pa}_G(Y_i) + \mathcal{N}(0, 1)
 	\end{split}
 \end{equation}
