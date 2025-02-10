@@ -866,26 +866,17 @@ overall fit of the model. Once satisfied with the constructed DAG, users can
 export the model for further analysis.
 
 \section{Conclusions}
+Researchers often prefer to construct DAGs manually rather than using automated
+algorithms due to practical challenges in applying automated methods. To assist
+in the process, we developed an iterative structure learning method that
+integrates manual construction with data-driven insights. This approach bridges
+the gap between fully manually and fully automated methods by providing a
+systematic way to construct DAGs while utilizing data.
 
-Points:
-\begin{itemize}
-	\item As researchers prefer to build models by hand, we present a tool
-		to assist them in construction using CI testing.
-	\item In practice as many edges are possible for any given DAG, we provide
-		a ranking method to find the best edge addition.
-	\item Compared to other expert knowledge specification methods, users
-		don't need to guess what information then need to provide as
-		exact questions are asked. Also enables us to ask an LLM for
-		it.
-\end{itemize}
-
-Future work:
-\begin{itemize}
-	\item Add latent variables; extend to ADMGs.
-	\item Can potentially be combined with pairwise orientation methods.
-	\item Improvements in the web-interface.
-\end{itemize}
-
+In future we would like to extend our approach to latent variables and Acyclic
+Directed Mixed Graphs (ADMGs), explore the potential of combining our approach
+with pairwise orientation methods. We would also improve the web interface for
+better usability. 
 \bibliography{references}
 
 \newpage
