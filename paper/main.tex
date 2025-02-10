@@ -610,11 +610,16 @@ causal discovery algorithms.
         \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
 		\If{$\lvert \phi(X, Y, \mathbf{Z}) \rvert > \phi_{\max}$}{
 			$ \phi_{\max} \gets \lvert \phi(X, Y, \mathbf{Z}) \rvert $ \;
-			$ L_{\max} \gets \mathcal{A}_G(X, Y)$ \;
+			$ e_{\max} \gets \mathcal{A}_G(X, Y)$ \;
 		}
         }
     }
-    add $L_{\max}$ to $E$\;
+
+    \uIf{ $(V,E \cup e_{\max})$ is acyclic }{
+	add $ e_{\max}$ to $E$ \;
+    } \Else {
+	add $ \textrm{reverse}(e_{\max})$ to $E$ \;
+    }
     \Return{$(V,E)$}\;
 }
 \caption{Adding an edge between variables with the highest correlation}
@@ -635,11 +640,12 @@ edges based on the residual association between the variables given the DAG.
 For quantifying the residual association between variables, we can use the
 effect size measures of the CI test. So, for a d-separation query $ D_G(X, Y,
 \mathbf{Z}) $, we can quantify the residual association between $ X $ and $ Y $
-conditioned on $ \mathbf{Z} $ as the effect size of the CI test $ X \ci Y |
-\mathbf{Z} $. A greedy approach could be to choose the edge that has the
-highest residual association between the variables.
+conditioned on $ \mathbf{Z} $, $ \phi(X, Y, \bm{Z}) $ as the effect size of the
+CI test $ X \ci Y | \mathbf{Z} $. A greedy approach could be to choose the edge
+that has the highest absolute residual association between the variables.
 Algorithm~\ref{algo:ranked_expand} outlines this approach. This approach has
-the benefit that it prioritizes edges that improve the model fit the most.
+the benefit that it prioritizes edges that improve the model fit the most. We use
+the \textsc{RankedExpand} in all of our experiments in the next section.
 
 \subsection{Comparison to Automated Algorithms}
 \begin{figure}[t!]
