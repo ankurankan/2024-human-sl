@@ -680,11 +680,9 @@ following sections.
 		\includegraphics{../code/fig4/ll.pdf}
 		\caption{}
 	\end{subfigure}
-	\caption{Plots showing improvements in fit of the model over iterations
-	on the Adult income dataset. For the expert simulation an LLM is used
-	for the edge orientations. (a) Shows using total residual association that is the
-	sum of effect size between variables that don't have an edge between them. (b)
-	Shows the log-likelihood of the overall model.
+	\caption{Model fit improvement over iterations on the Adult Income dataset. In the expert simulation, an 
+		LLM is used to determine the edge orientations. (a) Shows the total residual association, $\tau$. 
+		(b) Shows the log-likelihood of the overall model.
 	}
 	\label{fig:unexplained_ll}
 \end{figure}
@@ -765,36 +763,40 @@ values.
 
 \subsection{Connection to Score Based Methods}
 
-Our procedure closely resembles certain score-based automated causal discovery
+Our procedure shares similarities with score-based automated causal discovery
 methods, such as Greedy Equivalence Search (GES), where the algorithm
-iteratively adds or removes edges that improve the scoring metric the most.
-Similarly, a greedy version of our approach would involve adding an edge
-between the pair of variables with the highest residual association. While
-both methods aim to find modifications that most improve the model at each
-step, a key distinction lies in the nature of the evaluation criteria: unlike
-standard scoring metrics, our measure of association is not decomposable. A key
-property of scoring metrics is that they should be decomposible, i.e., they can
-be expressed as the sum of scores of nodes given its parents. This means adding
-or removing an edge affects only a localized part of the model. In contrast,
-our measure of association is global, meaning that modifying an edge in one
-part of the model can influence association values elsewhere.
+iteratively adds or removes edges that maximize improvements in a specified
+scoring metric. Given a scoring metric, --total residual association, $ \tau $ for 
+a DAG $ G = (V, E) $, defined as:
 
-Given a DAG $ G = (V, E) $, the total residual association, $\tau$ in define as:
 \begin{equation}
 	\tau = \sum_{\substack{X, Y \in V \\ X \rightarrow Y, Y \rightarrow X \not \in E}}   \phi(X, Y, \mathrm{pa}_G(X) \cup \mathrm{pa}_G(Y))
 \end{equation}
 
-Another major difference is in the interpretability of the evaluation metric.
-Most scoring metrics are based on log-likelihood with a penalty for model
-complexity. These score metrics allow for relative comparisons between models
-but do not provide an absolute measure of model fit. That is, they indicate
-which model is better for a given dataset but do not reveal how well the model
-explains the data in an absolute sense. In contrast, summing our measure of
-association across all variables provides a direct fitness measure—this sum
-approaches zero when the model perfectly accounts for all observed correlations
-in the data. This property enables an absolute assessment of model quality,
-rather than just a relative comparison between models. Figure~\ref{fig:unexplained_ll}
+our \textsc{RankedExpand} approach behaves similarly to GES. In each iteration,
+we add the edge between the variable pair that results in the lowest $ \tau $
+and remove edges that have no impact on $ \tau $.
 
+While both methods aim to make iterative modifications to the DAG, a key
+distinction lies in the nature of the evaluation criteria: unlike standard
+scoring metrics, $ \tau $ is not decomposable. Decomposibility is a key
+property of scoring metrics, allowing them to be expressed as the sum of
+individual variables in the model. This property ensures that adding or
+removing an edge only affects a localized part of the model. In contrast, $
+\tau $ can not be decomposed, as modifying an edge in one part of the model can
+affect the residual associations in other parts of the model.
+
+Another key difference lies in the interpretability of the evaluation metric.
+Scoring metrics are based on usually based on the log-likelihood with a penalty
+for model complexity. They can be used to make relative comparisons between
+models but their values do not have any interpretation in an absolute sense.
+That is, they indicate which model is better for a given dataset but do not
+quantify how well the model explains the data in an absolute sense. In
+contrast, $ \tau $ provides an absolute measure of model fit -- its value
+approaches $ 0 $ as the model perfectly explains the observed data.
+Figure~\ref{fig:unexplained_ll} illustrates this distinction by comparing GES
+to \textsc{ExpertInLoop} on the Adult income dataset across iterations of a
+single run of the algorithms.
 
 \subsection{Using LLMs as Experts}
  

@@ -23,7 +23,7 @@ p_unexplained_effect <- ggplot(d_results, aes(x=x, y=pillai, color=algo)) +
 	geom_point(alpha=0.6, show.legend=F) +
 	theme_minimal(base_size=8) +
 	labs(x="Iteration No.") +
-	labs(y="Total Unexplained Effect") + 
+	labs(y="Total Residual Association") + 
 	theme(legend.position='top',
 	      legend.title=element_blank())
 
