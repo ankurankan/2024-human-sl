@@ -93,43 +93,52 @@ decisions. Causal discovery methods aim to discover such relationships among
 random variables using observational data. In the DAG literature, the primary
 focus has been on developing automated algorithms to learn causal structures
 from datasets. These efforts have led to numerous causal discovery algorithms,
-such as constraint-based methods like PC algorithm \citep{Spirtes2001} and Fast
-Causal Inference \citep{Spirtes2000}), score-based methods such as Hill-Climb
+such as constraint-based methods like PC algorithm \citep{Spirtes2001,KalischB07} 
+and Fast Causal Inference \citep{Spirtes2000}), score-based methods such as Hill-Climb
 Search and Greedy Equivalence Search \citep{Chickering2002}, and continuous
-optimization-based methods like NO TEARS \citep{Zheng2018} and DAGMA
+optimization-based methods like NOTEARS \citep{Zheng2018} and DAGMA
 \citep{Bello2022}. Despite significant progress in automated causal discovery,
-their adoption in applied research has been limited. Researchers often prefer
-to manually construct DAGs based on their domain expertise \citep{Tennant2020,
-Petersen2021}. We attribute this preference to several challenges with existing
-causal discovery algorithms in practical settings:
+their adoption in applied research has been limited. Challenges encountered with existing
+causal discovery algorithms in practice include but are not limited to:
 
 \begin{enumerate}
-	\item \textbf{Lack of Trust:} While most algorithms are asymptotically
-		consistent, their behavior on finite samples is not well
-		understood. Their output can vary significantly depending on
-		the choice of algorithm and hyperparameters, making it
+	\item \textbf{Lack of Trust:} While constraint-based algorithms are 
+		often asymptotically
+		consistent \citep{KalischB07}, they can and do make mistakes
+		on  finite samples. These mistakes can be severe and contradict
+		obvious domain knowledge (think of edges going into unmodifiable
+		attributes such as Age). The choice of algorithm and hyperparameters
+		significantly aa=ffect the output, making it
 		difficult to assess reliability. Additionally, the absence of
 		robust performance evaluation methods for any given dataset
-		further reduce the confidence in their outputs. 
+		further reduce the confidence in their outputs. A recent paper
+		therefore advised Epidemiologists to not attempt using structure
+		learning algorithms without help of an expert \citep{Gururaghavendran_2024}.
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} As multiple
 		DAGs can be faithful to a given observational dataset, automated 
 		algorithms can only recover the MECs. These MECs can contain a
-		combination of directed and undirected edges. However, most
-		methods for downstream tasks, such as identification or causal
-		effect estimation, assume knowledge of a fully oriented DAG. 
+		combination of directed and undirected edges. This structural uncertainty
+		can make difficult or impossible to apply the learned model for downstream
+		tasks, such as identification or causal
+		effect estimation \citep{Maathuis_2009,PerkovicTKM17}.
 \end{enumerate}
 
-Figure~\ref{fig:intro} highlights some of these issues. On the other hand,
-constructing DAG based solely on domain expertise can be error prone as it
-requires us to distinguish between different causal structures, such as direct
-or indirect effects or causal mediation. Given these complexities, it is
-important to validate the consistency of a DAG against our dataset. One way to
-test this consistency is by testing whether the CI statements implied by the
-DAG hold in the data \citep{Ankan2021}. Specifically, each missing edge between
-a pair of variables in the DAG implies a CI statement, which can be tested in
-the dataset using a statistical test. If we find any violation to CI
-statements, we can make modifications to our model accordingly to fix the
-violations. 
+Figure~\ref{fig:intro} highlights some of these issues. In practice, DAGs 
+are still largely constructed from domain knowledge alone 
+\citep{Tennant2020,Petersen2021}. This can, however, be equally problematic.
+Constructing DAGs requires us to distinguish between different causal structures, 
+such as direct or indirect effects or causal mediation. Specifically, there is often a lack
+of theoretical support for the \emph{absence} of direct causal effects, which are 
+the key assumptions that graphical models make to enable downstream causal inferences.
+Given the likelihood of making mistakes, it is therefore
+important to at least validate the consistency of a DAG against our dataset. One way to
+test this consistency is by testing whether the conditional independence 
+(CI) statements implied by the DAG hold in the data \citep{Ankan2021}. Specifically, 
+each missing edge between
+a pair of variables in the DAG leads to one or more CI statements, 
+which can be checked using statistical tests. Violations to CI
+statements can point to the erroneous omission of important causal effects from a model
+or to the presence of latent confounders.
 
 % While DAG-based methods focus on
 % automated discovery, SEM-based methods emphasize expert driven model
@@ -160,10 +169,10 @@ violations.
 
     \caption{A comparison of Markov Equivalence Classes (MECs) learned from the Adult
 	     Income Dataset \citep{Becker1996} using different causal discovery
-	     algorithms and sample sizes. Edge colors represents the sample size
+	     algorithms and sample sizes. Edge colors represent the sample size
 	     used: red for $N=400$, and blue for $N=800$. (a) PC algorithm with a
 	     mutual information based CI test, (b) PC algorithm with a
-    	     residualization based test \citep{Ankan2023}, (c) Hill Climb Search with
+    	     residualization-based test \citep{Ankan2023}, (c) Hill Climb Search with
 	     Bayesian Information Criterion (BIC) score. The learned model structure varies
              significantly across different algorithms and sample sizes.}
     \label{fig:intro}
@@ -173,25 +182,25 @@ In this paper, we propose a structure learning method that leverages this CI
 testing approach to assist researchers during manual DAG construction, rather
 than just validating the model. Our approach follows an iterative
 model-building strategy that integrates domain expertise with CI testing on
-data. At each iteration, we use CI testing to identify pairs of variables where
-an edge is either missing or superfluous. We can then use this information
-along with domain expertise to determines whether to add or remove these edges.
+data. At each iteration, we use CI testing to identify pairs of variables that
+lack (direct or indirect) connections or are connected by a superfluous edge.
+ We then use this information
+along with domain expertise to determine which changes.
 The orientation of the edge when adding is determined based on the domain
-expertise. As at any iteration, multiple changes to the DAG are possible. We
-also give a way to rank potential new edges additions to the DAG using effect
-size measures for CI tests to address the most severe violations of CI tests
-first. As a result this approach acts like a guide to the expert when manually
-constructing their model while ensuring that the model is consistent with the
-data. 
+expertise; critically, this does not require the domain expert to distinguish 
+between direct and indirect effects. Our resulting approach can be 
+thought of as a guidance during manual model construction that ensures the 
+model remains consistent to the data.
 
-Our main contributions in this paper are as follows:
+Our contributions are organized as follows:
 
 \begin{enumerate}
-    \item We develop an iterative method based on CI testing to assist researchers in 
-	    constructing DAGs using their domain expertise (Section~\ref{sec:modification}).
-    \item We show a ranking method to prioritize potential modifications to the DAG that 
+    \item In Section~\ref{sec:modification}, we present our iterative method for DAG construction
+	based on domain knowledge and data, and prove its correctness in an ``oracle setting''.
+    \item We then present a ranking method to prioritize potential modifications to the DAG that 
     	    help in fixing the most severe violations first (Section~\ref{sec:ranking}).
-    \item We show empirically that even experts that make mistakes can outperform purely data-driven
+    \item We show empirically that even experts that make mistakes can outperform purely 
+	data-driven
 	causal discovery algorithms (Section~\ref{sec:empirical}).
     \item We provide two proof-of-concept implementations of our approach: one geared towards
 	LLMs as experts, and a graphical user interface designed 
