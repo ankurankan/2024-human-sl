@@ -661,7 +661,7 @@ version of {\sc Expand} where we use the largest unexplained association to
 determine where to next add an edge. 
 To implement this, we need an effect size
 metric by which we can rank effects. Depending on the type of variables, 
-we can use the effect size measures shown in Section~\ref{sec:ci_tests}. 
+we can use the effect sizes shown in Section~\ref{sec:ci_tests}. 
 The algorithm selects the edge that has the highest absolute residual 
 association, resulting
 in prioritization of edges that contribute the most to improving the model.
@@ -703,9 +703,8 @@ its value approaches $ 0 $ as the model perfectly explains the observed data.
 In this section, we compare our \textsc{ExpertInLoop} algorithm with automated
 causal discovery algorithms. Our goal with the empirical analysis is to
 understand the behaviour of our method when the experts are not perfect. To
-simulate this imperfect expert, we use a version of the strong ancestral oracle
+simulate an imperfect domain expert, we use a version of the strong ancestral oracle
 that has an accuracy of $ \alpha $:
-
 \begin{equation}
 	\begin{split}
 		x &= \textrm{rand}([0, 1]) \\
@@ -720,10 +719,9 @@ that has an accuracy of $ \alpha $:
 				  \end{cases}
 	\end{split}
 \end{equation}
-
 where $G_{\textrm{true}}$ is the true data generating DAG.
 
-An important point to note here is that the effective accuracy of $
+It is important to note that the effective accuracy of $
 \mathrm{Expert} $ is higher than $ \alpha $ as even when giving a random
 answer, there is a $ 1 $ in $ 3 $ chance that the answer is correct. Therefore,
 an $ \mathrm{Expert} $ with accuracy $ \alpha $, has an effective accuracy, $ \alpha_{\mathrm{eff}} = \alpha + (1 - \alpha) / 3 $.
@@ -753,20 +751,21 @@ We analyzed the performance of \textsc{ExpertInLoop} algorithm by comparing it
 with three other automated algorithms: PC, Hill-Climb Search, and Greedy
 Equivalence Search (GES) on linear Gaussian data. For \textsc{ExpertInLoop}, we
 use the \textsc{RankedExpand} method with Pearson's correlation coefficient as
-the effect size measure (Section~\ref{sec:ci_tests}). For the analysis, we
-simulated data from known DAGs and use the algorithms to recover the original
+the effect size (Section~\ref{sec:ci_tests}) and significance threshold
+$\alpha=0.05$; note that this means that also the d-separation ``oracle''
+makes both type~I and type~II errors. For the analysis, we
+simulate data from known DAGs and use the algorithms to recover the original
 DAG. We start by generating a random DAG on $10$ nodes and use linear models
 with random effects to simulate $ 500 $ samples from it. We simulate each
-variable $ V_i $ in the DAG as:
-
-
-\begin{equation}
-	\begin{split}
-		\bm{\beta} &= \mathrm{Uniform}([-0.6, 0.6]) \\
-		V_i &= \bm{\beta} \mathrm{Pa}_G(V_i) + \mathcal{N}(0, 1)
-	\end{split}
-\end{equation}
-
+variable $ V_i $ in the DAG as
+$$
+	V_i = \bm{\beta} \cdot \mathrm{Pa}_G(V_i) + \mathcal{N}(0, 1)
+$$
+where each coefficient $\beta_i$ of the vector $\bm{\beta} \in \mathbb{R}^{|\bm{\beta} |}$ is randomly drawn as
+$$
+\beta_i \sim \mathrm{Uniform}([-0.6, 0.6])
+$$
+ 
 We perform the experiment for both varying densities of the DAG and accuracy of
 $\mathrm{Expert}$. We also repeat each experiment $ 30 $ times and report the
 mean and standard error of the results.
@@ -894,11 +893,14 @@ integrates manual construction with data-driven feedback, bridging
 the gap between fully manually and fully automated methods.
 The idea of augmenting structure learning by domain knowledge is of course not 
 new. Common ways to provide such background knowledge are "whitelists" or "blacklists"
-of edges that must or must not be present in the resulting DAG, or specification
-of a temporal structure between the variables. 
+of edges 
+\citep{scutari2010}, or specification
+of a temporal structure between the variables \cite{Bang2023}.
 Compared to such approaches, where domain knowledge 
-is specified and supplied beforehand, the novelty of our method lies in the interactive
-back-and-forth between domain knowledge and data, which provably leads to the correct
+is specified and supplied beforehand, the novelty 
+of our method lies in the interactive
+back-and-forth between domain knowledge and data, 
+which provably leads to the correct
 result in a polynomial amount of steps (if the expert answers all
 ancestral queries correctly).
 
