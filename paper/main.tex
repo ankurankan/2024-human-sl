@@ -70,22 +70,22 @@
 	prefer to construct DAGs manually based on domain knowledge. This
 	preference arises due to several practical challenges with automated
 	algorithms, such as their tendency to make obvious errors and output
-	Markov Equivalence Classes (MECs) rather than a DAG. To assist
-	researchers in constructing DAGs manually, we propose an iterative 
-	structure learning approach that combines domain knowledge with data-driven
-	insights. Our method leverages Conditional Independence (CI) testing to
-	iteratively identify variable pairs where an edge is either missing or
-	superfluous. Based on this information, we can choose to add missing
-	edges with appropriate orientation based on domain knowledge or remove
-	unnecessary ones. We also give a method to rank potential new edges
-	based on their impact on the overall model fit. Empirical results show
-	that this iterative approach achieves performance comparable to
-	automated algorithms if the orientation of new edges is correctly
-	determined in at least one out of two cases. Additionally, we show
-	that, in the absence of an expert, a Large Language Model (LLM) can be
-	used to determine edge orientations. We provide an implementation of
-	our approach as both a webtool: <redacted for review> and a Python
-	package <redacted for review>.
+	Markov Equivalence Classes (MECs) instead of a DAG. To assist
+	researchers in constructing DAGs manually, we propose an iterative
+	structure learning approach that combines domain knowledge with
+	data-driven insights. Our method leverages Conditional Independence
+	(CI) testing to iteratively identify variable pairs where an edge is
+	either missing or superfluous. Based on this information, we can choose
+	to add missing edges with appropriate orientation based on domain
+	knowledge or remove unnecessary ones. We also give a method to rank
+	these missing edges based on their impact on the overall model fit.
+	Empirical results show that this iterative approach achieves
+	performance comparable to automated algorithms if the orientation of
+	new edges is correctly determined in at least one out of two cases.
+	Additionally, we show that, in the absence of an expert, a Large
+	Language Model (LLM) can be used to determine edge orientations. We
+	provide an implementation of our approach as both a web tool: <redacted
+	for review> and a Python package <redacted for review>.
 
 \end{abstract}
 
@@ -93,21 +93,19 @@
 Understanding cause-and-effect relationships between variables is a fundamental
 objective in many scientific fields. These relationships reveal the mechanisms
 behind observed phenomena and guide effective interventions or policy
-decisions. Causal discovery methods aim to discover such relationships
-among random variables using observational data. 
-
-In the DAG literature, the primary focus has been on developing automated
-algorithms to learn causal structures from datasets. These efforts have led to
-numerous causal discovery algorithms, such as constraint-based methods like PC
-algorithm \citep{Spirtes2001} and Fast Causal Inference \citep{Spirtes2000}),
-score-based methods such as Hill-Climb Search and Greedy Equivalence Search
-\citep{Chickering2002}, and continuous optimization-based methods like NO TEARS
-\citep{Zheng2018} and DAGMA \citep{Bello2022}. Despite significant progress in
-automated causal discovery, their adoption in applied research has been
-limited. Researchers often prefer to manually construct DAGs based on their
-domain expertise \citep{Tennant2020, Petersen2021}. We attribute this
-preference to several challenges with existing causal discovery algorithms in
-practical settings:
+decisions. Causal discovery methods aim to discover such relationships among
+random variables using observational data. In the DAG literature, the primary
+focus has been on developing automated algorithms to learn causal structures
+from datasets. These efforts have led to numerous causal discovery algorithms,
+such as constraint-based methods like PC algorithm \citep{Spirtes2001} and Fast
+Causal Inference \citep{Spirtes2000}), score-based methods such as Hill-Climb
+Search and Greedy Equivalence Search \citep{Chickering2002}, and continuous
+optimization-based methods like NO TEARS \citep{Zheng2018} and DAGMA
+\citep{Bello2022}. Despite significant progress in automated causal discovery,
+their adoption in applied research has been limited. Researchers often prefer
+to manually construct DAGs based on their domain expertise \citep{Tennant2020,
+Petersen2021}. We attribute this preference to several challenges with existing
+causal discovery algorithms in practical settings:
 
 \begin{enumerate}
 	\item \textbf{Lack of Trust:} While most algorithms are asymptotically
@@ -133,9 +131,9 @@ important to validate the consistency of a DAG against our dataset. One way to
 test this consistency is by testing whether the CI statements implied by the
 DAG hold in the data \citep{Ankan2021}. Specifically, each missing edge between
 a pair of variables in the DAG implies a CI statement, which can be tested in
-the dataset using a statistical test. If we find any violation to a CI
-statement, we can fix it by adding an edge between the variables in the DAG. We
-also need to decide the orientation of this edge based on domain expertise.
+the dataset using a statistical test. If we find any violation to CI
+statements, we can make modifications to our model accordingly to fix the
+violations. 
 
 % While DAG-based methods focus on
 % automated discovery, SEM-based methods emphasize expert driven model
@@ -176,52 +174,19 @@ also need to decide the orientation of this edge based on domain expertise.
 \end{figure}
 
 In this paper, we propose a structure learning method that leverages this CI
-testing approach to assist researchers during the DAG construction process,
-rather than just validating the model. Our approach follows an iterative
+testing approach to assist researchers during manual DAG construction, rather
+than just validating the model. Our approach follows an iterative
 model-building strategy that integrates domain expertise with CI testing on
-data. At each iterations, we use CI testing to identify pairs of variables
-where an edge is either missing or superfluous. These pairs are then presented
-to the expert, who determines whether to add or remove these edges. The
-orientation of the edge when adding is determined based on the domain
+data. At each iteration, we use CI testing to identify pairs of variables where
+an edge is either missing or superfluous. We can then use this information
+along with domain expertise to determines whether to add or remove these edges.
+The orientation of the edge when adding is determined based on the domain
 expertise. As at any iteration, multiple changes to the DAG are possible. We
 also give a way to rank potential new edges additions to the DAG using effect
 size measures for CI tests to address the most severe violations of CI tests
 first. As a result this approach acts like a guide to the expert when manually
 constructing their model while ensuring that the model is consistent with the
 data. 
-
-% When manually constructing models, it is important to test whether the
-% resulting DAG accurately represents the dataset. Based on this evaluation and
-% domain knowledge, we can make further modification to the model. One common
-% approach for assessing DAGs is to check whether the Conditional Independences
-% (CIs) implied by the DAG hold in the data \citep{Ankan2021}. If we find
-% violations to these CIs, we can use our domain knowledge to make appropriate
-% modifications to the DAG. However, this CI testing approach has a few
-% limitations:
-% 
-% \begin{enumerate}
-% \item As CIs are only implied by missing edges in the model, this approach does 
-% 	not test whether the existing edges are correct.
-% \item Determining whether a CI holds in data is based on a p-value threshold. This can 
-% 	be unreliable, for example, we get a significant p-value for even very weak 
-% 	relationship if the sample size is high.
-% \item The number of implied CIs can be large making it difficult to manually
-% 	check all of them. For example, a moderately sized alarm network
-% 	\citep{Beinlich1989} with $ 37 $ nodes, implies $ 287 $ CIs.
-% \end{enumerate}
-% 
-% To tackle these limitations, we draw inspiration from modification indices in
-% specification search. Modification indices provide ranking for potential model
-% modification based on their impact on the model's fit, allowing us to
-% prioritize most meaningful modifications.  Similarly, we propose a method for
-% ranking CI test violations to help us focus on the most critical
-% inconsistencies in the model. To determine this ranking we utilize a measure of
-% conditional association between variables in combination with p-values from the
-% CI test. This approach addresses all three of the issues outlined above. The
-% measure of association allows us to evaluate the validity of existing edges. It
-% reduces our reliance on p-values alone for deciding whether the CI test holds.
-% The ranking helps us prioritize the most critical violations, making it feasible 
-% to focus on the areas that most improve the model's fit.
 
 Our main contributions in this paper are as follows:
 
@@ -326,6 +291,8 @@ When $ \bm{Z} \neq \emptyset $,
 \begin{equation}
 	r_{X, Y; \bm{Z}} = - \frac{\Sigma^{-1}_{XY}}{\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}}
 \end{equation}
+
+\subsection{Model Testing Using CI Tests}
 
 \section{DAG Structure Learning using Ancestral Oracles}
 \label{sec:modification}
