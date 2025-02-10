@@ -238,15 +238,16 @@ practice. We take the example of the MEC learned by the PC algorithm in
 Figure~\ref{fig:intro}(b) using $ N=800 $. We first orient all the undirected
 edges in the model based on our domain knowledge to obtain a DAG. In this case
 we only have one undirected edge between \emph{Marital Status} and
-\emph{Relationship} that we orient as $ \textrm{Marital Status} \rightarrow
-\textrm{Relationship} $. We can now test the implied CIs of this DAG using
-data. Figure~\ref{fig:ci_table} shows the result of this testing on some of the
-implied CIs. If we use a p-value threshold of $ 0.05 $, the first $ 3 $ implied
-CIs hold in the data whereas the remaining tests fail. One of the ways to fix
-these failing tests is to add an edge between the variables $ X $ and $ Y $.
-While this method tells up which variable pairs need to have an edge between
-them, it does not tell anything about the orientation of the edge, and we would
-need to orient it based on our domain knowledge.
+\emph{Relationship} that we orient as \emph{Marital Status} $ \rightarrow $
+\emph{Relationship} . We can then test the implied CIs of the DAG using our
+dataset. Figure~\ref{fig:ci_table} shows the result of this testing on some of
+the implied CIs. If we use a p-value threshold of $ 0.05 $, the first $ 2 $
+implied CIs hold in the data whereas the remaining tests fail. One of the ways
+to fix these failing tests is to add an edge between the variable pair $ X $
+and $ Y $. While this method helps us in finding variable pairs where we need
+to add an edge, it does not give us any information about the orientation of
+this edge. We would have to rely on domain knowledge to determine this
+orientation.
 
 \begin{figure}
 	\centering
