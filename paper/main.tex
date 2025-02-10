@@ -233,21 +233,24 @@ non-collider structure ($ V_1 \rightarrow V_2 \rightarrow V_3 $, $ V_1
 
 \subsection{Testing DAG Using CI Tests}
 Our structure learning algorithm uses the idea of testing DAGs using CI tests.
-In this section, we give an example of how this model testing works in
+In this section, we show an example of how this model testing works in
 practice. We take the example of the MEC learned by the PC algorithm in
 Figure~\ref{fig:intro}(b) using $ N=800 $. We first orient all the undirected
 edges in the model based on our domain knowledge to obtain a DAG. In this case
 we only have one undirected edge between \emph{Marital Status} and
 \emph{Relationship} that we orient as \emph{Marital Status} $ \rightarrow $
-\emph{Relationship} . We can then test the implied CIs of the DAG using our
-dataset. Figure~\ref{fig:ci_table} shows the result of this testing on some of
-the implied CIs. If we use a p-value threshold of $ 0.05 $, the first $ 2 $
-implied CIs hold in the data whereas the remaining tests fail. One of the ways
-to fix these failing tests is to add an edge between the variable pair $ X $
-and $ Y $. While this method helps us in finding variable pairs where we need
-to add an edge, it does not give us any information about the orientation of
-this edge. We would have to rely on domain knowledge to determine this
-orientation.
+\emph{Relationship}. We can then test each of the implied CIs of the DAG
+against our dataset using a statistical test. Figure~\ref{fig:ci_table} shows
+some of the implied CIs of the model and the corresponding p-value of
+statistical test. Using a p-value threshold of $ 0.05 $, we can determine that
+the first $2$ implied CIs hold in the data while the remaining two do not.
+These failing tests tell us that there is residual association between these
+variable pairs that is currently not being explained by the DAG. This method,
+however, does not give us any information on the reason, such as there is a
+direct or indirect effect, or a confounding variable, behind this observed
+association. To fix these failing tests, we still have to rely on domain
+knowledge to determine the type of relationship and the causal directions
+between these variables.
 
 \begin{figure}
 	\centering
