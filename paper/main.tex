@@ -230,7 +230,7 @@ collider structure ($ V_1 \rightarrow V_2 \leftarrow V_3 $) on $ \pi(X, Y) $, $
 \bm{Z} \cap \{ V_2, \textrm{De}_G(V_2) \} \ne \emptyset $, and (ii) for every
 non-collider structure ($ V_1 \rightarrow V_2 \rightarrow V_3 $, $ V_1
 \leftarrow V_2 \rightarrow V_3 $), $ V_2 \not \in \bm{Z} $. $ X $ and $ Y $ are
-\emph{d-separated} given $ \bm{Z} $ if no d-connecting path exist between them.
+d-separated given $ \bm{Z} $ if no d-connecting path exist between them.
 
 \subsection{Conditional Independence Tests}
 \label{sec:ci_tests}
@@ -253,7 +253,7 @@ orientation.
 
 \begin{figure}
 	\centering
-	\begin{tabular}{llrr}
+	\begin{tabular}{llrl}
 		$X$ & $Y$ & $ \bm{Z} $ & p-value \\
 		\hline
 		Incm & MrtS &  Age, Occp, Rltn & $ 0.29 $     \\
@@ -347,7 +347,7 @@ $$
 \mathcal{A}_G(X,Y)=\begin{cases}
  X \to Y & \textrm{if } X \in \textrm{An}_G(Y) \\
  X \gets Y & \textrm{if } Y \in \textrm{An}_G(X) \\
- \textrm{rand}(\}X \gets Y, X \to Y\}) & \textrm{otherwise} \\
+ \textrm{rand}(\{X \gets Y, X \to Y\}) & \textrm{otherwise} \\
 \end{cases}
 $$
 where $\textrm{rand}(S)$ denotes a uniformly chosen element of $S$.
@@ -713,18 +713,19 @@ that has an accuracy of $ \alpha $:
 			\textrm{rand}(X \rightarrow Y, Y \leftarrow X, \textrm{None}) & \textrm{otherwise} \\
 				\end{cases} \\
 			\mathcal{O}(X, Y) &= \begin{cases}
-				X \rightarrow Y, & \textrm{if } X \rightarrow Y \in G_{\textrm{true}} \\
-				Y \rightarrow X, & \textrm{if } Y \rightarrow X \in G_{\textrm{true}} \\
-					\textrm{None}, & \textrm{otherwise }
+				X \rightarrow Y, & \textrm{if } X \in \textrm{An}_{G_{\textrm{true}}}(Y) \\
+				X \leftarrow Y, & \textrm{if } Y \in \textrm{An}_{G_{\textrm{true}}}(X) \\
+				\textrm{None}, & \textrm{otherwise }
 				  \end{cases}
 	\end{split}
 \end{equation}
 where $G_{\textrm{true}}$ is the true data generating DAG.
 
-It is important to note that the effective accuracy of $
-\mathrm{Expert} $ is higher than $ \alpha $ as even when giving a random
-answer, there is a $ 1 $ in $ 3 $ chance that the answer is correct. Therefore,
-an $ \mathrm{Expert} $ with accuracy $ \alpha $, has an effective accuracy, $ \alpha_{\mathrm{eff}} = \alpha + (1 - \alpha) / 3 $.
+It is important to note that the effective accuracy of $ \mathrm{Expert} $ is
+higher than $ \alpha $ as even when $ x > \alpha $, there is a $ 1 $ in
+$ 3 $ chance that edge orientation is correct. Therefore, an $ \mathrm{Expert} $ with
+accuracy $ \alpha $, has an effective accuracy, $ \alpha_{\mathrm{eff}} =
+\alpha + (1 - \alpha) / 3 $.
 
 \begin{figure}[t!]
 	\centering
@@ -778,7 +779,7 @@ MEC to compute a range of SHD and SID values representing the best and worst
 case scenarios. The results of this analysis are shown in
 Figure~\ref{fig:shd_sid}. For SHD, the performance of \textsc{ExpertInLoop} is
 comparable to the automated algorithms for $ \alpha = 0.3
-(\alpha_{\textrm{eff}} = 0.53 $, implying that if an expert is able to get the
+(\alpha_{\textrm{eff}} = 0.53 $), implying that if an expert is able to get the
 edge orientation correctly in more than $ 1 $ out of $ 2 $ cases, they can
 outperform the automated algorithms. Similarly for SID, an expert can outperform 
 the automated algorithms if they are able to get the orientation correct in $ 2 $ 
