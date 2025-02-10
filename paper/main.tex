@@ -846,25 +846,23 @@ from the LLM.
 	\label{fig:web}
 \end{figure}
 
-To enable users to apply this method to their own datasets, we developed an
-interactive web-based tool (shown in Fig.~\ref{fig:web}) for constructing
-models. Users begin by uploading their dataset, which initializes an empty DAG
-with nodes corresponding to the dataset\'s variables. They can then specify a
-p-value threshold and a measure of association threshold. To make the method
+To enable researchers to easily apply our approach to their own datasets, we
+also developed an interactive web-based tool (shown in Fig.~\ref{fig:web}) for
+constructing models. Users can upload their dataset, which initializes an empty
+DAG with nodes corresponding to the dataset's variables. They can then specify
+a p-value threshold and a measure of association threshold. To make the method
 work for mixed data types, we use a measure based on canonical correlations
 (Appendix~\ref{sec:mixed_association}). 
 
-Using the specified thresholds, the tool visually highlights unexplained
-correlations by displaying red edges between variables where correlation exists
-in the data but the current DAG is not able to explain. The thickness of these
-edges represents the strength of the correlation, helping users prioritize
-which edges to add. Similarly, if an edge in the graph is detected to be
-unnecessary, it is highlighted in black. Based on this information, users can
-select to remove unnecessary edge or select a potential edge to add and specify
-the orientation of the edge. The tool computes Shipley’s C \citep{Shipley2000}
-value at each change to determine the overall fit of the model to the data.
-Once satisfied with the constructed DAG, users can export the model for further
-analysis.
+Using the specified thresholds, the tool visually highlights variable pairs
+(using red edges) with a residual association higher than the threshold. The
+thickness of these edges represents the strength of association, helping users
+prioritize which variable pairs to address first. Similarly, if an edge in the
+graph is detected to be unnecessary, it is highlighted in black. Based on this
+information, make modifications to the model by adding or removing edges. The
+tool also provides the Room Mean Square Error of Approximation (RMSEA) of the
+overall model fit to the data. Once satisfied with the constructed DAG, users
+can export the model for further analysis.
 
 
 \section{Conclusions}
