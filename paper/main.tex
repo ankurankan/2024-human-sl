@@ -204,48 +204,49 @@ Our main contributions in this paper are as follows:
 
 \section{Background}
 \label{sec:background}
-\todo[inline]{Need to rewrite this}
-We denote random variables with uppercase letters $ X $, and a set of random
-variables as $ \bm{X} = \{X_1, \cdots, X_k\} $ with $ \rvert \bm{X} \rvert = k
-$. A sample from the random variable $ X $ is denoted as $ x $ and from a set
-of random variables $ \bm{X} $ is denoted as $ \bm{x} $. In this paper, we
-consider random variables in the mixed data setting where each of the random
-variables can be either of continuous, categorical, or ordinal unless
-specified. We write the expectation of a variable $ X $ as $ \mathbb{E}[X] $,
-conditional expectations as $ \mathbb{E}[X | \bm{Z}] $. We denote a graph $ G =
-(V, E) $ which nodes $ V$ and edges $ E $. In this paper we focus on all
-observed variables, and linear measure of association. 
-where $ \mathrm{cov}(X, Y) $ is the covariance between $ X $ and $ Y $, $ \mathrm{corr}(X, Y) $ is the correlation between $ X $ and $ Y $, and $
-\sigma_X $ and $ \sigma_Y $ are the standard deviations of $ X $ and $ Y $
-respectively.  Covariance matrix using $ \Sigma $ and the entry corresponding to
-covariance between $ X $ and $ Y $ in the matrix using $ \Sigma_{XY} $.
+We denote random variables using uppercase letters, such as $ X $, and a set of
+random variables by $ \bm{X} = \{X_1, \cdots, X_k\} $, where $ \rvert \bm{X}
+\rvert = k $ indicates the number of variables in the set. We denote the
+covariance between variables $ X $ and $ Y $ as $ \mathrm{cov}(X, Y) $, the
+covariance matrix as $ \Sigma $, and the entry corresponding to covariance
+between $ X $ and $ Y $ using $ \Sigma_{XY} $. In the context of this paper, we
+consider causal DAGs that contain only observed variables. The structure of the
+DAG is represented using a graph $ G = (V, E) $, where $ V $ are the nodes
+corresponding to the random variables, and $ E $ are the edges denoting the
+causal relationship between the variables. The set of parents of $ X $ in $ G $
+are denoted as $ \textrm{Pa}_G(X) $, and its ancestors and descendants as $
+\textrm{An}_G(X) $ and $ \textrm{De}_G(X) $ respectively. We denote a path, $
+\pi(X, Y) = \{ X, V_0, V_1, \cdots, V_k, Y \} $ between $ X $ and $ Y $ in $ G
+$ where each consecutive pair of variables in $ \pi $ are connected through an
+edge. We say $ X $ and $ Y $ are d-connected in $ G $ given a conditioning set
+$ \bm{Z} \subseteq V - \{X, Y\} $, if for a path $ \pi(X, Y) $ (i) every collider 
+structure ($ V_1 \rightarrow V_2 \leftarrow V_3 $) on $ \pi(X, Y) $, $ \bm{Z} \cap \{ V_2, \textrm{De}_G(V_2) \} \ne \emptyset $, and (ii) for every non-collider structure
+($ V_1 \rightarrow V_2 \rightarrow V_3 $, $ V_1 \leftarrow V_2 \rightarrow V_3 $), $ V_2 \not \in \bm{Z} $. $ X $ and $ Y $ are d-separated given $ G $ if no d-connecting
+path exists between them.
 
-\subsection{Model Testing Using CI Tests}
-Our structure learning algorithm relies on the idea of testing DAGs using CI
-tests. In this section, we give an example of how this model testing and
-corresponding modification work. We take the example of the MEC learned by the
-PC algorithm in Figure~\ref{fig:intro}(b) using $ N=800 $. We first orient all
-the undirected edges in the model based on our domain knowledge. In this case
-we only have one undirected edge between Marital Status and Relationship. Let's 
-orient the edge as Marital Status to Relationship.
+\subsection{Testing DAGs Using CI Tests}
+Our structure learning algorithm uses the idea of testing DAGs using CI tests.
+In this section, we give an example of how this model testing works in
+practice. We take the example of the MEC learned by the PC algorithm in
+Figure~\ref{fig:intro}(b) using $ N=800 $. We first orient all the undirected
+edges in the model based on our domain knowledge to obtain a DAG. In this case
+we only have one undirected edge between Marital Status and Relationship. Let's
+orient the edge as Marital Status to Relationship. 
 
- The implied CIs of the 
-model along with the test results are shown in the Figure.
-
-We can think of our proposed approach to be an iterative application of this model
-testing approach.
+Using these statistical tests we can determine the pair of variables that
+should have edge between them. We can think of our proposed approach to be an
+iterative application of this model testing approach.
 
 \subsection{Effect Sizes for CI Tests}
 
 Our structure learning approach relies on using CI tests and a measure of
 conditional association between variables -- also known as partial association.
-Specifically, we are interested in testing CI tests: $ X \ci Y \bm{Z} $, i.e.,
-whether the variables $ X $ and $ Y $ are independent when conditioned on $
-\bm{Z} $. Secondly, we are interested in quantifying the strength of
-relationship between $ X $ and $ Y $ conditioned on $ \bm{Z} $. We can use
-the effect size measures of the CI tests for this quantification. In this 
-section, we give an overview of some of the effect size measures for 
-different types of (possibly mixed) data.
+Specifically, we are interested in testing CI tests: $ X \ci Y \rvert \bm{Z} $
+(with potentially $ \bm{Z} = \emptyset $. Secondly, we are interested in
+quantifying the strength of the relationship between $ X $ and $ Y $
+conditioned on $ \bm{Z} $. We can use the effect size measures of the CI tests
+for this quantification. In this section, we give an overview of some of the
+effect size measures for different types of (possibly mixed) data.
 
 \paragraph{Both $ X $ and $ Y $ are continuous: }
 When both $ X $ and $ Y $ are continuous, Pearson's correlation coefficient is
@@ -266,7 +267,7 @@ residuals:
 	r_{X, Y; \bm{Z}} = r_{R_X, R_Y}
 \end{equation}
 
-\paragraph{$ X $ is ordinal, and $ Y $ and $ Z $  are continuous or ordinal: }
+\paragraph{$ X $ is ordinal, and $ Y $ and $ \bm{Z} $  are continuous or ordinal: }
 
 Polyserial (when one is ordinal and the other is continuous) and Polychoric
 (when both are ordinal) correlation have been used to estimate the covariance
@@ -287,7 +288,10 @@ When $ \bm{Z} \neq \emptyset $,
 	r_{X, Y; \bm{Z}} = - \frac{\Sigma^{-1}_{XY}}{\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}}
 \end{equation}
 
-\paragraph{$ X $, $ Y $, and $ \bm{Z} $ are discrete (ordinal or caterical): }
+\paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete (ordinal or categorical): }
+
+In the case when we have a combination of ordinal and categorical variables, we use
+the 
 
 \todo[inline]{Here we use an effect size RMSEA based on the previous Hotelling's test paper.}
 
