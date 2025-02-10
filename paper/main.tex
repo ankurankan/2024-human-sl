@@ -704,29 +704,20 @@ that has an accuracy of $ \alpha $:
 			\mathrm{TrueReln}(X, Y),  & \textrm{if  } x <= \alpha \\
 			\textrm{rand}(X \rightarrow Y, Y \leftarrow X, \textrm{None}) & \textrm{otherwise} \\
 				\end{cases} \\
-	\end{split}
-\end{equation}
-
-where given the true DAG, $ G $:
-
-\begin{equation}
-	\begin{split}
-	\mathrm{TrueReln}(X, Y) &= \begin{cases}
-					X \rightarrow Y, & \textrm{if } X \rightarrow Y \in G \\
-					Y \rightarrow X, & \textrm{if } Y \rightarrow X \in G \\
+		\mathrm{TrueReln}(X, Y) &= \begin{cases}
+				X \rightarrow Y, & \textrm{if } X \rightarrow Y \in G_{\textrm{true}} \\
+				Y \rightarrow X, & \textrm{if } Y \rightarrow X \in G_{\textrm{true}} \\
 					\textrm{None}, & \textrm{otherwise }
 				  \end{cases}
 	\end{split}
 \end{equation}
 
+where $G_{\textrm{true}}$ is the true data generating DAG.
+
 An important point to note here is that the effective accuracy of $
 \mathrm{Expert} $ is higher than $ \alpha $ as even when giving a random
 answer, there is a $ 1 $ in $ 3 $ chance that the answer is correct. Therefore,
-an $ \mathrm{Expert} $ with accuracy $ \alpha $, has an effective accuracy:
-
-\begin{equation}
-	\alpha_{\mathrm{eff}} = \alpha + (1 - \alpha) / 3
-\end{equation}
+an $ \mathrm{Expert} $ with accuracy $ \alpha $, has an effective accuracy, $ \alpha_{\mathrm{eff}} = \alpha + (1 - \alpha) / 3 $.
 
 \begin{figure}[t!]
 	\centering
@@ -748,10 +739,6 @@ an $ \mathrm{Expert} $ with accuracy $ \alpha $, has an effective accuracy:
 		$\alpha_{\textrm{eff}} $ is shown in the plot.}
 	\label{fig:shd_sid}
 \end{figure}
-
-, we use the
-\textsc{RankedExpand} method together with a version of the strong ancestral
-oracle that can make mistakes.
 
 We analyzed the performance of \textsc{ExpertInLoop} algorithm by comparing it
 with three other automated algorithms: PC, Hill-Climb Search, and Greedy
