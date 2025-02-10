@@ -640,20 +640,13 @@ the residual association, $ \phi(X, Y, \bm{Z}) $, as the effect size of the CI
 test $ X \ci Y \rvert \bm{Z} $. In Algorithm~\ref{algo:ranked_expand}, we
 outline a greedy approach to edge selection using the effect size measure. 
 
-To implement Algorithm~\ref{algo:ranked_expand}, we need to have an effect size 
-metric by which we can rank effects. For some simple cases, such as 
-linear-Gaussian models, such effect sizes exist. However, a challenge arises
-when using mixed data. We here present a standardized effect size hat 
-is useable for datasets containing mixtures of continuous, ordinal and 
-
-The
-algorithm selects the edge that has the highest absolute residual association,
-resulting in prioritization of edges that contribute the most to improving the
-model.
-
+To implement Algorithm~\ref{algo:ranked_expand}, we need to have an effect size
+metric by which we can rank effects. Depending on the type of variables, we can
+use the effect size measures shown in Section~\ref{sec:ci_tests}. The algorithm
+selects the edge that has the highest absolute residual association, resulting
+in prioritization of edges that contribute the most to improving the model.
 
 \subsection{Connection to Score-Based Methods}
-
 
 Our procedure shares similarities with score-based automated causal discovery
 methods, such as Greedy Equivalence Search (GES), where the algorithm
@@ -744,7 +737,7 @@ We analyzed the performance of \textsc{ExpertInLoop} algorithm by comparing it
 with three other automated algorithms: PC, Hill-Climb Search, and Greedy
 Equivalence Search (GES) on linear Gaussian data. For \textsc{ExpertInLoop}, we
 use the \textsc{RankedExpand} method with Pearson's correlation coefficient as
-the effect size measure (Section~\ref{ref:ci_tests}). For the analysis, we
+the effect size measure (Section~\ref{sec:ci_tests}). For the analysis, we
 simulated data from known DAGs and use the algorithms to recover the original
 DAG. We start by generating a random DAG on $10$ nodes and use linear models
 with random effects to simulate $ 500 $ samples from it. We simulate each
