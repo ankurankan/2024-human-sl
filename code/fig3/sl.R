@@ -87,8 +87,14 @@ simulate_human_sl <- function(sim_data, true_dag, oracle_acc, max_iter=1e4){
 					new_dag <- temp_dag
 				}
 				else{
-					print("Not adding edge to avoid cycle.")
-					blacklist_edges <- rbind(blacklist_edges, oracle_edge)
+					temp_dag <- add_edge(new_dag, c(oracle_edge[2], oracle_edge[1]))
+					if (dagitty::isAcyclic(temp_dag)){
+						new_dag <- temp_dag
+					}
+					else{
+						print("Not adding edge to avoid cycle.")
+						blacklist_edges <- rbind(blacklist_edges, oracle_edge)
+					}
 				}
 			}
 		}
