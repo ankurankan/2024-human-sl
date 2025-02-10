@@ -806,25 +806,26 @@ single run of the algorithms.
 	\caption{DAG learned from the adult income dataset using an LLM (GEMINI-1.5-flash) as the expert. The p-value threshold used is $ 0.05 $ and the measure of association threshold is $ 0. 1 $}
 	\label{fig:adult_llm}
 \end{figure}
-Recently, there has been a lot of work towards using LLMs for causal discovery,
-with tasks ranging from determining pairwise edge orientation
-\citep{Kiciman2023, Jin2024} to full causal structure learning \citep{Naik2023,
-Vashishtha2023} and counterfactual reasoning tasks\citep{Kiciman2023} (see
-\citet{Liu2024} for an overview).
 
-Since our approach utilizes expert knowledge to determine edge orientations, we
-investigated the potential of using an LLM for this task. We applied our causal
-discovery procedure with using Gemini 1.5 flash model as the expert. Our method
-uses a greedy approach where the pair of variables with the highest unexplained
-correlation is oriented first. The prompt used to determine the orientation is
-provided in Appendix~\ref{section:llms}. Our LLM prompt utilizes variable
-description to determine the edge orientation. We applied this approach to the
-adult income dataset and the output is shown in Fig.~\ref{fig:adult_llm}. 
+Recently, there has been significant interest in leveraging Large Language
+Models (LLMs) for causal discovery. These applications range from determining
+pairwise edge orientations \citep{Kiciman2023, Jin2024} to full causal
+structure learning \citep{Naik2023, Vashishtha2023} and counterfactual
+reasoning \citep{Kiciman2023} (see \citet{Liu2024} for a comprehensive
+overview).
 
-Unlike the other approaches to utilize LLM for doing full causal discovery, we 
-used a combination of statistical tests and LLMs. This greatly reduces the
-amount of information that we need from the LLM. Our approach is also able to 
-ask exact questions about the variables unlike some of the other approaches.
+Since our approach relies on expert knowledge to determine edge orientations,
+we explored the potential of using an LLM for this task. We applied our causal
+discovery procedure using the Gemini 1.5 Flash model as the expert. We simulate
+the \emph{weak ancestral oracle} using the LLM by asking it to choose the
+causal direction between a pair of variables. The LLM is provided a description
+of each of the variables for the task. We have provided the prompt used in
+Appendix~\ref{section:llms}. Figure~\ref{fig:adult_llm} shows the DAG learned
+on the Adult Income dataset using the LLM as the expert. Compared to other
+methods that use LLMs for causal discovery, our approach combines a data-driven
+method with LLMs. We believe this should help in reducing the amount of
+mistakes made by the LLM as well as reduce the amount of information needed
+from the LLM.
 
 \section{Web Tool}
 \label{sec:web}
