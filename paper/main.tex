@@ -235,33 +235,35 @@ d-separated given $ \bm{Z} $ if no d-connecting path exist between them.
 Our structure learning algorithm uses the idea of testing DAGs using CI tests.
 In this section, we give an example of how this model testing works in
 practice. We take the example of the MEC learned by the PC algorithm in
-Figure~\ref{fig:intro}(a) using $ N=800 $. We first orient all the undirected
+Figure~\ref{fig:intro}(b) using $ N=800 $. We first orient all the undirected
 edges in the model based on our domain knowledge to obtain a DAG. In this case
-we only have one undirected edge between Marital Status and Relationship. We 
-orient the edge as Marital Status to Relationship. We then proceed to test
-each of the implied CI of the model using a statistical test. We show the result
-of some of these tests in Figure.
+we only have one undirected edge between \emph{Marital Status} and
+\emph{Relationship} that we orient as $ \textrm{Marital Status} \rightarrow
+\textrm{Relationship} $. We can now test the implied CIs of this DAG using
+data. Figure~\ref{fig:ci_table} shows the result of this testing on some of the
+implied CIs. If we use a p-value threshold of $ 0.05 $, the first $ 3 $ implied
+CIs hold in the data whereas the remaining tests fail. One of the ways to fix
+these failing tests is to add an edge between the variables $ X $ and $ Y $.
+While this method tells up which variable pairs need to have an edge between
+them, it does not tell anything about the orientation of the edge, and we would
+need to orient it based on our domain knowledge.
 
-\todo[inline]{Add a table here}
-% \begin{figure}
-% 	\centering
-% 	\begin{tabular}{llrr}
-% 		\multicolumn{4}{c}{Z=Age, Sex} \\
-% 		$X$ & $Y$ & \bm{Z} & p \\
-% 		\hline
-% 		Edct & Wrkc & 1.00  \\
-% 		Occp & Wrkc & 1.00  \\
-% 		Rltn & HrPW &  .99  \\
-% 		Incm & Occp & .08   \\
-% 		Incm & Wrkc &  .50  \\
-% 		Incm & HrPW & .003  \\
-% 		\hline
-% 	\end{tabular}
-% \end{figure}
-
-Using these statistical tests we can determine the pair of variables that
-should have edge between them. We can think of our proposed approach to be an
-iterative application of this model testing approach.
+\begin{figure}
+	\centering
+	\begin{tabular}{llrr}
+		$X$ & $Y$ & $ \bm{Z} $ & p-value \\
+		\hline
+		Incm & MrtS &  Age, Occp, Rltn & $ 0.29 $     \\
+		Incm & Sex  &  Occp, Rltn      & $ 0.21 $     \\
+		Incm & Wrkc &  Occp 	       & $ 1.5e^{-3} $ \\
+		Edct & MrtS & Incm, Occp, Rltn & $ 0.02 $       \\
+		\hline
+	\end{tabular}
+	\caption{Results of testing some of implied CIs of the DAG in
+		 Figure~\ref{fig:intro}(b) using the same CI test that was used for
+		 learning it.}
+	\label{fig:ci_table}
+\end{figure}
 
 \subsection{Effect Sizes for CI Tests}
 \label{sec:ci_tests}

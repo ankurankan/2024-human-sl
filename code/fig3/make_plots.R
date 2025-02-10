@@ -164,7 +164,7 @@ make_plots_v2 <- function(filename, plot_type){
 	      	       c(d_shd$ges_mean, d_shd$hc_mean, d_shd$pc_mean, d_shd$human_mean),
 	      	       c(d_shd$ges_lower, d_shd$hc_lower, d_shd$pc_lower, d_shd$human_lower),
 	      	       c(d_shd$ges_upper, d_shd$hc_upper, d_shd$pc_upper, d_shd$human_upper),
-		       c(rep('GES', nrow(d_shd)), rep('Hill-Climb Search', nrow(d_shd)), rep('PC', nrow(d_shd)), rep('Expert', nrow(d_shd))),
+		       c(rep('GES', nrow(d_shd)), rep('Hill-Climb', nrow(d_shd)), rep('PC', nrow(d_shd)), rep('Expert', nrow(d_shd))),
 		       c(rep('ges', nrow(d_shd)), rep('hc', nrow(d_shd)), rep('pc', nrow(d_shd)), paste('human', d_shd$oracle_acc)),
 		       c(rep(NA, nrow(d_shd)), rep(NA, nrow(d_shd)), rep(NA, nrow(d_shd)), d_shd$oracle_acc)
 		       ))
@@ -181,9 +181,9 @@ make_plots_v2 <- function(filename, plot_type){
 				   ymin=lower, ymax=upper, 
 				   group=grp, color=algo, 
 				   fill=algo,
-				   linetype=ifelse(algo %in% c('GES', 'PC', 'Hill-Climb Search'), NA, "solid"))) + 
+				   linetype=ifelse(algo %in% c('GES', 'PC', 'Hill-Climb'), NA, "solid"))) + 
 		geom_line(alpha=0.4, show.legend=T) +
-		geom_point(data=subset(d_shd, !(algo %in% c('GES', 'PC', 'Hill-Climb Search'))), pch=19, size=1, alpha=0.4, show.legend=F) +
+		geom_point(data=subset(d_shd, !(algo %in% c('GES', 'PC', 'Hill-Climb'))), pch=19, size=1, alpha=0.4, show.legend=F) +
 		geom_ribbon(linetype=0, alpha=0.4, show.legend=F) + 
 		geom_dl(aes(label=line_labels), color='black', method=list(dl.trans(x=x+.1), "last.points", cex=0.5)) + 
       		theme_minimal(base_size = 8) + 
@@ -196,7 +196,7 @@ make_plots_v2 <- function(filename, plot_type){
 		ylim(0, 40) +
 		guides(linetype='none', fill='none')
 
-	ggsave("shd_ribbon.pdf", p_shd, height=2, width=3.4, units='in')
+	ggsave("shd_ribbon.pdf", p_shd, height=2, width=3.37, units='in')
 
 
 	d_sid <- d %>% select(edge_prob, oracle_acc, ges_lower_sid_mean, ges_upper_sid_mean, ges_lower_sid_sd, ges_upper_sid_sd, hc_lower_sid_mean, hc_upper_sid_mean, hc_lower_sid_sd, hc_upper_sid_sd, pc_lower_sid_mean, pc_upper_sid_mean, pc_lower_sid_sd, pc_upper_sid_sd, human_sid_mean, human_sid_sd)
@@ -224,7 +224,7 @@ make_plots_v2 <- function(filename, plot_type){
 	      	       c(d_sid$ges_mean, d_sid$hc_mean, d_sid$pc_mean, d_sid$human_mean),
 	      	       c(d_sid$ges_lower, d_sid$hc_lower, d_sid$pc_lower, d_sid$human_lower),
 	      	       c(d_sid$ges_upper, d_sid$hc_upper, d_sid$pc_upper, d_sid$human_upper),
-		       c(rep('GES', nrow(d_sid)), rep('Hill-Climb Search', nrow(d_sid)), rep('PC', nrow(d_sid)), rep('Expert', nrow(d_sid))),
+		       c(rep('GES', nrow(d_sid)), rep('Hill-Climb', nrow(d_sid)), rep('PC', nrow(d_sid)), rep('Expert', nrow(d_sid))),
 		       c(rep('ges', nrow(d_sid)), rep('hc', nrow(d_sid)), rep('pc', nrow(d_sid)), paste('human', d_sid$oracle_acc)),
 		       c(rep(NA, nrow(d_sid)), rep(NA, nrow(d_sid)), rep(NA, nrow(d_sid)), d_sid$oracle_acc)
 		       ))
@@ -240,9 +240,9 @@ make_plots_v2 <- function(filename, plot_type){
 	p_sid <- ggplot(d_sid, aes(x=edge_prob, y=mean_val, 
 				   ymin=lower, ymax=upper, 
 				   group=grp, color=algo, 
-				   fill=algo, linetype=ifelse(algo %in% c('GES', 'PC', 'Hill-Climb Search'), NA, "solid"))) + 
+				   fill=algo, linetype=ifelse(algo %in% c('GES', 'PC', 'Hill-Climb'), NA, "solid"))) + 
 		geom_line(alpha=0.4, show.legend=T) +
-		geom_point(data=subset(d_sid, !(algo %in% c('GES', 'PC', 'Hill-Climb Search'))), pch=19, size=1, alpha=0.4, show.legend=F) +
+		geom_point(data=subset(d_sid, !(algo %in% c('GES', 'PC', 'Hill-Climb'))), pch=19, size=1, alpha=0.4, show.legend=F) +
 		geom_ribbon(linetype=0, alpha=0.4, show.legend=F) + 
 		geom_dl(aes(label=line_labels), color='black', method=list(dl.trans(x=x+.1), "last.points", cex=0.5)) + 
       		theme_minimal(base_size = 8) + 
@@ -255,7 +255,7 @@ make_plots_v2 <- function(filename, plot_type){
 		ylim(0, 90) +
 		guides(linetype='none', fill='none')
 
-	ggsave("sid_ribbon.pdf", p_sid, height=2, width=3.4, units='in')
+	ggsave("sid_ribbon.pdf", p_sid, height=2, width=3.37, units='in')
 }
 
 make_plots_v2(filename='results/sl_results_linear.csv', plot_type='ribbon')
