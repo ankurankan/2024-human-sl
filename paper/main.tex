@@ -806,9 +806,9 @@ values.
 		\includegraphics{../code/fig4/ll.pdf}
 		\caption{}
 	\end{subfigure}
-	\caption{Model fit improvement over iterations on the Adult Income dataset. In the expert simulation, an 
-		LLM is used to determine the edge orientations. (a) Shows the total residual association, $\tau$. 
-		(b) Shows the log-likelihood of the overall model.
+	\caption{LLM-in-the-loop causal discovery on the Adult Income datases. As the ground 
+truth is unknown, two measures of fit are shown over 30 iterative modifications: 
+total residual association $\tau$ (a, lower is bettter); log-likelihood (a, higher is better).
 	}
 	\label{fig:unexplained_ll}
 \end{figure}
@@ -819,7 +819,11 @@ values.
 
 We now present two proof-of-concept implementations of our approach, 
 geared towards using  large language models (LLMs) and humans as experts
-to decide on edge directions.
+to decide on edge directions. We use the Adult Income dataset from the 
+introduction as an example. There is no known ground truth for this dataset,
+and it contains mixed types of data; here, we use a version that contains
+ordinal and nominal variables and use the RMSEA as a measure of association
+to prioritize modifications (Section~\ref{sec:background}). 
 
 \subsection{Using LLMs as Experts}
  
@@ -844,18 +848,14 @@ we explored the potential of using an LLM for this task. We applied our causal
 discovery procedure using the Gemini 1.5 Flash model as the expert. We simulate
 the \emph{weak ancestral oracle} using the LLM by asking it to choose the
 causal direction between a pair of variables. The LLM is provided a description
-of each of the variables for the task. We have provided the prompt used in
+of each of the variables and given the prompt shown in
 Appendix~\ref{section:llms}. 
-Figure~\ref{fig:unexplained_ll} illustrates this distinction by comparing GES
-to \textsc{ExpertInLoop} on the Adult income dataset across iterations of a
-single run of the algorithms.
+Figure~\ref{fig:unexplained_ll} shows how the model fit to the data improves 
+across 30 iterations compared to GES for a run of the algorithm.
 Figure~\ref{fig:adult_llm} shows the DAG learned
-on the Adult Income dataset using the LLM as the expert. Compared to other
-methods that use LLMs for causal discovery, our approach combines a data-driven
-method with LLMs. We believe this should help in reducing the amount of
-mistakes made by the LLM as well as reduce the amount of information needed
-from the LLM.
-
+on the Adult Income dataset using the LLM as the expert. We can see 
+that the model fit improves comparably to a greedy approach and 
+the resulting DAG contains largely sensible edge directions. 
 
 \subsection{Using Humans as Experts}
 
@@ -878,34 +878,44 @@ To enable researchers to easily apply our approach to their own datasets, we
 developed an interactive web-based tool (Figure~\ref{fig:web}) for constructing
 DAGs. Users can upload their dataset, which initializes an empty DAG with nodes
 corresponding to the dataset's variables. They can then specify a p-value
-threshold and a measure of association threshold. To accommodate mixed data
-types, we use a measure of association based on canonical correlations
-(detailed in Appendix~\ref{sec:mixed_association}). 
-
-Using the specified thresholds, the tool visually highlights variable pairs
+threshold and a threshold for a minimal association strength. The tool 
+then visually highlights variable pairs
 with a residual association greater than the threshold, marking them with red
-edges. The thickness of these edges represents the strength of association,
-helping users prioritize which variable pairs to address first. Similarly, if
-an existing edge is superfluous, it is highlighted in black, signaling
-potentially unnecessary edge. Using this information, users can iteratively
+edges; to avoid cluttering, no lines are drawn for residual associations that
+are statistically insignificanct or below the specified threshold.
+The thickness of these edges represents the strength of association,
+helping users prioritize which variable pairs to address first; however, note that
+users are free to choose which variables to connect. Similarly, if
+an existing edge is found to be potentially superfluous (statistically insignificant),
+it is highlighted in black. Using this information, users can iteratively
 modify the model by adding or removing edges. The tool also computes the Root
-Mean Square Error of Approximation (RMSEA) to provide an estimate of the
+Mean Square Error of Approximation (RMSEA) based on Shipley's C test, a global test 
+of model fit based on the implied CIs \citep{Shipley2000}, to provide an estimate of the
 overall fit of the model. Once satisfied with the constructed DAG, users can
 export the model for further analysis.
 
 \section{Conclusions}
-\todo[inline]{Rewrite}
+
 Researchers often prefer to construct DAGs manually rather than using automated
 algorithms due to practical challenges in applying automated methods. To assist
-in the process, we developed an iterative structure learning method that
-integrates manual construction with data-driven insights. This approach bridges
-the gap between fully manually and fully automated methods by providing a
-systematic way to construct DAGs while utilizing data.
+this process, we developed an iterative structure learning method that
+integrates manual construction with data-driven feedback, bridging
+the gap between fully manually and fully automated methods.
+The idea of augmenting structure learning by domain knowledge is of course not 
+new. Common ways to provide such background knowledge are "whitelists" or "blacklists"
+of edges that must or must not be present in the resulting DAG, or specification
+of a temporal structure between the variables. 
+Compared to such approaches, where domain knowledge 
+is specified and supplied beforehand, the novelty of our method lies in the interactive
+back-and-forth between domain knowledge and data, which provably leads to the correct
+result in a polynomial amount of steps (if the expert answers all
+ancestral queries correctly).
 
-In future we would like to extend our approach to latent variables and Acyclic
-Directed Mixed Graphs (ADMGs), explore the potential of combining our approach
-with pairwise orientation methods. We would also improve the web interface for
-better usability. 
+Avenues for future work include extending this approach to latent variables 
+as encoded by acyclic directed mixed graphs (ADMGs). Further, if experts make 
+mistakes that lead to inconsistencies during model construction (such as cycles),
+this information could be leveraged in a more systematic way to allow backtracking
+and recovery.
 \bibliography{references}
 
 \newpage
