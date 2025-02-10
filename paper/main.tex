@@ -32,7 +32,7 @@
 \usepackage{subcaption}
 \usepackage[linesnumbered, ruled]{algorithm2e}
 
-\def\ci{\perp\!\!\!\!\!\perp}
+\def\ci{\perp\!\!\!\!\perp}
 
 \newtheorem{definition}{Definition}
 \newtheorem{proposition}{Proposition}
@@ -209,20 +209,21 @@ Our contributions are organized as follows:
 
 \section{Background}
 \label{sec:background}
-We denote random variables using uppercase letters, such as $ X $, and a set of
+We denote random variables using uppercase letters like $X$, and a set of
 random variables by $ \bm{X} = \{X_1, \cdots, X_k\} $, where $ \rvert \bm{X}
-\rvert = k $ indicates the number of variables in the set. We denote the
-covariance between variables $ X $ and $ Y $ as $ \mathrm{cov}(X, Y) $, the
-covariance matrix as $ \Sigma $, and the entry corresponding to covariance
-between $ X $ and $ Y $ using $ \Sigma_{XY} $. In the context of this paper, we
-consider causal DAGs that contain only observed variables. The structure of the
-DAG is represented using a graph $ G = (V, E) $, where $ V $ are the nodes
-corresponding to the random variables, and $ E $ are the edges denoting the
-causal relationship between the variables. The set of parents of $ X $ in $ G $
-are denoted as $ \textrm{Pa}_G(X) $, and its ancestors and descendants as $
-\textrm{An}_G(X) $ and $ \textrm{De}_G(X) $ respectively. We denote a path, $
+\rvert = k $ is the number of variables in the set. We denote the
+covariance between variables $ X $ and $ Y $ as $ \mathrm{cov}(X, Y) $, a 
+covariance matrix as $ \Sigma $, and the entry corresponding to the covariance
+between $ X $ and $ Y $ as $ \Sigma_{XY} $. We consider causal DAGs that contain 
+only observed variables. A DAG $ G = (V, E) $ is an acyclic directed graph
+whose nodes $ V $ corresponding to random variables and whose edges $ E $ represent
+direct causal relationships \cite{Pearl2009}. For an edge $e=X \to Y$, 
+$\textrm{reverse}(e)=Y \to X$. The set of parents of $ X $ in $ G $
+is denoted as $ \textrm{Pa}_G(X) $, and its ancestors and descendants as $
+\textrm{An}_G(X) $ and $ \textrm{De}_G(X) $, respectively; we use the convention
+that $X \notin \textrm{An}_G(X)$ and $X \notin \textrm{De}_G(X)$. We denote a path, $
 \pi(X, Y) = \{ X, V_0, V_1, \cdots, V_k, Y \} $ between $ X $ and $ Y $ in $ G
-$ where each consecutive pair of variables in $ \pi $ are connected through an
+$ where consecutive pairs of variables in $ \pi $ are connected by an
 edge. We say $ X $ and $ Y $ are d-connected in $ G $ given a conditioning set
 $ \bm{Z} \subseteq V - \{X, Y\} $, if for a path $ \pi(X, Y) $ (i) for every
 collider structure ($ V_1 \rightarrow V_2 \leftarrow V_3 $) on $ \pi(X, Y) $, $
@@ -231,22 +232,23 @@ non-collider structure ($ V_1 \rightarrow V_2 \rightarrow V_3 $, $ V_1
 \leftarrow V_2 \rightarrow V_3 $), $ V_2 \not \in \bm{Z} $. $ X $ and $ Y $ are
 d-separated given $ \bm{Z} $ if no d-connecting path exist between them.
 
-\subsection{Testing DAG Using CI Tests}
-Our structure learning algorithm uses the idea of testing DAGs using CI tests.
-In this section, we give an example of how this model testing works in
-practice. We take the example of the MEC learned by the PC algorithm in
-Figure~\ref{fig:intro}(b) using $ N=800 $. We first orient all the undirected
-edges in the model based on our domain knowledge to obtain a DAG. In this case
-we only have one undirected edge between \emph{Marital Status} and
-\emph{Relationship} that we orient as \emph{Marital Status} $ \rightarrow $
-\emph{Relationship} . We can then test the implied CIs of the DAG using our
-dataset. Figure~\ref{fig:ci_table} shows the result of this testing on some of
-the implied CIs. If we use a p-value threshold of $ 0.05 $, the first $ 2 $
+\subsection{Conditional Independence Tests}
+\label{sec:ci_tests}
+Our structure learning algorithm uses the idea of testing DAGs using CI statements
+like $ X \ci Y \rvert \bm{Z} $ (with
+potentially $ \bm{Z} = \emptyset $).
+For example, take the MEC learned by the PC algorithm in
+Figure~\ref{fig:intro}(b) using $ N=800 $, and suppose that we orient 
+the undirected edge between \emph{Marital Status} and
+\emph{Relationship}  as \emph{Marital Status} $ \rightarrow $
+\emph{Relationship}. We can then read implied CIs of the DAG using $d$-separation,
+and test them in our dataset. Figure~\ref{fig:ci_table} shows the result of some tests. 
+Using a significance threshold  $\alpha=0.05 $, the first $ 2 $
 implied CIs hold in the data whereas the remaining tests fail. One of the ways
 to fix these failing tests is to add an edge between the variable pair $ X $
 and $ Y $. While this method helps us in finding variable pairs where we need
 to add an edge, it does not give us any information about the orientation of
-this edge. We would have to rely on domain knowledge to determine this
+this edge. In this paper, we use domain knowledge to determine this
 orientation.
 
 \begin{figure}
@@ -266,54 +268,48 @@ orientation.
 	\label{fig:ci_table}
 \end{figure}
 
-\subsection{Effect Sizes for CI Tests}
-\label{sec:ci_tests}
-
-Our structure learning approach relies on using CI tests and a measure of
-conditional association between variables -- also known as partial association.
-We are interested in testing CI tests: $ X \ci Y \rvert \bm{Z} $ (with
-potentially $ \bm{Z} = \emptyset $) in data and quantifying the strength of the
-relationship between $ X $ and $ Y $ conditioned on $ \bm{Z} $. For the
-quantification we use effect size measures based on the CI test. In this
-section, we give an overview of some of the CI tests and effect size measures
+In addition to determining sigificance, we are interested in quantifying the 
+\emph{strength} of any partial association between $X$ and $Y$ after conditioning 
+on $\mathbf{Z}$. This metric depends on the type of CI test used. In the following,
+we briefly overview some CI tests and effect size measures
 for different types of (possibly mixed) data.
 
 \paragraph{Both $ X $ and $ Y $ are continuous: }
 When both $ X $ and $ Y $ are continuous, we can use a (partial) correlation
-test for CI testing and Pearson's correlation coefficient can be used at the
+test for CI testing and Pearson's correlation coefficient can be used as the
 effect size. When $ \bm{Z} = \emptyset $, the correlation coefficient is
 defined as: $ r_{X, Y} = \mathrm{cov}(X, Y) / (\sigma_X \sigma_Y) $. When $
-\bm{Z} \neq \emptyset $, partial correlation coefficient can be used. This is
-estimated by fitting two regression models $ E_X: X \sim \bm{Z} $ and $ E_Y: Y
+\bm{Z} \neq \emptyset $, the partial correlation coefficient can be used instead.
+This is estimated by fitting two regression models $ E_X: X \sim \bm{Z} $ and $ E_Y: Y
 \sim \bm{Z} $, calculating the residuals $ R_X = X - E_X(\bm{Z}) $ and $ R_Y =
 Y - E_Y(\bm{Y}) $, and then computing the correlation coefficient between the
 residuals: $r_{X, Y \rvert \bm{Z}} = r_{R_X, R_Y}$
 
 \paragraph{$ X $ is ordinal, and $ Y $ and $ \bm{Z} $  are continuous or ordinal: }
 
-Polyserial (when one is ordinal and the other is continuous) and Polychoric
-(when both are ordinal) correlation have been used to estimate the covariance
-matrix between them \citep{Poon1987}. Both methods make the assumption that the
+Polyserial (for continuous $Y$) and polychoric
+(ordinal $Y$) correlations are used to estimate correlations 
+involving ordinal variables \citep{Poon1987}. Both methods make the assumption that the
 observed ordinal variable is a result of thresholding a latent normally
-distributed continuous variable. Under this assumption, the methods then try to
-estimate the covariance matrix while maximizing the likelihood of the dataset.
+distributed continuous variable. Under this assumption, the methods then 
+estimate the threshold values and covariance matrix using maximum likelihood.
 Using the estimated covariance matrix, $ \Sigma $ we can perform a correlation
 test for CI and compute the Pearson's correlation coefficient as the effect
-size. When 
+size in the same way as for continuous $ X, Y $ and $ \bm{Z} $, i.e., 
 $\bm{Z} = \emptyset $, $ r_{X, Y} = \Sigma_{XY} / (\sqrt{\Sigma_{XX} \Sigma_{YY}}) $, 
 	and when $ \bm{Z} \ne \emptyset $,
 	$ r_{X, Y \rvert \bm{Z}} = - \Sigma^{-1}_{XY}/ (\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}) $.
 
-\paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete (ordinal or categorical): }
+\paragraph{$ X $, $ Y $, and $ \bm{Z} $ are all discrete (ordinal or categorical): }
 
-In the case when we have a combination of ordinal and categorical variables, we
-can use a residualization based CI test \citep{Ankan2023}. This test gives a
-chi-square distributed test statistic, that can be used for computing an effect
-size such as the Root Mean Squared Error of Approximation (RMSEA). Given a
-chi-squared test statistic, $ \chi^2 $, with $ \textrm{df} $ degrees of
-freedom, the RMSEA is defined as: $ \textrm{RMSEA}_{X, Y \rvert \bm{Z}} =
-\sqrt{\chi^2 - \textrm{df}/ (\textrm{df} (N-1))} $, where $ N $ is the sample
-size.
+For combinations of ordinal and categorical variables, we
+can use a residualization-based CI test \citep{Ankan2023} that returns a 
+chi-square distributed test statistic. Given the statistic, $ \chi^2 $, with $ \textrm{df} $ degrees of
+freedom, we use the Root Mean Squared Error of Approximation (RMSEA) defined as
+ $ \textrm{RMSEA}_{X, Y \rvert \bm{Z}} =
+\sqrt{\max(0,\chi^2 - \textrm{df})/ (\textrm{df} (N-1))} $, where $ N $ is the sample
+size. This effect size can be used for any statistical test with a chi-square 
+distributed test statistic. 
 
 \section{Expert-In-The-Loop Causal Discovery}
 
