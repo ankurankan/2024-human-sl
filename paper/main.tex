@@ -224,16 +224,18 @@ collider structure ($ V_1 \rightarrow V_2 \leftarrow V_3 $) on $ \pi(X, Y) $, $
 \bm{Z} \cap \{ V_2, \textrm{De}_G(V_2) \} \ne \emptyset $, and (ii) for every
 non-collider structure ($ V_1 \rightarrow V_2 \rightarrow V_3 $, $ V_1
 \leftarrow V_2 \rightarrow V_3 $), $ V_2 \not \in \bm{Z} $. $ X $ and $ Y $ are
-d-separated given $ \bm{Z} $ if no d-connecting path exists between them.
+d-separated given $ \bm{Z} $ if no d-connecting path exist between them.
 
 \subsection{Testing DAGs Using CI Tests}
 Our structure learning algorithm uses the idea of testing DAGs using CI tests.
 In this section, we give an example of how this model testing works in
 practice. We take the example of the MEC learned by the PC algorithm in
-Figure~\ref{fig:intro}(b) using $ N=800 $. We first orient all the undirected
+Figure~\ref{fig:intro}(a) using $ N=800 $. We first orient all the undirected
 edges in the model based on our domain knowledge to obtain a DAG. In this case
-we only have one undirected edge between Marital Status and Relationship. Let's
-orient the edge as Marital Status to Relationship. 
+we only have one undirected edge between Marital Status and Relationship. We 
+orient the edge as Marital Status to Relationship. We then proceed to test
+each of the implied CI of the model using a statistical test. We show the result
+of some of these tests in Figure.
 
 Using these statistical tests we can determine the pair of variables that
 should have edge between them. We can think of our proposed approach to be an
@@ -243,17 +245,17 @@ iterative application of this model testing approach.
 
 Our structure learning approach relies on using CI tests and a measure of
 conditional association between variables -- also known as partial association.
-Specifically, we are interested in testing CI tests: $ X \ci Y \rvert \bm{Z} $
-(with potentially $ \bm{Z} = \emptyset $. Secondly, we are interested in
-quantifying the strength of the relationship between $ X $ and $ Y $
-conditioned on $ \bm{Z} $. We can use the effect size measures of the CI tests
-for this quantification. In this section, we give an overview of some of the
-effect size measures for different types of (possibly mixed) data.
+We are interested in testing CI tests: $ X \ci Y \rvert \bm{Z} $ (with
+potentially $ \bm{Z} = \emptyset $) in data and quantifying the strength of the
+relationship between $ X $ and $ Y $ conditioned on $ \bm{Z} $. For the
+quantification we use effect size measures based on the CI test. In this
+section, we give an overview of some of the CI tests and effect size measures
+for different types of (possibly mixed) data.
 
 \paragraph{Both $ X $ and $ Y $ are continuous: }
-When both $ X $ and $ Y $ are continuous, Pearson's correlation coefficient is
-typically used. When $ \bm{Z} = \emptyset $, the correlation
-coefficient is defined as:
+When both $ X $ and $ Y $ are continuous, Pearson's correlation test can be
+used and Pearson's correlation coefficient can be used at the effect size. When
+$ \bm{Z} = \emptyset $, the correlation coefficient is defined as:
 
 \begin{equation}
 	r_{X, Y} = \frac{\mathrm{cov}(X, Y)}{\sigma_X \sigma_Y}
@@ -262,11 +264,11 @@ coefficient is defined as:
 When $ \bm{Z} \neq \emptyset $, partial correlation coefficient can be used.
 This is estimated by fitting two regression models $ E_X: X \sim \bm{Z} $ and $
 E_Y: Y \sim \bm{Z} $, calculating the residuals $ R_X = X - E_X(\bm{Z}) $ and $
-R_Y = Y - E_Y(\bm{Y}) $, and then computing the correlation between the
-residuals:
+R_Y = Y - E_Y(\bm{Y}) $, and then computing the correlation coefficient between
+the residuals:
 
 \begin{equation}
-	r_{X, Y; \bm{Z}} = r_{R_X, R_Y}
+	r_{X, Y \rvert \bm{Z}} = r_{R_X, R_Y}
 \end{equation}
 
 \paragraph{$ X $ is ordinal, and $ Y $ and $ \bm{Z} $  are continuous or ordinal: }
@@ -278,7 +280,8 @@ observed ordinal variable is a result of thresholding a latent normally
 distributed continuous variable. Under this assumption, the methods then try to
 estimate the covariance matrix while maximizing the likelihood of the dataset.
 Using the estimated covariance matrix, $ \Sigma $ we can the compute Pearson's
-correlation coefficient. When $ \bm{Z} = \emptyset $,
+correlation coefficient to use as the effect size as well as for testing. When
+$ \bm{Z} = \emptyset $,
 
 \begin{equation}
 	r_{X, Y} = \frac{\Sigma_{XY}}{\sqrt{\Sigma_{XX} \Sigma_{YY}}}
@@ -287,16 +290,23 @@ correlation coefficient. When $ \bm{Z} = \emptyset $,
 When $ \bm{Z} \neq \emptyset $, 
 
 \begin{equation}
-	r_{X, Y; \bm{Z}} = - \frac{\Sigma^{-1}_{XY}}{\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}}
+	r_{X, Y \rvert \bm{Z}} = - \frac{\Sigma^{-1}_{XY}}{\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}}
 \end{equation}
 
 \paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete (ordinal or categorical): }
 
-In the case when we have a combination of ordinal and categorical variables, we use
-the 
+In the case when we have a combination of ordinal and categorical variables, we
+can use the residualization based CI test from \citep{Ankan2023}. This test
+gives a chi-square distributed test statistic, that can be used for computing
+an effect size such as Root Mean Squared Error of Approximation (RMSEA). Given
+a chi-squared test statistic, $ \chi^2 $, with $ \textrm{df} $ degrees of
+freedom, the RMSEA is defined as:
 
-\todo[inline]{Here we use an effect size RMSEA based on the previous Hotelling's test paper.}
+\begin{equation}
+	\textrm{RMSEA}_{X, Y \rvert \bm{Z}} = \sqrt{\frac{\chi^2 - \textrm{df}}{\textrm{df} (N-1)}}
+\end{equation}
 
+where $ N $ is the sample size.
 
 \section{Expert-In-The-Loop Causal Discovery}
 
