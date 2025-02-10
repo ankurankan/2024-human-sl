@@ -264,6 +264,7 @@ should have edge between them. We can think of our proposed approach to be an
 iterative application of this model testing approach.
 
 \subsection{Effect Sizes for CI Tests}
+\label{sec:ci_tests}
 
 Our structure learning approach relies on using CI tests and a measure of
 conditional association between variables -- also known as partial association.
@@ -690,42 +691,11 @@ approaches $ 0 $ as the model perfectly explains the observed data.
 \section{Empirical Analysis}
 \label{sec:empirical}
 
-In this section, we give some of the practical aspects of the
-\textsc{ExpertInLoop} algorithm, and then compare the algorithm with automated
-causal discovery algorithms.
-
-In all experiments, we use the \textsc{RankedExpand} method together
-with a version of the strong ancestral oracle that can make mistakes.
-
-\todo{Want to know: what if my experts are not perfect?}
-
-\begin{figure}[t!]
-	\centering
-	\begin{subfigure}{0.5\textwidth}
-		\centering
-		\includegraphics{../code/fig3/shd_ribbon.pdf}
-		\caption{}
-	\end{subfigure}
-	\begin{subfigure}{0.5\textwidth}
-		\centering
-		\includegraphics{../code/fig3/sid_ribbon.pdf}
-		\caption{}
-	\end{subfigure}
-	\caption{Comparison of PC, Hill-Climb Search, and GES algorithms against
-		\textsc{ExpertInLoop} algorithm. As automated algorithms only
-		recover the CPDAG, we use the best and worst scoring
-		orientation of the CPDAG to get the range. We test
-		\textsc{ExpertInLoop} with varying values of expert accuracy, $ \alpha = \{0.1, 0.3, 0.5, 0.7, 0.9\} $. The corresponding
-		$\alpha_{\textrm{eff}} $ is shown in the plot.}
-	\label{fig:shd_sid}
-\end{figure}
-
-The \textsc{ExpertInLoop} algorithm requires two oracles, one that can answer
-d-separation queries and an ancestral oracle that can give the causal direction
-between variable pairs. For the experiments, we simulate the d-separation
-oracle using a CI test with a p-value threshold of $ 0.05 $. To simulate the
-edge orientation oracle, we simulate a domain expert that can give the correct
-causal relationship with some accuracy $ \alpha $.
+In this section, we compare our \textsc{ExpertInLoop} algorithm with automated
+causal discovery algorithms. Our goal with the empirical analysis is to
+understand the behaviour of our method when the experts are not perfect. To
+simulate this imperfect expert, we use a version of the strong ancestral oracle
+that has an accuracy of $ \alpha $:
 
 \begin{equation}
 	\begin{split}
@@ -751,26 +721,52 @@ where given the true DAG, $ G $:
 
 An important point to note here is that the effective accuracy of $
 \mathrm{Expert} $ is higher than $ \alpha $ as even when giving a random
-answer, there is a $ 1 $ in $ 3 $ chance that the answer is correct by chance.
-Hence, for an $ \mathrm{Expert} $ with accuracy $ \alpha $, the effective
-accuracy becomes:
+answer, there is a $ 1 $ in $ 3 $ chance that the answer is correct. Therefore,
+an $ \mathrm{Expert} $ with accuracy $ \alpha $, has an effective accuracy:
 
 \begin{equation}
 	\alpha_{\mathrm{eff}} = \alpha + (1 - \alpha) / 3
 \end{equation}
 
+\begin{figure}[t!]
+	\centering
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics{../code/fig3/shd_ribbon.pdf}
+		\caption{}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics{../code/fig3/sid_ribbon.pdf}
+		\caption{}
+	\end{subfigure}
+	\caption{Comparison of PC, Hill-Climb Search, and GES algorithms against
+		\textsc{ExpertInLoop} algorithm. As automated algorithms only
+		recover the CPDAG, we use the best and worst scoring
+		orientation of the CPDAG to get the range. We test
+		\textsc{ExpertInLoop} with varying values of expert accuracy, $ \alpha = \{0.1, 0.3, 0.5, 0.7, 0.9\} $. The corresponding
+		$\alpha_{\textrm{eff}} $ is shown in the plot.}
+	\label{fig:shd_sid}
+\end{figure}
+
+, we use the
+\textsc{RankedExpand} method together with a version of the strong ancestral
+oracle that can make mistakes.
 
 We analyzed the performance of \textsc{ExpertInLoop} algorithm by comparing it
 with three other automated algorithms: PC, Hill-Climb Search, and Greedy
-Equivalence Search (GES). For the analysis, we simulated data from known DAGs
-and use the algorithms to recover the original DAG. We start by generating a
-random DAG on $10$ nodes and use linear models with random effects to simulate
-$ 500 $ samples from it. We simulate each variable $ V_i $ in the DAG as:
+Equivalence Search (GES) on linear Gaussian data. For \textsc{ExpertInLoop}, we
+use the \textsc{RankedExpand} method with Pearson's correlation coefficient as
+the effect size measure (Section~\ref{ref:ci_tests}). For the analysis, we
+simulated data from known DAGs and use the algorithms to recover the original
+DAG. We start by generating a random DAG on $10$ nodes and use linear models
+with random effects to simulate $ 500 $ samples from it. We simulate each
+variable $ V_i $ in the DAG as:
 
 
 \begin{equation}
 	\begin{split}
-		\beta &= \mathrm{Uniform}([-0.6, 0.6]) \\
+		\bm{\beta} &= \mathrm{Uniform}([-0.6, 0.6]) \\
 		V_i &= \bm{\beta} \mathrm{Pa}_G(V_i) + \mathcal{N}(0, 1)
 	\end{split}
 \end{equation}
@@ -782,18 +778,17 @@ mean and standard error of the results.
 To compare the learned DAG to the original DAG, we use two metrics: Structural
 Hamming Distance (SHD) and Structural Intervention Distance (SID)
 \citep{Peters2015}. Unlike \textrm{ExpertInLoop}, the automated algorithms can
-only recover the CPDAG, we consider all possible orientations of the CPDAG to
-compute the range of SHD and SID values to show the best and worst case
-results. The results of this analysis are shown in Figure~\ref{fig:shd_sid}.
-For SHD, the performance of \textsc{ExpertInLoop} is comparable to the
-automated algorithms for $ \alpha = 0.3 (\alpha_{\textrm{eff}} = 0.53 $, which
-is equivalent to the expert getting the orientation correct $ 1 $ out of $ 2 $
-case. For SID, the performance is comparable to the automated algorithms for $
-\alpha = 0.5 (\alpha_{\textrm{eff}} = 0.67) $, which is equivalent to the
-expert getting the orientation correct in $ 2 $ out of $ 3 $ cases. For denser
-DAGs, the \textsc{ExpertInLoop} is able to perform better for lower $ \alpha $
-values.
-
+only recover the MEC, therefore, we considered all possible orientations of the
+MEC to compute a range of SHD and SID values representing the best and worst
+case scenarios. The results of this analysis are shown in
+Figure~\ref{fig:shd_sid}. For SHD, the performance of \textsc{ExpertInLoop} is
+comparable to the automated algorithms for $ \alpha = 0.3
+(\alpha_{\textrm{eff}} = 0.53 $, implying that if an expert is able to get the
+edge orientation correctly in more than $ 1 $ out of $ 2 $ cases, they can
+outperform the automated algorithms. Similarly for SID, an expert can outperform 
+the automated algorithms if they are able to get the orientation correct in $ 2 $ 
+out of $ 3 $ cases. Another thing to note is that for denser DAGs, the 
+\textsc{ExpertInLoop} is able to perform better for lower $ \alpha $ values.
 
 \begin{figure}[t!]
 	\begin{subfigure}{0.25\textwidth}
