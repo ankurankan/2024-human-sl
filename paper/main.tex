@@ -278,21 +278,13 @@ for different types of (possibly mixed) data.
 \paragraph{Both $ X $ and $ Y $ are continuous: }
 When both $ X $ and $ Y $ are continuous, Pearson's correlation test can be
 used and Pearson's correlation coefficient can be used at the effect size. When
-$ \bm{Z} = \emptyset $, the correlation coefficient is defined as:
-
-\begin{equation}
-	r_{X, Y} = \frac{\mathrm{cov}(X, Y)}{\sigma_X \sigma_Y}
-\end{equation}
-
-When $ \bm{Z} \neq \emptyset $, partial correlation coefficient can be used.
-This is estimated by fitting two regression models $ E_X: X \sim \bm{Z} $ and $
-E_Y: Y \sim \bm{Z} $, calculating the residuals $ R_X = X - E_X(\bm{Z}) $ and $
-R_Y = Y - E_Y(\bm{Y}) $, and then computing the correlation coefficient between
-the residuals:
-
-\begin{equation}
-	r_{X, Y \rvert \bm{Z}} = r_{R_X, R_Y}
-\end{equation}
+$ \bm{Z} = \emptyset $, the correlation coefficient is defined as: $ r_{X, Y} =
+\mathrm{cov}(X, Y) / (\sigma_X \sigma_Y) $. When $ \bm{Z} \neq \emptyset $,
+partial correlation coefficient can be used. This is estimated by fitting two
+regression models $ E_X: X \sim \bm{Z} $ and $ E_Y: Y \sim \bm{Z} $,
+calculating the residuals $ R_X = X - E_X(\bm{Z}) $ and $ R_Y = Y - E_Y(\bm{Y})
+$, and then computing the correlation coefficient between the residuals: $r_{X,
+Y \rvert \bm{Z}} = r_{R_X, R_Y}$
 
 \paragraph{$ X $ is ordinal, and $ Y $ and $ \bm{Z} $  are continuous or ordinal: }
 
@@ -302,12 +294,11 @@ matrix between them \citep{Poon1987}. Both methods make the assumption that the
 observed ordinal variable is a result of thresholding a latent normally
 distributed continuous variable. Under this assumption, the methods then try to
 estimate the covariance matrix while maximizing the likelihood of the dataset.
-Using the estimated covariance matrix, $ \Sigma $ we can perform the CI test and compute 
-the Pearson's correlation coefficient as the effect size:
-
-\begin{equation}
-	r_{X, Y \rvert \bm{Z} = \emptyset} = \frac{\Sigma_{XY}}{\sqrt{\Sigma_{XX} \Sigma_{YY}}}; \;\;\; \; r_{X, Y \rvert \bm{Z}} = - \frac{\Sigma^{-1}_{XY}}{\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}}
-\end{equation}
+Using the estimated covariance matrix, $ \Sigma $ we can perform the CI test
+and compute the Pearson's correlation coefficient as the effect size. When 
+$\bm{Z} = \emptyset $, $ r_{X, Y} = \Sigma_{XY} / (\sqrt{\Sigma_{XX} \Sigma_{YY}}) $, 
+	and when $ \bm{Z} \ne \emptyset $,
+	$ r_{X, Y \rvert \bm{Z}} = - \Sigma^{-1}_{XY}/ (\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}) $.
 
 \paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete (ordinal or categorical): }
 
@@ -316,13 +307,9 @@ can use a residualization based CI test \citep{Ankan2023}. This test gives a
 chi-square distributed test statistic, that can be used for computing an effect
 size such as the Root Mean Squared Error of Approximation (RMSEA). Given a
 chi-squared test statistic, $ \chi^2 $, with $ \textrm{df} $ degrees of
-freedom, the RMSEA is defined as:
-
-\begin{equation}
-	\textrm{RMSEA}_{X, Y \rvert \bm{Z}} = \sqrt{\frac{\chi^2 - \textrm{df}}{\textrm{df} (N-1)}}
-\end{equation}
-
-where $ N $ is the sample size.
+freedom, the RMSEA is defined as: $ \textrm{RMSEA}_{X, Y \rvert \bm{Z}} =
+\sqrt{\chi^2 - \textrm{df}/ (\textrm{df} (N-1))} $, where $ N $ is the sample
+size.
 
 \section{Expert-In-The-Loop Causal Discovery}
 
