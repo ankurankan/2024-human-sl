@@ -279,15 +279,15 @@ section, we give an overview of some of the CI tests and effect size measures
 for different types of (possibly mixed) data.
 
 \paragraph{Both $ X $ and $ Y $ are continuous: }
-When both $ X $ and $ Y $ are continuous, Pearson's correlation test can be
-used and Pearson's correlation coefficient can be used at the effect size. When
-$ \bm{Z} = \emptyset $, the correlation coefficient is defined as: $ r_{X, Y} =
-\mathrm{cov}(X, Y) / (\sigma_X \sigma_Y) $. When $ \bm{Z} \neq \emptyset $,
-partial correlation coefficient can be used. This is estimated by fitting two
-regression models $ E_X: X \sim \bm{Z} $ and $ E_Y: Y \sim \bm{Z} $,
-calculating the residuals $ R_X = X - E_X(\bm{Z}) $ and $ R_Y = Y - E_Y(\bm{Y})
-$, and then computing the correlation coefficient between the residuals: $r_{X,
-Y \rvert \bm{Z}} = r_{R_X, R_Y}$
+When both $ X $ and $ Y $ are continuous, we can use a (partial) correlation
+test for CI testing and Pearson's correlation coefficient can be used at the
+effect size. When $ \bm{Z} = \emptyset $, the correlation coefficient is
+defined as: $ r_{X, Y} = \mathrm{cov}(X, Y) / (\sigma_X \sigma_Y) $. When $
+\bm{Z} \neq \emptyset $, partial correlation coefficient can be used. This is
+estimated by fitting two regression models $ E_X: X \sim \bm{Z} $ and $ E_Y: Y
+\sim \bm{Z} $, calculating the residuals $ R_X = X - E_X(\bm{Z}) $ and $ R_Y =
+Y - E_Y(\bm{Y}) $, and then computing the correlation coefficient between the
+residuals: $r_{X, Y \rvert \bm{Z}} = r_{R_X, R_Y}$
 
 \paragraph{$ X $ is ordinal, and $ Y $ and $ \bm{Z} $  are continuous or ordinal: }
 
@@ -297,8 +297,9 @@ matrix between them \citep{Poon1987}. Both methods make the assumption that the
 observed ordinal variable is a result of thresholding a latent normally
 distributed continuous variable. Under this assumption, the methods then try to
 estimate the covariance matrix while maximizing the likelihood of the dataset.
-Using the estimated covariance matrix, $ \Sigma $ we can perform the CI test
-and compute the Pearson's correlation coefficient as the effect size. When 
+Using the estimated covariance matrix, $ \Sigma $ we can perform a correlation
+test for CI and compute the Pearson's correlation coefficient as the effect
+size. When 
 $\bm{Z} = \emptyset $, $ r_{X, Y} = \Sigma_{XY} / (\sqrt{\Sigma_{XX} \Sigma_{YY}}) $, 
 	and when $ \bm{Z} \ne \emptyset $,
 	$ r_{X, Y \rvert \bm{Z}} = - \Sigma^{-1}_{XY}/ (\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}) $.
