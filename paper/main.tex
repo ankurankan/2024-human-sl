@@ -694,10 +694,10 @@ that has an accuracy of $ \alpha $:
 	\begin{split}
 		x &= \textrm{rand}([0, 1]) \\
 		\mathrm{Expert}(\alpha) &= \begin{cases} 
-			\mathrm{TrueReln}(X, Y),  & \textrm{if  } x <= \alpha \\
+			\mathcal{O}(X, Y),  & \textrm{if  } x <= \alpha \\
 			\textrm{rand}(X \rightarrow Y, Y \leftarrow X, \textrm{None}) & \textrm{otherwise} \\
 				\end{cases} \\
-		\mathrm{TrueReln}(X, Y) &= \begin{cases}
+			\mathcal{O}(X, Y) &= \begin{cases}
 				X \rightarrow Y, & \textrm{if } X \rightarrow Y \in G_{\textrm{true}} \\
 				Y \rightarrow X, & \textrm{if } Y \rightarrow X \in G_{\textrm{true}} \\
 					\textrm{None}, & \textrm{otherwise }
