@@ -293,10 +293,16 @@ When $ \bm{Z} \neq \emptyset $,
 \end{equation}
 
 \subsection{Model Testing Using CI Tests}
-Our structure learning algorithm relies on suggesting modifications to the
-expert based on CI testing. In this section, we show an example of how this
-works. Our structure learning algorithm can be thought of an iterative
-application of this model testing approach.
+Our structure learning algorithm relies on the idea of testing DAGs using CI
+tests. In this section, we give an example of how this model testing and
+corresponding modification work. We take the example of the MEC learned by the
+PC algorithm in Figure~\ref{fig:intro}(b) using $ N=800 $. We first orient all
+the undirected edges in the model based on our domain knowledge. In this case
+we only have one undirected edge between Marital Status and Relationship. Let's 
+orient the edge as Marital Status to Relationship.
+
+ The implied CIs of the 
+model along with the test results are shown in Figure.
 
 \section{DAG Structure Learning using Ancestral Oracles}
 \label{sec:modification}
@@ -637,24 +643,6 @@ following sections.
 	\label{fig:shd_sid}
 \end{figure}
 
-\begin{figure}[t!]
-	\begin{subfigure}{0.25\textwidth}
-		\centering
-		\includegraphics{../code/fig4/unexplained_effect.pdf}
-		\caption{}
-	\end{subfigure}%
-	\begin{subfigure}{0.25\textwidth}
-		\centering
-		\includegraphics{../code/fig4/ll.pdf}
-		\caption{}
-	\end{subfigure}
-	\caption{Model fit improvement over iterations on the Adult Income dataset. In the expert simulation, an 
-		LLM is used to determine the edge orientations. (a) Shows the total residual association, $\tau$. 
-		(b) Shows the log-likelihood of the overall model.
-	}
-	\label{fig:unexplained_ll}
-\end{figure}
-
 The \textsc{ExpertInLoop} algorithm requires two oracles, one that can answer
 d-separation queries and an ancestral oracle that can give the causal direction
 between variable pairs. For the experiments, we simulate the d-separation
@@ -730,6 +718,24 @@ DAGs, the \textsc{ExpertInLoop} is able to perform better for lower $ \alpha $
 values.
 
 \subsection{Connection to Score Based Methods}
+
+\begin{figure}[t!]
+	\begin{subfigure}{0.25\textwidth}
+		\centering
+		\includegraphics{../code/fig4/unexplained_effect.pdf}
+		\caption{}
+	\end{subfigure}%
+	\begin{subfigure}{0.25\textwidth}
+		\centering
+		\includegraphics{../code/fig4/ll.pdf}
+		\caption{}
+	\end{subfigure}
+	\caption{Model fit improvement over iterations on the Adult Income dataset. In the expert simulation, an 
+		LLM is used to determine the edge orientations. (a) Shows the total residual association, $\tau$. 
+		(b) Shows the log-likelihood of the overall model.
+	}
+	\label{fig:unexplained_ll}
+\end{figure}
 
 Our procedure shares similarities with score-based automated causal discovery
 methods, such as Greedy Equivalence Search (GES), where the algorithm
