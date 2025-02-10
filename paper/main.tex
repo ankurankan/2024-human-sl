@@ -595,7 +595,6 @@ causal discovery algorithms.
 \subsection{Ranking Potential New Edges}
 \label{sec:ranking}
 
-
 \begin{algorithm}[h]
 \DontPrintSemicolon
 \SetAlgoLined
@@ -628,24 +627,25 @@ causal discovery algorithms.
 
 The \textsc{ExpertInLoop} algorithm adds a new edge in each iteration. The edge
 to be added is selected using the \textsc{Expand} algorithm, which returns a
-potential edge at random based on the iteration order in the algorithm.
-However, if the residual association between the selected variables is low,
-adding the edge may result in only a marginal improvement in the model's
-overall fit. As the algorithm requires manual intervention in each iteration in
-terms of domain knowledge, it would be beneficial to prioritize the edges that
-improve the model's fit the most.
+potential edge at random based on the iteration order. However, if the residual
+association between the selected variables is low, adding the edge may result
+in only a marginal improvement in the overall model fit. Given that the
+algorithm requires expert intervention in each iteration to specify the edge
+orientation, it is beneficial to prioritize edges that contribute the most to
+improving the model.
 
-Therefore, an alternative to selecting an edge at random is to rank potential
-edges based on the residual association between the variables given the DAG.
-For quantifying the residual association between variables, we can use the
-effect size measures of the CI test. So, for a d-separation query $ D_G(X, Y,
-\mathbf{Z}) $, we can quantify the residual association between $ X $ and $ Y $
-conditioned on $ \mathbf{Z} $, $ \phi(X, Y, \bm{Z}) $ as the effect size of the
-CI test $ X \ci Y | \mathbf{Z} $. A greedy approach could be to choose the edge
-that has the highest absolute residual association between the variables.
-Algorithm~\ref{algo:ranked_expand} outlines this approach. This approach has
-the benefit that it prioritizes edges that improve the model fit the most. We use
-the \textsc{RankedExpand} in all of our experiments in the next section.
+To achieve this, instead of selecting edges randomly, we propose ranking
+potential edges based on their residual association given the current DAG. This
+residual association can be quantified using the effect size measures from the
+CI tests used for querying the d-separation in Algorithm~\ref{algo:expand}.
+Specifically, for a d-separation query $ D_G(X, Y, \mathbf{Z}) $, we quantify
+the residual association, $ \phi(X, Y, \bm{Z}) $, as the effect size of the CI
+test $ X \ci Y \rvert \bm{Z} $. In Algorithm~\ref{algo:ranked_expand}, we
+outline a greedy approach to edge selection using the effect size measure. The
+algorithm selects the edge that has the highest absolute residual association,
+resulting in prioritization of edges that contribute the most to improving the
+model. We use this \textsc{RankedExpand} in all of our experiments in the
+following sections.
 
 \subsection{Comparison to Automated Algorithms}
 \begin{figure}[t!]
@@ -690,18 +690,17 @@ the \textsc{RankedExpand} in all of our experiments in the next section.
 \end{figure}
 
 The \textsc{ExpertInLoop} algorithm requires two oracles, one that can answer
-d-separation queries and an ancestral oracle that can give the orientation or
-non-existence of edges between pairs of variables. For answering the
-d-separation queries, we use a CI test, the partial correlation test with a
-p-value threshold of $ 0.05 $. Secondly, to tell the direction between edges or
-non-existence of edges, we simulate an expert with accuracy $ \alpha $ as
-follows:
+d-separation queries and an ancestral oracle that can give the causal direction
+between variable pairs. For the experiments, we simulate the d-separation
+oracle using a CI test with a p-value threshold of $ 0.05 $. To simulate the
+edge orientation oracle, we simulate a domain expert that can give the correct
+causal relationship with some accuracy $ \alpha $.
 
 \begin{equation}
 	\begin{split}
 		x &= \textrm{rand}([0, 1]) \\
-		E(\alpha) &= \begin{cases} 
-			\mathrm{TrueDir}(X, Y),  & \textrm{if  } x <= \alpha \\
+		\mathrm{Expert}(\alpha) &= \begin{cases} 
+			\mathrm{TrueReln}(X, Y),  & \textrm{if  } x <= \alpha \\
 			\textrm{rand}(X \rightarrow Y, Y \leftarrow X, \textrm{None}) & \textrm{otherwise} \\
 				\end{cases} \\
 	\end{split}
@@ -711,7 +710,7 @@ where given the true DAG, $ G $:
 
 \begin{equation}
 	\begin{split}
-	\mathrm{TrueDir}(X, Y) &= \begin{cases}
+	\mathrm{TrueReln}(X, Y) &= \begin{cases}
 					X \rightarrow Y, & \textrm{if } X \rightarrow Y \in G \\
 					Y \rightarrow X, & \textrm{if } Y \rightarrow X \in G \\
 					\textrm{None}, & \textrm{otherwise }
@@ -719,9 +718,11 @@ where given the true DAG, $ G $:
 	\end{split}
 \end{equation}
 
-An important point to note here is that the effective accuracy of $ E $ is
-higher than $ \alpha $ as even when giving a random answer, there is a $ 1 $ in
-$ 3 $ chance that the answer is correct. The effective accuracy is:
+An important point to note here is that the effective accuracy of $
+\mathrm{Expert} $ is higher than $ \alpha $ as even when giving a random
+answer, there is a $ 1 $ in $ 3 $ chance that the answer is correct by chance.
+Hence, for an $ \mathrm{Expert} $ with accuracy $ \alpha $, the effective
+accuracy becomes:
 
 \begin{equation}
 	\alpha_{\mathrm{eff}} = \alpha + (1 - \alpha) / 3
@@ -730,56 +731,37 @@ $ 3 $ chance that the answer is correct. The effective accuracy is:
 
 We analyzed the performance of \textsc{ExpertInLoop} algorithm by comparing it
 with three other automated algorithms: PC, Hill-Climb Search, and Greedy
-Equivalence Search (GES). For the analysis, we simulated $ 500 $ samples from
-known DAGs and use the algorithms to recover the original DAG. We start by
-generating a random DAG on $10$ nodes and use linear models with random effects
-to generate the data. We vary the edge probability of the DAG to generate DAGs
-with varying density. We repeat the data generation $30$ times for each density
-value for the DAG. We compare the learned DAG to the original DAG using two
-metrics: Structural Hamming Distance (SHD) and Structural Intervention Distance
-(SID) \citep{Peters2015}.
+Equivalence Search (GES). For the analysis, we simulated data from known DAGs
+and use the algorithms to recover the original DAG. We start by generating a
+random DAG on $10$ nodes and use linear models with random effects to simulate
+$ 500 $ samples from it. We simulate each variable $ Y_i $ in the DAG as:
+
 
 \begin{equation}
-	Y = \bm{\beta} \mathrm{Pa}_G(Y) + \mathcal{N}(0, 1)
+	\begin{split}
+		\beta &= \mathcal{N}(\bm{0}, \bm{I}) \\
+		Y_i &= \bm{\beta} \mathrm{Pa}_G(Y_i) + \mathcal{N}(0, 1)
+	\end{split}
 \end{equation}
 
+We perform the experiment for both varying densities of the DAG and accuracy of
+$\mathrm{Expert}$. We also repeat each experiment $ 30 $ times and report the
+mean and standard error of the results.
 
-As the automated algorithms can only recover the CPDAG from data, and our
-method recovers the DAG. To compare them fairly, we computed the SHD and SID
-for all possible orientations of the CPDAG to show the best and worst case
-scenarios. The results are shown in Figure~\ref{fig:shd_sid}. For SHD, the
-performance of \textsc{ExpertInLoop} is comparable to the automated algorithms
-for $ \alpha = 0.3 (\alpha_{\textrm{eff}} = 0.53 $, and performs better for
-higher $ \alpha $ values. For SID, the \textsc{ExpertInLoop} performs better in
-denser DAGs.
-
-% \begin{verbatim}
-% 	Input: Dataset $ D $ on variables $ \bm{X} $
-% 	Output: Learned DAG G.
-% 	
-% 	function compute_effects(G):
-% 		pvalues <- dict()
-% 		effects <- dict()
-% 		for X_i, X_j in X:
-% 			if edge between X_i, X_j:
-% 				p_values[(X_i, X_j)] <- pvalue(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
-% 				effects[(X_i, X_j)] <- \phi(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
-% 			else:
-% 				p_values[(X_i, X_j)] <- pvalue(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
-% 				effects[(X_i, X_j)] <- \phi(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
-% 		return p_values, effects
-% 	
-% 	$ G $ <- Empty Graph
-% 	p_values, effects <- compute_effects(G)
-% 	while (p_values > p_thres, 
-% \end{verbatim}
-% 
-% \begin{algorithm}
-% 	\KwData{Data set $ D $ on variables $ \bm{X} $, pthres, effectthres}
-% 	\KwResult{The learned DAG: $ G $}
-% 	\BlankLine
-% 	$ G \leftarrow $ Empty Graph
-% \end{algorithm}
+To compare the learned DAG to the original DAG, we use two metrics: Structural
+Hamming Distance (SHD) and Structural Intervention Distance (SID)
+\citep{Peters2015}. Unlike \textrm{ExpertInLoop}, the automated algorithms can
+only recover the CPDAG, we consider all possible orientations of the CPDAG to
+compute the range of SHD and SID values to show the best and worst case
+results. The results of this analysis are shown in Figure~\ref{fig:shd_sid}.
+For SHD, the performance of \textsc{ExpertInLoop} is comparable to the
+automated algorithms for $ \alpha = 0.3 (\alpha_{\textrm{eff}} = 0.53 $, which
+is equivalent to the expert getting the orientation correct $ 1 $ out of $ 2 $
+case. For SID, the performance is comparable to the automated algorithms for $
+\alpha = 0.5 (\alpha_{\textrm{eff}} = 0.67) $, which is equivalent to the
+expert getting the orientation correct in $ 2 $ out of $ 3 $ cases. For denser
+DAGs, the \textsc{ExpertInLoop} is able to perform better for lower $ \alpha $
+values.
 
 \subsection{Connection to Score Based Methods}
 
