@@ -213,23 +213,23 @@ We denote random variables using uppercase letters, such as $ X $, and a set of
 random variables by $ \bm{X} = \{X_1, \cdots, X_k\} $, where $ \rvert \bm{X}
 \rvert = k $ indicates the number of variables in the set. We denote the
 covariance between variables $ X $ and $ Y $ as $ \mathrm{cov}(X, Y) $, the
-covariance matrix as $ \Sigma $, and the entry corresponding to covariance
-between $ X $ and $ Y $ using $ \Sigma_{XY} $. In the context of this paper, we
+covariance matrix as $ \Sigma $, and the entry corresponding to the covariance
+between $ X $ and $ Y $ using $ \Sigma_{XY} $. In this paper, we
 consider causal DAGs that contain only observed variables. The structure of the
 DAG is represented using a graph $ G = (V, E) $, where $ V $ are the nodes
 corresponding to the random variables, and $ E $ are the edges denoting the
-causal relationship between the variables. The set of parents of $ X $ in $ G $
-are denoted as $ \textrm{Pa}_G(X) $, and its ancestors and descendants as $
-\textrm{An}_G(X) $ and $ \textrm{De}_G(X) $ respectively. We denote a path, $
+causal relationship between the variables. The set of \emph{parents} of $ X $ in $ G $
+are denoted as $ \textrm{Pa}_G(X) $, and its \emph{ancestors} and \emph{descendants} as $
+\textrm{An}_G(X) $ and $ \textrm{De}_G(X) $ respectively. We denote a \emph{path}, $
 \pi(X, Y) = \{ X, V_0, V_1, \cdots, V_k, Y \} $ between $ X $ and $ Y $ in $ G
 $ where each consecutive pair of variables in $ \pi $ are connected through an
-edge. We say $ X $ and $ Y $ are d-connected in $ G $ given a conditioning set
+edge. We say $ X $ and $ Y $ are \emph{d-connected} in $ G $ given a conditioning set
 $ \bm{Z} \subseteq V - \{X, Y\} $, if for a path $ \pi(X, Y) $ (i) for every
 collider structure ($ V_1 \rightarrow V_2 \leftarrow V_3 $) on $ \pi(X, Y) $, $
 \bm{Z} \cap \{ V_2, \textrm{De}_G(V_2) \} \ne \emptyset $, and (ii) for every
 non-collider structure ($ V_1 \rightarrow V_2 \rightarrow V_3 $, $ V_1
 \leftarrow V_2 \rightarrow V_3 $), $ V_2 \not \in \bm{Z} $. $ X $ and $ Y $ are
-d-separated given $ \bm{Z} $ if no d-connecting path exist between them.
+\emph{d-separated} given $ \bm{Z} $ if no d-connecting path exist between them.
 
 \subsection{Testing DAG Using CI Tests}
 Our structure learning algorithm uses the idea of testing DAGs using CI tests.
