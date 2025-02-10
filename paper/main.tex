@@ -316,8 +316,8 @@ distributed test statistic.
 
 Our approach to causal structure learning combines domain knowledge with data-driven
 insights in a manner that is based on the following considerations: 
-(1) A domain experts is possibly good at determining causal directions between variables if 
-there is a clear causal direction between them. (2) A domain expert may be less good
+(1) A domain expert is possibly good at determining causal directions between variables if 
+there \emph{is} a clear causal direction between them. (2) A domain expert may be less good
 at identifying cases where there is no causal relationship between the variables,
 since \emph{potential} causal relationships can often be argued for anyway.
 (3) Many domain experts could struggle to distinguish direct from indirect 
@@ -333,7 +333,7 @@ be prioritized.
 
 \label{sec:modification}
 
-We therefore consider the following two models of a domain experts: Given two variables
+We consider two models of a domain experts. Given two variables
 $ X $ and $ Y $ that are part of an unknown causal DAG $G$, an \emph{strong ancestral oracle} 
 $\mathcal{A}_G$ is defined as:
 $$\mathcal{A}_G(X,Y)=\begin{cases}
@@ -347,30 +347,33 @@ $$
 \mathcal{A}_G(X,Y)=\begin{cases}
  X \to Y & \textrm{if } X \in \textrm{An}_G(Y) \\
  X \gets Y & \textrm{if } Y \in \textrm{An}_G(X) \\
- \textrm{rand}(X \gets Y, X \to Y) & \textrm{otherwise} \\
+ \textrm{rand}(\}X \gets Y, X \to Y\}) & \textrm{otherwise} \\
 \end{cases}
 $$
-
+where $\textrm{rand}(S)$ denotes a uniformly chosen element of $S$.
 That is, our ancestral oracles only provide information on the direction of cause-effect
 relationships, and do not distinguish between direct and indirect effects. 
-The weak ancestral oracle is even unable to detect cases where there is no cause-effect
-relationship between two variables. Using such oracles for DAG construction therefore 
-inherently risks that superfluous edges are created. In our approach, such superfluous edges
-will be detected and removed by utilizing the data. 
+The weak ancestral oracle is even unable to detect the absence of cause-effect
+relationships between two variables. Using such oracles for DAG construction  
+inherently risks that superfluous edges are created. 
 
-To model how our learning procedure interacts with the data, we assume that we
-additionally have access to a second oracle $\mathcal{D}_G$ than can answer d-separation
+Our approach uses the data to decide where to add edges and which edges 
+are superfluous and can be removed.
+As a useful abstraction, let us assume that we
+have access to a second oracle $\mathcal{D}_G$ than can answer d-separation
 queries with respect to the unknown target graph:
 $\mathcal{D}_G(X,Y,\mathbf{Z})=1$ iff $X$ and $Y$ are $d$-separated by $\mathbf{Z}$ in 
-$G$. These are the standard oracles considered in constraint-based structure learning
-algorithms, such as the PC algorithm \cite{Spirtes2001}. 
+$G$. These are the standard oracles considered in constraint-based structure
+learning algorithms, such as the PC algorithm \cite{Spirtes2001}. 
 
-Based on these two oracles, we now define two core procedures that we will use to 
+Based on these two oracles, we now define two core procedures that
 iteratively change a current DAG structure. The procedure 
-\textsc{Expand} (Algorithm~\ref{algo:expand}) uses conditional independence
-information to search for missing edges in the graph and then uses domain
-knowledge to orient them. The procedure \textsc{Prune} (Algorithm~\ref{algo:prune}) uses
-conditional independence information to remove superfluous edges from the
+\textsc{Expand} (Algorithm~\ref{algo:expand}) uses CI  
+information (supplied in this case by the d-separation oracle) 
+to search for unexplained associations in the graph and 
+then uses domain knowledge to determine ancestry. The 
+procedure \textsc{Prune} (Algorithm~\ref{algo:prune}) uses
+CI information to remove superfluous edges from the
 graph.
 
 \begin{algorithm}[h]
@@ -401,17 +404,21 @@ graph.
 \label{algo:expand}
 \end{algorithm}
 
-The function $\textsc{Expand}$ takes an initial list of edges and searches for 
-any vertex pairs that are not connected but where the d-separation oracle 
-indicates  that there is still a residual association not explained by the other variables.
-An optional parameter $B$, the empty set by default, allows to specify a ``black list''
-of vertex pairs that must not be connected, and another optional parameter $k$
-specifies the maximum amount of edges to be added by this procedure.
+$\textsc{Expand}$ takes an initial list of edges and searches for 
+any unconnected vertex pairs that are not connected but where the
+d-separation oracle indicates a residual association not explained 
+by other paths.
+The parameter $B$ specifies a ``black list''
+of vertex pairs that must not be connected, 
+whereas $k$
+can be used to limit the maximum amount of edges 
+to be added by this procedure; the usefulness of the $B$ and $k$
+parameters will become clear soon.
 
-Let $G^+$ denote the transitive closure of $G$, that is, the graph in which 
-there is a direct edge $X \to Y$ whenever $X \in \textrm{An}_G(Y)$. The transitive
-closure is related to the result of $\textsc{Expand}$ by the following two 
-easily proved facts.
+Let $G^+$ denote the transitive closure of $G$ (the graph in which 
+there is a direct edge $X \to Y$ whenever $X \in \textrm{An}_G(Y)$). 
+The transitive closure is related to the result of $\textsc{Expand}$ 
+by the following two easily proved facts.
 
 \begin{proposition}
 For a conditional independence oracle
@@ -436,13 +443,16 @@ $\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G, \emptyset, \infty)
 \end{proposition}
 
 \begin{proof}
-Every pair of vertices $X, Y$ that are $d$-connected in $G$ are now connected by an edge 
+Every pair of vertices $X, Y$ that are $d$-connected 
+in $G$ are now connected by an edge 
 during $\textsc{Expand}$. For $X \in \textrm{An}_G(Y)$, the edge is 
-$X \to Y$ just like when using a strong ancestral oracle; since only correctly oriented
-edges are added between ancestor-descendant pairs, such additions never create cycles.
-For $X, Y$ that are only $d$-connected throug common ancestors, an arbitrary 
-edge is added in a manner that preserves acyclicity. The result is a supergraph
-of $G^+$.
+$X \to Y$ like when using a strong ancestral oracle; 
+since only correctly oriented
+edges are added between ancestor-descendant pairs, 
+such additions never create cycles.
+For $X, Y$ that are only $d$-connected throug common ancestors, 
+an arbitrary edge is added in a manner that preserves acyclicity.
+The result is a supergraph of $G^+$.
 \end{proof}
 
 
@@ -467,7 +477,8 @@ of $G^+$.
 \label{algo:prune}
 \end{algorithm}
 
-Unlike our ancestral oracles, the pruning operation is quite effective at distinguishing
+Unlike our ancestral oracles, the pruning operation is 
+quite effective at distinguishing
 direct and indirect effects, as shown by the following result.
 
 \begin{proposition}
@@ -477,12 +488,18 @@ Then $\textsc{Prune}(G',\mathcal{D}_G)=G$.
 \end{proposition}
 
 \begin{proof}
-For an edge $X \to Y$ in the skeleton of $G$, $\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$ regardless 
-of $\mathbf{Z}$, so all edges in the skeleton are retained after {\sc Prune}. Conversely, if 
- $X \to Y$ is not in the skeleton of $G$, let $\mathbf{Z}$ be the $d$-separating set chosen 
-in line~5 of {\sc Prune} (there is at least one such $\mathbf{Z}$, the union of the parents of 
-$X$ and $Y$). Since  $\mathbf{Z}$ $d$-separates all paths from $X$ to $Y$ in $G'$, it does the same 
-in $G$ which contains a subset of these paths. Therefore, all edges not in the skeleton of $G$ are 
+For an edge $X \to Y$ in the skeleton of $G$, 
+$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$ regardless 
+of $\mathbf{Z}$, so all edges in the skeleton are 
+retained after {\sc Prune}. Conversely, if 
+ $X \to Y$ is not in the skeleton of $G$, let 
+$\mathbf{Z}$ be the $d$-separating set chosen 
+in line~5 of {\sc Prune} (there is at least one 
+such $\mathbf{Z}$, the union of the parents of 
+$X$ and $Y$). Since  $\mathbf{Z}$ $d$-separates 
+all paths from $X$ to $Y$ in $G'$, it does the same 
+in $G$ which contains a subset of these paths. 
+Therefore, all edges not in the skeleton of $G$ are 
 removed.
 \end{proof}
 
@@ -495,9 +512,11 @@ ancestral oracle $\mathcal{A}_G$,
 $\textsc{Prune}(\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_G,\emptyset,\infty),\mathcal{D}_G)=G.$
 \end{theorem}
 
-Since we require expert knowledge only in the $\textsc{Expand}$ operation, we may try
-to be more economical by asking fewer questions at a time and interleaving expansion and
-pruning steps. This leads us to the following, more incremental DAG construction algorithm.
+Since we require expert knowledge only in the $\textsc{Expand}$ 
+operation, we may try to be more economical by asking fewer 
+questions at a time and interleaving expansion and
+pruning steps. This leads us to the following, more iterative 
+DAG construction algorithm.
 
 \begin{algorithm}[h]
 \DontPrintSemicolon
@@ -527,12 +546,22 @@ $\textsc{ExpertInLoop}(V,\mathcal{D}_G,\mathcal{A}_G)=G$.
 \end{theorem}
 
 \begin{proof}
-The loop in Algorithm~\ref{algo:expert} terminates if and only if $E=E^*$. If the loop does not 
-terminate, a new edge has been added in line 6, and/or one or more edges were pruned in line 7; the pruned 
-edges never include the edge added in line 6 in the same iteration.
-Every edge can be added at 
-most once and pruned at most once. Therefore, the algorithm always terminates
-after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ in the skeleton of $G$, $\mathcal{D}_G(X,Y,\mathbf{Z})=0$ irrespective of $\mathbf{Z}$, and $e$ must be added to $E$ in some iteration, and can never be pruned afterwards. Therefore, after some iteration, $(V,E)$ must be a supergraph of $G$ after executing line 6, and this will be pruned to the real graph $G$ in line 7 (Proposition~\ref{prop:prune}). In the next iteration, no further changes are made, and the loop terminates.
+The loop in Algorithm~\ref{algo:expert} terminates if and 
+only if $E=E^*$. If the loop does not  terminate, a new
+ edge has been added in line 6, and/or one or more edges were 
+pruned in line 7; the pruned edges never include the edge added 
+in line 6 in the same iteration. Every edge can be added at 
+most once and pruned at most once. Therefore, the algorithm 
+always terminates after at most $|V|(|V|-1)+1$ iterations of
+the loop. For every edge $e=X\to Y $ in the skeleton of $G$, 
+$\mathcal{D}_G(X,Y,\mathbf{Z})=0$ irrespective of $\mathbf{Z}$, 
+and $e$ must be added to $E$ in some iteration, and can never 
+be pruned afterwards. Therefore, after some iteration, 
+$(V,E)$ must be a supergraph of $G$ after executing line~6, 
+and this will be pruned to the real graph $G$ in line~7 
+(Proposition~\ref{prop:prune}). In the next iteration, 
+no further changes are made, and the loop terminates.
+\label{thm:itworks}
 \end{proof} 
 
 
@@ -572,7 +601,7 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 		\includegraphics[page=7]{example.pdf}
 		\caption{$ X_3 \rightarrow X_4 $. $ X_1 \not \rightarrow X_4 $.}
 	\end{subfigure}
-	\caption{An example showing each iteration of the \textsc{ExpertInLoop} algorithm. The dashed edges show all the potential edges that \textsc{Expand} step could add in each iteration.}
+	\caption{An example showing each iteration of \textsc{ExpertInLoop}. The dashed edges show all the potential edges that \textsc{Expand} could add in each iteration.}
 \end{figure}
 
 
@@ -609,54 +638,55 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 \label{algo:ranked_expand}
 \end{algorithm}
 
-The \textsc{ExpertInLoop} algorithm adds a new edge in each iteration. The edge
-to be added is selected using the \textsc{Expand} algorithm, which returns a
-potential edge at random based on the iteration order. However, if the residual
-association between the selected variables is low, adding the edge may result
-in only a marginal improvement in the overall model fit. Given that the
+\textsc{ExpertInLoop} adds a new edge in each iteration. The edge
+to be added is selected using the \textsc{Expand} algorithm, which 
+returns a potential edge at random based on the iteration order. 
+However, if the residual association between the selected variables 
+is low, adding the edge may result in only a marginal improvement 
+in the overall model fit. Given that the
 algorithm requires expert intervention in each iteration to specify the edge
-orientation, it is beneficial to prioritize edges that contribute the most to
-improving the model.
+orientation, it can be beneficial to prioritize edges that contribute 
+the most to improving the model.
 
 To achieve this, instead of selecting edges randomly, we propose ranking
 potential edges based on their residual association given the current DAG. This
-residual association can be quantified using the effect size measures from the
-CI tests used for querying the d-separation in Algorithm~\ref{algo:expand}.
-Specifically, for a d-separation query $ D_G(X, Y, \mathbf{Z}) $, we quantify
+residual association can be quantified using the effect sizes from the
+CI tests used for deciding d-separation in Algorithm~\ref{algo:expand}.
+Specifically, for a d-separation query $D_G(X, Y, \mathbf{Z}) $, we quantify
 the residual association, $ \phi(X, Y, \bm{Z}) $, as the effect size of the CI
-test $ X \ci Y \rvert \bm{Z} $. In Algorithm~\ref{algo:ranked_expand}, we
-outline a greedy approach to edge selection using the effect size measure. 
+test $X \ci Y \rvert \bm{Z} $. 
 
-To implement Algorithm~\ref{algo:ranked_expand}, we need to have an effect size
-metric by which we can rank effects. Depending on the type of variables, we can
-use the effect size measures shown in Section~\ref{sec:ci_tests}. The algorithm
-selects the edge that has the highest absolute residual association, resulting
+Algorithm~\ref{algo:ranked_expand} shows a 
+version of {\sc Expand} where we use the largest unexplained association to
+determine where to next add an edge. 
+To implement this, we need an effect size
+metric by which we can rank effects. Depending on the type of variables, 
+we can use the effect sizes shown in Section~\ref{sec:ci_tests}. 
+The algorithm selects the edge that has the highest absolute residual 
+association, resulting
 in prioritization of edges that contribute the most to improving the model.
 
-\subsection{Connection to Score-Based Methods}
+\subsection{Comparison to Score-Based Methods}
 
-Our procedure shares similarities with score-based automated causal discovery
-methods, such as Greedy Equivalence Search (GES), where the algorithm
-iteratively adds or removes edges that maximize improvements in a specified
-scoring metric. Given a scoring metric, --total residual association, $ \tau $ for 
-a DAG $ G = (V, E) $, defined as:
+Superficially, the data-driven aspects of our procedure appear
+ similar to score-based automated causal discovery methods like 
+Greedy Equivalence Search (GES), which 
+iteratively add or remove edges that maximize improvements in a specified
+scoring metric. Indeed, we can define the \emph{total residual association}
+ $ \tau $ for a DAG $ G = (V, E) $ as:
 
 \begin{equation}
 	\tau = \sum_{\substack{X, Y \in V \\ X \rightarrow Y, Y \rightarrow X \not \in E}}   \phi(X, Y, \mathrm{pa}_G(X) \cup \mathrm{pa}_G(Y))
 \end{equation}
 
-our \textsc{RankedExpand} approach behaves similarly to GES. In each iteration,
-we add the edge between the variable pair that results in the lowest $ \tau $
-and remove edges that have no impact on $ \tau $.
-
-While both methods aim to make iterative modifications to the DAG, a key
-distinction lies in the nature of the evaluation criteria: unlike standard
-scoring metrics, $ \tau $ is not decomposable. Decomposibility is a key
-property of scoring metrics, allowing them to be expressed as the sum of
-individual variables in the model. This property ensures that adding or
-removing an edge only affects a localized part of the model. In contrast, $
-\tau $ can not be decomposed, as modifying an edge in one part of the model can
-affect the residual associations in other parts of the model.
+Our \textsc{RankedExpand} approach behaves similarly to GES in that it 
+tries to prioritize modifications that lead to the largest improvements 
+in $\tau$. However, adding an edge between the two vertices that contribute
+the most to $\tau$ does not necessarily lead to the largest 
+possible decrease in $\tau$ because the new edge can also affect other 
+residual associations. In other words, $\tau$ is not a \emph{decomposable}
+metric that can be expressed as a sum over individual variables in the model
+and their parents. 
 
 Another key difference lies in the interpretability of the evaluation metric.
 Scoring metrics are based on usually based on the log-likelihood with a penalty
@@ -664,9 +694,8 @@ for model complexity. They can be used to make relative comparisons between
 models but their values do not have any interpretation in an absolute sense.
 That is, they indicate which model is better for a given dataset but do not
 quantify how well the model explains the data in an absolute sense. In
-contrast, $ \tau $ provides an absolute measure of model fit -- its value
-approaches $ 0 $ as the model perfectly explains the observed data.
-
+contrast, $ \tau $ could be seen as an absolute measure of model fit -- 
+its value approaches $ 0 $ as the model perfectly explains the observed data.
 
 \section{Empirical Analysis}
 \label{sec:empirical}
@@ -674,9 +703,8 @@ approaches $ 0 $ as the model perfectly explains the observed data.
 In this section, we compare our \textsc{ExpertInLoop} algorithm with automated
 causal discovery algorithms. Our goal with the empirical analysis is to
 understand the behaviour of our method when the experts are not perfect. To
-simulate this imperfect expert, we use a version of the strong ancestral oracle
+simulate an imperfect domain expert, we use a version of the strong ancestral oracle
 that has an accuracy of $ \alpha $:
-
 \begin{equation}
 	\begin{split}
 		x &= \textrm{rand}([0, 1]) \\
@@ -691,10 +719,9 @@ that has an accuracy of $ \alpha $:
 				  \end{cases}
 	\end{split}
 \end{equation}
-
 where $G_{\textrm{true}}$ is the true data generating DAG.
 
-An important point to note here is that the effective accuracy of $
+It is important to note that the effective accuracy of $
 \mathrm{Expert} $ is higher than $ \alpha $ as even when giving a random
 answer, there is a $ 1 $ in $ 3 $ chance that the answer is correct. Therefore,
 an $ \mathrm{Expert} $ with accuracy $ \alpha $, has an effective accuracy, $ \alpha_{\mathrm{eff}} = \alpha + (1 - \alpha) / 3 $.
@@ -724,20 +751,21 @@ We analyzed the performance of \textsc{ExpertInLoop} algorithm by comparing it
 with three other automated algorithms: PC, Hill-Climb Search, and Greedy
 Equivalence Search (GES) on linear Gaussian data. For \textsc{ExpertInLoop}, we
 use the \textsc{RankedExpand} method with Pearson's correlation coefficient as
-the effect size measure (Section~\ref{sec:ci_tests}). For the analysis, we
-simulated data from known DAGs and use the algorithms to recover the original
+the effect size (Section~\ref{sec:ci_tests}) and significance threshold
+$\alpha=0.05$; note that this means that also the d-separation ``oracle''
+makes both type~I and type~II errors. For the analysis, we
+simulate data from known DAGs and use the algorithms to recover the original
 DAG. We start by generating a random DAG on $10$ nodes and use linear models
 with random effects to simulate $ 500 $ samples from it. We simulate each
-variable $ V_i $ in the DAG as:
-
-
-\begin{equation}
-	\begin{split}
-		\bm{\beta} &= \mathrm{Uniform}([-0.6, 0.6]) \\
-		V_i &= \bm{\beta} \mathrm{Pa}_G(V_i) + \mathcal{N}(0, 1)
-	\end{split}
-\end{equation}
-
+variable $ V_i $ in the DAG as
+$$
+	V_i = \bm{\beta} \cdot \mathrm{Pa}_G(V_i) + \mathcal{N}(0, 1)
+$$
+where each coefficient $\beta_i$ of the vector $\bm{\beta} \in \mathbb{R}^{|\bm{\beta} |}$ is randomly drawn as
+$$
+\beta_i \sim \mathrm{Uniform}([-0.6, 0.6])
+$$
+ 
 We perform the experiment for both varying densities of the DAG and accuracy of
 $\mathrm{Expert}$. We also repeat each experiment $ 30 $ times and report the
 mean and standard error of the results.
@@ -865,11 +893,14 @@ integrates manual construction with data-driven feedback, bridging
 the gap between fully manually and fully automated methods.
 The idea of augmenting structure learning by domain knowledge is of course not 
 new. Common ways to provide such background knowledge are "whitelists" or "blacklists"
-of edges that must or must not be present in the resulting DAG, or specification
-of a temporal structure between the variables. 
+of edges 
+\citep{scutari2010}, or specification
+of a temporal structure between the variables \cite{Bang2023}.
 Compared to such approaches, where domain knowledge 
-is specified and supplied beforehand, the novelty of our method lies in the interactive
-back-and-forth between domain knowledge and data, which provably leads to the correct
+is specified and supplied beforehand, the novelty 
+of our method lies in the interactive
+back-and-forth between domain knowledge and data, 
+which provably leads to the correct
 result in a polynomial amount of steps (if the expert answers all
 ancestral queries correctly).
 
