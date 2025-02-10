@@ -16,7 +16,8 @@ rownames(d_ges) <- seq(1, nrow(d_ges))
 d_ges <- cbind(d_ges, x=seq(1, nrow(d_ges)))
 d_ges$algo <- 'GES'
 
-d_results = rbind(d_expert, d_ges)
+d_results <- rbind(d_expert, d_ges)
+d_results <- d_results[d_results$x < 31, ]
 
 p_unexplained_effect <- ggplot(d_results, aes(x=x, y=pillai, color=algo)) +
 	geom_line(alpha=0.6) +
