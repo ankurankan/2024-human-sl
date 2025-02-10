@@ -682,7 +682,7 @@ the \textsc{RankedExpand} in all of our experiments in the next section.
 	\end{subfigure}
 	\caption{Plots showing improvements in fit of the model over iterations
 	on the Adult income dataset. For the expert simulation an LLM is used
-	for the edge orientations. (a) Shows using total unexplained effect that is the
+	for the edge orientations. (a) Shows using total residual association that is the
 	sum of effect size between variables that don't have an edge between them. (b)
 	Shows the log-likelihood of the overall model.
 	}
@@ -787,7 +787,7 @@ Our procedure closely resembles certain score-based automated causal discovery
 methods, such as Greedy Equivalence Search (GES), where the algorithm
 iteratively adds or removes edges that improve the scoring metric the most.
 Similarly, a greedy version of our approach would involve adding an edge
-between the pair of variables with the highest unexplained correlation. While
+between the pair of variables with the highest residual association. While
 both methods aim to find modifications that most improve the model at each
 step, a key distinction lies in the nature of the evaluation criteria: unlike
 standard scoring metrics, our measure of association is not decomposable. A key
@@ -797,9 +797,9 @@ or removing an edge affects only a localized part of the model. In contrast,
 our measure of association is global, meaning that modifying an edge in one
 part of the model can influence association values elsewhere.
 
-Given a DAG $ G = (V, E) $, the total unexplained correlation, $\tau$ in define as:
+Given a DAG $ G = (V, E) $, the total residual association, $\tau$ in define as:
 \begin{equation}
-	\tau = \sum_{\{ (X, Y) \in V | X \rightarrow Y \not \in E \wedge Y \rightarrow X \not \in E \} } \phi(X, Y, \mathrm{pa}_G(X) \cup \mathrm{pa}_G(Y)))
+	\tau = \sum_{\substack{X, Y \in V \\ X \rightarrow Y, Y \rightarrow X \not \in E}}   \phi(X, Y, \mathrm{pa}_G(X) \cup \mathrm{pa}_G(Y))
 \end{equation}
 
 Another major difference is in the interpretability of the evaluation metric.
