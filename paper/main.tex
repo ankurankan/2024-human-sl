@@ -847,23 +847,23 @@ from the LLM.
 \end{figure}
 
 To enable researchers to easily apply our approach to their own datasets, we
-also developed an interactive web-based tool (shown in Fig.~\ref{fig:web}) for
-constructing models. Users can upload their dataset, which initializes an empty
-DAG with nodes corresponding to the dataset's variables. They can then specify
-a p-value threshold and a measure of association threshold. To make the method
-work for mixed data types, we use a measure based on canonical correlations
-(Appendix~\ref{sec:mixed_association}). 
+developed an interactive web-based tool (Figure~\ref{fig:web}) for constructing
+DAGs. Users can upload their dataset, which initializes an empty DAG with nodes
+corresponding to the dataset's variables. They can then specify a p-value
+threshold and a measure of association threshold. To accommodate mixed data
+types, we use a measure of association based on canonical correlations
+(detailed in Appendix~\ref{sec:mixed_association}). 
 
 Using the specified thresholds, the tool visually highlights variable pairs
-(using red edges) with a residual association higher than the threshold. The
-thickness of these edges represents the strength of association, helping users
-prioritize which variable pairs to address first. Similarly, if an edge in the
-graph is detected to be unnecessary, it is highlighted in black. Based on this
-information, make modifications to the model by adding or removing edges. The
-tool also provides the Room Mean Square Error of Approximation (RMSEA) of the
-overall model fit to the data. Once satisfied with the constructed DAG, users
-can export the model for further analysis.
-
+with a residual association greater than the threshold, marking them with red
+edges. The thickness of these edges represents the strength of association,
+helping users prioritize which variable pairs to address first. Similarly, if
+an existing edge is superfluous, it is highlighted in black, signaling
+potentially unnecessary edge. Using this information, users can iteratively
+modify the model by adding or removing edges. The tool also computes the Root
+Mean Square Error of Approximation (RMSEA) to provide an estimate of the
+overall fit of the model. Once satisfied with the constructed DAG, users can
+export the model for further analysis.
 
 \section{Conclusions}
 
