@@ -15,10 +15,10 @@ PVALUE_THRESHOLD <- 0.05
 # Oracle function. Returns either true or (random or don't know) direction of the edge.
 oracle <- function(u, v, true_dag, accuracy=1){
 	if (runif(1) <= accuracy){
-		if (v %in% dagitty::children(true_dag, u)){
+		if (v %in% dagitty::descendants(true_dag, u)){
 			return(c(u, v))
 		}
-		else if (u %in% dagitty::children(true_dag, v)){
+		else if (u %in% dagitty::descendants(true_dag, v)){
 			return(c(v, u))
 		}
 		else{
