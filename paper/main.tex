@@ -677,6 +677,7 @@ scoring metric. Indeed, we can define the \emph{total residual association}
 
 \begin{equation}
 	\tau = \sum_{\substack{X, Y \in V \\ X \rightarrow Y, Y \rightarrow X \not \in E}}   \phi(X, Y, \mathrm{pa}_G(X) \cup \mathrm{pa}_G(Y))
+\label{eqn:tau}
 \end{equation}
 
 Our \textsc{RankedExpand} approach behaves similarly to GES in that it 
@@ -693,7 +694,7 @@ Scoring metrics are based on usually based on the log-likelihood with a penalty
 for model complexity. They can be used to make relative comparisons between
 models but their values do not have any interpretation in an absolute sense.
 That is, they indicate which model is better for a given dataset but do not
-quantify how well the model explains the data in an absolute sense. In
+quantify how well the model explains the data. In
 contrast, $ \tau $ could be seen as an absolute measure of model fit -- 
 its value approaches $ 0 $ as the model perfectly explains the observed data.
 
@@ -702,28 +703,32 @@ its value approaches $ 0 $ as the model perfectly explains the observed data.
 
 In this section, we compare our \textsc{ExpertInLoop} algorithm with automated
 causal discovery algorithms. Our goal with the empirical analysis is to
-understand the behaviour of our method when the experts are not perfect. To
-simulate an imperfect domain expert, we use a version of the strong ancestral oracle
-that has an accuracy of $ \alpha $:
-\begin{equation}
+understand the behaviour of our method when both experts are not perfect.
+Specifically, how good does the domain expert have to be so we actually benefit
+from their expertise, compared to a purely data-driven approach? 
+
+In our analysis, we simulate data from a ``true'' DAG $G$ and use the
+{\sc ExpertInLoop} algorithm with the {\sc RankedExpand} heuristic 
+to recover $G$. We implement the $d$-separation oracle $\mathcal{D}_G(X,Y,\mathbf{Z})$
+by conducting conditional independence tests of $X \ci Y \mid \mathbf{Z}$, which on finite
+data inevitably make type~I and type~II errors. To
+simulate an imperfect domain expert, we use a version of a strong 
+ancestral oracle $\mathcal{A}_G$ (Section~\ref{sec:modification})
+that with probability $\alpha$ knows the correct answer and randomly
+guesses otherwise, i.e.,
+\begin{equation*}
 	\begin{split}
 		x &= \textrm{rand}([0, 1]) \\
 		\mathrm{Expert}(\alpha) &= \begin{cases} 
-			\mathcal{O}(X, Y),  & \textrm{if  } x <= \alpha \\
+			\mathcal{A}_G(X, Y),  & \textrm{if  } x <= \alpha \\
 			\textrm{rand}(X \rightarrow Y, Y \leftarrow X, \textrm{None}) & \textrm{otherwise} \\
-				\end{cases} \\
-			\mathcal{O}(X, Y) &= \begin{cases}
-				X \rightarrow Y, & \textrm{if } X \in \textrm{An}_{G_{\textrm{true}}}(Y) \\
-				X \leftarrow Y, & \textrm{if } Y \in \textrm{An}_{G_{\textrm{true}}}(X) \\
-				\textrm{None}, & \textrm{otherwise }
-				  \end{cases}
+				\end{cases} 
 	\end{split}
-\end{equation}
-where $G_{\textrm{true}}$ is the true data generating DAG.
+\end{equation*}
 
 It is important to note that the effective accuracy of $ \mathrm{Expert} $ is
-higher than $ \alpha $ as even when $ x > \alpha $, there is a $ 1 $ in
-$ 3 $ chance that edge orientation is correct. Therefore, an $ \mathrm{Expert} $ with
+higher than $ \alpha $ as even when $ x > \alpha $, there is a $ 1/3 $
+that edge orientation is correct. Therefore, an $ \mathrm{Expert} $ with
 accuracy $ \alpha $, has an effective accuracy, $ \alpha_{\mathrm{eff}} =
 \alpha + (1 - \alpha) / 3 $.
 
@@ -748,38 +753,37 @@ accuracy $ \alpha $, has an effective accuracy, $ \alpha_{\mathrm{eff}} =
 	\label{fig:shd_sid}
 \end{figure}
 
-We analyzed the performance of \textsc{ExpertInLoop} algorithm by comparing it
-with three other automated algorithms: PC, Hill-Climb Search, and Greedy
-Equivalence Search (GES) on linear Gaussian data. For \textsc{ExpertInLoop}, we
+We compare the performance of the \textsc{ExpertInLoop} algorithm by
+to three other automated algorithms: PC \citep{Spirtes2001,KalischB07}, 
+Hill-Climb Search \citep{scutari2010}, and Greedy Equivalence Search (GES) \citep{Chickering2002}
+on linear-Gaussian data. For \textsc{ExpertInLoop}, we
 use the \textsc{RankedExpand} method with Pearson's correlation coefficient as
 the effect size (Section~\ref{sec:ci_tests}) and significance threshold
-$\alpha=0.05$; note that this means that also the d-separation ``oracle''
-makes both type~I and type~II errors. For the analysis, we
-simulate data from known DAGs and use the algorithms to recover the original
-DAG. We start by generating a random DAG on $10$ nodes and use linear models
+(and type~I error rate) $\alpha=0.05$. We start by generating a random DAG 
+on $10$ nodes and use linear models
 with random effects to simulate $ 500 $ samples from it. We simulate each
 variable $ V_i $ in the DAG as
 $$
 	V_i = \bm{\beta} \cdot \mathrm{Pa}_G(V_i) + \mathcal{N}(0, 1)
 $$
-where each coefficient $\beta_i$ of the vector $\bm{\beta} \in \mathbb{R}^{|\bm{\beta} |}$ is randomly drawn as
+where each coefficient $\beta_i$ of the vector $\bm{\beta} \in \mathbb{R}^{|\mathrm{Pa}_G(V_i)|}$ is randomly drawn as
 $$
 \beta_i \sim \mathrm{Uniform}([-0.6, 0.6])
 $$
  
-We perform the experiment for both varying densities of the DAG and accuracy of
-$\mathrm{Expert}$. We also repeat each experiment $ 30 $ times and report the
+We perform the experiment for varying densities of the DAG and accuracies of
+$\mathrm{Expert}$. We repeat each experiment $ 30 $ times and report the
 mean and standard error of the results.
 
-To compare the learned DAG to the original DAG, we use two metrics: Structural
-Hamming Distance (SHD) and Structural Intervention Distance (SID)
-\citep{Peters2015}. Unlike \textrm{ExpertInLoop}, the automated algorithms can
+To compare the learned DAG to the original DAG, we use two metrics: the Structural
+Hamming Distance (SHD) and the Structural Intervention Distance (SID)
+\citep{Peters2015}. Unlike \textsc{ExpertInLoop}, the automated algorithms can
 only recover the MEC, therefore, we considered all possible orientations of the
 MEC to compute a range of SHD and SID values representing the best and worst
 case scenarios. The results of this analysis are shown in
 Figure~\ref{fig:shd_sid}. For SHD, the performance of \textsc{ExpertInLoop} is
-comparable to the automated algorithms for $ \alpha = 0.3
-(\alpha_{\textrm{eff}} = 0.53 $), implying that if an expert is able to get the
+comparable to the automated algorithms for $ \alpha = 0.3$
+($\alpha_{\textrm{eff}} = 0.53 $), implying that if an expert is able to get the
 edge orientation correctly in more than $ 1 $ out of $ 2 $ cases, they can
 outperform the automated algorithms. Similarly for SID, an expert can outperform 
 the automated algorithms if they are able to get the orientation correct in $ 2 $ 
@@ -799,7 +803,7 @@ out of $ 3 $ cases. Another thing to note is that for denser DAGs, the
 	\end{subfigure}
 	\caption{LLM-in-the-loop causal discovery on the Adult Income datases. As the ground 
 truth is unknown, two measures of fit are shown over 30 iterative modifications: 
-total residual association $\tau$ (a, lower is bettter); log-likelihood (a, higher is better).
+total residual association $\tau$ (a, see Equation~\ref{eqn:tau}; lower is bettter); log-likelihood (b, higher is better).
 	}
 	\label{fig:unexplained_ll}
 \end{figure}
@@ -813,7 +817,8 @@ geared towards using  large language models (LLMs) and humans as experts
 to decide on edge directions. We use the Adult Income dataset from the 
 introduction as an example. There is no known ground truth for this dataset,
 and it contains mixed types of data; here, we use a version that contains
-ordinal and nominal variables and use the RMSEA as a measure of association
+ordinal and nominal variables and use the RMSEA of a residualization-based
+conditional independence test \citep{Ankan2023} as a measure of association
 to prioritize modifications (Section~\ref{sec:background}). 
 
 \subsection{Using LLMs as Experts}
@@ -823,7 +828,9 @@ to prioritize modifications (Section~\ref{sec:background}).
 	\includegraphics[page=1]{fig5.pdf}
 	\caption{DAG learned from the Adult Income dataset using an LLM
 		(Gemini 1.5 Flash) as the expert. The p-value threshold used is $ 0.05 $ 
-		and the measure of association threshold is $ 0. 1 $}
+		and the measure of association threshold is $ 0. 1 $, meaning
+		that associations below $0.1$ are not considered by 
+		\textsc{RankedExpand}.}
 	\label{fig:adult_llm}
 \end{figure}
 
@@ -834,7 +841,7 @@ structure learning \citep{Naik2023, Vashishtha2023} and counterfactual
 reasoning \citep{Kiciman2023} (see \citet{Liu2024} for a comprehensive
 overview).
 
-Since our approach relies on expert knowledge to determine edge orientations,
+Since our approach relies on expert knowledge to determine ancestral relationships,
 we explored the potential of using an LLM for this task. We applied our causal
 discovery procedure using the Gemini 1.5 Flash model as the expert. We simulate
 the \emph{weak ancestral oracle} using the LLM by asking it to choose the
@@ -846,7 +853,7 @@ across 30 iterations compared to GES for a run of the algorithm.
 Figure~\ref{fig:adult_llm} shows the DAG learned
 on the Adult Income dataset using the LLM as the expert. We can see 
 that the model fit improves comparably to a greedy approach and 
-the resulting DAG contains largely sensible edge directions. 
+the resulting DAG appears to contain largely sensible edge directions. 
 
 \subsection{Using Humans as Experts}
 
@@ -873,7 +880,7 @@ threshold and a threshold for a minimal association strength. The tool
 then visually highlights variable pairs
 with a residual association greater than the threshold, marking them with red
 edges; to avoid cluttering, no lines are drawn for residual associations that
-are statistically insignificanct or below the specified threshold.
+are statistically insignificant or below the specified threshold.
 The thickness of these edges represents the strength of association,
 helping users prioritize which variable pairs to address first; however, note that
 users are free to choose which variables to connect. Similarly, if
@@ -891,19 +898,18 @@ Researchers often prefer to construct DAGs manually rather than using automated
 algorithms due to practical challenges in applying automated methods. To assist
 this process, we developed an iterative structure learning method that
 integrates manual construction with data-driven feedback, bridging
-the gap between fully manually and fully automated methods.
+the gap between fully manual and fully automated methods.
 The idea of augmenting structure learning by domain knowledge is of course not 
-new. Common ways to provide such background knowledge are "whitelists" or "blacklists"
-of edges 
+new. Common ways to provide such background knowledge are ``whitelists'' or 
+``blacklists'' of edges 
 \citep{scutari2010}, or specification
-of a temporal structure between the variables \cite{Bang2023}.
+of a ``tiered'' (e.g., temporal) structure between the variables \citep{Bang2023}.
 Compared to such approaches, where domain knowledge 
 is specified and supplied beforehand, the novelty 
 of our method lies in the interactive
 back-and-forth between domain knowledge and data, 
 which provably leads to the correct
-result in a polynomial amount of steps (if the expert answers all
-ancestral queries correctly).
+result in a polynomial amount of steps in the oracle settings we considered.
 
 Avenues for future work include extending this approach to latent variables 
 as encoded by acyclic directed mixed graphs (ADMGs). Further, if experts make 
