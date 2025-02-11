@@ -191,7 +191,7 @@ make_plots_v2 <- function(filename, plot_type){
 		      legend.title=element_blank(),
 		      legend.text=element_text(size=8)) +
 		labs(x = "Edge Probability") +
-		labs(y = "Mean SHD") + 
+		labs(y = "SHD") + 
 		labs(color = "Algorithm") +
 		ylim(0, 40) +
 		guides(linetype='none', fill='none')
@@ -250,7 +250,7 @@ make_plots_v2 <- function(filename, plot_type){
 		      legend.title=element_blank(),
 		      legend.text=element_text(size=8)) +
 		labs(x = "Edge Probability") +
-		labs(y = "Mean SID") + 
+		labs(y = "SID") + 
 		labs(color = "Algorithm") +
 		ylim(0, 90) +
 		guides(linetype='none', fill='none')
