@@ -1,26 +1,52 @@
-The theoretical results, particularly concerning the Expand-procedure, may contain an error based on my understanding (see counterexample in the detailed comments).
-The discussion of related work is somewhat limited; I would expect more existing literature on the topic since the expert-in-the-loop idea seems straightforward.
-The paper lacks a discussion of limitations, such as potential overfitting issues in the proposed method.
+1. Discussion of related work
 
-The method relies on strong assumptions such as sufficiency, and likely also the Markov and faithfulness assumptions, which are not explicitly listed in the paper. While the discussion on expert quality is interesting, the other assumptions should be addressed more clearly.
-The notation 
- used in the algorithm needs to be defined. It seems to indicate dependence between 
- and 
- given 
-, not independence—please clarify.
-In the proof of Proposition 2, it is stated that correctly oriented edges are always added when an ancestral relationship exists, even with a weak ancestral oracle. However, I believe this may not hold in all cases. For example, consider nodes 
- with confounding between 
- and 
- via hidden variables. Expand could now first add (wrong) edges 
- and 
- using an empty conditioning set 
- by the weak ancestral oracle. Afterwards it could select the pair 
-. There is dependence between 
- and 
- given 
-, so the expert knowledge would give you the edge 
- but this edge would introduce a cycle, so would be added with the wrong orientation. This issue also seems to impact Theorem 1, as errors in Expand may propagate since you claim that "Every edge can be added at most once...". Please clarify if I misunderstood your algorithm.
-I'm a bit confused by section 3.3, I thought you propose a method of how to use expert knowledge in combination with data-driven causal discovery. Couldn't similar ideas to your method be in principle also combined with score-based algorithms? The purpose and scope of this section could be clarified.
-While the GUI for expert input is a valuable contribution, Section 5.2 feels unfinished since no experiments with human experts are included.
-Minor typo: The symbol 
- is used with different meanings in Section 4.
+While there are other approaches to integrating expert knowledge in causal
+discovery such as specifying forbidden or fixed edges or specifying temporal
+order for the variables, this was the first work towards an interactive
+approach towards causal discovery. However, another reviewer has pointed out to
+a very recent work where the paper also considers an interactive expert
+knowledge specification approach that we missed. We will provide a reference
+and discussion of the difference between the two approaches.
+
+2. Discussion on the potential overfitting issues with the proposed method.
+
+Overfitting can indeed be an issue in practice with this approach as there can
+be many correlations between the variables. The association threshold can be
+used as a way to control the density of the final models. As depending on the
+application or dataset, the user might want a more denser or sparser model[1],
+the threshold values gives a way to control this.
+
+3. Strong assumptions such as sufficiency, and faithfulness assumptions.
+
+Our approach makes the same assumptions as most standard algorithms for causal
+discovery make faithfulness and causal sufficiency. We do mention in Section 2
+that we consider all variables to be observed but we will make these
+assumptions clearer.
+
+
+4. The notation $ D_G(X, Y, Z) = 0 $.
+
+In Section 3.1, we define $ D_G(X, Y, Z) = 1 $ when $ X $ and $ Y $ are
+d-separated by $ Z $ in G. Similarly $ D_G(X, Y, Z) = 0 $ when $ X $ and $ Y $ 
+are d-connected conditioned on $ Z $ in $ G $. We will move this definition to 
+our notation section and clarify both the $ 0 $ and $ 1 $ values.
+
+5. Proof of Proposition 2.
+
+We do not consider unobserved confounding.
+
+6. Purpose of Section 3.3.
+
+As the proposed approach is very similar to the GES algorithm and takes the
+same two steps: Expand is equivalent to Add and Reduce is equivalent to Remove
+in case of GES, we wanted to highlight the differences between the two
+approaches.
+
+7. Human experiments for Section 5.2
+
+
+8. Typos
+
+We will fix these.
+
+[1]
