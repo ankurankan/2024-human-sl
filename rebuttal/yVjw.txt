@@ -1,22 +1,40 @@
 1. Clarity in describing the algorithm.
 
-We are considering a single approach. As most researchers construct DAGs
-manually, the goal of our approach is to assist these researchers in this
-manual DAG construction. Our proposed approach is an interactive way to this
-manual model construction where our method uses the data to identify and rank
-potential modifications to the DAG such that it is more consistent to the data.
-These potential modifications can either be adding an edge between two
-variables or removing an existing edge. Using this information the researcher
-are free to choose which modification they want to make, or stop at any point
-where they are satisfied with the model.
+We are presenting a single approach throughout the paper. Since most
+researchers manually construct DAGs using their domain knowledge, the goal of
+our proposed method is to assist them in this process by offering an
+interactive, data-driven tool. The proposed method uses the data to identify
+and rank potential modifications to the current DAG, either by adding an edge
+(the method only identifies the pair of variables and not the orientation of
+the edge) or removing an existing edge to improve consistency with the data.
 
-In Section 4, to simulate an expert we assume that the expert always first
-chooses the highest ranked modification in each iterations
+These suggestions are then presented to the researcher, who can choose which
+(if any) modification to apply. If the researcher chooses to add an edge, they
+would need to specify the orientation of the edge. The researcher remains in
+control and can stop the process whenever they are satisfied with the model.
+This setup allows expert knowledge to guide decisions at each step, while the
+data helps highlight where revisions might be needed.
 
-We will make this clearer in Section 3 and Section 4.
+In Section 4, for the purpose of evaluation, we simulate an expert by assuming
+they always select the highest-ranked modification in each iteration. 
 
-2. Overlooked Kitson 2025.
+We will make revisions in Section 3 and 4 to make these clearer.
 
-We did miss that paper. Their approach proposes a modification to the tabu
-search algorithm where the algorithm prompts the user for information when the
-score improvement is not significant.
+2. Overlooked Kitson (2025).
+
+Thank you for pointing us to the work by Kitson et al. We indeed missed this paper.
+
+While both our method and Kitson (2025) propose interactive approaches to
+causal discovery, the goal and the method differs. Kitson (2025) proposes an
+approach by modifying a score-based method where the algorithm selectively
+prompts the user for input when certain conditions are met -- such as a tie in
+score improvement or low confidence in a certain modification. In contrast, our
+approach is designed to assist users in manual model construction by presenting
+a ranked list of potential modifications in each iteration. The user is then
+free to choose the modification or stop when satisfied with the model. In this
+way, compared to Kitson (2005) our method puts more emphasis on expert-driven
+construction, guided by data-driven suggestions.
+
+We will revise our conclusion section to acknowledge Kitson (2025) and include the 
+differences between the two approaches.
+
