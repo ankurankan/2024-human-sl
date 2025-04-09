@@ -1,16 +1,17 @@
 1. Clarity in describing the algorithm.
 
-We are considering a single approach. The goal of this approach is to augment
-the manual DAG construction usually done by domain experts. We do this by
-showing potential modifications to the experts using data where they can make
-the choice of adding/removing edges and their orientation. For the theoretical
-and empirical analysis, we need an algorithmic procedure to simulate this model
-construction process and for that we choose to always make modifications to the
-pair of variables with the highest unexplained correlation. In practice, the
-expert can use this information to help them in making a choice but are not
-obliged to always select this pair of variable first.
+We are considering a single approach. As most researchers construct DAGs
+manually, the goal of the presented approach is to assist researchers in this
+manual construction process. In each iteration, our proposed approach finds
+potential modifications to the DAG such that the model becomes more consistent
+with the data. Using this information the user can choose the most suitable
+modification to make (and decide edge orientation if adding an edge).
 
-We will make this distinction clearer in Section 3 and 4 of the paper.
+In Section 4, to simulate an expert we have considered a variant of this above
+approach, where in each iteration the expert chooses the highest ranked edge
+addition in each iteration.
+
+We will make this distinction clearer in Section 4 of the paper.
 
 2. Overlooked Kitson 2025.
 
