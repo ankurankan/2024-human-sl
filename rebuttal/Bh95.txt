@@ -1,0 +1,55 @@
+1. Mistakes due to unreliable CI tests.
+
+It is indeed true that a lot of the issues in constraint-based causal discovery
+arise due to difficulties in CI testing. But multiple previous methods have
+shown that expert knowledge can be used to improve the results of these
+automated causal discovery methods [1][2]. 
+
+However as researchers in practice do not use any causal
+discovery algorithms and prefer to construct the DAGs based only on their
+expert knowledge, we here present a method that can assist them in this
+process. The solution that approach offers is a middle ground between these
+completely automated algorithms and a completely manual approach where the
+manual construction approach is augmented using the available data. The
+automated algorithms make decision about keeping the edge or removing them
+automatically based on the CI test, here we put an expert to make this decision
+and they can override the results of CI tests using their domain expertise.
+Other methods for causal discovery that use expert knowledge kind of aim for
+this same thing where the expert can for example specify required edges or
+forbidden edges in the final model. Our approach instead provides a more
+fine-grained control to the researchers while also letting them know the
+consequences of their decision (for example through unexplained correlations).
+For example some observed correlation is an artifact of the way data was
+collected but should not be present in the true causal model.
+
+We will modify our introduction such that this message is clearer.
+
+[1] TODO: Forbidden and fixed edges from Meek
+[2] TODO: Temporal ordering Christine & Vanessa
+
+2. Lack of theoretical analysis on the behavior of the method when the domain
+expert is incorrect.
+
+We do not think there is any straightforward way to perform the theoretical
+analysis for a given accuracy level of the ancestral oracle or the d-separation
+oracle. This is however an issue with most of such algorithms such algorithms
+rely on such assumptions for example PC algorithm assumes that we have a
+conditional independence test oracle and score based methods assumes a
+consistent scoring method. With proving the correctness of our approach we show
+that in the ideal scenario the algorithm will recover the true graph, whereas
+the empirical analysis then considers the scenario when the assumptions of
+access to an oracle is not correct.
+
+3. Using residual association to prioritize modifications to the DAG.
+
+Indeed the residual association for a CI test $ X \ci Y | \bm{Z} $ measures the
+conditional association between the variables $ X $ and $ Y $ conditioned on $
+\bm{Z} $. In our case, given a DAG, $G$, if there is no edge between $ X $ and
+$ Y $ and $ Z = pa_G(X) \cup pa_G(Y) $, then the residual association can be
+interpreted as the observed association between the variables $ X $ and $ Y $
+in our data that is \textbf{not explained} by our current DAG. The strength of
+this conditional association then gives us a measure of how bad the unexplained
+association is, and hence we use it as a measure to rank modifications.
+
+4. Issues in text.
+Thank you for pointing these out, we will fix them.

@@ -1,0 +1,19 @@
+1. Clarity in describing the algorithm.
+
+We are considering a single approach. The goal of this approach is to augment
+the manual DAG construction usually done by domain experts. We do this by
+showing potential modifications to the experts using data where they can make
+the choice of adding/removing edges and their orientation. For the theoretical
+and empirical analysis, we need an algorithmic procedure to simulate this model
+construction process and for that we choose to always make modifications to the
+pair of variables with the highest unexplained correlation. In practice, the
+expert can use this information to help them in making a choice but are not
+obliged to always select this pair of variable first.
+
+We will make this distinction clearer in Section 3 and 4 of the paper.
+
+2. Overlooked Kitson 2025.
+
+We did miss that paper. Their approach proposes a modification to the tabu
+search algorithm where the algorithm prompts the user for information when the
+score improvement is not significant.

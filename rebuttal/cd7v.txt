@@ -1,0 +1,26 @@
+The theoretical results, particularly concerning the Expand-procedure, may contain an error based on my understanding (see counterexample in the detailed comments).
+The discussion of related work is somewhat limited; I would expect more existing literature on the topic since the expert-in-the-loop idea seems straightforward.
+The paper lacks a discussion of limitations, such as potential overfitting issues in the proposed method.
+
+The method relies on strong assumptions such as sufficiency, and likely also the Markov and faithfulness assumptions, which are not explicitly listed in the paper. While the discussion on expert quality is interesting, the other assumptions should be addressed more clearly.
+The notation 
+ used in the algorithm needs to be defined. It seems to indicate dependence between 
+ and 
+ given 
+, not independence—please clarify.
+In the proof of Proposition 2, it is stated that correctly oriented edges are always added when an ancestral relationship exists, even with a weak ancestral oracle. However, I believe this may not hold in all cases. For example, consider nodes 
+ with confounding between 
+ and 
+ via hidden variables. Expand could now first add (wrong) edges 
+ and 
+ using an empty conditioning set 
+ by the weak ancestral oracle. Afterwards it could select the pair 
+. There is dependence between 
+ and 
+ given 
+, so the expert knowledge would give you the edge 
+ but this edge would introduce a cycle, so would be added with the wrong orientation. This issue also seems to impact Theorem 1, as errors in Expand may propagate since you claim that "Every edge can be added at most once...". Please clarify if I misunderstood your algorithm.
+I'm a bit confused by section 3.3, I thought you propose a method of how to use expert knowledge in combination with data-driven causal discovery. Couldn't similar ideas to your method be in principle also combined with score-based algorithms? The purpose and scope of this section could be clarified.
+While the GUI for expert input is a valuable contribution, Section 5.2 feels unfinished since no experiments with human experts are included.
+Minor typo: The symbol 
+ is used with different meanings in Section 4.
