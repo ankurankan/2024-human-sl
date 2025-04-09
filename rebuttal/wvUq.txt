@@ -1,4 +1,4 @@
-We would like to the reviewer for taking the time to review our work and the
+We would like to thank the reviewer for taking the time to review our work and the
 valuable comments. Below, we provide responses to each concern.
 
 1. Empirical analysis with lower effective accuracy.
@@ -11,48 +11,47 @@ realistic scenario and in practice, the worst an expert can do is to guess
 completely at random. Such behavior would correspond to an expected effective
 accuracy of $ 0.33 $. If we extrapolate the trends from Figure 4, we would
 expect that ExpertInLoop with effective accuracy of $ 0.33 $ would perform
-worse that all other algorithms considered. Therefore, we do not think adding
-this additional case would change any of the conclusions of the paper. However,
-we will add this scenario in Figure 4 for completeness.
+worse that all other algorithms considered. Therefore, we think the conclusions
+of our paper would remain the same. However, for completeness we will add this
+additional scenario in Figure 4.
 
 2. Dealing with conflicting information between data and expert knowledge.
 
-We agree that in real-world settings, expert knowledge may conflict with the
-observed data. In practice, as most researchers construct DAGs manually solely
-based on their expert knowledge, model testing is an important step to compare
-how consistent is the data with the constructed DAG. Any failed tests can help
-in uncovering either incorrect expert knowledge or presence of some artifacts
-in the dataset. 
-
-Our proposed approach can be thought of an iterative way to model
-testing which augments the model construction process where the user still
-makes the final choice of modifications to the model. The approach highlights
-inconsistency between the model and the dataset, which the user utilizes to
-make the choice.
-
-As pointed out by another reviewer, we might not have clearly framed this
-difference between the approach being just an interactive assistant for model
-construction vs the automated version (that chooses the highest priority edge
-in each iteration) that we use for the theoretical and empirical analysis. We
-will make this distinction clearer in the paper.
-
-[] Ankan, Ankur, Inge MN Wortel, and Johannes Textor. "Testing graphical causal models using the R package “dagitty”." Current Protocols 1.2 (2021): e45.
-[] 
+We agree that in real-world settings, expert knowledge may be inconsistent or
+conflict with the observed data. In practice, as most researchers construct
+DAGs manually solely based on their expert knowledge, model testing is an
+important step to verify the consistency of the model with the data and to
+identify these conflicts [1]. Any failed tests can help in uncovering either
+incorrect expert knowledge or presence of some artifacts in the dataset. As our
+proposed approach utilizes this model testing idea to suggest modifications, it 
+will also highlights conflicts between the data and expert knowledge. However, as
+our approach only assists the researchers in model construction, the decision on 
+how to deal with these conflicts still upto the user.
 
 3. More detailed discussion on using LLMs as experts.
 
 Our main goal with the paper is to present an approach to assist researchers in
-manual construction of their DAGs rather than an automated method. With the section
-on LLMs our goal was just to highlight that there is a potential to use LLMs to 
-automate the algorithm, however as that was not the main aim of the paper, we did not
-delve into more detailed analysis on the performance of the LLM.
+manual construction of their DAGs rather than an automated method. With the
+section on LLMs our goal was just to highlight that there is a potential to use
+LLMs to automate the algorithm, however as that was not the main aim of the
+paper, we did not delve into more detailed analysis on the performance of the
+LLM and think it is out of scope for this paper.
 
 4. Comparison to other expert knowledge based causal discovery algorithms.
 
-One of the key differences in our approach vs other expert knowledge based approach
-is that we do not ask the user to specify expert knowledge in advance. This can lead to 
-much less information that we need to provide. For example specifying tiers for all the 
-variables in the model can be difficult or 
+One of the key differences in our approach vs other expert knowledge based
+approach is that our approach is interactive in nature whereas the other
+approaches require the user to specify all background knowledge for the
+algorithm. For example, in the case of TPC algorithm we would need to define a
+tier for each of the variables in the dataset, whereas in our case we would
+only need to answer the ancestral relationship between specific nodes in each
+iteration.
+
+We have a discussion in the Conclusion section with other methods for specifying
+expert knowledge. We will expand it a bit.
 
 5. Typos
 Thank you for pointing them out. We will fix them.
+
+
+[1] Ankan, Ankur, Inge MN Wortel, and Johannes Textor. "Testing graphical causal models using the R package “dagitty”." Current Protocols 1.2 (2021): e45.
