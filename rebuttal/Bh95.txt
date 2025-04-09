@@ -1,6 +1,6 @@
 1. Mistakes due to unreliable CI tests.
 
-It is indeed true that a lot of the issues in constraint-based causal discovery
+It is true that the mistakes made by constraint-based causal discovery
 arise due to difficulties in CI testing. But multiple previous methods have
 shown that expert knowledge can be used to improve the results of these
 automated causal discovery methods [1][2]. 
@@ -24,21 +24,21 @@ collected but should not be present in the true causal model.
 
 We will modify our introduction such that this message is clearer.
 
-[1] TODO: Forbidden and fixed edges from Meek
-[2] TODO: Temporal ordering Christine & Vanessa
+[1] Meek, Christopher. "Causal inference and causal explanation with background knowledge." In Proceedings of the Eleventh conference on Uncertainty in artificial intelligence (UAI'95). 
+[2] Bang, Christine W., and Vanessa Didelez. "Do we become wiser with time? On causal equivalence with tiered background knowledge." Uncertainty in Artificial Intelligence. PMLR, 2023.
 
 2. Lack of theoretical analysis on the behavior of the method when the domain
 expert is incorrect.
 
 We do not think there is any straightforward way to perform the theoretical
 analysis for a given accuracy level of the ancestral oracle or the d-separation
-oracle. This is however an issue with most of such algorithms such algorithms
-rely on such assumptions for example PC algorithm assumes that we have a
-conditional independence test oracle and score based methods assumes a
-consistent scoring method. With proving the correctness of our approach we show
-that in the ideal scenario the algorithm will recover the true graph, whereas
-the empirical analysis then considers the scenario when the assumptions of
-access to an oracle is not correct.
+oracle. However, this is common issue with most of the causal discovery
+algorithms and we usually have to rely on some oracle assumptions to prove
+their correctness. For example PC algorithm and its variants assumes that we
+have a conditional independence test oracle and score based algorithms assumes
+a consistent scoring method. In our paper, we have provided a correctness proof
+under the assumption of an ancestral oracle and a d-separation oracle, and our 
+empirical analysis tests for the violations of these assumptions.
 
 3. Using residual association to prioritize modifications to the DAG.
 
