@@ -1,6 +1,7 @@
 library(jsonlite)
 
 preprocess_adult <- function(d){
+	print(d)
 	d$X <- NULL
 	d$Fnlwgt <- NULL
 	d$EducationNum <- NULL
