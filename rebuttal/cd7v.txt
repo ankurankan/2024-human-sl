@@ -1,35 +1,42 @@
+We would like to thank the reviewer for taking the time to review our work and the
+valuable comments. Below, we provide responses to each concern.
+
 1. Discussion of related work
 
 While there are other approaches to integrating expert knowledge in causal
-discovery such as specifying forbidden or fixed edges or specifying temporal
-order for the variables, this was the first work towards an interactive
-approach towards causal discovery. However, another reviewer has pointed out to
-a very recent work where the paper also considers an interactive expert
-knowledge specification approach that we missed. We will provide a reference
-and discussion of the difference between the two approaches.
+discovery such as specifying forbidden or fixed edges[1] or specifying temporal
+order[2] for the variables, our work was the first to have an interactive
+approach towards causal discovery. Reviewer yVjw has, however, pointed us 
+to another paper that considers a similar interactive approach. We will add
+reference and discussion on the differences between the two approaches.
 
 2. Discussion on the potential overfitting issues with the proposed method.
 
 Overfitting can indeed be an issue in practice with this approach as there can
-be many correlations between the variables. The association threshold can be
-used as a way to control the density of the final models. As depending on the
-application or dataset, the user might want a more denser or sparser model[1],
-the threshold values gives a way to control this.
+be many small residual association between the variables. In practice, as built
+into the web tool and used in the empirical analysis, we suggest using a
+association threshold value that would ignore any conditional association below
+the threshold value. Given that the choice of overfitting can be dependent on
+the context of the problem statement [3], the threshold value gives a way to 
+control to get the desired output.
+
+We will add a discussion on overfitting in the Conclusions section of our paper.
 
 3. Strong assumptions such as sufficiency, and faithfulness assumptions.
 
-Our approach makes the same assumptions as most standard algorithms for causal
-discovery make faithfulness and causal sufficiency. We do mention in Section 2
-that we consider all variables to be observed but we will make these
-assumptions clearer.
-
+Our approach makes the assumptions of faithfulness and causal sufficiency
+similar to most algorithms for causal discovery. We do mention in Section 2
+that we only consider the setting where all variables to be observed implying
+causal sufficiency. But we do agree that these assumptions can be make clearer
+in the paper and we will do that.
 
 4. The notation $ D_G(X, Y, Z) = 0 $.
 
 In Section 3.1, we define $ D_G(X, Y, Z) = 1 $ when $ X $ and $ Y $ are
-d-separated by $ Z $ in G. Similarly $ D_G(X, Y, Z) = 0 $ when $ X $ and $ Y $ 
-are d-connected conditioned on $ Z $ in $ G $. We will move this definition to 
-our notation section and clarify both the $ 0 $ and $ 1 $ values.
+d-separated by $ Z $ in G. Similarly, $ D_G(X, Y, Z) = 0 $ when $ X $ and $ Y $
+are d-connected conditioned on $ Z $ in $ G $. We will move this definition to
+the notation paragraph in Section 2 and clarify the notation for both $ D_G = 0 $ and
+$ D_G = 1 $.
 
 5. Proof of Proposition 2.
 
@@ -38,15 +45,17 @@ We do not consider unobserved confounding.
 6. Purpose of Section 3.3.
 
 As the proposed approach is very similar to the GES algorithm and takes the
-same two steps: Expand is equivalent to Add and Reduce is equivalent to Remove
-in case of GES, we wanted to highlight the differences between the two
-approaches.
+same two steps as first adding edges to the model and then doing a pruning step
+to remove unnecessary edge, our goal with Section 3.3 was to highlight the
+difference between the two approaches.
 
 7. Human experiments for Section 5.2
 
+TODO
 
 8. Typos
 
 We will fix these.
 
-[1]
+[1] Meek, Christopher. "Causal inference and causal explanation with background knowledge." In Proceedings of the Eleventh conference on Uncertainty in artificial intelligence (UAI'95). 
+[2] Bang, Christine W., and Vanessa Didelez. "Do we become wiser with time? On causal equivalence with tiered background knowledge." Uncertainty in Artificial Intelligence. PMLR, 2023.
