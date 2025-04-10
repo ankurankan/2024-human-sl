@@ -1,40 +1,43 @@
+We would like to thank the reviewer for taking the time to review our work and the
+valuable comments. Below, we provide responses to each concern.
+
 1. Clarity in describing the algorithm.
 
 We are presenting a single approach throughout the paper. Since most
 researchers manually construct DAGs using their domain knowledge, the goal of
 our proposed method is to assist them in this process by offering an
-interactive, data-driven tool. The proposed method uses the data to identify
-and rank potential modifications to the current DAG, either by adding an edge
-(the method only identifies the pair of variables and not the orientation of
-the edge) or removing an existing edge to improve consistency with the data.
-
-These suggestions are then presented to the researcher, who can choose which
-(if any) modification to apply. If the researcher chooses to add an edge, they
-would need to specify the orientation of the edge. The researcher remains in
-control and can stop the process whenever they are satisfied with the model.
-This setup allows expert knowledge to guide decisions at each step, while the
-data helps highlight where revisions might be needed.
+interactive, data-driven tool. Our proposed method uses data to identify and
+rank potential modifications to the current DAG, either by adding an edge or
+removing an existing edge to improve consistency with the data. In each
+iteration, these suggestions are presented to the user, who ultimately chooses
+the modification to make allowing them to integrate their domain expertise in
+the model building process. This approach allows for the expert to remain in
+control while guiding the model building process through insights from data.
 
 In Section 4, for the purpose of evaluation, we simulate an expert by assuming
-they always select the highest-ranked modification in each iteration. 
+that the expert always select the highest-ranked modification in each
+iteration. This is a slightly different setup compared to how we expect the
+tool to be used in practice.
 
-We will make revisions in Section 3 and 4 to make these clearer.
+We will make revisions in the Introduction and Section 4 to make the goal of
+the presented approach and the assumption made for empirical evaluation
+clearer.
 
-2. Overlooked Kitson (2025).
+2. Overlooked related work (Kitson, 2025).
 
-Thank you for pointing us to the work by Kitson et al. We indeed missed this paper.
+Thank you for pointing us to the work by Kitson et al. (2025), which we indeed
+missed.
 
 While both our method and Kitson (2025) propose interactive approaches to
-causal discovery, the goal and the method differs. Kitson (2025) proposes an
-approach by modifying a score-based method where the algorithm selectively
-prompts the user for input when certain conditions are met -- such as a tie in
-score improvement or low confidence in a certain modification. In contrast, our
-approach is designed to assist users in manual model construction by presenting
-a ranked list of potential modifications in each iteration. The user is then
-free to choose the modification or stop when satisfied with the model. In this
-way, compared to Kitson (2005) our method puts more emphasis on expert-driven
-construction, guided by data-driven suggestions.
+causal discovery, the intended goal and the method differs. Kitson (2025)
+modifies a score-based method and selectively prompts the user for input when
+the algorithm is uncertain -- such as in cases of tied score improvement or
+low-confidence modifications. In contrast, our approach is designed to assist
+users in manual DAG construction by presenting them with a ranked list of
+potential modifications in each iterations. As the user always makes the choice
+of these modifications, they maintain full control on the changes being made
+and when to stop the process. In this way, our method places greater emphasis on
+expert-driven model construction compared to Kitson (2025).
 
-We will revise our conclusion section to acknowledge Kitson (2025) and include the 
-differences between the two approaches.
-
+We will revise the Conclusions section to acknowledge Kitson (2025) and include
+the differences between the two approaches.
