@@ -47,7 +47,7 @@ the notation for both $ D_G = 0 $ and $ D_G = 1 $.
 
 5. Proof of Proposition 2.
 
-We do not consider unobserved confounding.
+As our method works under the assumptions of causal sufficiency (i.e., no hidden confounding), it would fail on the example due to hidden confounding.
 
 6. Purpose of Section 3.3.
 
@@ -63,7 +63,7 @@ TODO
 
 8. Typos
 
-Thanks for pointing this out. We will fix these.
+Thanks for pointing this out. We will fix it.
 
 [1] Meek, Christopher. "Causal inference and causal explanation with background knowledge." In Proceedings of the Eleventh conference on Uncertainty in artificial intelligence (UAI'95). 
 [2] Bang, Christine W., and Vanessa Didelez. "Do we become wiser with time? On causal equivalence with tiered background knowledge." Uncertainty in Artificial Intelligence. PMLR, 2023.
