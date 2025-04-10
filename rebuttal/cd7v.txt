@@ -57,9 +57,11 @@ wanted to highlight the differences between the two approaches in this section.
 
 7. Human experiments for Section 5.2
 
-=====
-TODO
-=====
+We created the current version of our GUI tool as a proof of concept for
+testing out our approach. We will continue to further develop this tool, and
+experiments with human experts would be a direction for future research.
+
+TODO: Unsure how to address this.
 
 8. Typos
 
