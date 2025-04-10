@@ -11,8 +11,8 @@ we were not aware of any other work that explored a similar setting, however
 Reviewer yVjw pointed us to the paper by Kitson et al. (2025) which considered
 similar interactive user input but with a very different approach.
 
-We acknowledge this oversight and will include a discussion of this related
-work in our Conclusions section.
+We will include a reference and discussion of this related work in our
+Conclusions section.
 
 2. Potential overfitting due to residual associations.
 
@@ -20,19 +20,19 @@ We agree that overfitting can be a concern when relying on residual
 associations, as in finite samples many small conditional associations may
 exist. In practice, we address this by a tunable threshold on the conditional
 association, below which potential modifications are ignored. This threshold is
-implemented in both the web-based tool and is used for the empirical
+implemented in both the web-based tool and is also used for the empirical
 evaluations presented in the paper. Moreover the tradeoff between precision and
-recall is usually dependent on the context [3], hence the threshold can also be
-used to tune the method to the required setting.
+recall in causal discovery is usually dependent on the context [3], hence the
+threshold can also be used to tune the method to the required setting.
 
 We will add a discussion on overfitting in the Conclusions section of our paper.
 
 3. Assumptions such as sufficiency and faithfulness.
 
-As with many causal discovery methods, our approach assumes the Causal Markov
-Condition, faithfulness, and causal sufficiency. While we mention in Section 2
-that we assume all variables to be observed (implying sufficiency), we agree
-that these assumptions should be stated more explicitly.
+As with many causal discovery methods, our approach assumes faithfulness and
+causal sufficiency. While we mention in Section 2 that we assume all variables
+to be observed (implying sufficiency), we agree that these assumptions should
+be stated more explicitly.
 
 We will explicitly state these assumptions at the beginning of Section 3.
 
