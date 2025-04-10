@@ -14,14 +14,13 @@ the modification to make allowing them to integrate their domain expertise in
 the model building process. This approach allows for the expert to remain in
 control while guiding the model building process through insights from data.
 
-In Section 4, for the purpose of evaluation, we simulate an expert by assuming
-that the expert always select the highest-ranked modification in each iteration
-(Algorithm 4). This is a slightly different setup compared to how we expect the
-tool to be used in practice.
+In Section 3 and 4, for the purpose of theoretical and empirical evaluation, we
+consider automated versions of this approach where in the algorithms we accept
+all the suggestions made by the method. This is a slightly different setup
+compared to how we expect the tool to be used in practice.
 
-We will make revisions in the Introduction and Section 4 to make the goal of
-the presented approach and the assumption made for empirical evaluation
-clearer.
+We will make revisions in the Introduction and Sections 3 and 4 to make the
+goal of the presented approach and setting used in Section 3 and 4 clearer.
 
 2. Overlooked related work (Kitson, 2025).
 
