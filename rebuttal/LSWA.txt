@@ -2,26 +2,77 @@
 
 2. Handling edges that create a cycle.
 
+The direction of the edge is irrelevant here as we would only observe
+d-connection between these variables if there is another path between the two
+variables in the true model. Once after a few iteration the algorithm discovers
+this path, this edge would become irrelevant and the pruning step would remove
+this edge.
+
 3. Stopping the procedure midway.
+
+As we can see in Figure 5, if we continue following the suggestions from the
+method, it leads to continuous improvement in the fit of the model, so a user
+can choose to stop at any point. The total residual association measure can
+also be used to check how well the current model fits to the data.
 
 4. Issues with post-selection inference.
 
+This is true and we will mention it in the paper.
+
 5. Description of Conditional Independence Tests.
+
+We will specify the Gaussian assumption for the tests. We do not consider fully mixed
+datasets in the paper, however, the approach can easily be extended for a mixed data
+test that can give an effect size measure.
 
 6. Age can be endogenous.
 
+We will clarify in the example that we are considering the variable Age from
+the adult income dataset where it should be exogenous but some of the casual 
+discovery algorithms can make it endogenous as shown in Figure 1.
+
+TODO: Not sure how to respond to this. Any variable that we choose as an example can
+be made endogenous if we consider it in a specific setting.
+
 7. Distinction between direct and indirect effects.
 
+While the approach only requires the user to specify the correct ancestral edge
+direction and not distinguish between direct and indirect effects, the user is
+free to choose if they want to specifically focus on these. One of the benefits
+of the pruning step is that even if the user adds an edge that is not required,
+the pruning step eventually removes it. If we take a simple mediation model
+example, X -> M -> Y and lets say we start with an empty graph and the user
+somehow first adds the edge X -> Y, the method would still suggest adding edges
+between X and M and Y and M. Once the user adds the edges X -> M and M -> Y,
+the method would show that these two edges already explain the and the X -> Y
+is not required, which the user can then remove.
+
+The edges in Figure 7 shows the current edges in the DAG in green, potential 
+edge additions to the DAG in red, and the edges that can be removed in black.
+
 8. Experts overruling statistical statements.
+Experts can overrule statistical statements at any point in the model construction 
+process. As the tool is designed to only give suggestions to the user, if they 
+disagree with the tools they can still make the modification, the tool will just 
+highlight that the specified model does not agree with the given data.
 
 9. Total residual association is not score-equivalent.
 
+The total residual association should be score equivalent as they are the product 
+of the effect sizes of all the implied CIs of a given DAG. As all the DAGs in a MEC
+implies the same set of CI statements, the total residual association should be the
+same.
+
 10. Comparison with other algorithms that perform better for dense graphs.
+
 
 11. Automated algorithms can only recover MECs.
 
-12. 
+12. The removing of edges are handled by the pruning step that is able to remove any 
+of the extra edges that were added during the Expand operation.
 
 13.
 
 14. Typos and language issues.
+
+Thank you for pointing these out, we will fix them.
