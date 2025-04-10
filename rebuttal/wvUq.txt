@@ -12,7 +12,10 @@ completely at random. Such behavior would correspond to an expected effective
 accuracy of $ 0.33 $. If we extrapolate the trends from Figure 4, we would
 expect that ExpertInLoop with effective accuracy of $ 0.33 $ would perform
 worse that all other algorithms considered. Therefore, the conclusions of our
-paper would remain the same. We will add this additional scenario to Figure 4.
+paper would remain the same. 
+
+We will add this additional scenario where the expert makes random guesses ($
+\alpha = 0 $ and $ \alpha_{\textit{eff}} = 0.33 $ to Figure 4.
 
 2. Dealing with conflicting information between data and expert knowledge.
 
@@ -21,19 +24,20 @@ conflict with the observed data. In practice, as most researchers construct
 DAGs manually solely based on their expert knowledge, model testing is an
 important step to verify the consistency of the model with the data and to
 identify any conflicts [1]. Any failed tests can help in uncovering either
-incorrect expert knowledge or presence of some artifacts in the dataset. As our
+incorrect expert knowledge or presence of some artifacts in data. As our
 proposed approach works by continuously performing model tests to suggest
 modifications, it will similarly highlight conflicts between the data and
-expert knowledge. However, as our approach only assists the researchers in
-model construction, the researchers still gets to make the decision on how to
-deal with these conflicts.
+expert knowledge. We believe that these are valuable insights for a researchers
+as it critiques their assumptions. Additionally, as our approach only gives
+suggestions for modifications, the researchers can still decide how to deal
+with these conflicts.
 
 3. More detailed discussion on using LLMs as experts.
 
 Our main goal with the paper is to present an approach to assist researchers in
 manual construction of their DAGs rather than an automated method. With the
 section on LLMs our goal was to highlight that there is a potential to use LLMs
-to automate the algorithm and act as the domain experts. However, as that was
+to automate the approach with LLMs acting as the expert. However, as that is
 not the main aim of the paper, we did not delve into more detailed analysis on
 the performance of the LLM and we think it is out of scope for this paper.
 
@@ -45,14 +49,14 @@ approaches require the user to specify all background knowledge for the
 algorithm. For example, in the case of TPC algorithm we would need to define a
 tier for each of the variables in the dataset, whereas in our case we would
 only need to answer the ancestral relationship between specific nodes in each
-iteration. Hence, the expert knowledge required for TPC and our approach is
-different making it difficult to have a level comparison between the two.
-Reviewer yVjw did point us to another paper that uses an interactive approach
-to integrating expert knowledge in causal discovery. We will add a reference
-and comparison to that paper in the Conclusion.
+iteration. Hence, the amount of expert knowledge required for TPC and our
+approach is different making it difficult to construct a setup where we can
+also control for the amount of expert knowledge provided to each of these
+approaches. Reviewer yVjw did point us to another paper that uses an
+interactive approach to integrating expert knowledge in causal discovery. We
+will add a reference and comparison to that paper in the Conclusion.
 
 5. Typos
 Thank you for pointing them out. We will fix them.
-
 
 [1] Ankan, Ankur, Inge MN Wortel, and Johannes Textor. "Testing graphical causal models using the R package “dagitty”." Current Protocols 1.2 (2021): e45.
