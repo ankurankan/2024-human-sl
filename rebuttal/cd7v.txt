@@ -3,40 +3,47 @@ valuable comments. Below, we provide responses to each concern.
 
 1. Discussion of related work
 
-While there are other approaches to integrating expert knowledge in causal
-discovery such as specifying forbidden or fixed edges[1] or specifying temporal
-order[2] for the variables, our work was the first to have an interactive
-approach towards causal discovery. Reviewer yVjw has, however, pointed us 
-to another paper that considers a similar interactive approach. We will add
-reference and discussion on the differences between the two approaches.
+While previous work has explored incorporating expert knowledge through
+specifying constraints through fixed/forbidden edges[1] or temporal ordering[2]
+in automated causal discovery algorithms, our approach differs by providing an
+interactive method for integrating expert knowledge. While writing this paper
+we were not aware of any other work that explored a similar setting, however
+Reviewer yVjw pointed us to the paper by Kitson et al. (2025) which considered
+similar interactive user input but with a very different approach.
 
-2. Discussion on the potential overfitting issues with the proposed method.
+We acknowledge this oversight and will include a discussion of this related
+work in our Conclusions section.
 
-Overfitting can indeed be an issue in practice with this approach as there can
-be many small residual association between the variables. In practice, as built
-into the web tool and used in the empirical analysis, we suggest using a
-association threshold value that would ignore any conditional association below
-the threshold value. Given that the choice of overfitting can be dependent on
-the context of the problem statement [3], the threshold value gives a way to 
-control to get the desired output.
+2. Potential overfitting due to residual associations.
+
+We agree that overfitting can be a concern when relying on residual
+associations, as in finite samples many small conditional associations may
+exist. In practice, we address this by a tunable threshold on the conditional
+association, below which potential modifications are ignored. This threshold is
+implemented in both the web-based tool and is used for the empirical
+evaluations presented in the paper. Moreover the tradeoff between precision and
+recall is usually dependent on the context [3], hence the threshold can also be
+used to tune the method to the required setting.
 
 We will add a discussion on overfitting in the Conclusions section of our paper.
 
-3. Strong assumptions such as sufficiency, and faithfulness assumptions.
+3. Assumptions such as sufficiency and faithfulness.
 
-Our approach makes the assumptions of faithfulness and causal sufficiency
-similar to most algorithms for causal discovery. We do mention in Section 2
-that we only consider the setting where all variables to be observed implying
-causal sufficiency. But we do agree that these assumptions can be make clearer
-in the paper and we will do that.
+As with many causal discovery methods, our approach assumes the Causal Markov
+Condition, faithfulness, and causal sufficiency. While we mention in Section 2
+that we assume all variables to be observed (implying sufficiency), we agree
+that these assumptions should be stated more explicitly.
+
+We will explicitly state these assumptions at the beginning of Section 3.
 
 4. The notation $ D_G(X, Y, Z) = 0 $.
 
 In Section 3.1, we define $ D_G(X, Y, Z) = 1 $ when $ X $ and $ Y $ are
 d-separated by $ Z $ in G. Similarly, $ D_G(X, Y, Z) = 0 $ when $ X $ and $ Y $
-are d-connected conditioned on $ Z $ in $ G $. We will move this definition to
-the notation paragraph in Section 2 and clarify the notation for both $ D_G = 0 $ and
-$ D_G = 1 $.
+are d-connected conditioned on $ Z $ in $ G $. 
+
+We will move this definition to the notations paragraph in Section 2 and clarify
+the notation for both $ D_G = 0 $ and $ D_G = 1 $.
 
 5. Proof of Proposition 2.
 
@@ -44,10 +51,9 @@ We do not consider unobserved confounding.
 
 6. Purpose of Section 3.3.
 
-As the proposed approach is very similar to the GES algorithm and takes the
-same two steps as first adding edges to the model and then doing a pruning step
-to remove unnecessary edge, our goal with Section 3.3 was to highlight the
-difference between the two approaches.
+As the proposed approach is very similar to the GES algorithm and constructs
+the model in two phases: adding edges and pruning edges similar to GES, we
+wanted to highlight the differences between the two approaches in this section.
 
 7. Human experiments for Section 5.2
 
@@ -55,7 +61,8 @@ TODO
 
 8. Typos
 
-We will fix these.
+Thanks for pointing this out. We will fix these.
 
 [1] Meek, Christopher. "Causal inference and causal explanation with background knowledge." In Proceedings of the Eleventh conference on Uncertainty in artificial intelligence (UAI'95). 
 [2] Bang, Christine W., and Vanessa Didelez. "Do we become wiser with time? On causal equivalence with tiered background knowledge." Uncertainty in Artificial Intelligence. PMLR, 2023.
+[3] Malinsky, Daniel. "A cautious approach to constraint-based causal model selection." arXiv preprint arXiv:2404.18232 (2024).
