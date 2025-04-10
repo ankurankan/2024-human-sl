@@ -15,8 +15,8 @@ the model building process. This approach allows for the expert to remain in
 control while guiding the model building process through insights from data.
 
 In Section 4, for the purpose of evaluation, we simulate an expert by assuming
-that the expert always select the highest-ranked modification in each
-iteration. This is a slightly different setup compared to how we expect the
+that the expert always select the highest-ranked modification in each iteration
+(Algorithm 4). This is a slightly different setup compared to how we expect the
 tool to be used in practice.
 
 We will make revisions in the Introduction and Section 4 to make the goal of
