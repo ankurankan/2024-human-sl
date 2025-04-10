@@ -1,9 +1,10 @@
 1. Mistakes due to unreliable CI tests.
 
-It is true that the mistakes made by constraint-based causal discovery
-arise due to difficulties in CI testing. But multiple previous methods have
-shown that expert knowledge can be used to improve the results of these
-automated causal discovery methods [1][2]. 
+It is true that the mistakes made by constraint-based causal discovery arise
+due to difficulties in CI testing. But multiple previous methods have shown
+that providing expert knowledge can significantly improve the results of these
+automated causal discovery methods [1][2]. In our approach, we have developed
+an interactive way to specify this expert knowledge.
 
 However as researchers in practice do not use any causal
 discovery algorithms and prefer to construct the DAGs based only on their
@@ -24,20 +25,18 @@ collected but should not be present in the true causal model.
 
 We will modify our introduction such that this message is clearer.
 
-[1] Meek, Christopher. "Causal inference and causal explanation with background knowledge." In Proceedings of the Eleventh conference on Uncertainty in artificial intelligence (UAI'95). 
-[2] Bang, Christine W., and Vanessa Didelez. "Do we become wiser with time? On causal equivalence with tiered background knowledge." Uncertainty in Artificial Intelligence. PMLR, 2023.
 
 2. Lack of theoretical analysis on the behavior of the method when the domain
 expert is incorrect.
 
-We do not think there is any straightforward way to perform the theoretical
-analysis for a given accuracy level of the ancestral oracle or the d-separation
-oracle. However, this is common issue with most of the causal discovery
+There are no straightforward ways to perform theoretical analysis for a given
+accuracy level of the ancestral oracle or the d-separation oracle. However,
+this is common issue with the analysis of  most of the causal discovery
 algorithms and we usually have to rely on some oracle assumptions to prove
 their correctness. For example PC algorithm and its variants assumes that we
 have a conditional independence test oracle and score based algorithms assumes
 a consistent scoring method. In our paper, we have provided a correctness proof
-under the assumption of an ancestral oracle and a d-separation oracle, and our 
+under the assumption of an ancestral oracle and a d-separation oracle, and our
 empirical analysis tests for the violations of these assumptions.
 
 3. Using residual association to prioritize modifications to the DAG.
@@ -53,3 +52,6 @@ association is, and hence we use it as a measure to rank modifications.
 
 4. Issues in text.
 Thank you for pointing these out, we will fix them.
+
+[1] Meek, Christopher. "Causal inference and causal explanation with background knowledge." In Proceedings of the Eleventh conference on Uncertainty in artificial intelligence (UAI'95). 
+[2] Bang, Christine W., and Vanessa Didelez. "Do we become wiser with time? On causal equivalence with tiered background knowledge." Uncertainty in Artificial Intelligence. PMLR, 2023.
