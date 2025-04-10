@@ -1,0 +1,27 @@
+1. Comparisons between different algorithms in the simulation study.
+
+2. Handling edges that create a cycle.
+
+3. Stopping the procedure midway.
+
+4. Issues with post-selection inference.
+
+5. Description of Conditional Independence Tests.
+
+6. Age can be endogenous.
+
+7. Distinction between direct and indirect effects.
+
+8. Experts overruling statistical statements.
+
+9. Total residual association is not score-equivalent.
+
+10. Comparison with other algorithms that perform better for dense graphs.
+
+11. Automated algorithms can only recover MECs.
+
+12. 
+
+13.
+
+14. Typos and language issues.
