@@ -14,7 +14,8 @@ has been shown that integrating expert knowledge in causal discovery can
 improve the results of automated algorithms [1][2], we present an interactive
 way to specify this expert knowledge. This interactive approach allows the user
 to be fully in control (and hence avoid the mistakes made by CI tests) while
-still being able to use information from the data to make their decisions.
+still being able to use information from the data through CI tests to make
+their decisions.
 
 2. Lack of theoretical analysis under imperfect expert knowledge.
 
