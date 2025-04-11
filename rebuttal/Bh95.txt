@@ -54,12 +54,15 @@ structural equation models. Can you please clarify?
 
 4. Issues in text.
 
-a) We're sorry but we don't understand the objection. If the graph is empty
-($E=\emptyset$), then indeed $D_G( X, Y, \bm{Z} ) = 1$ for all $\bm{Z} \in V
+a) We're sorry but we don't understand the objection. Perhaps this is a misunderstanding, we will attempt to clarify this by going through two cases. First, if the true graph $G$ is empty ($E=\emptyset$), then indeed $D_G( X, Y, \bm{Z} ) = 1$ for all $\bm{Z} \in V
 \setminus \{X, Y\}$. Therefore we will not add any edges to $L$. The outer loop
 iterates through all node pairs and stops, and then the algorithm terminates
 with $E$ still empty. This is exactly how it should be since $G^+ = G =
-(V,\emptyset)$ in this case. Can you please clarify?
+(V,\emptyset)$ in this case. 
+
+Second, if the true graph $G$ is not empty and we start by setting $E=\emptyset$, then once we get to a node pair X,Y where there is an edge in the skeleton, then $D_G( X, Y, \bm{Z} ) = 0$ irrespective of Z. So we will end up adding this edge (with orienatation determined by the expert) to $E$ as we should. (Other, superfluous edges will also generally be added, and removed again later by "Prune".)
+
+Can you please clarify your objection?
 
 b) Correct, this should be "break" or "go to 17", thank you.
 
