@@ -14,9 +14,9 @@ directed mixed graphs (ADMGs)."). In other words, we assume causal sufficiency,
 as you also pointed out.
 
 Let's consider your example with the latent variables added, let's call them A
-and B. Then the DAG becomes X <- A -> Y <-> B <-> W. It is indeed possible
+and B. Then the DAG becomes X <- A -> Y <- B -> W. It is indeed possible
 that Expand first adds edges X -> Y and W -> Y. But then it has to add the
-edges A -> { X, Y } and B -> { X, Y } next. Once that's done, the incorrect
+edges A -> { X, Y } and B -> { W, Y } next. Once that's done, the incorrect
 edges will be removed by Prune.
 
 The setting we're considering here is the same one considered by algorithms
