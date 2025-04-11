@@ -32,7 +32,14 @@ as it critiques their assumptions. Additionally, as our approach only gives
 suggestions for modifications, the researchers can still decide how to deal
 with these conflicts.
 
-Another example of conflicting information would be when experts at some point would themselves introduce a cycle in the graph. This can be dealt with in some cases but not all (see Weak Ancestral Oracle). In both the human-in-the-loop and LLM interfaces, we could explicitly alert the expert to the inconsistency and present the conflicting information with an explicit request for resolution. A formal analysis of such a conflict resolution mechanism would be an interesting question for future research. We can add some of this to the discussion section.
+Another example of conflicting information would be when experts at some point
+would themselves introduce a cycle in the graph. This can be dealt with in some
+cases but not all (see Weak Ancestral Oracle). In both the human-in-the-loop
+and LLM interfaces, we could explicitly alert the expert to the inconsistency
+and present the conflicting information with an explicit request for
+resolution. A formal analysis of such a conflict resolution mechanism would be
+an interesting question for future research. We can add some of this to the
+discussion section.
 
 3. More detailed discussion on using LLMs as experts.
 

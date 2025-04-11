@@ -38,6 +38,16 @@ of these modifications, they maintain full control on the changes being made
 and when to stop the process. In this way, our method places greater emphasis on
 expert-driven model construction compared to Kitson (2025).
 
-Further, the type of expert knowledge differs. Our algorithms center on the idea of "ancestral experts" which are good at identifying the general direction of causal effects, but can't distinguish between direct and indirect effects. The approach by Kitson (2025) does require experts to consider whether effects are direct or indirect, which is more demanding.
+Further, the type of expert knowledge differs. Our algorithms center on the
+idea of "ancestral experts" which are good at identifying the general direction
+of causal effects, but can't distinguish between direct and indirect effects.
+The approach by Kitson (2025) does require experts to consider whether effects
+are direct or indirect, which is more demanding.
 
-In light of these references, we will revise our paper to carefully avoid any impression that we are the first to consider an interactive expert in structure learning, citing Kitson (2025) early on. We will also add a comparison between the approaches to Section 3.3 and the conclusions. If possible, we will also change our title to something like "Constraint-Based Causal Discovery with an Expert-In-The-Loop: ..." to make the difference clear from the start. Thank you again!
+In light of these references, we will revise our paper to carefully avoid any
+impression that we are the first to consider an interactive expert in structure
+learning, citing Kitson (2025) early on. We will also add a comparison between
+the approaches to Section 3.3 and the conclusions. If possible, we will also
+change our title to something like "Constraint-Based Causal Discovery with an
+Expert-In-The-Loop: ..." to make the difference clear from the start. Thank you
+again!
