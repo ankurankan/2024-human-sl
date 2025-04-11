@@ -3,27 +3,70 @@ address each of the main concerns raised.
 
 1. Mistakes due to unreliable CI tests.
 
-Indeed, many errors made by fully automated causal discovery algorithms can be traced to unreliable CI tests. While we still use CI tests in our method, meaning that there can indeed be errors made if the CI tests provide incorrect results, the whole point of our method is that the resulting DAG will nevertheless be free of edges that contradict the expert's knowledge about cause-effect relationships. For example, if the expert knows that Age is a cause of Baldness, then there will never be a causal path from Baldness to Age in the graph. 
+Indeed, many errors made by fully automated causal discovery algorithms can be
+traced to unreliable CI tests. While we still use CI tests in our method,
+meaning that there can indeed be errors made if the CI tests provide incorrect
+results, the whole point of our method is that the resulting DAG will
+nevertheless be free of edges that contradict the expert's knowledge about
+cause-effect relationships. For example, if the expert knows that Age is a
+cause of Baldness, then there will never be a causal path from Baldness to Age
+in the graph. 
 
-This basic idea of combining expert knowledge with CI tests to make fewer errors in causal discovery has already been shown to improve the results of automated algorithms in non-interactive settings [1,2]. Here we present an interactive way to specify this expert knowledge. This interactive approach allows the user to be fully in control (and hence avoid the mistakes made by CI tests) while still being able to use information from the data through CI tests to make their decisions.
+This basic idea of combining expert knowledge with CI tests to make fewer
+errors in causal discovery has already been shown to improve the results of
+automated algorithms in non-interactive settings [1,2]. Here we present an
+interactive way to specify this expert knowledge. This interactive approach
+allows the user to be fully in control (and hence avoid the mistakes made by CI
+tests) while still being able to use information from the data through CI tests
+to make their decisions.
 
 2. Lack of theoretical analysis under imperfect expert knowledge.
 
-We do provide theoretical results under imperfect expert knowledge: this is exactly what our "weak ancestral oracle", which just randomly guesses an ancestral relationship when there is none, is about. We show that this kind of error does not affect the approach in the oracle setting. Our empirical analysis complements this theoretical approach. Generally, there is very little theoretical work about how input errors affect constraint-based causal discovery algorithms, as this seems very hard to do, which is why most papers include some kind of empirical analysis. Strong formal theoretical guarantees, such as correctness, generally require strong assumptions, such as access to a perfect CI test oracle (as in PC algorithm) or a consistent scoring function (as in score-based approaches).
+We do provide theoretical results under imperfect expert knowledge: this is
+exactly what our "weak ancestral oracle", which just randomly guesses an
+ancestral relationship when there is none, is about. We show that this kind of
+error does not affect the approach in the oracle setting. Our empirical
+analysis complements this theoretical approach. Generally, there is very little
+theoretical work about how input errors affect constraint-based causal
+discovery algorithms, as this seems very hard to do, which is why most papers
+include some kind of empirical analysis. Strong formal theoretical guarantees,
+such as correctness, generally require strong assumptions, such as access to a
+perfect CI test oracle (as in PC algorithm) or a consistent scoring function
+(as in score-based approaches).
 
-We can point to this common problem and open question for causal discovery research in the discussion session and point to it as a limitation of our approach (shared with many others). 
+We can point to this common problem and open question for causal discovery
+research in the discussion session and point to it as a limitation of our
+approach (shared with many others). 
 
 3. Use of residual association for prioritizing DAG modifications.
 
-We unfortunately do not understand this objection. Indeed we prioritize the tests with the highest residual association (not necessarily correlation) when deciding which edges to add. The reasoning is that a high residual association corresponds to a relevant *unexplained relationship*. For example, let's say we have a standardized linear Gaussian model X -> Y -> Z with an edge coefficient (=correlation in this case) of 0.9 for X -> Y and 0.5 for Y -> Z, implying a correlation of 0.45 between X and Z. Then our method prioritizes adding an edge X -> Y first, which is exactly what we want in this case. This reasoning (prioritizing the largest unexplained associations) is essentially the same one that is used in score-based algorithms like GES or in modification indices in structural equation models. Can you please clarify?
+We unfortunately do not understand this objection. Indeed we prioritize the
+tests with the highest residual association (not necessarily correlation) when
+deciding which edges to add. The reasoning is that a high residual association
+corresponds to a relevant *unexplained relationship*. For example, let's say we
+have a standardized linear Gaussian model X -> Y -> Z with an edge coefficient
+(=correlation in this case) of 0.9 for X -> Y and 0.5 for Y -> Z, implying a
+correlation of 0.45 between X and Z. Then our method prioritizes adding an edge
+X -> Y first, which is exactly what we want in this case. This reasoning
+(prioritizing the largest unexplained associations) is essentially the same one
+that is used in score-based algorithms like GES or in modification indices in
+structural equation models. Can you please clarify?
 
 4. Issues in text.
 
-a) We're sorry but we don't understand the objection. If the graph is empty ($E=\emptyset$), then indeed $D_G( X, Y, \bm{Z} ) = 1$ for all $\bm{Z} \in V \setminus \{X, Y\}$. Therefore we will not add any edges to $L$. The outer loop iterates through all node pairs and stops, and then the algorithm terminates with $E$ still empty. This is exactly how it should be since $G^+ = G = (V,\emptyset)$ in this case. Can you please clarify?
+a) We're sorry but we don't understand the objection. If the graph is empty
+($E=\emptyset$), then indeed $D_G( X, Y, \bm{Z} ) = 1$ for all $\bm{Z} \in V
+\setminus \{X, Y\}$. Therefore we will not add any edges to $L$. The outer loop
+iterates through all node pairs and stops, and then the algorithm terminates
+with $E$ still empty. This is exactly how it should be since $G^+ = G =
+(V,\emptyset)$ in this case. Can you please clarify?
 
 b) Correct, this should be "break" or "go to 17", thank you.
 
-c) Correct, X -> Y needs to be added back at the end of the iteration. (We had thought of this as being a scoped modification that is undone when the next iteration starts, but it is much better to make it explicit.) Thank you.
+c) Correct, X -> Y needs to be added back at the end of the iteration. (We had
+thought of this as being a scoped modification that is undone when the next
+iteration starts, but it is much better to make it explicit.) Thank you.
+
 
 [1] Meek, Christopher. "Causal inference and causal explanation with background knowledge." In Proceedings of the Eleventh conference on Uncertainty in artificial intelligence (UAI'95). 
 [2] Bang, Christine W., and Vanessa Didelez. "Do we become wiser with time? On causal equivalence with tiered background knowledge." Uncertainty in Artificial Intelligence. PMLR, 2023.
