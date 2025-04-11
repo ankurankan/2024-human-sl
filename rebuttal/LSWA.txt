@@ -1,4 +1,6 @@
-1. Comparisons between different algorithms in the simulation study.
+1. We agree that choosing hyperparameters that lead to the same number of edges 
+would have made it easier to interpret the results. However, we think that doing
+that in the current paper would introduce a lot of changes.
 
 2. We would like to clarify that Algorithm 1 is slightly different than how we
 expect the user to use the method in practice. For the purpose of the analysis,
@@ -65,7 +67,11 @@ product of the effect sizes of all the implied CIs of a given DAG. As all the
 DAGs in a MEC implies the same set of CI statements, the total residual
 association should be the same.
 
-10. 
+10. Our goal with the empirical analysis was to show that the manual
+construction method is able to construct DAGs comparable to the automated
+algorithms, hence we choose some of the most common algorithms as baseline. But
+it would be interesting to make further systematic comparisons with more
+specialized methods and would be something for future work.
 
 11. Thank you for pointing that out. It is indeed true, we will mention it in the paper.
 
