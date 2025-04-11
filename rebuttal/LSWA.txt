@@ -4,18 +4,17 @@ address each of the concerns raised.
 1. We agree that choosing hyperparameters that lead to the same number of edges
 would make it easier to interpret the results. However, we think that making
 that change in the current paper would introduce too many changes. But we will
-keep this in mind in our future work.
+keep this in mind for our future work.
 
 2. We would like to clarify that Algorithm 1 is slightly different from how we
 expect the user to use the method interactively in practice. For the purpose of
 the analysis, Algorithm 1 considers a fully automated scenario where all the
 edges corresponding to unexplained associations need to be added (and hence we
-have to add a reverse edge to avoid the cycle). In practice, if a user reaches
+have to add a reversed edge to avoid the cycle). In practice, if a user reaches
 a scenario where adding an edge creates a cycle in the DAG, it implies that
 they have made some mistakes earlier and ideally they would backtrack their
 changes to identify and fix the mistakes. We do not have any systematic
-approach for this backtracking yet as we mention in the Conclusion section of
-the paper and hence we add a reverse edge in the automated version.
+approach for backtracking yet as we mention in the Conclusion section.
 
 As Reviewer yVjw also pointed, the difference in the automated versions as
 presented in the Algorithms and how we expect the user to use the method
