@@ -22,10 +22,13 @@ interactively is not clear in the paper. We will make revisions to the
 Introduction and Section 3 and 4 to make difference clearer.
 
 3. As we can see in Figure 5, if we continue to follow the suggestions from the
-method, it leads to continuous improvements in the fit of the model, so a user
-can choose to stop at any point during this process. We can additionally use
-the total residual association as an absolute measure to quantify how well the
-current model explains the data.
+method, it leads to continuous improvements in the fit of the model in each
+iteration. We can additionally use the total residual association as an
+absolute measure to quantify how well the current model explains the data.
+While we would expect the DAG at any iteration to have edges in the correct
+ancestral directions if the user has correctly specified those, it is difficult
+to make a statement on the implications when the user makes mistakes and stops
+at a random iteration.
 
 4. Thanks for pointing this out, we agree and we will mention it in the paper.
 
