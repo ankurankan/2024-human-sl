@@ -1,5 +1,8 @@
+We thank the reviewer for their thoughtful comments and suggestions. Below, we
+address each of the concerns raised.
+
 1. We agree that choosing hyperparameters that lead to the same number of edges
-would made it easier to interpret the results. However, we think that making
+would make it easier to interpret the results. However, we think that making
 that change in the current paper would introduce too many changes. But we will
 keep this in mind in our future work.
 
