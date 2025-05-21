@@ -13,7 +13,7 @@ The app should be ready to use.
 ### Example Datasets
 There are two example datasets in this repo:
 1. `mediator.csv` : Should work with the app without any changes.
-2. `adult_mixed_proc.csv` : Will need to replace the current `preprocess_dataset` function in `api.R` with the commented out version. And rerun the backend server.
+2. `adult_mixed_proc.csv` : We will first need to replace the current `preprocess_dataset` function in `api.R` with the commented out version. And rerun the backend server.
 
 ### Notes:
 
