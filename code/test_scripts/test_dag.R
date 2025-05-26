@@ -112,7 +112,7 @@ compute_effects_v2 <- function(dag, d){
 			u <- n2; v <- n1 ; a <- "->"
 			p.value <- ci.test(n1, n2, otherparents, d, test='glm_q3')
 		} else if( n1 %in% p2 ) {
-			otherparents <- setdiff( p1, n2 )
+			otherparents <- setdiff( p2, n1 )
 			tst <- ciTest( X=n1, Y=n2, Z=otherparents, d,
 				type="cis.pillai" )
 			u <- n1 ; v <- n2 ; a <- "->"
