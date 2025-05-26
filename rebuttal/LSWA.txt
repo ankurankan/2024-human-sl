@@ -1,0 +1,96 @@
+We thank the reviewer for their thoughtful comments and suggestions. Below, we
+address each of the concerns raised.
+
+1. We agree that choosing hyperparameters that lead to the same number of edges
+would make it easier to interpret the results. However, we think that making
+that change in the current paper would introduce too many changes. But we will
+keep this in mind for our future work.
+
+2. We would like to clarify that Algorithm 1 is slightly different from how we
+expect the user to use the method interactively in practice. For the purpose of
+the analysis, Algorithm 1 considers a fully automated scenario where all the
+edges corresponding to unexplained associations need to be added (and hence we
+have to add a reversed edge to avoid the cycle). In practice, if a user reaches
+a scenario where adding an edge creates a cycle in the DAG, it implies that
+they have made some mistakes earlier and ideally they would backtrack their
+changes to identify and fix the mistakes. We do not have any systematic
+approach for backtracking yet as we mention in the Conclusion section.
+
+As Reviewer yVjw also pointed, the difference in the automated versions as
+presented in the Algorithms and how we expect the user to use the method
+interactively is not clear in the paper. We will make revisions to the
+Introduction and Section 3 and 4 to make difference clearer.
+
+3. As we can see in Figure 5, if we continue to follow the suggestions from the
+method, it leads to continuous improvements in the fit of the model in each
+iteration. We can additionally use the total residual association as an
+absolute measure to quantify how well the current model explains the data.
+While we would expect the DAG at any iteration to have edges in the correct
+ancestral directions if the user has correctly specified those, it is difficult
+to make a statement on the implications when the user makes mistakes and stops
+at a random iteration.
+
+4. Thanks for pointing this out, we agree and we will mention it in the paper.
+
+5. We agree that the CI tests considered here assume Gaussian variables and
+underlying latent Gaussian variables for ordinal variables. We will add these
+assumptions in the section. We have not considered a mix of continuous and
+nominal categorical variables as we are not aware of any CI test with a measure
+of association for this combination.
+
+6. We will clarify the setting in which the Age variable is considered here (i.e.,
+the adult income dataset) where we do not expect any edges going into it.
+
+7. The approach only requires the user to correctly specify ancestral
+relationships but is still able to distinguish between direct and indirect
+effects. If we consider a simple mediation model, X -> M -> Y and lets
+say we start with an empty DAG and the user first adds the edge X -> Y. The
+DAG would still have unexplained association between X and M, and Y and M.
+Based on this the user can then add the edges X -> M and M -> Y, after which
+the pruning step would remove the original incorrect X -> Y edge.
+
+The green and black edges in Figure 7 shows the current edges in the DAG. The
+red edges show the pair of variables that still have unexplained association
+with the strength shown using the edge's thickness. In each step, the user can
+choose a pair of variables connected through a red edge (ideally the one with
+the highest unexplained association) and add an edge between based on their
+domain knowledge. At each iteration, the tool also presents unnecessary edges
+in the DAG in black that the user can remove.
+
+We will improve the caption of Figure 7 to make it clearer what the different
+edges represent.
+
+8. As our method is supposed to be used to assist in manual DAG construction by
+showing potential modifications to the DAG, the user is free to overrule/ignore
+any suggestion made by the method. Even in such scenarios when the expert
+disagrees with a suggestion, the method would still be helpful as it would
+highlight that the data does not agree with the expert knowledge.
+
+9. That is indeed true and we will mention it. We do think it should be
+possible to construct $ \tau $ that considers all implied CIs of the DAG which
+should make it score-equivalent.
+
+10. Our goal with the empirical analysis was to show that the manual
+construction method is able to construct DAGs that are comparable to the
+automated algorithms, hence we choose some of the most common algorithms as
+baseline. However, we agree that it would be interesting to make further
+systematic comparisons with more specialized methods and we will consider it in
+our future work.
+
+11. Thank you for pointing that out. We will mention it in the paper.
+
+12. Thank you for pointing this out. We will revise the statement to: ".. expert is able to correctly identify the relationship in more than .."
+
+13a. In Algorithm 1, $ (V, E) $ represents the current graph and $ D_G $ makes
+d-separation queries on the true unknown graph.
+
+13b. We will add another step here to check whether $ e $ is None, and lines
+7-11 should be executed only when $ e $ is not None.
+
+13c. That is indeed a mistake and it should be "go to line 17".
+
+13d. Yes, we agree that it would be clearer to include it in the if statement
+of line 5 as L only gets updated inside that if statement. We will modify the
+algorithm.
+
+14-21. Typos and language issues: Thank you for pointing these out, we will fix them.

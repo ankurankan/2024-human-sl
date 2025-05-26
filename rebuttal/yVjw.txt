@@ -1,0 +1,53 @@
+We would like to thank the reviewer for taking the time to review our work and the
+valuable comments. Below, we provide responses to each concern.
+
+1. Clarity in describing the algorithm.
+
+We are presenting a single approach throughout the paper. Since most
+researchers manually construct DAGs using their domain knowledge, the goal of
+our proposed method is to assist them in this process by offering an
+interactive, data-driven tool. Our proposed method uses data to identify and
+rank potential modifications to the current DAG, either by adding an edge or
+removing an existing edge to improve consistency with the data. In each
+iteration, these suggestions are presented to the user, who ultimately chooses
+the modification to make allowing them to integrate their domain expertise in
+the model building process. This approach allows for the expert to remain in
+control while guiding the model building process through insights from data.
+
+In Section 3 and 4, for the purpose of theoretical and empirical evaluation, we
+consider automated versions of this approach where in the algorithms we accept
+all the suggestions made by the method. This is a slightly different setup
+compared to how we expect the tool to be used in practice.
+
+We will make revisions in the Introduction and Sections 3 and 4 to make the
+goal of the presented approach and setting used in Section 3 and 4 clearer.
+
+2. Overlooked related work (Kitson, 2025).
+
+Thank you for pointing us to the work by Kitson et al. (2025), which we indeed
+missed, as we developed this approach simultaneously. This is a very relevant reference indeed, but the approach described in that paper is very different.
+
+While both our method and Kitson (2025) propose interactive approaches to
+causal discovery, the intended goal and the method differs. Kitson (2025)
+modifies a score-based method and selectively prompts the user for input when
+the algorithm is uncertain -- such as in cases of tied score improvement or
+low-confidence modifications. In contrast, our approach is designed to assist
+users in manual DAG construction by presenting them with a ranked list of
+potential modifications in each iterations. As the user always makes the choice
+of these modifications, they maintain full control on the changes being made
+and when to stop the process. In this way, our method places greater emphasis on
+expert-driven model construction compared to Kitson (2025).
+
+Further, the type of expert knowledge differs. Our algorithms center on the
+idea of "ancestral experts" which are good at identifying the general direction
+of causal effects, but can't distinguish between direct and indirect effects.
+The approach by Kitson (2025) does require experts to consider whether effects
+are direct or indirect, which is more demanding.
+
+In light of these references, we will revise our paper to carefully avoid any
+impression that we are the first to consider an interactive expert in structure
+learning, citing Kitson (2025) early on. We will also add a comparison between
+the approaches to Section 3.3 and the conclusions. If possible, we will also
+change our title to something like "Constraint-Based Causal Discovery with an
+Expert-In-The-Loop: ..." to make the difference clear from the start. Thank you
+again!

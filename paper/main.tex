@@ -1,4 +1,4 @@
-\documentclass{uai2025} % for initial submission
+\documentclass[accepted]{uai2025} % for initial submission
 %\documentclass[accepted]{uai2025} % after acceptance, for a revised version; 
 % also before submission to see how the non-anonymous paper would look like 
                         
@@ -32,13 +32,13 @@
 \usepackage{subcaption}
 \usepackage[linesnumbered, ruled]{algorithm2e}
 
-\def\ci{\perp\!\!\!\!\!\perp}
+\def\ci{\perp\!\!\!\!\perp}
 
 \newtheorem{definition}{Definition}
 \newtheorem{proposition}{Proposition}
 \newtheorem{theorem}{Theorem}
 
-\title{Expert-In-The-Loop Causal Discovery: Iterative Model Refinement Using Expert Knowledge}
+\title{Expert-In-The-Loop Causal Discovery: \\ Iterative Model Refinement Using Expert Knowledge}
 
 % The standard author block has changed for UAI 2025 to provide
 % more space for long author lists and allow for complex affiliations
@@ -62,112 +62,93 @@
 \maketitle
 
 \begin{abstract}
-
-Causal discovery has received significant attention in the Directed Acyclic
-Graphs (DAGs) literature, leading to the development of numerous automated
-algorithms for learning DAGs from data. However, their adoption in applied
-domains remain limited, as researchers often prefer to construct DAGs manually
-based on domain knowledge. This preference arises due to several practical
-challenges with automated algorithms, such as their tendency to make obvious
-errors and output Markov Equivalence Classes (MECs) rather than a DAG. To
-address these challenges, we propose an iterative method that guides
-researchers in manually constructing or improving the fit of an existing DAG.
-Our approach combines implied Conditional Independence (CI) testing with a
-measure of conditional association between variables to rank violations
-of implied CIs in a given DAG. This ranking helps prioritize modifications to
-the DAG to improve its fit to the data while utilizing expert knowledge to
-decide the orientation of new edges. Empirical results show that this guided
-manual model construction approach achieves performance comparable to automated
-algorithms if we are able to correctly decide the orientation of new edges in
-one out of three cases. Additionally, we demonstrate that, in the absence of an
-expert, a Large Language Model (LLM) can be potentially used to determine edge
-orientations. We provide the implementation of our approach in both a web tool
-at: <redacted for review> and a Python package <redacted for review>.
-
+	Numerous causal discovery algorithms were developed to automatically learn
+	directed acyclic graphs (DAGs) and other causal models from data. However,
+	their adoption in applied domains remains limited, as researchers often
+	prefer to construct DAGs manually based on domain knowledge. This
+	preference arises due to several practical challenges with automated
+	algorithms, such as their tendency to produce results that contradict
+	obvious domain knowledge and their inability to distinguish Markov equivalent
+	models. To assist researchers in constructing DAGs manually, we propose an iterative
+	structure learning approach that combines domain knowledge with
+	data-driven insights. Our method leverages conditional independence
+	testing to iteratively identify variable pairs where an edge is
+	either missing or superfluous. Based on this information, we can choose
+	to add missing edges with appropriate orientation based on domain
+	knowledge or remove unnecessary ones. We also give a method to rank
+	these missing edges based on their impact on the overall model fit.
+	In a simulation study, we find that this iterative approach to leverage domain 
+	knowledge already starts outperforming purely data-driven structure learning if 
+	the orientation of new edge is correctly determined in at least two out of three cases.
+	We present a proof-of-concept implementation using a large language 
+	model as a domain expert and a graphical user interface designed to 
+	assist human experts with DAG construction.
 \end{abstract}
 
 \section{Introduction}
 Understanding cause-and-effect relationships between variables is a fundamental
 objective in many scientific fields. These relationships reveal the mechanisms
 behind observed phenomena and guide effective interventions or policy
-decisions. Causal discovery methods aim to discover such relationships
-among random variables using observational data. Approaches to causal discovery
-have been developed within both the Directed Acyclic Graphs (DAGs) and
-Structural Equation Models (SEMs) frameworks, each adapting a different
-approach.
-
-In the DAG literature, the primary focus has been on developing automated
-algorithms to learn causal structures from datasets. These efforts have led to
-numerous causal discovery algorithms, such as constraint-based methods like PC
-algorithm \citep{Spirtes2001} and Fast Causal Inference \citep{Spirtes2000}),
-score-based methods such as Hill-Climb Search and Greedy Equivalence Search
-\citep{Chickering2002}, and continuous optimization-based methods like NO TEARS
-\citep{Zheng2018} and DAGMA \citep{Bello2022}. While DAG-based methods focus on
-automated discovery, SEM-based methods emphasize expert driven model
-specification. This includes tools to assist researchers in manually
-constructing models, enabling them to incorporate their domain knowledge in the
-model building process. Researchers typically begin with an initial model based
-on their domain knowledge and then use these tools to guide modifications that
-improve the model's fit to data. This process is commonly known as
-Specification Search \citep{Long1983} and uses method such as modification
-indices, and Wald-based tests \citep{Marcoulides2018}. 
-
-Despite significant progress in automated causal discovery, their adoption in
-applied research has been limited. Researchers often prefer to manually
-construct DAGs based on their domain expertise \citep{Tennant2020,
-Petersen2021}. We attribute this preference to several challenges with existing
-causal discovery algorithms in practical settings:
+decisions. Causal discovery methods aim to discover such relationships among
+random variables using observational data. In the DAG literature, the primary
+focus has been on developing automated algorithms to learn causal structures
+from datasets. These efforts have led to numerous causal discovery algorithms,
+such as constraint-based methods like PC algorithm \citep{Spirtes2001,KalischB07} 
+and Fast Causal Inference \citep{Spirtes2000}), score-based methods such as Hill-Climb
+Search and Greedy Equivalence Search \citep{Chickering2002}, and continuous
+optimization-based methods like NOTEARS \citep{Zheng2018} and DAGMA
+\citep{Bello2022}. Despite significant progress in automated causal discovery,
+their adoption in applied research has been limited. Challenges encountered with existing
+causal discovery algorithms in practice include but are not limited to:
 
 \begin{enumerate}
-	\item \textbf{Lack of Trust:} While most algorithms are asymptotically
-		consistent, their behavior on finite samples is not well
-		understood. Their output can vary significantly depending on
-		the choice of algorithm and hyperparameters, making it
+	\item \textbf{Lack of Trust:} While constraint-based algorithms are 
+		often asymptotically
+		consistent \citep{KalischB07}, they can and do make mistakes
+		on  finite samples. These mistakes can be severe and contradict
+		obvious domain knowledge (think of edges going into unmodifiable
+		attributes such as Age). The choice of algorithm and hyperparameters
+		significantly affects the output, making it
 		difficult to assess reliability. Additionally, the absence of
 		robust performance evaluation methods for any given dataset
-		further reduce the confidence in their outputs. 
+		further reduce the confidence in their outputs. A recent paper
+		therefore advised Epidemiologists to not attempt using structure
+		learning algorithms without help of an expert \citep{Gururaghavendran_2024}.
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} As multiple
 		DAGs can be faithful to a given observational dataset, automated 
 		algorithms can only recover the MECs. These MECs can contain a
-		combination of directed and undirected edges. However, most
-		methods for downstream tasks, such as identification or causal
-		effect estimation, assume knowledge of a fully oriented DAG. 
+		combination of directed and undirected edges. This structural uncertainty
+		can make it difficult or impossible to apply the learned model for downstream
+		tasks, such as identification or causal
+		effect estimation \citep{Maathuis_2009,PerkovicTKM17}.
 \end{enumerate}
 
-Figure~\ref{fig:intro} highlights some of these issues. 
+Figure~\ref{fig:intro} highlights some of these issues. In practice, DAGs 
+are still largely constructed from domain knowledge alone 
+\citep{Tennant2020,Petersen2021}. This can, however, be equally problematic.
+Constructing DAGs requires us to distinguish between different causal structures, 
+such as direct or indirect effects or causal mediation. Specifically, there is often a lack
+of theoretical support for the \emph{absence} of direct causal effects, which are 
+the key assumptions that graphical models make to enable downstream causal inferences.
+Given the likelihood of making mistakes, it is therefore
+important to at least validate the consistency of a DAG against our dataset. One way to
+test this consistency is by testing whether the conditional independence 
+(CI) statements implied by the DAG hold in the data \citep{Ankan2021}. Specifically, 
+each missing edge between
+a pair of variables in the DAG leads to one or more CI statements, 
+which can be checked using statistical tests. Violations to CI
+statements can point to the erroneous omission of important causal effects from a model
+or to the presence of latent confounders.
 
-When manually constructing models, it is important to test whether the
-resulting DAG accurately represents the dataset. Based on this evaluation and
-domain knowledge, we can make further modification to the model. One common
-approach for assessing DAGs is to check whether the Conditional Independences
-(CIs) implied by the DAG hold in the data \citep{Ankan2021}. If we find
-violations to these CIs, we can use our domain knowledge to make appropriate
-modifications to the DAG. However, this CI testing approach has a few
-limitations:
-
-\begin{enumerate}
-\item As CIs are only implied by missing edges in the model, this approach does 
-	not test whether the existing edges are correct.
-\item Determining whether a CI holds in data is based on a p-value threshold. This can 
-	be unreliable, for example, we get a significant p-value for even very weak 
-	relationship if the sample size is high.
-\item The number of implied CIs can be large making it difficult to manually
-	check all of them. For example, a moderately sized alarm network
-	\citep{Beinlich1989} with $ 37 $ nodes, implies $ 287 $ CIs.
-\end{enumerate}
-
-To tackle these limitations, we draw inspiration from modification indices in
-specification search. Modification indices provide ranking for potential model
-modification based on their impact on the model's fit, allowing us to
-prioritize most meaningful modifications.  Similarly, we propose a method for
-ranking CI test violations to help us focus on the most critical
-inconsistencies in the model. To determine this ranking we utilize a measure of
-conditional association between variables in combination with p-values from the
-CI test. This approach addresses all three of the issues outlined above. The
-measure of association allows us to evaluate the validity of existing edges. It
-reduces our reliance on p-values alone for deciding whether the CI test holds.
-The ranking helps us prioritize the most critical violations, making it feasible 
-to focus on the areas that most improve the model's fit.
+% While DAG-based methods focus on
+% automated discovery, SEM-based methods emphasize expert driven model
+% specification. This includes tools to assist researchers in manually
+% constructing models, enabling them to incorporate their domain knowledge in the
+% model building process. Researchers typically begin with an initial model based
+% on their domain knowledge and then use these tools to guide modifications that
+% improve the model's fit to data. This process is commonly known as
+% Specification Search \citep{Long1983} and uses method such as modification
+% indices, and Wald-based tests \citep{Marcoulides2018}. 
 
 \begin{figure}[t!]
     \begin{subfigure}{0.5 \textwidth}
@@ -186,153 +167,175 @@ to focus on the areas that most improve the model's fit.
     	\caption{}
     \end{subfigure}
 
-    \caption{A comparison of Markov Equivalence Class (MEC) learned using Adult
-	    Income Dataset \citep{Becker1996} using different algorithms and
-	    sample sizes. Edge colour represents the sample size used: Red
-	    ($N=400$), and blue ($N=800$). (a) PC algorithm with a mutual
-	    information based CI test, (b) PC algorithm with a residualization
-	    based test \citep{Ankan2023}, (c) Hill Climb Search with Bayesian
-	    Information Criterion (BIC) score. The learned model structure
-	    varies significantly in each case.}
+    \caption{A comparison of Markov Equivalence Classes (MECs) learned from the Adult
+	     Income Dataset \citep{Becker1996} using different causal discovery
+	     algorithms and sample sizes. Edge colors represent the sample size
+	     used: red for $N=400$, and blue for $N=800$. (a) PC algorithm with a
+	     mutual information based CI test, (b) PC algorithm with a
+    	     residualization-based test \citep{Ankan2023}, (c) Hill Climb Search with
+	     Bayesian Information Criterion (BIC) score. The learned model structure varies
+             significantly across different algorithms and sample sizes.}
     \label{fig:intro}
 \end{figure}
 
+In this paper, we propose a structure learning method that leverages this CI
+testing approach to assist researchers during manual DAG construction, rather
+than just validating the model. Our approach follows an iterative
+model-building strategy that integrates domain expertise with CI testing on
+data. At each iteration, we use CI testing to identify pairs of variables that
+lack (direct or indirect) connections or are connected by a superfluous edge.
+ We then use this information
+along with domain expertise to determine which changes to make.
+The orientation of the edge when adding is determined based on the domain
+expertise; critically, this does not require the domain expert to distinguish 
+between direct and indirect effects. Our resulting approach can be 
+thought of as a guidance during manual model construction that ensures the 
+model remains consistent to the data.
 
-Our main contributions in this paper are as follows:
+Our contributions are organized as follows:
 
 \begin{enumerate}
-    \item We propose a novel measure of conditional association for mixed data
-	    based on canonical correlations
-	    (Section~\ref{sec:mixed_association}). This measure generalizes
-	    several commonly used special case measures of association to mixed
-	    data.
-    \item Using this measure of conditional association, we develop a procedure
-	    to rank violations of implied CIs. Using this ranking helps us
-	    prioritize modifications to DAG to improve its fit while allowing
-	    us to integrate expert knowledge when adding new edges (Section~\ref{sec:modification}).
-    \item We provide a web-based interactive tool and a Python package to allow 
-	    researchers to easily apply this method to their datasets (Section~\ref{sec:web}).
-    \item Lastly, we compare the manual DAG construction method with automated
-	    causal discovery algorithms (Section~\ref{sec:empirical}).
+    \item In Section~\ref{sec:modification}, we present our iterative method for DAG construction
+	based on domain knowledge and data, and prove its correctness in an ``oracle setting''.
+    \item We then present a ranking method to prioritize potential modifications to the DAG that 
+    	    help in fixing the most severe violations first (Section~\ref{sec:ranking}).
+    \item We show empirically that even experts that make mistakes can outperform purely 
+	data-driven
+	causal discovery algorithms (Section~\ref{sec:empirical}).
+    \item We provide two proof-of-concept implementations of our approach: one geared towards
+	LLMs as experts, and a graphical user interface designed 
+	for human experts (Section~\ref{sec:web}).
 \end{enumerate}
 
-% The rest of the paper is structured as follows. In
-% Section~\ref{sec:background}, we give a background on the commonly used
-% measures of association for various data types. In
-% Section~\ref{sec:mixed_association}, we present our generalized measure of
-% conditional association for mixed data. Section~\ref{sec:modification} provides
-% details on the procedure for using the measure of association for constructing
-% DAGs. Section~\ref{sec:web} presents our web-browser based tool and lastly in
-% Section~\ref{sec:empirical}, we show some empirical results to compare this
-% manual DAG construction approach to automated algorithms.
-
-\section{Background and Related Work}
+\section{Background}
 \label{sec:background}
-\todo[inline]{Need to rewrite this}
-We denote random variables with uppercase letters $ X $, and a set of random
-variables as $ \bm{X} = \{X_1, \cdots, X_k\} $ with $ \rvert \bm{X} \rvert = k
-$. A sample from the random variable $ X $ is denoted as $ x $ and from a set
-of random variables $ \bm{X} $ is denoted as $ \bm{x} $. In this paper, we
-consider random variables in the mixed data setting where each of the random
-variables can be either of continuous, categorical, or ordinal unless
-specified. We write the expectation of a variable $ X $ as $ \mathbb{E}[X] $,
-conditional expectations as $ \mathbb{E}[X | \bm{Z}] $. We denote a graph $ G =
-(V, E) $ which nodes $ V$ and edges $ E $. In this paper we focus on all
-observed variables, and linear measure of association. 
-where $ \mathrm{cov}(X, Y) $ is the covariance between $ X $ and $ Y $, $ \mathrm{corr}(X, Y) $ is the correlation between $ X $ and $ Y $, and $
-\sigma_X $ and $ \sigma_Y $ are the standard deviations of $ X $ and $ Y $
-respectively.  Covariance matrix using $ \Sigma $ and the entry corresponding to
-covariance between $ X $ and $ Y $ in the matrix using $ \Sigma_{XY} $.
+We denote random variables using uppercase letters like $X$, and a set of
+random variables by $ \bm{X} = \{X_1, \cdots, X_k\} $, where $ \rvert \bm{X}
+\rvert = k $ is the number of variables in the set. We denote the standard
+deviation of $ X $ as $ \sigma_X $, the covariance between variables $ X $ and
+$ Y $ as $ \mathrm{cov}(X, Y) $, a covariance matrix as $ \Sigma $, and the
+entry corresponding to the covariance between $ X $ and $ Y $ as $ \Sigma_{XY}
+$. We consider causal DAGs that contain only observed variables. A DAG $ G =
+(V, E) $ is an acyclic directed graph whose nodes $ V $ corresponding to random
+variables and whose edges $ E $ represent direct causal relationships
+\cite{Pearl2009}. For an edge $e=X \to Y$, $\textrm{reverse}(e)=Y \to X$. The
+set of parents of $ X $ in $ G $ is denoted as $ \textrm{Pa}_G(X) $, and its
+ancestors and descendants as $ \textrm{An}_G(X) $ and $ \textrm{De}_G(X) $,
+respectively; we use the convention that $X \notin \textrm{An}_G(X)$ and $X
+\notin \textrm{De}_G(X)$. We denote a path, $ \pi(X, Y) = \{ X, V_0, V_1,
+\cdots, V_k, Y \} $ between $ X $ and $ Y $ in $ G $ where consecutive pairs of
+variables in $ \pi $ are connected by an edge. We say $ X $ and $ Y $ are
+d-connected in $ G $ given a conditioning set $ \bm{Z} \subseteq V - \{X, Y\}
+$, if for a path $ \pi(X, Y) $ (i) for every collider structure ($ V_1
+\rightarrow V_2 \leftarrow V_3 $) on $ \pi(X, Y) $, $ \bm{Z} \cap \{ V_2,
+\textrm{De}_G(V_2) \} \ne \emptyset $, and (ii) for every non-collider
+structure ($ V_1 \rightarrow V_2 \rightarrow V_3 $, $ V_1 \leftarrow V_2
+\rightarrow V_3 $), $ V_2 \not \in \bm{Z} $. $ X $ and $ Y $ are d-separated
+given $ \bm{Z} $ if no d-connecting path exist between them.
 
-\subsection{Measures of Conditional Association}
-Our approach for ranking CI tests is based on a measure of conditional
-association -- also known as partial association -- between variables.
-Specifically, we are interested in quantifying the association between
-variables $ X $ and $ Y $ when conditioned on a set of variables $ \bm{Z} $
-(which may be empty, i.e., $ \bm{Z} = \emptyset $). Various measures of
-conditional association have been used for this purpose depending on the type
-of $ X $, $ Y $, and $ \bm{Z} $. These measures are often based on the effect
-size of the CI test $ X \ci Y \rvert \bm{Z} $. In this section, we give an
-overview of some of the commonly used measures for different data types.
+\subsection{Conditional Independence Tests}
+\label{sec:ci_tests}
+Our structure learning algorithm uses the idea of testing DAGs using CI statements
+like $ X \ci Y \rvert \bm{Z} $ (with
+potentially $ \bm{Z} = \emptyset $).
+For example, take the MEC learned by the PC algorithm in
+Figure~\ref{fig:intro}(b) using $ N=800 $, and suppose that we orient 
+the undirected edge between \emph{Marital Status} and
+\emph{Relationship}  as \emph{Marital Status} $ \rightarrow $
+\emph{Relationship}. We can then read implied CIs of the DAG using $d$-separation,
+and test them in our dataset. Figure~\ref{fig:ci_table} shows the result of some tests. 
+Using a significance threshold  $\alpha=0.05 $, the first $ 2 $
+implied CIs hold in the data whereas the remaining tests fail. One of the ways
+to fix these failing tests is to add an edge between the variable pair $ X $
+and $ Y $. While this method helps us in finding variable pairs where we need
+to add an edge, it does not give us any information about the orientation of
+this edge. In this paper, we use domain knowledge to determine this
+orientation.
+
+\begin{figure}
+	\centering
+	\begin{tabular}{llrl}
+		$X$ & $Y$ & $ \bm{Z} $ & p-value \\
+		\hline
+		Incm & MrtS &  Age, Occp, Rltn & $ 0.29 $     \\
+		Incm & Sex  &  Occp, Rltn      & $ 0.21 $     \\
+		Incm & Wrkc &  Occp 	       & $ 1.5e^{-3} $ \\
+		Edct & MrtS & Incm, Occp, Rltn & $ 0.02 $       \\
+		\hline
+	\end{tabular}
+	\caption{Results of testing some of the implied CIs of the DAG in
+		 Figure~\ref{fig:intro}(b) using the same residualization based
+	 	 CI test that was used for learning it.}
+	\label{fig:ci_table}
+\end{figure}
+
+In addition to determining sigificance, we are interested in quantifying the 
+\emph{strength} of any partial association between $X$ and $Y$ after conditioning 
+on $\mathbf{Z}$. This metric depends on the type of CI test used. In the following,
+we briefly overview some CI tests and effect size measures
+for different types of (possibly mixed) data.
 
 \paragraph{Both $ X $ and $ Y $ are continuous: }
-When both $ X $ and $ Y $ are continuous, Pearson's correlation coefficient is
-typically used. When $ \bm{Z} = \emptyset $, the correlation
-coefficient is defined as:
+When both $ X $ and $ Y $ are continuous, we can use a (partial) correlation
+test for CI testing and Pearson's correlation coefficient can be used as the
+effect size. When $ \bm{Z} = \emptyset $, the correlation coefficient is
+defined as: $ r_{X, Y} = \mathrm{cov}(X, Y) / (\sigma_X \sigma_Y) $. When $
+\bm{Z} \neq \emptyset $, the partial correlation coefficient can be used instead.
+This is estimated by fitting two regression models $ E_X: X \sim \bm{Z} $ and $ E_Y: Y
+\sim \bm{Z} $, calculating the residuals $ R_X = X - E_X(\bm{Z}) $ and $ R_Y =
+Y - E_Y(\bm{Y}) $, and computing the Pearson's correlation coefficient between the
+residuals: $r_{X, Y \rvert \bm{Z}} = r_{R_X, R_Y}$
 
-\begin{equation}
-	r_{X, Y} = \frac{\mathrm{cov}(X, Y)}{\sigma_X \sigma_Y}
-\end{equation}
+\paragraph{$ X $ is ordinal, and $ Y $ and $ \bm{Z} $  are continuous or ordinal: }
 
-When $ \bm{Z} \neq \emptyset $, partial correlation coefficient can be used.
-This is estimated by fitting two regression models $ E_X: X \sim \bm{Z} $ and $
-E_Y: Y \sim \bm{Z} $, calculating the residuals $ R_X = X - E_X(\bm{Z}) $ and $
-R_Y = Y - E_Y(\bm{Y}) $, and then computing the correlation between the
-residuals:
-
-\begin{equation}
-	r_{X, Y; \bm{Z}} = r_{R_X, R_Y}
-\end{equation}
-
-\paragraph{All $ X $, $ Y $, and $ \bm{Z} $ are discrete: }
-
-When all variables are discrete, Cram\'er's V can used as a measure of
-association. When $ \bm{Z} = \emptyset $, Cram\'er's V is derived from the 
-chi-squared test statistic:
-
-\begin{equation}
-	\mathbf{V}_{X, Y} = \sqrt{\frac{\chi^2 / n}{\mathrm{min}(k-1, r-1)}}
-\end{equation}
-
-where $ \chi^2 $ is the chi-squared test statistic for $ X $ and $ Y $, $ n $
-is the sample size, and $ k $ and $ r $ are the number of categories in $ X $
-and $ Y $ respectively. When $ \bm{Z} \neq \emptyset $, we start by splitting
-the dataset by each unique combination of $ \bm{Z} $ into subsets,  $ \bm{Z} $,
-$ D = \{ D_{\bm{Z} = \bm{Z}_1}, D_{\bm{Z} = \bm{Z}_2}, \cdots, D_{\bm{Z} =
-\bm{Z}_k} \} $. Then we compute the Cram\'er's V for each of these smaller datasets
-and combine them as follows:
-
-\begin{equation}
-	\mathbf{V}_{X, Y; \bm{Z}} = \sum_{i=1}^{k} \left[ \mathbf{V}_{X, Y} \right]_{D_{\bm{Z} = \bm{Z}_i}} 
-\end{equation}
-
-\paragraph{$ X $ is ordinal, and $ Y $ and $ Z $  are continuous or ordinal: }
-
-Polyserial (when one is ordinal and the other is continuous) and Polychoric
-(when both are ordinal) correlation have been used to estimate the covariance
-matrix between them \citep{Poon1987}. Both methods make the assumption that the
+Polyserial (for continuous $Y$) and polychoric
+(ordinal $Y$) correlations are used to estimate correlations 
+involving ordinal variables \citep{Poon1987}. Both methods make the assumption that the
 observed ordinal variable is a result of thresholding a latent normally
-distributed continuous variable. Under this assumption, the methods then try to
-estimate the covariance matrix while maximizing the likelihood of the dataset.
-Using the estimated covariance matrix, $ \Sigma $ we can the compute Pearson's
-correlation coefficient. When $ \bm{Z} = \emptyset $,
+distributed continuous variable. Under this assumption, the methods then 
+estimate the threshold values and covariance matrix using maximum likelihood.
+Using the estimated covariance matrix, $ \Sigma $ we can perform a correlation
+test for CI and compute the Pearson's correlation coefficient as the effect
+size (same as for continuous $ X $ and $ Y $), i.e., 
+$\bm{Z} = \emptyset $, $ r_{X, Y} = \Sigma_{XY} / (\sqrt{\Sigma_{XX} \Sigma_{YY}}) $, 
+	and when $ \bm{Z} \ne \emptyset $,
+	$ r_{X, Y \rvert \bm{Z}} = - \Sigma^{-1}_{XY}/ (\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}) $.
 
-\begin{equation}
-	r_{X, Y} = \frac{\Sigma_{XY}}{\sqrt{\Sigma_{XX} \Sigma_{YY}}}
-\end{equation}
+\paragraph{$ X $, $ Y $, and $ \bm{Z} $ are all discrete (ordinal or categorical): }
 
-When $ \bm{Z} \neq \emptyset $, 
+For combinations of ordinal and categorical variables, we
+can use a residualization-based CI test \citep{Ankan2023} that returns a 
+chi-square distributed test statistic. Given the statistic, $ \chi^2 $, with $ \textrm{df} $ degrees of
+freedom, we use the Root Mean Squared Error of Approximation (RMSEA) defined as
+ $ \textrm{RMSEA}_{X, Y \rvert \bm{Z}} =
+\sqrt{\max(0,\chi^2 - \textrm{df})/ (\textrm{df} (N-1))} $, where $ N $ is the sample
+size. This effect size can be used for any statistical test with a chi-square 
+distributed test statistic. 
 
-\begin{equation}
-	r_{X, Y; \bm{Z}} = - \frac{\Sigma^{-1}_{XY}}{\sqrt{\Sigma^{-1}_{XX} \Sigma^{-1}_{YY}}}
-\end{equation}
+\section{Expert-In-The-Loop Causal Discovery}
 
-
-\section{DAG Structure Learning using Ancestral Oracles}
-\label{sec:modification}
 
 Our approach to causal structure learning combines domain knowledge with data-driven
-insights in a manner that is based on the following base assumptions: 
-(1) Domain experts are good at determining causal directions between variables if 
-there is a clear causal direction between them. (2) Domain experts are less good
+insights in a manner that is based on the following considerations: 
+(1) A domain expert is possibly good at determining causal directions between variables if 
+there \emph{is} a clear causal direction between them. (2) A domain expert may be less good
 at identifying cases where there is no causal relationship between the variables,
 since \emph{potential} causal relationships can often be argued for anyway.
-(3) Domain experts are even less good at distinguishing direct from indirect 
-effects, since the question whether a direct effect exists between two variables
-depends on all other variables present in the graph. 
+(3) Many domain experts could struggle to distinguish direct from indirect 
+effects, since the presence of a direct effect between two variables
+of interest depends on all other variables present in the graph. 
 
-We therefore consider the following two models of a domain experts: Given two variables
-\emph{X} and \emph{Y} that are part of an unknown causal DAG $G$, an \emph{strong ancestral oracle} 
+We will now first present theoretical results showing how a structure
+learning algorithm using such experts can uncover the true DAG structure.
+Afterwards, we will present a heuristic for deciding which changes should
+be prioritized.
+
+\subsection{DAG Structure Learning using Ancestral Oracles}
+
+\label{sec:modification}
+
+We consider two models of a domain experts. Given two variables
+$ X $ and $ Y $ that are part of an unknown causal DAG $G$, an \emph{strong ancestral oracle} 
 $\mathcal{A}_G$ is defined as:
 $$\mathcal{A}_G(X,Y)=\begin{cases}
  X \to Y & \textrm{if } X \in \textrm{An}_G(Y) \\
@@ -345,30 +348,33 @@ $$
 \mathcal{A}_G(X,Y)=\begin{cases}
  X \to Y & \textrm{if } X \in \textrm{An}_G(Y) \\
  X \gets Y & \textrm{if } Y \in \textrm{An}_G(X) \\
- \textrm{rand}(X \gets Y, X \to Y) & \textrm{otherwise} \\
+ \textrm{rand}(\{X \gets Y, X \to Y\}) & \textrm{otherwise} \\
 \end{cases}
 $$
+where $\textrm{rand}(S)$ denotes a uniformly chosen element of $S$.
+That is, our ancestral oracles only provide information on the direction of cause-effect
+relationships, and do not distinguish between direct and indirect effects. 
+The weak ancestral oracle is even unable to detect the absence of cause-effect
+relationships between two variables. Using such oracles for DAG construction  
+inherently risks that superfluous edges are created. 
 
-That is, our ancestral oracles never distinguish whether the relationships
-between variables is direct or indirect; and the weak ancestral oracle is even
-unable to detect cases where there is no cause-effect relationship between two
-variables. Using such oracles for DAG construction therefore inherently risks
-that superfluous edges are created. In our approach, such superfluous edges
-will be detected and removed by utilizing the data. 
-
-To model how our learning procedure interacts with the data, we assume that we
+Our approach uses the data to decide where to add edges and which edges 
+are superfluous and can be removed.
+As a useful abstraction, let us assume that we
 have access to a second oracle $\mathcal{D}_G$ than can answer d-separation
 queries with respect to the unknown target graph:
-$\mathcal{D}_G(X,Y,\mathbf{Z})=1$ iff $X \ci_G Y \mid \mathbf{Z}$. These are
-the standard oracles considered in constraint-based structure learning
-algorithms, such as the PC algorithm \cite{Spirtes2001}. Based on this oracle,
-we now define two procedures that iteratively change a current DAG structure.
+$\mathcal{D}_G(X,Y,\mathbf{Z})=1$ iff $X$ and $Y$ are $d$-separated by $\mathbf{Z}$ in 
+$G$. These are the standard oracles considered in constraint-based structure
+learning algorithms, such as the PC algorithm \cite{Spirtes2001}. 
 
-Our structure learning algorithm is based on two core procedures.
-\textsc{Expand} (Algorithm~\ref{algo:expand}) uses conditional independence
-information to search for missing edges in the graph and then uses domain
-knowledge to orient them. \textsc{Prune} (Algorithm~\ref{algo:prune}) uses
-conditional independence information to remove superfluous edges from the
+Based on these two oracles, we now define two core procedures that
+iteratively change a current DAG structure. The procedure 
+\textsc{Expand} (Algorithm~\ref{algo:expand}) uses CI  
+information (supplied in this case by the d-separation oracle) 
+to search for unexplained associations in the graph and 
+then uses domain knowledge to determine ancestry. The 
+procedure \textsc{Prune} (Algorithm~\ref{algo:prune}) uses
+CI information to remove superfluous edges from the
 graph.
 
 \begin{algorithm}[h]
@@ -377,41 +383,78 @@ graph.
 \SetKwFunction{Expand}{Expand}
 \SetKw{KwGoTo}{go to}
 \SetKwProg{Fn}{Function}{:}{}
-\Fn{{\sc Expand}($V,E,\mathcal{D}_G,\mathcal{A}_G$,$B=\emptyset$,$k=\infty$)}{
+\Fn{{\sc Expand}($V,E,\mathcal{D}_G,\mathcal{A}_G$,$B$,$k$)}{
     let $L \gets \{\}$\;
     \ForEach{$X, Y$ where $X \to Y \notin E$ and $Y \to X \notin E$ and 
 	$\{X,Y\} \notin B$}{
         let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
         \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
-            $L \gets L \cup \mathcal{A}_G(X, Y)$ \;
+	    $e \gets \mathcal{A}_G(X, Y)$ \;
+	    \uIf{ $(V,E \cup L \cup e)$ is acyclic }{
+            	$L \gets L \cup  \{ e \} $\;
+	    } \Else {
+            	$L \gets L \cup  \{ \textrm{reverse}(e) \} $\;
+	    }
         }
 	\If{$|L|\geq k$}{\KwGoTo 12\;}
     }
     add all edges in $L$ to $E$\;
     \Return{$(V,E)$}\;
 }
-\caption{Adding edges based on data and domain knowledge}
+\caption{Adding edges based on data and domain knowledge.}
 \label{algo:expand}
 \end{algorithm}
 
-The function $\textsc{Expand}$ takes an initial list of edges and searches for 
-any vertex pairs that are not connected but where the d-separation oracle 
-indicates  that there is still a residual association not explained by the other variables.
-An optional parameter $B$, the empty set by default, allows to specify a ``black list''
-of vertex pairs that must not be connected, and another optional parameter $k$
-specifies the maximum amount of edges to be added by this procedure.
+$\textsc{Expand}$ takes an initial list of edges and searches for 
+any unconnected vertex pairs that are not connected but where the
+d-separation oracle indicates a residual association not explained 
+by other paths.
+The parameter $B$ specifies a ``black list''
+of vertex pairs that must not be connected, 
+whereas $k$
+can be used to limit the maximum amount of edges 
+to be added by this procedure; the usefulness of the $B$ and $k$
+parameters will become clear soon.
+
+Let $G^+$ denote the transitive closure of $G$ (the graph in which 
+there is a direct edge $X \to Y$ whenever $X \in \textrm{An}_G(Y)$). 
+The transitive closure is related to the result of $\textsc{Expand}$ 
+by the following two easily proved facts.
 
 \begin{proposition}
 For a conditional independence oracle
  $\mathcal{D}_G$ and a strong ancestral oracle $\mathcal{A}_G$, 
-$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G)=G^+$.
+$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G, \emptyset, \infty)=G^+$.
+\label{prop:strongexpand}
 \end{proposition}
+
+\begin{proof}
+Since we start from an empty graph, every pair of vertices $X, Y$ where
+ $X \in \textrm{An}_G(Y)$ is d-separated by the empty set and is
+ connected by the edge $X \to Y$. No other edges are added. Therefore, 
+the result is $G^+$. 
+\end{proof}
 
 \begin{proposition}
 For a conditional independence oracle
  $\mathcal{D}_G$ and a weak ancestral oracle $\mathcal{A}_G$, 
-$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G)\supseteq G^+$.
+$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G, \emptyset, \infty)
+\supseteq G^+$.
+\label{prop:weakexpand}
 \end{proposition}
+
+\begin{proof}
+Every pair of vertices $X, Y$ that are $d$-connected 
+in $G$ are now connected by an edge 
+during $\textsc{Expand}$. For $X \in \textrm{An}_G(Y)$, the edge is 
+$X \to Y$ like when using a strong ancestral oracle; 
+since only correctly oriented
+edges are added between ancestor-descendant pairs, 
+such additions never create cycles.
+For $X, Y$ that are only $d$-connected throug common ancestors, 
+an arbitrary edge is added in a manner that preserves acyclicity.
+The result is a supergraph of $G^+$.
+\end{proof}
 
 
 \begin{algorithm}[h]
@@ -435,8 +478,9 @@ $\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G)\supseteq G^+$.
 \label{algo:prune}
 \end{algorithm}
 
-
-
+Unlike our ancestral oracles, the pruning operation is 
+quite effective at distinguishing
+direct and indirect effects, as shown by the following result.
 
 \begin{proposition}
 Consider two DAGs $G=(V,E)$ and $G'=(V,E')$ where $E \subseteq E'$. 
@@ -444,17 +488,36 @@ Then $\textsc{Prune}(G',\mathcal{D}_G)=G$.
 \label{prop:prune}
 \end{proposition}
 
-By combining the previous three propositions, we immediately obtain the following:
+\begin{proof}
+For an edge $X \to Y$ in the skeleton of $G$, 
+$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$ regardless 
+of $\mathbf{Z}$, so all edges in the skeleton are 
+retained after {\sc Prune}. Conversely, if 
+ $X \to Y$ is not in the skeleton of $G$, let 
+$\mathbf{Z}$ be the $d$-separating set chosen 
+in line~5 of {\sc Prune} (there is at least one 
+such $\mathbf{Z}$, the union of the parents of 
+$X$ and $Y$). Since  $\mathbf{Z}$ $d$-separates 
+all paths from $X$ to $Y$ in $G'$, it does the same 
+in $G$ which contains a subset of these paths. 
+Therefore, all edges not in the skeleton of $G$ are 
+removed.
+\end{proof}
+
+By combining Propositions~\ref{prop:strongexpand}, \ref{prop:weakexpand} and 
+\ref{prop:prune}, we immediately obtain the following:
 
 \begin{theorem}
 Given a d-separation oracle $\mathcal{D}_G$ and a strong or weak 
 ancestral oracle $\mathcal{A}_G$, 
-$\textsc{Prune}(\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_G),\mathcal{D}_G)=G.$
+$\textsc{Prune}(\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_G,\emptyset,\infty),\mathcal{D}_G)=G.$
 \end{theorem}
 
-Since we require expert knowledge only in the $\textsc{Expand}$ operation, we may try
-to be more economical by asking fewer questions at a time and interleaving expansion and
-pruning steps. This leads us to the following, more incremental DAG construction algorithm.
+Since we require expert knowledge only in the $\textsc{Expand}$ 
+operation, we may try to be more economical by asking fewer 
+questions at a time and interleaving expansion and
+pruning steps. This leads us to the following, more iterative 
+DAG construction algorithm.
 
 \begin{algorithm}[h]
 \DontPrintSemicolon
@@ -484,11 +547,22 @@ $\textsc{ExpertInLoop}(V,\mathcal{D}_G,\mathcal{A}_G)=G$.
 \end{theorem}
 
 \begin{proof}
-The loop in Algorithm~\ref{algo:expert} terminates if and only if $E=E^*$. If the loop does not 
-terminate, then a new edge has been added in line 6, or one or more edges were pruned in line 7.
-Every edge can be added at 
-most once and pruned at most once. Therefore, the algorithm always terminates
-after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ in the skeleton of $G$, $\mathcal{D}_G(X,Y,\mathbf{Z})=0$ irrespective of $\mathbf{Z}$. Therefore, $e$ must be added to $E$ in some iteration, and can never be pruned afterwards. Therefore, after some iteration, $(V,E)$ must be a supergraph of $G$ after executing line 6, and this will be pruned to the real graph $G$ in line 7 (Proposition~\ref{prop:prune}). In the next iteration, no further changes are made, and the loop terminates.
+The loop in Algorithm~\ref{algo:expert} terminates if and 
+only if $E=E^*$. If the loop does not  terminate, a new
+ edge has been added in line 6, and/or one or more edges were 
+pruned in line 7; the pruned edges never include the edge added 
+in line 6 in the same iteration. Every edge can be added at 
+most once and pruned at most once. Therefore, the algorithm 
+always terminates after at most $|V|(|V|-1)+1$ iterations of
+the loop. For every edge $e=X\to Y $ in the skeleton of $G$, 
+$\mathcal{D}_G(X,Y,\mathbf{Z})=0$ irrespective of $\mathbf{Z}$, 
+and $e$ must be added to $E$ in some iteration, and can never 
+be pruned afterwards. Therefore, after some iteration, 
+$(V,E)$ must be a supergraph of $G$ after executing line~6, 
+and this will be pruned to the real graph $G$ in line~7 
+(Proposition~\ref{prop:prune}). In the next iteration, 
+no further changes are made, and the loop terminates.
+\label{thm:itworks}
 \end{proof} 
 
 
@@ -528,25 +602,136 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 		\includegraphics[page=7]{example.pdf}
 		\caption{$ X_3 \rightarrow X_4 $. $ X_1 \not \rightarrow X_4 $.}
 	\end{subfigure}
-	\caption{An example showing the steps of \textit{ExpertInLoop} algorithm. The dashed edges show all the potential edges that \textit{Expand} algorithm could add in each step.
-	}
+	\caption{An example showing each iteration of \textsc{ExpertInLoop}. The dashed edges show all the potential edges that \textsc{Expand} could add in each iteration.}
 \end{figure}
 
 
+\subsection{Ranking Potential New Edges}
+\label{sec:ranking}
 
-% \begin{figure}
-% 	\centering
-% 	\begin{subfigure}{0.5\textwidth}
-% 		\includegraphics[scale=0.25]{../../presentations/2024_05_das/2.png}
-% 	\end{subfigure}%
-% 	\begin{subfigure}{0.5\textwidth}
-% 		\includegraphics[scale=0.25]{../../presentations/2024_05_das/5.png}
-% 	\end{subfigure}
-% 	\caption{Screenshots of the web-tool. \todo[inline]{Insert screenshots of the web-tool}}
-% \end{figure}
+\begin{algorithm}[h]
+\DontPrintSemicolon
+\SetAlgoLined
+\SetKwFunction{RankedExpand}{RankedExpand}
+\SetKw{KwGoTo}{go to}
+\SetKwProg{Fn}{Function}{:}{}
+\Fn{{\sc RankedExpand}($V,E,\mathcal{D}_G,\mathcal{A}_G$,$\phi$,$B=\emptyset$)}{
+    let $\phi_{\max} \gets 0 $\;
+    \ForEach{$X, Y$ where $X \to Y \notin E$ and $Y \to X \notin E$ and 
+	$\{X,Y\} \notin B$}{
+        let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
+        \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
+		\If{$\lvert \phi(X, Y, \mathbf{Z}) \rvert > \phi_{\max}$}{
+			$ \phi_{\max} \gets \lvert \phi(X, Y, \mathbf{Z}) \rvert $ \;
+			$ e_{\max} \gets \mathcal{A}_G(X, Y)$ \;
+		}
+        }
+    }
+
+    \uIf{ $(V,E \cup e_{\max})$ is acyclic }{
+	add $ e_{\max}$ to $E$ \;
+    } \Else {
+	add $ \textrm{reverse}(e_{\max})$ to $E$ \;
+    }
+    \Return{$(V,E)$}\;
+}
+\caption{Adding an edge between variables with the highest correlation}
+\label{algo:ranked_expand}
+\end{algorithm}
+
+\textsc{ExpertInLoop} adds a new edge in each iteration. The edge
+to be added is selected using the \textsc{Expand} algorithm, which 
+returns a potential edge at random based on the iteration order. 
+However, if the residual association between the selected variables 
+is low, adding the edge may result in only a marginal improvement 
+in the overall model fit. Given that the
+algorithm requires expert intervention in each iteration to specify the edge
+orientation, it can be beneficial to prioritize edges that contribute 
+the most to improving the model.
+
+To achieve this, instead of selecting edges randomly, we propose ranking
+potential edges based on their residual association given the current DAG. This
+residual association can be quantified using the effect sizes from the
+CI tests used for deciding d-separation in Algorithm~\ref{algo:expand}.
+Specifically, for a d-separation query $D_G(X, Y, \mathbf{Z}) $, we quantify
+the residual association, $ \phi(X, Y, \bm{Z}) $, as the effect size of the CI
+test $X \ci Y \rvert \bm{Z} $. 
+
+Algorithm~\ref{algo:ranked_expand} shows a 
+version of {\sc Expand} where we use the largest unexplained association to
+determine where to next add an edge. 
+To implement this, we need an effect size
+metric by which we can rank effects. Depending on the type of variables, 
+we can use the effect sizes shown in Section~\ref{sec:ci_tests}. 
+The algorithm selects the edge that has the highest absolute residual 
+association, resulting
+in prioritization of edges that contribute the most to improving the model.
+
+\subsection{Comparison to Score-Based Methods}
+
+Superficially, the data-driven aspects of our procedure appear
+ similar to score-based automated causal discovery methods like 
+Greedy Equivalence Search (GES), which 
+iteratively add or remove edges that maximize improvements in a specified
+scoring metric. Indeed, we can define the \emph{total residual association}
+ $ \tau $ for a DAG $ G = (V, E) $ as:
+
+\begin{equation}
+	\tau = \sum_{\substack{X, Y \in V \\ X \rightarrow Y, Y \rightarrow X \not \in E}}   \phi(X, Y, \mathrm{pa}_G(X) \cup \mathrm{pa}_G(Y))
+\label{eqn:tau}
+\end{equation}
+
+Our \textsc{RankedExpand} approach behaves similarly to GES in that it 
+tries to prioritize modifications that lead to the largest improvements 
+in $\tau$. However, adding an edge between the two vertices that contribute
+the most to $\tau$ does not necessarily lead to the largest 
+possible decrease in $\tau$ because the new edge can also affect other 
+residual associations. In other words, $\tau$ is not a \emph{decomposable}
+metric that can be expressed as a sum over individual variables in the model
+and their parents. 
+
+Another key difference lies in the interpretability of the evaluation metric.
+Scoring metrics are based on usually based on the log-likelihood with a penalty
+for model complexity. They can be used to make relative comparisons between
+models but their values do not have any interpretation in an absolute sense.
+That is, they indicate which model is better for a given dataset but do not
+quantify how well the model explains the data. In
+contrast, $ \tau $ could be seen as an absolute measure of model fit -- 
+its value approaches $ 0 $ as the model perfectly explains the observed data.
 
 \section{Empirical Analysis}
 \label{sec:empirical}
+
+In this section, we compare our \textsc{ExpertInLoop} algorithm with automated
+causal discovery algorithms. Our goal with the empirical analysis is to
+understand the behaviour of our method when both experts are not perfect.
+Specifically, how good does the domain expert have to be so we actually benefit
+from their expertise, compared to a purely data-driven approach? 
+
+In our analysis, we simulate data from a ``true'' DAG $G$ and use the
+{\sc ExpertInLoop} algorithm with the {\sc RankedExpand} heuristic 
+to recover $G$. We implement the $d$-separation oracle $\mathcal{D}_G(X,Y,\mathbf{Z})$
+by conducting conditional independence tests of $X \ci Y \mid \mathbf{Z}$, which on finite
+data inevitably make type~I and type~II errors. To
+simulate an imperfect domain expert, we use a version of a strong 
+ancestral oracle $\mathcal{A}_G$ (Section~\ref{sec:modification})
+that with probability $\alpha$ knows the correct answer and randomly
+guesses otherwise, i.e.,
+\begin{equation*}
+	\begin{split}
+		x &= \textrm{rand}([0, 1]) \\
+		\mathrm{Expert}(\alpha) &= \begin{cases} 
+			\mathcal{A}_G(X, Y),  & \textrm{if  } x <= \alpha \\
+			\textrm{rand}(X \rightarrow Y, Y \leftarrow X, \textrm{None}) & \textrm{otherwise} \\
+				\end{cases} 
+	\end{split}
+\end{equation*}
+
+It is important to note that the effective accuracy of $ \mathrm{Expert} $ is
+higher than $ \alpha $ as even when $ x > \alpha $, there is a $ 1/3 $
+that edge orientation is correct. Therefore, an $ \mathrm{Expert} $ with
+accuracy $ \alpha $, has an effective accuracy, $ \alpha_{\mathrm{eff}} =
+\alpha + (1 - \alpha) / 3 $.
 
 \begin{figure}[t!]
 	\centering
@@ -560,13 +745,51 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 		\includegraphics{../code/fig3/sid_ribbon.pdf}
 		\caption{}
 	\end{subfigure}
-	\caption{Comparison of PC and Hill-Climb Search algorithms against
-		manually drawn DAGs using the assistance method. As PC and
-		Hill-Climb Search return the Markov Equivalence Class (MEC), we
-		use the best and worst scoring orientation of the MEC to get
-		the range of values. The human drawn values are done for
-		multiple accuracy values of the oracle.}
+	\caption{Comparison of PC, Hill-Climb Search, and GES algorithms against
+		\textsc{ExpertInLoop} algorithm. As automated algorithms only
+		recover the CPDAG, we use the best and worst scoring
+		orientation of the CPDAG to get the range. We test
+		\textsc{ExpertInLoop} with varying values of expert accuracy, $ \alpha = \{0.1, 0.3, 0.5, 0.7, 0.9\} $. The corresponding
+	$\alpha_{\textrm{eff}} $ is shown in the plot. Expert shading: mean $\pm$ standard error. Others shading: [mean min. - standard error min., mean max. + standard error max.]}
+	\label{fig:shd_sid}
 \end{figure}
+
+We compare the performance of the \textsc{ExpertInLoop} algorithm by
+to three other automated algorithms: PC \citep{Spirtes2001,KalischB07}, 
+Hill-Climb Search \citep{scutari2010}, and Greedy Equivalence Search (GES) \citep{Chickering2002}
+on linear-Gaussian data. For \textsc{ExpertInLoop}, we
+use the \textsc{RankedExpand} method with Pearson's correlation coefficient as
+the effect size (Section~\ref{sec:ci_tests}) and significance threshold
+(and type~I error rate) $\alpha=0.05$. We start by generating a random DAG 
+on $10$ nodes and use linear models
+with random effects to simulate $ 500 $ samples from it. We simulate each
+variable $ V_i $ in the DAG as
+$$
+	V_i = \bm{\beta} \cdot \mathrm{Pa}_G(V_i) + \mathcal{N}(0, 1)
+$$
+where each coefficient $\beta_i$ of the vector $\bm{\beta} \in \mathbb{R}^{|\mathrm{Pa}_G(V_i)|}$ is randomly drawn as
+$$
+\beta_i \sim \mathrm{Uniform}([-0.6, 0.6])
+$$
+ 
+We perform the experiment for varying densities of the DAG and accuracies of
+$\mathrm{Expert}$. We repeat each experiment $ 30 $ times and report the
+mean and standard error of the results.
+
+To compare the learned DAG to the original DAG, we use two metrics: the Structural
+Hamming Distance (SHD) and the Structural Intervention Distance (SID)
+\citep{Peters2015}. Unlike \textsc{ExpertInLoop}, the automated algorithms can
+only recover the MEC, therefore, we considered all possible orientations of the
+MEC to compute a range of SHD and SID values representing the best and worst
+case scenarios. The results of this analysis are shown in
+Figure~\ref{fig:shd_sid}. For SHD, the performance of \textsc{ExpertInLoop} is
+comparable to the automated algorithms for $ \alpha = 0.3$
+($\alpha_{\textrm{eff}} = 0.53 $), implying that if an expert is able to get the
+edge orientation correctly in more than $ 1 $ out of $ 2 $ cases, they can
+outperform the automated algorithms. Similarly for SID, an expert can outperform 
+the automated algorithms if they are able to get the orientation correct in $ 2 $ 
+out of $ 3 $ cases. Another thing to note is that for denser DAGs, the 
+\textsc{ExpertInLoop} is able to perform better for lower $ \alpha $ values.
 
 \begin{figure}[t!]
 	\begin{subfigure}{0.25\textwidth}
@@ -579,174 +802,66 @@ after at most $|V|(|V|-1)+1$ iterations of the loop. For every edge $e=X\to Y $ 
 		\includegraphics{../code/fig4/ll.pdf}
 		\caption{}
 	\end{subfigure}
-	\caption{Plots showing improvements in fit of the model over iterations
-	on the Adult income dataset. For the expert simulation an LLM is used
-	for the edge orientations. (a) Shows using total unexplained effect that is the
-	sum of effect size between variables that don't have an edge between them. (b)
-	Shows the log-likelihood of the overall model.
+	\caption{LLM-in-the-loop causal discovery on the Adult Income datases. As the ground 
+truth is unknown, two measures of fit are shown over 30 iterative modifications: 
+total residual association $\tau$ (a, see Equation~\ref{eqn:tau}; lower is bettter); log-likelihood (b, higher is better).
 	}
+	\label{fig:unexplained_ll}
 \end{figure}
 
-We analyzed the performance of \textit{ExpertInLoop} algorithm by comparing it
-with three other automated algorithms: PC, Hill-Climb Search, and Greedy
-Equivalence Search (GES). For the analysis, we simulated data from known DAG
-structures and use the algorithms to recover the original DAG. We start by
-generating a random DAG on $10$ nodes and use linear models with random effects
-to generate the data. We vary the edge probability of the DAG to generate DAGs
-with varying density. We repeat the data generation $30$ times for each density
-value for the DAG. We compare the learned DAG to the original DAG using two
-metrics: Structural Hamming Distance (SHD) and Structural Intervention Distance
-(SID) \citep{Peters2015}.
+\section{Practical Implementation}
 
+\label{sec:web}
 
-As both PC and Hill-Climb Search can only give us a CPDAG, we
-
-we use simulated data from
-a known DAG and compare how well the algorithm is able to recover the original
-model using two metrics: Structural Hamming Distance (SHD) and Structural
-Intervention Distance (SID). To simulate the data, we start with a randomly
-generated DAG on $ 10 $ nodes and use linear models with random effects to
-generate the data. 
-
-We vary the edge probability of the DAG to generate DAGs with varying density.
-We repeat the data generation $ 30 $ times for each density value for the DAG.
-As both PC and Hill-Climb Search can only give us a CPDAG, we compare the
-orientation of these CPDAG which result in the best and worst case scores on
-SHD and SID.
-
-To use our proposed approach, we need an expert to tell us the direction of the
-edges. We simulated an expert using this assisted model construction approach,
-we start with an empty model and take a greedy approach to add edges to this
-model. At any point, we select the pair of variables that has significant
-correlation and the highest unexplained correlation, i.e., highest conditional
-association. We then use an oracle to decide the direction of the edge between
-the variables. Given an accuracy of the oracle, $ \alpha $, the oracle either
-gives the correct direction, incorrect direction, or returns None representing
-that it does not know the direction.
-
-\begin{equation}
-	\begin{split}
-		x &= \textnormal{rand}([0, 1]) \\
-		O(\alpha) &= \begin{cases} 
-			M \rightarrow Y, & \textnormal{if  } x <= \alpha \\
-			\textnormal{rand}(M \rightarrow Y, M \leftarrow Y, None) & \textnormal{otherwise} \\
-				\end{cases} \\
-	\end{split}
-\end{equation}
-
-If the oracle returns None for any pair of variables, an edge between this pair
-is not suggested to the oracle in future iterations. We also make sure that
-only edges which do not form a cyclic in the graph are used to select the next
-potential edge. After adding each edge, we also check if the p-value of any
-existing edge shows independence. If that happens we remove that edge and
-blacklist that edge, i.e., that edge is not prompted again during the run of
-the algorithm. We repeat this procedure till the model explains all
-correlations between the variables. There is a possibility that this greedy
-expert gets stuck at incorrect graph structures as it does not do any
-backtracking to fix its earlier mistakes. This procedure is outlined in the
-Algorithm 1.
-\todo[inline]{Show an algorithm of how this expert method is working}
-
-\begin{verbatim}
-	Input: Dataset $ D $ on variables $ \bm{X} $
-	Output: Learned DAG G.
-	
-	function compute_effects(G):
-		pvalues <- dict()
-		effects <- dict()
-		for X_i, X_j in X:
-			if edge between X_i, X_j:
-				p_values[(X_i, X_j)] <- pvalue(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
-				effects[(X_i, X_j)] <- \phi(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
-			else:
-				p_values[(X_i, X_j)] <- pvalue(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
-				effects[(X_i, X_j)] <- \phi(X_i, X_j, pa_{\bar{G}}(X_i) \cup pa_{\bar{G}}(X_j))
-		return p_values, effects
-	
-	$ G $ <- Empty Graph
-	p_values, effects <- compute_effects(G)
-	while (p_values > p_thres, 
-\end{verbatim}
-
-\begin{algorithm}
-	\KwData{Data set $ D $ on variables $ \bm{X} $, pthres, effectthres}
-	\KwResult{The learned DAG: $ G $}
-	\BlankLine
-	$ G \leftarrow $ Empty Graph
-\end{algorithm}
-
-\subsection{Connection to Score Based Methods}
-
-Our procedure closely resembles certain score-based automated causal discovery
-methods, such as Greedy Equivalence Search (GES), where the algorithm
-iteratively adds or removes edges that improve the scoring metric the most.
-Similarly, a greedy version of our approach would involve adding an edge
-between the pair of variables with the highest unexplained correlation. While
-both methods aim to find modifications that most improve the model at each
-step, a key distinction lies in the nature of the evaluation criteria: unlike
-standard scoring metrics, our measure of association is not decomposable. A key
-property of scoring metrics is that they should be decomposible, i.e., they can
-be expressed as the sum of scores of nodes given its parents. This means adding
-or removing an edge affects only a localized part of the model. In contrast,
-our measure of association is global, meaning that modifying an edge in one
-part of the model can influence association values elsewhere.
-
-Another major difference is in the interpretability of the evaluation metric.
-Most scoring metrics are based on log-likelihood with a penalty for model
-complexity. These score metrics allow for relative comparisons between models
-but do not provide an absolute measure of model fit. That is, they indicate
-which model is better for a given dataset but do not reveal how well the model
-explains the data in an absolute sense. In contrast, summing our measure of
-association across all variables provides a direct fitness measure—this sum
-approaches zero when the model perfectly accounts for all observed correlations
-in the data. This property enables an absolute assessment of model quality,
-rather than just a relative comparison between models.
-
+We now present two proof-of-concept implementations of our approach, 
+geared towards using  large language models (LLMs) and humans as experts
+to decide on edge directions. We use the Adult Income dataset from the 
+introduction as an example. There is no known ground truth for this dataset,
+and it contains mixed types of data; here, we use a version that contains
+ordinal and nominal variables and use the RMSEA of a residualization-based
+conditional independence test \citep{Ankan2023} as a measure of association
+to prioritize modifications (Section~\ref{sec:background}). 
 
 \subsection{Using LLMs as Experts}
-Recently, there has been a lot of work towards using LLMs for causal discovery,
-with tasks ranging from determining pairwise edge orientation
-\citep{Kiciman2023, Jin2024} to full causal structure learning \citep{Naik2023,
-Vashishtha2023} and counterfactual reasoning tasks\citep{Kiciman2023} (see
-\citet{Liu2024} for an overview).
+ 
+\begin{figure}[t!]
+	\centering
+	\includegraphics[page=1]{fig5.pdf}
+	\caption{DAG learned from the Adult Income dataset using an LLM
+		(Gemini 1.5 Flash) as the expert. The p-value threshold used is $ 0.05 $ 
+		and the measure of association threshold is $ 0. 1 $, meaning
+		that associations below $0.1$ are not considered by 
+		\textsc{RankedExpand}.}
+	\label{fig:adult_llm}
+\end{figure}
 
-Since our approach utilizes expert knowledge to determine edge orientations, we
-investigated the potential of using an LLM for this task. We applied our causal
-discovery procedure with using Gemini 1.5 flash model as the expert. Our method
-uses a greedy approach where the pair of variables with the highest unexplained
-correlation is oriented first. The prompt used to determine the orientation is
-provided in Appendix~\ref{section:llms}. Our LLM prompt utilizes variable
-description to determine the edge orientation. We applied this approach to the
-adult income dataset and the output is shown in Fig.~\ref{fig:adult_llm}. 
+Recently, there has been significant interest in leveraging Large Language
+Models (LLMs) for causal discovery. These applications range from determining
+pairwise edge orientations \citep{Kiciman2023, Jin2024} to full causal
+structure learning \citep{Naik2023, Vashishtha2023} and counterfactual
+reasoning \citep{Kiciman2023} (see \citet{Liu2024} for a comprehensive
+overview).
 
-Unlike the other approaches to utilize LLM for doing full causal discovery, we 
-used a combination of statistical tests and LLMs. This greatly reduces the
-amount of information that we need from the LLM. Our approach is also able to 
-ask exact questions about the variables unlike some of the other approaches.
+Since our approach relies on expert knowledge to determine ancestral relationships,
+we explored the potential of using an LLM for this task. We applied our causal
+discovery procedure using the Gemini 1.5 Flash model as the expert. We simulate
+the \emph{weak ancestral oracle} using the LLM by asking it to choose the
+causal direction between a pair of variables. The LLM is provided a description
+of each of the variables and given the prompt shown in
+Appendix~\ref{section:llms}. 
+Figure~\ref{fig:unexplained_ll} shows how the model fit to the data improves 
+across 30 iterations compared to GES for a run of the algorithm.
+Figure~\ref{fig:adult_llm} shows the DAG learned
+on the Adult Income dataset using the LLM as the expert. We can see 
+that the model fit improves comparably to a greedy approach and 
+the resulting DAG appears to contain largely sensible edge directions. 
 
-\section{Web Tool}
-\label{sec:web}
-To enable users to apply this method to their own datasets, we developed an
-interactive web-based tool (shown in Fig.~\ref{fig:web}) for constructing
-models. Users begin by uploading their dataset, which initializes an empty DAG
-with nodes corresponding to the dataset\'s variables. They can then specify a
-p-value threshold and a measure of association threshold.
+\subsection{Using Humans as Experts}
 
-Using the specified thresholds, the tool visually highlights unexplained
-correlations by displaying red edges between variables where correlation exists
-in the data but the current DAG is not able to explain. The thickness of these
-edges represents the strength of the correlation, helping users prioritize
-which edges to add. Similarly, if an edge in the graph is detected to be
-unnecessary, it is highlighted in black. Based on this information, users can
-select to remove unnecessary edge or select a potential edge to add and specify
-the orientation of the edge. The tool computes Shipley’s C \citep{Shipley2000}
-value at each change to determine the overall fit of the model to the data.
-Once satisfied with the constructed DAG, users can export the model for further
-analysis.
 
 \begin{figure}[t!]
 	\centering
-	\includegraphics[scale=0.4]{../code/plots/web_tool_full.png}
+	\includegraphics[scale=0.4]{../code/plots/web_tool_full_new.png}
 	\caption{A screenshot of the web tool for constructing the model. Users
 		can upload their dataset after which the tool creates an empty
 		graph and shows all pair of variables which are associated in
@@ -758,28 +873,55 @@ analysis.
 	\label{fig:web}
 \end{figure}
 
-\begin{figure}[t!]
-	\centering
-	\includegraphics[page=1]{fig5.pdf}
-	\caption{DAG learned using the adult income dataset using an LLM (GEMINI-1.5-flash) as the expert. The p-value threshold used is $ 0.05 $ and the measure of association threshold is $ 0. 1 $}
-	\label{fig:adult_llm}
-\end{figure}
+To enable researchers to easily apply our approach to their own datasets, we
+developed an interactive web-based tool (Figure~\ref{fig:web}) for constructing
+DAGs. Users can upload their dataset, which initializes an empty DAG with nodes
+corresponding to the dataset's variables. They can then specify a p-value
+threshold and a threshold for a minimal association strength. The tool 
+then visually highlights variable pairs
+with a residual association greater than the threshold, marking them with red
+edges; to avoid cluttering, no lines are drawn for residual associations that
+are statistically insignificant or below the specified threshold.
+The thickness of these edges represents the strength of association,
+helping users prioritize which variable pairs to address first; however, note that
+users are free to choose which variables to connect. Similarly, if
+an existing edge is found to be potentially superfluous (statistically insignificant),
+it is highlighted in black. Using this information, users can iteratively
+modify the model by adding or removing edges. The tool also computes the Root
+Mean Square Error of Approximation (RMSEA) based on Shipley's C test, a global test 
+of model fit based on the implied CIs \citep{Shipley2000}, to provide an estimate of the
+overall fit of the model. Once satisfied with the constructed DAG, users can
+export the model for further analysis.
 
 \section{Conclusions}
 
-Points:
-\begin{itemize}
-	\item As researchers prefer to anyways build models by hand, this is like a companion tool to help them in deciding the method.
-	\item Solves all the $ 3 $ issues outlined in the introduction.
-	\item Compared to other expert knowledge specification methods, users don't need to guess what information then need to provide as exact questions are asked. Also enables us to ask an LLM for it.
-\end{itemize}
+Researchers often prefer to construct DAGs manually rather than using automated
+algorithms due to practical challenges in applying automated methods. To assist
+this process, we developed an iterative structure learning method that
+integrates manual construction with data-driven feedback, bridging
+the gap between fully manual and fully automated methods.
+The idea of augmenting structure learning by domain knowledge is of course not 
+new. Common ways to provide such background knowledge are ``whitelists'' or 
+``blacklists'' of edges 
+\citep{scutari2010}, or specification
+of a ``tiered'' (e.g., temporal) structure between the variables \citep{Bang2023}.
+Compared to such approaches, where domain knowledge 
+is specified and supplied beforehand, the novelty 
+of our method lies in the interactive
+back-and-forth between domain knowledge and data, 
+which provably leads to the correct
+result in a polynomial amount of steps in the oracle settings we considered.
 
-Future work:
-\begin{itemize}
-	\item Add latent variables; extend to ADMGs.
-	\item Can potentially be combined with pairwise orientation methods.
-	\item Improvements in the web-interface.
-\end{itemize}
+Avenues for future work include extending this approach to latent variables 
+as encoded by acyclic directed mixed graphs (ADMGs). Further, if experts make 
+mistakes that lead to inconsistencies during model construction (such as cycles),
+this information could be leveraged in a more systematic way to allow backtracking
+and recovery.
+
+\begin{acknowledgements} 
+	We acknowledge the use of ChatGPT (\url{https://chatgpt.com/}) for
+	proofreading parts the manuscript.
+\end{acknowledgements}
 
 \bibliography{references}
 

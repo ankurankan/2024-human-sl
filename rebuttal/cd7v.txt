@@ -1,0 +1,94 @@
+Thank you for your review and constructive comments. We start by a response to
+Q5 (detailed comments) since it includes the most important point we wish to
+rebut.
+ 
+1. and 3. (causal sufficiency)
+
+We'd like to clarify why our algorithm does not contain an error: the example
+you're giving uses hidden latent variables, which we ruled out explicitly (see
+Background, "We consider causal DAGs that contain only observed variables.").
+We are aware that this algorithm does not simply work with latent variables, as
+we also state in the first sentence of the last paragraph ("Avenues for future
+work include extending this approach to latent variables as encoded by acyclic
+directed mixed graphs (ADMGs)."). In other words, we assume causal sufficiency,
+as you also pointed out.
+
+Let's consider your example with the latent variables added, let's call them A
+and B. Then the DAG becomes X <- A -> Y <- B -> W. It is indeed possible
+that Expand first adds edges X -> Y and W -> Y. But then it has to add the
+edges A -> { X, Y } and B -> { W, Y } next. Once that's done, the incorrect
+edges will be removed by Prune.
+
+The setting we're considering here is the same one considered by algorithms
+such as PC or GES, which are our baselines. It will be interesting to see how
+this could be generalized to more general graph classes, but we feel this is a
+relevant starting point. To avoid these assumptions being missed in a cursory
+reading of the paper, we will add a clearly labelled section "Assumptions", and
+we will also add the technical terms such as "causal sufficiency" to signal the
+setting to causal structure learning experts.
+
+We continue by a point-by-point reply to your other points.
+
+2. The notation $ D_G(X, Y, Z) = 0 $.
+
+In Section 3.1, we define $ D_G(X, Y, Z) = 1 $ when $ X $ and $ Y $ are
+d-separated by $ Z $ in G. Similarly, $ D_G(X, Y, Z) = 0 $ when $ X $ and $ Y $
+are d-connected conditioned on $ Z $ in $ G $. 
+
+We will move this definition to the notations paragraph in Section 2 and
+clarify the notation for both $ D_G = 0 $ and $ D_G = 1 $.
+
+4. Purpose of Section 3.3.
+
+Our proposed approach has some similarity to GES where we also add and prune
+edges. Based on earlier feedback, we added this section to make the difference
+between these two approaches clearer. You are correct that similar ideas could
+be used in score-based algorithms (see also comment by Reviewer yVjw) but the
+critical difference is that this would require an expert who can distinguish
+between direct and indirect effects, whereas we only need "ancestral experts".
+It would be interesting to explore in future work how ancestral experts could
+be used in score-based methods. 
+
+5. Human experiments for Section 5.2
+
+The GUI that we developed serves as a proof of concept for how to design an
+interface to obtain the required information from a human expert -- which was
+not trivial -- and will allow interested researchers to test this method
+relatively easily. We agree it would be interesting to perform experiments with
+humans, and we have begun to think about how such experiments could be designed
+and performed. There are significant challenges to overcome for such
+experiments -- for example, there is no human-interpretable dataset we're aware
+of where there is an accessible ground truth. We're currently thinking about
+using well-known signal transduction networks in molecular biology as a
+benchmark, which we could test on final-year Master students in our molecular
+biology program. However, we respectfully feel that this work would be out of
+scope for the present paper.
+
+Responses to Q4:
+
+1. Discussion of related work
+
+While previous work has explored incorporating expert knowledge through
+specifying constraints through fixed/forbidden edges[1] or temporal ordering[2]
+in automated causal discovery algorithms, our approach differs by providing an
+interactive method for integrating expert knowledge. While writing this paper
+we were not aware of any other work that explored a similar setting, however
+Reviewer yVjw pointed us to the paper by Kitson et al. (2025) which considered
+similar interactive user input but with a very different approach.
+
+We will include a reference and discussion of this related work in our
+Conclusions section.
+
+2. Discussion of limitations.
+
+We agree that it would be a good idea to add a dedicated paragraph on
+limitations to the discussion section. We will add an explicit mention of the
+causal sufficiency setting and a discussion of potential overfitting (indeed
+graphs built with this method should ideally be tested again on a different, or
+at least a held-out dataset). Whether or not there is a higher risk of
+overfitting with this method than with a fully automated causal discovery
+algorithm is not so clear to us, and we can add this as a point for future
+research.
+
+[1] Meek, Christopher. "Causal inference and causal explanation with background knowledge." In Proceedings of the Eleventh conference on Uncertainty in artificial intelligence (UAI'95). 
+[2] Bang, Christine W., and Vanessa Didelez. "Do we become wiser with time? On causal equivalence with tiered background knowledge." Uncertainty in Artificial Intelligence. PMLR, 2023.

@@ -10,21 +10,21 @@
 
 	% PC algorithm MI test 400 samples
 	\begin{tikzpicture}
-	\begin{scope}[xscale=1, yscale=1]
+	\begin{scope}[xscale=1, yscale=0.8]
 		\tikzstyle{every node}=[align=center, inner sep=1pt]
-		\node (ms)   at (0, 0)    {{Marital Status}};
-		\node (rln)  at (0, -0.8) {{Relationship}};
-		\node (sex)  at (0, -1.6) {{Sex}};
-		\node (hrpw) at (0, -2.4) {{Hours Per Week}};
+		\node (ms)   at (0, 0)    {\textrm{Marital Status}};
+		\node (rln)  at (0, -0.8) {\textrm{Relationship}};
+		\node (sex)  at (0, -1.6) {\textrm{Sex}};
+		\node (hrpw) at (0, -2.4) {\textrm{Hours Per Week}};
 
-		\node (age) at (2.5, 0)    {{Age}};
-		\node (inc) at (2.5, -0.8) {{Income}};
-		\node (occ) at (2.5, -1.6) {{Occupation}};
-		\node (wc)  at (2.5, -2.4) {{Work Class}};
+		\node (age) at (2.5, 0)    {\textrm{Age}};
+		\node (inc) at (2.5, -0.8) {\textrm{Income}};
+		\node (occ) at (2.5, -1.6) {\textrm{Occupation}};
+		\node (wc)  at (2.5, -2.4) {\textrm{Work Class}};
 
-		\node (nc)   at (5, 0)    {{Native Country}};
-		\node (race) at (5, -0.8) {{Race}};
-		\node (edu)  at (5, -1.6) {{Education}};
+		\node (nc)   at (5, 0)    {\textrm{Native Country}};
+		\node (race) at (5, -0.8) {\textrm{Race}};
+		\node (edu)  at (5, -1.6) {\textrm{Education}};
 
 		\draw [red, transform canvas={xshift=0.15em}] (ms) to (rln);
 		\draw [blue, transform canvas={xshift=-0.15em} ] (ms) to (rln);
@@ -32,8 +32,8 @@
 		\draw [red, transform canvas={xshift=0.15em}] (rln) to (sex);
 		\draw [blue, ->, >=stealth, transform canvas={xshift=-0.15em}] (sex) to (rln);
 
-		\draw [red, transform canvas={xshift=0.15em}] (occ) to (edu);
-		\draw [blue, ->, >=stealth, transform canvas={xshift=-0.15em}] (occ) to (edu);
+		\draw [red, transform canvas={yshift=0.15em}] (occ) to (edu);
+		\draw [blue, ->, >=stealth, transform canvas={yshift=-0.15em}] (occ) to (edu);
 
 
 		\draw [red] (inc) to (edu);
@@ -47,22 +47,21 @@
 
 	% PC algorithm Q3 test 400 samples
 	\begin{tikzpicture}
-	\begin{scope}
+	\begin{scope}[yscale=0.8]
 		\tikzstyle{every node}=[align=center, inner sep=0.2em]
+		\node (ms)   at (0, 0)    {\textrm{Marital Status}};
+		\node (rln)  at (0, -0.8) {\textrm{Relationship}};
+		\node (sex)  at (0, -1.6) {\textrm{Sex}};
+		\node (hrpw) at (0, -2.4) {\textrm{Hours Per Week}};
 
-		\node (ms)   at (0, 0)    {{Marital Status}};
-		\node (rln)  at (0, -0.8) {{Relationship}};
-		\node (sex)  at (0, -1.6) {{Sex}};
-		\node (hrpw) at (0, -2.4) {{Hours Per Week}};
+		\node (age) at (2.5, 0)    {\textrm{Age}};
+		\node (inc) at (2.5, -0.8) {\textrm{Income}};
+		\node (occ) at (2.5, -1.6) {\textrm{Occupation}};
+		\node (wc)  at (2.5, -2.4) {\textrm{Work Class}};
 
-		\node (age) at (2.5, 0)    {{Age}};
-		\node (inc) at (2.5, -0.8) {{Income}};
-		\node (occ) at (2.5, -1.6) {{Occupation}};
-		\node (wc)  at (2.5, -2.4) {{Work Class}};
-
-		\node (nc)   at (5, 0)    {{Native Country}};
-		\node (race) at (5, -0.8) {{Race}};
-		\node (edu)  at (5, -1.6) {{Education}};
+		\node (nc)   at (5, 0)    {\textrm{Native Country}};
+		\node (race) at (5, -0.8) {\textrm{Race}};
+		\node (edu)  at (5, -1.6) {\textrm{Education}};
 
 
 		\draw [red, transform canvas={xshift=0.15em}] (ms) to (rln);
@@ -109,22 +108,22 @@
 
 	% Hill Climb with BIC Score Q3 test 400 samples
 	\begin{tikzpicture}
-	\begin{scope}
+	\begin{scope}[yscale=0.8]
 		\tikzstyle{every node}=[align=center, inner sep=0.2em]
 
-		\node (ms)   at (0, 0)    {{Marital Status}};
-		\node (rln)  at (0, -0.8) {{Relationship}};
-		\node (sex)  at (0, -1.6) {{Sex}};
-		\node (hrpw) at (0, -2.4) {{Hours Per Week}};
+		\node (ms)   at (0, 0)    {\textrm{Marital Status}};
+		\node (rln)  at (0, -0.8) {\textrm{Relationship}};
+		\node (sex)  at (0, -1.6) {\textrm{Sex}};
+		\node (hrpw) at (0, -2.4) {\textrm{Hours Per Week}};
 
-		\node (age) at (2.5, 0)    {{Age}};
-		\node (inc) at (2.5, -0.8) {{Income}};
-		\node (occ) at (2.5, -1.6) {{Occupation}};
-		\node (wc)  at (2.5, -2.4) {{Work Class}};
+		\node (age) at (2.5, 0)    {\textrm{Age}};
+		\node (inc) at (2.5, -0.8) {\textrm{Income}};
+		\node (occ) at (2.5, -1.6) {\textrm{Occupation}};
+		\node (wc)  at (2.5, -2.4) {\textrm{Work Class}};
 
-		\node (nc)   at (5, 0)    {{Native Country}};
-		\node (race) at (5, -0.8) {{Race}};
-		\node (edu)  at (5, -1.6) {{Education}};
+		\node (nc)   at (5, 0)    {\textrm{Native Country}};
+		\node (race) at (5, -0.8) {\textrm{Race}};
+		\node (edu)  at (5, -1.6) {\textrm{Education}};
 
 		\draw [red, transform canvas={xshift=0.15em}] (ms) to (rln);
 		\draw [blue, transform canvas={xshift=-0.15em}] (ms) to (rln);

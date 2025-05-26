@@ -1,0 +1,71 @@
+We would like to thank the reviewer for taking the time to review our work and the
+valuable comments. Below, we provide responses to each concern.
+
+1. Empirical analysis with lower effective accuracy.
+
+In our simulation study, the lowest effective accuracy we considered was $ 0.4
+$, which corresponds to the expert having a true accuracy of $ 0.1 $ and
+randomly choosing between the correct edge orientation or no edge in the
+remaining cases. We believe that forcing the expert to always be wrong is not a
+realistic scenario and in practice, the worst an expert can do is to guess
+completely at random. Such behavior would correspond to an expected effective
+accuracy of $ 0.33 $. If we extrapolate the trends from Figure 4, we would
+expect that ExpertInLoop with effective accuracy of $ 0.33 $ would perform
+worse that all other algorithms considered. Therefore, the conclusions of our
+paper would remain the same. 
+
+We will add this additional scenario where the expert makes random guesses ($
+\alpha = 0 $ and $ \alpha_{\textit{eff}} = 0.33 $ to Figure 4.
+
+2. Dealing with conflicting information between data and expert knowledge.
+
+We agree that in real-world settings, expert knowledge may be inconsistent or
+conflict with the observed data. In practice, as most researchers construct
+DAGs manually solely based on their expert knowledge, model testing is an
+important step to verify the consistency of the model with the data and to
+identify any conflicts [1]. Any failed tests can help in uncovering either
+incorrect expert knowledge or presence of some artifacts in data. As our
+proposed approach works by continuously performing model tests to suggest
+modifications, it will similarly highlight conflicts between the data and
+expert knowledge. We believe that these are valuable insights for a researchers
+as it critiques their assumptions. Additionally, as our approach only gives
+suggestions for modifications, the researchers can still decide how to deal
+with these conflicts.
+
+Another example of conflicting information would be when experts at some point
+would themselves introduce a cycle in the graph. This can be dealt with in some
+cases but not all (see Weak Ancestral Oracle). In both the human-in-the-loop
+and LLM interfaces, we could explicitly alert the expert to the inconsistency
+and present the conflicting information with an explicit request for
+resolution. A formal analysis of such a conflict resolution mechanism would be
+an interesting question for future research. We can add some of this to the
+discussion section.
+
+3. More detailed discussion on using LLMs as experts.
+
+Our main goal with the paper is to present an approach to assist researchers in
+manual construction of their DAGs rather than an automated method. With the
+section on LLMs our goal was to highlight that there is a potential to use LLMs
+to automate the approach with LLMs acting as the expert. However, as that is
+not the main aim of the paper, we did not delve into more detailed analysis on
+the performance of the LLM and we think it is out of scope for this paper.
+
+4. Comparison to other expert knowledge based causal discovery algorithms.
+
+One of the key differences in our approach vs other expert knowledge based
+approaches is that our approach is interactive in nature whereas the other
+approaches require the user to specify all background knowledge for the
+algorithm. For example, in the case of TPC algorithm we would need to define a
+tier for each of the variables in the dataset, whereas in our case we would
+only need to answer the ancestral relationship between specific nodes in each
+iteration. Hence, the amount of expert knowledge required for TPC and our
+approach is different making it difficult to construct a setup where we can
+also control for the amount of expert knowledge provided to each of these
+approaches. Reviewer yVjw did point us to another paper that uses an
+interactive approach to integrating expert knowledge in causal discovery. We
+will add a reference and comparison to that paper in the Conclusion.
+
+5. Typos
+Thank you for pointing them out. We will fix them.
+
+[1] Ankan, Ankur, Inge MN Wortel, and Johannes Textor. "Testing graphical causal models using the R package “dagitty”." Current Protocols 1.2 (2021): e45.
