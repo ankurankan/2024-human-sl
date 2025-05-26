@@ -258,5 +258,5 @@ make_plots_v2 <- function(filename, plot_type){
 	ggsave("sid_ribbon.pdf", p_sid, height=2, width=3.37, units='in')
 }
 
-make_plots_v2(filename='results/sl_results_lin_reverse.csv', plot_type='ribbon')
+make_plots_v2(filename='results/sl_results_mixed.csv', plot_type='ribbon')
 
