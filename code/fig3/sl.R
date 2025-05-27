@@ -95,15 +95,15 @@ simulate_human_sl <- function(sim_data, true_dag, oracle_acc, max_iter=1e4){
 							p.value <- dagitty::ciTest(X=edge[1], Y=edge[2], Z=Z, sim_data, type='cis.pillai')
 							if (p.value["p.value"] > PVALUE_THRESHOLD){
 								temp_dag <- remove_edges(temp_dag, as.data.frame(list(X=edge[1], A='->', Y=edge[2])))
+								new_dag <- temp_dag
 							}
 							else{
-								browser()
-								print("Couldn't remove edge. Might be infinite loop.")
+								print("Couldn't remove edge from the cycle.")
+								blacklist_edges <- rbind(blacklist_edges, oracle_edge)
 							}
 						}
 					}
 				}
-				new_dag <- temp_dag
 				# if (dagitty::isAcyclic(temp_dag)){
 				# 	new_dag <- temp_dag
 				# }
@@ -269,7 +269,7 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 		print("Done with PC")
 
 		for (oracle_acc in oracle_accs){
-			human_dist <- t(future_replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
+			human_dist <- t(replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
 
 			human_mean <- apply(human_dist, mean, MARGIN=2)
 			human_sd <- apply(human_dist, sd, MARGIN=2)/sqrt(R)
@@ -292,7 +292,7 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 
 
 edge_probs <- seq(0.1, 0.9, 0.1)
-oracle_accs <- c(0.0, seq(0.1, 0.9, 0.2))
+oracle_accs <- seq(0.1, 0.9, 0.2)
 n_nodes <- 10
 R <- 30
 
