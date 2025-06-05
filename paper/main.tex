@@ -335,28 +335,33 @@ be prioritized.
 \label{sec:modification}
 
 We consider two models of a domain experts. Given two variables
-$ X $ and $ Y $ that are part of an unknown causal DAG $G$, an \emph{strong ancestral oracle} 
+$ X $ and $ Y $ that are part of a directed graph $G$, an \emph{strong ancestral oracle} 
 $\mathcal{A}_G$ is defined as:
 $$\mathcal{A}_G(X,Y)=\begin{cases}
  X \to Y & \textrm{if } X \in \textrm{An}_G(Y) \\
  X \gets Y & \textrm{if } Y \in \textrm{An}_G(X) \\
  \textrm{None} & \textrm{otherwise} \\
 \end{cases}$$
+Note that the ancestral oracle does not consider differences between direct and 
+indirect relationships: for any $G, H$ where $G^+=H^+$, we have $\mathcal{A}_G=\mathcal{A}_H$.
 
-whereas a \emph{weak ancestral oracle} is defined as:
-$$
-\mathcal{A}_G(X,Y)=\begin{cases}
- X \to Y & \textrm{if } X \in \textrm{An}_G(Y) \\
- X \gets Y & \textrm{if } Y \in \textrm{An}_G(X) \\
- \textrm{rand}(\{X \gets Y, X \to Y\}) & \textrm{otherwise} \\
-\end{cases}
-$$
-where $\textrm{rand}(S)$ denotes a uniformly chosen element of $S$.
-That is, our ancestral oracles only provide information on the direction of cause-effect
-relationships, and do not distinguish between direct and indirect effects. 
-The weak ancestral oracle is even unable to detect the absence of cause-effect
-relationships between two variables. Using such oracles for DAG construction  
-inherently risks that superfluous edges are created. 
+Experts can make mistakes. In our theoretical analysis, we will model two different types
+of mistakes that the algorithm can recover from. 
+
+\begin{definition}
+Let $G=(V,E_G)$ be a DAG let and $H=(V,E_H)$ be a directed graph (possibly cyclic) 
+such that $E_G \subseteq E_H$. Then $\mathcal{A}_H$
+is called a \emph{$G$-consistent ancestral oracle}. Further, 
+if $H=(V,E_H)$ is a supergraph of $G$ that contains at least one cycle, then 
+$\mathcal{A}_H$ is called a \emph{$G$-consistent ancestral oracle} with respect to $G$.
+\end{definition}
+
+These two oracles still provide correct information on all ancestral relationships that are 
+present in $G$, but cannot reliably detect the \emph{absence} of ancestral relationships.
+Further, the inconsistent ancestral oracle sometimes contradicts itself: there are at least two
+variables $X,Y$ where its information implies both a causal effect of $X$ on $Y$ and a reverse 
+causal effect of $Y$ on $X$. Therefore, if we use such oracles for DAG construction, we will
+introduce superfluous edges into our graph.
 
 Our approach uses the data to decide where to add edges and which edges 
 are superfluous and can be removed.
@@ -364,7 +369,7 @@ As a useful abstraction, let us assume that we
 have access to a second oracle $\mathcal{D}_G$ than can answer d-separation
 queries with respect to the unknown target graph:
 $\mathcal{D}_G(X,Y,\mathbf{Z})=1$ iff $X$ and $Y$ are $d$-separated by $\mathbf{Z}$ in 
-$G$. These are the standard oracles considered in constraint-based structure
+$G$, and $0$ otherwise. These are the standard oracles considered in constraint-based structure
 learning algorithms, such as the PC algorithm \cite{Spirtes2001}. 
 
 Based on these two oracles, we now define two core procedures that
@@ -390,13 +395,9 @@ graph.
         let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
         \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
 	    $e \gets \mathcal{A}_G(X, Y)$ \;
-	    \uIf{ $(V,E \cup L \cup e)$ is acyclic }{
-            	$L \gets L \cup  \{ e \} $\;
-	    } \Else {
-            	$L \gets L \cup  \{ \textrm{reverse}(e) \} $\;
-	    }
+            $L \gets L \cup  \{ e \} $\;
         }
-	\If{$|L|\geq k$}{\KwGoTo 12\;}
+	\If{$|L|\geq k$}{\KwGoTo 13\;}
     }
     add all edges in $L$ to $E$\;
     \Return{$(V,E)$}\;
@@ -435,26 +436,15 @@ Since we start from an empty graph, every pair of vertices $X, Y$ where
 the result is $G^+$. 
 \end{proof}
 
+The following is immediately obtained as a corollary. 
+
 \begin{proposition}
 For a conditional independence oracle
- $\mathcal{D}_G$ and a weak ancestral oracle $\mathcal{A}_G$, 
-$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G, \emptyset, \infty)
-\supseteq G^+$.
+ $\mathcal{D}_G$ and a $G$-consistent ancestral oracle $\mathcal{A}_H$, 
+$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_H, \emptyset, \infty)
+=H^+ \supseteq G^+$.
 \label{prop:weakexpand}
 \end{proposition}
-
-\begin{proof}
-Every pair of vertices $X, Y$ that are $d$-connected 
-in $G$ are now connected by an edge 
-during $\textsc{Expand}$. For $X \in \textrm{An}_G(Y)$, the edge is 
-$X \to Y$ like when using a strong ancestral oracle; 
-since only correctly oriented
-edges are added between ancestor-descendant pairs, 
-such additions never create cycles.
-For $X, Y$ that are only $d$-connected throug common ancestors, 
-an arbitrary edge is added in a manner that preserves acyclicity.
-The result is a supergraph of $G^+$.
-\end{proof}
 
 
 \begin{algorithm}[h]
@@ -508,9 +498,9 @@ By combining Propositions~\ref{prop:strongexpand}, \ref{prop:weakexpand} and
 \ref{prop:prune}, we immediately obtain the following:
 
 \begin{theorem}
-Given a d-separation oracle $\mathcal{D}_G$ and a strong or weak 
-ancestral oracle $\mathcal{A}_G$, 
-$\textsc{Prune}(\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_G,\emptyset,\infty),\mathcal{D}_G)=G.$
+Given a d-separation oracle $\mathcal{D}_G$ and a $G$-consistent 
+ancestral oracle $\mathcal{A}_H$, 
+$\textsc{Prune}(\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_H,\emptyset,\infty),\mathcal{D}_G)=G.$
 \end{theorem}
 
 Since we require expert knowledge only in the $\textsc{Expand}$ 
