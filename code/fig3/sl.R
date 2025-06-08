@@ -88,11 +88,12 @@ simulate_human_sl <- function(sim_data, true_dag, oracle_acc, max_iter=1e4){
 					for (i in 1:(length(cycle)-1)){
 						edge = c(cycle[i], cycle[i+1])
 						if ((edge[1] == oracle_edge[1]) & (edge[2] == oracle_edge[2])){
-							invisible()	
+							invisible()
 						}
 						else{
-							Z = setdiff(cycle, c(edge[1], edge[2]))
-							p.value <- dagitty::ciTest(X=edge[1], Y=edge[2], Z=Z, sim_data, type='cis.pillai')
+							adj_set <- setdiff(parents(temp_dag, edge[2]), edge[1])
+							Z = setdiff(cycle, c(edge[1], edge[2]))[1] # Take any variable on the cycle
+							p.value <- dagitty::ciTest(X=edge[1], Y=edge[2], Z=union(adj_set, Z), sim_data, type='cis.pillai')
 							if (p.value["p.value"] > PVALUE_THRESHOLD){
 								temp_dag <- remove_edges(temp_dag, as.data.frame(list(X=edge[1], A='->', Y=edge[2])))
 								new_dag <- temp_dag
@@ -269,7 +270,7 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 		print("Done with PC")
 
 		for (oracle_acc in oracle_accs){
-			human_dist <- t(replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
+			human_dist <- t(future_replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
 
 			human_mean <- apply(human_dist, mean, MARGIN=2)
 			human_sd <- apply(human_dist, sd, MARGIN=2)/sqrt(R)
