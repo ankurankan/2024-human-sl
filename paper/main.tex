@@ -390,19 +390,46 @@ graph.
         let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
         \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
 	    $e \gets \mathcal{A}_G(X, Y)$ \;
-	    \uIf{ $(V,E \cup L \cup e)$ is acyclic }{
-            	$L \gets L \cup  \{ e \} $\;
-	    } \Else {
-            	$L \gets L \cup  \{ \textrm{reverse}(e) \} $\;
+	    $L \gets L \cup \{ e \} $ \;
+	    \If{ $ (V, E \cup L) $ is cyclic }{
+		    $ L \gets \textsc{FixCycles}(V, E, L, e, \mathcal{D}_G) $ \;
 	    }
+	    % \If{ $(V,E \cup L \cup e)$ is acyclic }{
+            % 	$L \gets L \cup  \{ e \} $\;
+	    % } \Else {
+            % 	$L \gets L \cup  \{ \textrm{reverse}(e) \} $\;
+	    % }
         }
-	\If{$|L|\geq k$}{\KwGoTo 12\;}
+	\If{$|L|\geq k$}{\KwGoTo 16\;}
     }
     add all edges in $L$ to $E$\;
     \Return{$(V,E)$}\;
 }
 \caption{Adding edges based on data and domain knowledge.}
 \label{algo:expand}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\DontPrintSemicolon
+\SetAlgoLined
+\SetKwFunction{FixCycle}{FixCycle}
+\SetKw{KwGoTo}{go to}
+\SetKwProg{Fn}{Function}{:}{}
+\Fn{{\sc FixCycles}($V, E, L, e, \mathcal{D}_G $)}{
+	$ u, v \gets e $ \;
+	\ForEach {$ P = \{ v \rightarrow x_1, x_1 \rightarrow x_2, \cdots,  x_{k-1} \rightarrow x_k, x_k \rightarrow u \} $ in ($V, E \cup L$) }{
+		\ForEach {$ x_i \rightarrow x_j $ in $ P $}{
+        	let $\mathbf{Z}$ be a set that $d$-separates $x_i$ and $x_j$ in $(V, E \cup L)$\;
+		\If {$ \mathcal{D}_G(X, Y, \mathbf{Z}) = 0 $}{
+			$ L \gets L - \{ x_i \rightarrow x_j \} $ \;
+
+		}
+	}
+	}
+	\Return $ L $ \;
+}
+\caption{Fixing cycles by removing incorrect edges.}
+\label{algo:fix_cycles}
 \end{algorithm}
 
 $\textsc{Expand}$ takes an initial list of edges and searches for 
@@ -451,7 +478,7 @@ $X \to Y$ like when using a strong ancestral oracle;
 since only correctly oriented
 edges are added between ancestor-descendant pairs, 
 such additions never create cycles.
-For $X, Y$ that are only $d$-connected throug common ancestors, 
+For $X, Y$ that are only $d$-connected through common ancestors, 
 an arbitrary edge is added in a manner that preserves acyclicity.
 The result is a supergraph of $G^+$.
 \end{proof}
@@ -472,7 +499,7 @@ The result is a supergraph of $G^+$.
         }
     }
     remove all edges in $L$ from $G$\;
-    \Return{$(V,E)$}\;
+    \Return{$(V, E)$}\;
 }
 \caption{Pruning superfluous edges}
 \label{algo:prune}
