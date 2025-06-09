@@ -135,7 +135,7 @@ library(directlabels)
 make_plots_v2 <- function(filename, plot_type){
 	d <- read.csv(filename, row.names=1)
 	# d <- d[d$edge_prob %in% c(0.1, 0.3, 0.5, 0.7, 0.9), ]
-	d <- d[d$oracle_acc %in% c(0.1, 0.3, 0.5, 0.7, 0.9), ]
+	d <- d[d$oracle_acc %in% seq(0, 0.9, 0.2), ]
 
 	d$edge_prob <- sapply(d$edge_prob, as.character)
 
