@@ -350,10 +350,10 @@ of mistakes that the algorithm can recover from.
 
 \begin{definition}
 Let $G=(V,E_G)$ be a DAG let and $H=(V,E_H)$ be a directed graph (possibly cyclic) 
-such that $E_G \subseteq E_H$. Then $\mathcal{A}_H$
-is called a \emph{$G$-consistent ancestral oracle}. Further, 
-if $H=(V,E_H)$ is a supergraph of $G$ that contains at least one cycle, then 
-$\mathcal{A}_H$ is called a \emph{$G$-consistent ancestral oracle} with respect to $G$.
+such that $E_{G^+} \subseteq E_{H^+}$. Then $\mathcal{A}_H$
+is called a \emph{$G$-compatible ancestral oracle}. Further, 
+if $H=(V,E_H)$ is an acyclic supergraph of $G$, then 
+$\mathcal{A}_H$ is called a \emph{acyclic $G$-compatible ancestral oracle} with respect to $G$.
 \end{definition}
 
 These two oracles still provide correct information on all ancestral relationships that are 
@@ -471,7 +471,7 @@ The following is immediately obtained as a corollary.
 
 \begin{proposition}
 For a conditional independence oracle
- $\mathcal{D}_G$ and a $G$-consistent ancestral oracle $\mathcal{A}_H$, 
+ $\mathcal{D}_G$ and an acyclic $G$-compatible ancestral oracle $\mathcal{A}_H$, 
 $\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_H, \emptyset, \infty)
 =H^+ \supseteq G^+$.
 \label{prop:weakexpand}
