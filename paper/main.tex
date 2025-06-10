@@ -555,10 +555,10 @@ DAG construction algorithm.
 
 \Fn{{\sc ExpertInLoop}($V,\mathcal{D}_G,\mathcal{A}_G$)}{
 $E_p \gets \emptyset$ \tcc{Current edges} 
-$B \gets \emptyset$ \tcc{Edges that were pruned} 
+$B \gets \emptyset$ \tcc{Edges that were pruned or removed from cycles} 
 \Repeat{ $E=E_p$ }{
 	$E \gets E_p$ \;
-	$(V,E) \gets \textsc{Expand}(V,E,\mathcal{D}_G,\mathcal{A}_G,B,1)$ \;
+	$(V,E,B<D-s>) \gets \textsc{Expand}(V,E,\mathcal{D}_G,\mathcal{A}_G,B,1)$ \;
 	$(V,E_p) \gets \textsc{Prune}(V,E,\mathcal{D}_G)$ \;
 	$B \gets B \cup \{ E_p \setminus E \} $
 }
