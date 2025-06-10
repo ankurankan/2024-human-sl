@@ -62,16 +62,15 @@
 \maketitle
 
 \begin{abstract}
-	Numerous causal discovery algorithms were developed to automatically learn
-	directed acyclic graphs (DAGs) and other causal models from data. However,
-	their adoption in applied domains remains limited, as researchers often
-	prefer to construct DAGs manually based on domain knowledge. This
-	preference arises due to several practical challenges with automated
-	algorithms, such as their tendency to produce results that contradict
-	obvious domain knowledge and their inability to distinguish Markov equivalent
-	models. To assist researchers in constructing DAGs manually, we propose an iterative
-	structure learning approach that combines domain knowledge with
-	data-driven insights. Our method leverages conditional independence
+	Many researchers construct directed acyclic graph (DAG) models manually
+	based on domain knowledge. 
+	Although numerous causal discovery algorithms were developed to automatically learn
+	DAGs and other causal models from data, these remain challenging to 
+	use due to their tendency to produce results that contradict
+	domain knowledge, among other issues. Here we propose a hybrid, 
+	iterative structure learning approach that combines domain knowledge with
+	data-driven insights to assist researches in constructing DAGs.
+	Our method leverages conditional independence
 	testing to iteratively identify variable pairs where an edge is
 	either missing or superfluous. Based on this information, we can choose
 	to add missing edges with appropriate orientation based on domain
@@ -91,15 +90,14 @@ Understanding cause-and-effect relationships between variables is a fundamental
 objective in many scientific fields. These relationships reveal the mechanisms
 behind observed phenomena and guide effective interventions or policy
 decisions. Causal discovery methods aim to discover such relationships among
-random variables using observational data. In the DAG literature, the primary
-focus has been on developing automated algorithms to learn causal structures
-from datasets. These efforts have led to numerous causal discovery algorithms,
-such as constraint-based methods like PC algorithm \citep{Spirtes2001,KalischB07} 
+random variables using observational data. These
+include constraint-based methods like PC algorithm \citep{Spirtes2001,KalischB07} 
 and Fast Causal Inference \citep{Spirtes2000}), score-based methods such as Hill-Climb
 Search and Greedy Equivalence Search \citep{Chickering2002}, and continuous
 optimization-based methods like NOTEARS \citep{Zheng2018} and DAGMA
-\citep{Bello2022}. Despite significant progress in automated causal discovery,
-their adoption in applied research has been limited. Challenges encountered with existing
+\citep{Bello2022}. Despite this significant body of work,
+the adoption of causal discovery methods in observational research has so far 
+been limited. Challenges encountered with existing
 causal discovery algorithms in practice include but are not limited to:
 
 \begin{enumerate}
@@ -113,7 +111,7 @@ causal discovery algorithms in practice include but are not limited to:
 		difficult to assess reliability. Additionally, the absence of
 		robust performance evaluation methods for any given dataset
 		further reduce the confidence in their outputs. A recent paper
-		therefore advised Epidemiologists to not attempt using structure
+		 advised Epidemiologists to not attempt using structure
 		learning algorithms without help of an expert \citep{Gururaghavendran_2024}.
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} As multiple
 		DAGs can be faithful to a given observational dataset, automated 
@@ -216,7 +214,7 @@ random variables by $ \bm{X} = \{X_1, \cdots, X_k\} $, where $ \rvert \bm{X}
 deviation of $ X $ as $ \sigma_X $, the covariance between variables $ X $ and
 $ Y $ as $ \mathrm{cov}(X, Y) $, a covariance matrix as $ \Sigma $, and the
 entry corresponding to the covariance between $ X $ and $ Y $ as $ \Sigma_{XY}
-$. We consider causal DAGs that contain only observed variables. A DAG $ G =
+$. A DAG $ G =
 (V, E) $ is an acyclic directed graph whose nodes $ V $ corresponding to random
 variables and whose edges $ E $ represent direct causal relationships
 \cite{Pearl2009}. For an edge $e=X \to Y$, $\textrm{reverse}(e)=Y \to X$. The
@@ -233,6 +231,16 @@ $, if for a path $ \pi(X, Y) $ (i) for every collider structure ($ V_1
 structure ($ V_1 \rightarrow V_2 \rightarrow V_3 $, $ V_1 \leftarrow V_2
 \rightarrow V_3 $), $ V_2 \not \in \bm{Z} $. $ X $ and $ Y $ are d-separated
 given $ \bm{Z} $ if no d-connecting path exist between them.
+
+\subsection{Assumptions} 
+In this paper, we consider the structure learning problem under the widely
+known \emph{causal Markov}, \emph{causal sufficiency} and \emph{faithfulness}
+assumptions \citep{Spirtes1993}. These entail that there exists a 
+DAG $G$ on the variables $\bm{X}$ whose implied $d$-separation statements coincide
+exactly with the conditional independence relationships among the variables 
+in $\bm{X}$, and for which all direct common causes of variables in $\bm{X}$ are 
+also included in $\bm{X}$. These are the same assumptions made by the structure
+learning algorithms we consider in this paper, such as the PC algorithm \citep{Spirtes1993}.
 
 \subsection{Conditional Independence Tests}
 \label{sec:ci_tests}
@@ -335,9 +343,10 @@ be prioritized.
 
 \label{sec:modification}
 
-We consider two models of a domain experts. Given two variables
-$ X $ and $ Y $ that are part of a directed graph $G$, an \emph{strong ancestral oracle} 
-$\mathcal{A}_G$ is defined as:
+We model domain experts as procedures that take two variables $X$ and $Y$ that are assumed 
+to be part of a DAG $G$ and 
+provide information on the ancestral relationship between them. First, 
+a \emph{strong ancestral oracle} $\mathcal{A}_G$ is defined as:
 $$\mathcal{A}_G(X,Y)=\begin{cases}
  X \to Y & \textrm{if } X \in \textrm{An}_G(Y) \\
  X \gets Y & \textrm{if } Y \in \textrm{An}_G(X) \\
@@ -359,9 +368,8 @@ $\mathcal{A}_H$ is called a \emph{acyclic $G$-compatible ancestral oracle} with 
 
 These two oracles still provide correct information on all ancestral relationships that are 
 present in $G$, but cannot reliably detect the \emph{absence} of ancestral relationships.
-Further, the inconsistent ancestral oracle sometimes contradicts itself: there are at least two
-variables $X,Y$ where its information implies both a causal effect of $X$ on $Y$ and a reverse 
-causal effect of $Y$ on $X$. Therefore, if we use such oracles for DAG construction, we will
+We even allow our oracles to contradict themselves by giving responses that would lead to a 
+cyclic graph when combined. If we use such oracles for DAG construction, we will
 introduce superfluous edges into our graph.
 
 Our approach uses the data to decide where to add edges and which edges 
@@ -371,13 +379,12 @@ have access to a second oracle $\mathcal{D}_G$ than can answer d-separation
 queries with respect to the unknown target graph:
 $\mathcal{D}_G(X,Y,\mathbf{Z})=1$ iff $X$ and $Y$ are $d$-separated by $\mathbf{Z}$ in 
 $G$, and $0$ otherwise. These are the standard oracles considered in constraint-based structure
-learning algorithms, such as the PC algorithm \cite{Spirtes2001}. 
+learning algorithms, such as the PC algorithm \citep{Spirtes2001}. 
 
-Based on these two oracles, we now define two core procedures that
-iteratively change a current DAG structure. The procedure 
+We now define two core procedures that use ancestral and $d$-separation queries
+to iteratively change a current DAG structure. The procedure 
 \textsc{Expand} (Algorithm~\ref{algo:expand}) uses CI  
-information (supplied in this case by the d-separation oracle) 
-to search for unexplained associations in the graph and 
+information to search for unexplained associations in the graph and 
 then uses domain knowledge to determine ancestry. The 
 procedure \textsc{Prune} (Algorithm~\ref{algo:prune}) uses
 CI information to remove superfluous edges from the
@@ -398,7 +405,9 @@ graph.
 	    $e \gets \mathcal{A}_G(X, Y)$ \;
 	    $L \gets L \cup \{ e \} $ \;
 	    \If{ $ (V, E \cup L) $ is cyclic }{
-		    $ L \gets \textsc{FixCycles}(V, E, L, e, \mathcal{D}_G) $ \;
+		    $ L' \gets \textsc{FixCycles}(V, E \cup L, \mathcal{D}_G) $ \;
+		    $ B \gets B \cup (L \setminus L') $ \;
+		    $ L \gets L'$
 	    }
 	    % \If{ $(V,E \cup L \cup e)$ is acyclic }{
             % 	$L \gets L \cup  \{ e \} $\;
@@ -406,10 +415,10 @@ graph.
             % 	$L \gets L \cup  \{ \textrm{reverse}(e) \} $\;
 	    % }
         }
-	\If{$|L|\geq k$}{\KwGoTo 16\;}
+	\If{$|L|\geq k$}{\KwGoTo 18\;}
     }
     add all edges in $L$ to $E$\;
-    \Return{$(V,E)$}\;
+    \Return{$(V,E,B)$}\;
 }
 \caption{Adding edges based on data and domain knowledge.}
 \label{algo:expand}
@@ -421,18 +430,16 @@ graph.
 \SetKwFunction{FixCycle}{FixCycle}
 \SetKw{KwGoTo}{go to}
 \SetKwProg{Fn}{Function}{:}{}
-\Fn{{\sc FixCycles}($V, E, L, e, \mathcal{D}_G $)}{
-	$ u, v \gets e $ \;
-	\ForEach {$ P = \{ v \rightarrow x_1, x_1 \rightarrow x_2, \cdots,  x_{k-1} \rightarrow x_k, x_k \rightarrow u \} $ in ($V, E \cup L$) }{
-		\ForEach {$ x_i \rightarrow x_j $ in $ P $}{
-        	let $\mathbf{Z}$ be a set that $d$-separates $x_i$ and $x_j$ in $(V, E \cup L)$\;
-		\If {$ \mathcal{D}_G(X, Y, \mathbf{Z}) = 0 $}{
-			$ L \gets L - \{ x_i \rightarrow x_j \} $ \;
+\Fn{{\sc FixCycles}($V, E, \mathcal{D}_G $)}{
+		$R \gets \emptyset$ \; 
+		\ForEach {$ x_i \rightarrow x_j $ on a cycle in $ (V,E) $}{
+		\If {there exists a set $\mathbf{Z}\subseteq\mathbf{X}$ where $\mathcal{D}_G(x_i, x_j)=1$
+}{
+			$ R \gets R \cup \{ x_i \rightarrow x_j \} $ \;
 
 		}
 	}
-	}
-	\Return $ L $ \;
+	\Return $ L \setminus R $ \;
 }
 \caption{Fixing cycles by removing incorrect edges.}
 \label{algo:fix_cycles}
