@@ -361,8 +361,7 @@ of mistakes that the algorithm can recover from.
 \begin{definition}
 Let $G=(V,E_G)$ be a DAG let and $H=(V,E_H)$ be a directed graph (possibly cyclic) 
 such that $E_{G^+} \subseteq E_{H^+}$. Then $\mathcal{A}_H$
-is called a \emph{$G$-compatible ancestral oracle}. Further, 
-if $H=(V,E_H)$ is an acyclic supergraph of $G$, then 
+is called a \emph{$G$-compatible ancestral oracle}. If $H$ is furthermore acyclic, then 
 $\mathcal{A}_H$ is called a \emph{acyclic $G$-compatible ancestral oracle} with respect to $G$.
 \end{definition}
 
@@ -432,10 +431,10 @@ graph.
 \SetKwProg{Fn}{Function}{:}{}
 \Fn{{\sc FixCycles}($V, E, \mathcal{D}_G $)}{
 		$R \gets \emptyset$ \; 
-		\ForEach {$ x_i \rightarrow x_j $ on a cycle in $ (V,E) $}{
-		\If {there exists a set $\mathbf{Z}\subseteq\mathbf{X}$ where $\mathcal{D}_G(x_i, x_j)=1$
+		\ForEach {$ X \rightarrow Y $ on a cycle in $ (V,E) $}{
+		\If {there exists a set $\mathbf{Z}\subseteq\mathbf{X}$ where $\mathcal{D}_G(X, Y, \mathbf{Z})=1$
 }{
-			$ R \gets R \cup \{ x_i \rightarrow x_j \} $ \;
+			$ R \gets R \cup \{ X \rightarrow Y \} $ \;
 
 		}
 	}
@@ -450,11 +449,13 @@ any unconnected vertex pairs that are not connected but where the
 d-separation oracle indicates a residual association not explained 
 by other paths.
 The parameter $B$ specifies a ``black list''
-of vertex pairs that must not be connected, 
-whereas $k$
+of vertex pairs that must not be connected, which is important
+to prevent edges that were removed from cycles to be added again 
+and will have another important role in the overall algorithm.
+In addition, $k$
 can be used to limit the maximum amount of edges 
-to be added by this procedure; the usefulness of the $B$ and $k$
-parameters will become clear soon.
+to be added by this procedure; it will become clear soon why
+this is useful.
 
 Let $G^+$ denote the transitive closure of $G$ (the graph in which 
 there is a direct edge $X \to Y$ whenever $X \in \textrm{An}_G(Y)$). 
@@ -485,6 +486,26 @@ $\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_H, \emptyset, \infty)
 \label{prop:weakexpand}
 \end{proposition}
 
+When using experts that generate cyclic graphs, edges are pruned to 
+break these cycles, which can lead to a more sparse result.
+
+\begin{proposition}
+For a conditional independence oracle
+ $\mathcal{D}_G$ and a $G$-compatible ancestral oracle $\mathcal{A}_H$ where
+$H$ contains at least one cycle,
+let $\tilde{G}=\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_H, \emptyset, \infty)$
+Then $H^+ \supsetneq \tilde{G} \supseteq G$. 
+\label{prop:weakexpand:cyclic}
+\end{proposition}
+
+\begin{proof}
+All edges in the skeleton of $G$ are added during $\textsc{Expand}$ with the 
+correct orientation and cannot be removed by $\textsc{FixCycles}$. Therefore, the result
+is a supergraph of $G$. If cycles are created during $\textsc{Expand}$, then every 
+cycle contains at least one edge that is not the skeleton of $G$, otherwise $G$ itself
+would be cyclic. At least one edge of every cycle is therefore removed by
+ $\textsc{FixCycles}$, making the result acyclic again.
+\end{proof}
 
 \begin{algorithm}[h]
 \DontPrintSemicolon
@@ -533,13 +554,15 @@ Therefore, all edges not in the skeleton of $G$ are
 removed.
 \end{proof}
 
-By combining Propositions~\ref{prop:strongexpand}, \ref{prop:weakexpand} and 
+By combining Propositions~\ref{prop:strongexpand}, \ref{prop:weakexpand}, 
+\ref{prop:weakexpand:cyclic} and 
 \ref{prop:prune}, we immediately obtain the following:
 
 \begin{theorem}
 Given a d-separation oracle $\mathcal{D}_G$ and a $G$-consistent 
 ancestral oracle $\mathcal{A}_H$, 
-$\textsc{Prune}(\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_H,\emptyset,\infty),\mathcal{D}_G)=G.$
+let $(V',E',B)=\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_H,\emptyset,\infty)$.
+Then $\textsc{Prune}(V',E',\mathcal{D}_G)=G.$
 \end{theorem}
 
 Since we require expert knowledge only in the $\textsc{Expand}$ 
@@ -555,10 +578,10 @@ DAG construction algorithm.
 
 \Fn{{\sc ExpertInLoop}($V,\mathcal{D}_G,\mathcal{A}_G$)}{
 $E_p \gets \emptyset$ \tcc{Current edges} 
-$B \gets \emptyset$ \tcc{Edges that were pruned or removed from cycles} 
+$B \gets \emptyset$ \tcc{Edges that were pruned or removed from cycle} 
 \Repeat{ $E=E_p$ }{
 	$E \gets E_p$ \;
-	$(V,E,B<D-s>) \gets \textsc{Expand}(V,E,\mathcal{D}_G,\mathcal{A}_G,B,1)$ \;
+	$(V,E,B) \gets \textsc{Expand}(V,E,\mathcal{D}_G,\mathcal{A}_G,B,1)$ \;
 	$(V,E_p) \gets \textsc{Prune}(V,E,\mathcal{D}_G)$ \;
 	$B \gets B \cup \{ E_p \setminus E \} $
 }
@@ -594,6 +617,10 @@ no further changes are made, and the loop terminates.
 \label{thm:itworks}
 \end{proof} 
 
+We note that the general property of Algorithm~\ref{algo:expert} that 
+each possible edge can be added and removed at most once, which guarantees
+that the algorithm eventually terminates, remains valid even if the oracles make
+arbitrary mistakes. This is crucial when using the algorithm in practice.
 
 \begin{figure}[t!]
 	\begin{subfigure}{0.125 \textwidth}
@@ -695,6 +722,12 @@ we can use the effect sizes shown in Section~\ref{sec:ci_tests}.
 The algorithm selects the edge that has the highest absolute residual 
 association, resulting
 in prioritization of edges that contribute the most to improving the model.
+
+In addition to prioritizing edges to add or remove, the ranking could also
+be used to break cycles when CI tests fail to identify the edges that are not
+in the skeleton during the procedure  $\textsc{FixCycle}$, which could happen
+due to finite sample effects. In that case, removing edges that correspond to 
+weak associations may be preferable to keeping the cycles in the model.
 
 \subsection{Comparison to Score-Based Methods}
 
