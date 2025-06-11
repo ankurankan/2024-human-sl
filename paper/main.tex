@@ -355,22 +355,33 @@ $$\mathcal{A}_G(X,Y)=\begin{cases}
 Note that the ancestral oracle does not consider differences between direct and 
 indirect relationships: for any $G, H$ where $G^+=H^+$, we have $\mathcal{A}_G=\mathcal{A}_H$.
 
-Experts can make mistakes. In our theoretical analysis, we will model two different types
-of mistakes that the algorithm can recover from. 
+Experts can make mistakes. In our analysis, we will consider experts that
+essentially ``make up'' non-existing causal relationships, but do provide 
+correct answers on the directionality of existing ones. 
 
 \begin{definition}
-Let $G=(V,E_G)$ be a DAG let and $H=(V,E_H)$ be a directed graph (possibly cyclic) 
-such that $E_{G^+} \subseteq E_{H^+}$. Then $\mathcal{A}_H$
-is called a \emph{$G$-compatible ancestral oracle}. If $H$ is furthermore acyclic, then 
-$\mathcal{A}_H$ is called a \emph{acyclic $G$-compatible ancestral oracle} with respect to $G$.
+Let $G=(V,E_G)$ and $H=(V,E_H)$ be two DAGs. 
+The \emph{$G$-compatible ancestral oracle} $\mathcal{A}_{G\mid H}$ is defined by
+$$\mathcal{A}_{G\mid H}(X,Y)=\begin{cases}
+ X \to Y & \textrm{if } X \in \textrm{An}_G(Y) \\
+ X \gets Y & \textrm{if } Y \in \textrm{An}_G(X) \\
+ \mathcal{A}_{H}(X,Y) & \textrm{otherwise} \\
+\end{cases}$$
+Consider the graph $G\mid H$ containing the edges $ \mathcal{A}_{G\mid H}(X,Y)$ for all 
+pairs $(X, Y) \in V \times V$.   
+If $G\mid H$ is acyclic, then 
+$\mathcal{A}_H$ is called an \emph{acyclic $G$-compatible ancestral oracle}.
 \end{definition}
 
-These two oracles still provide correct information on all ancestral relationships that are 
-present in $G$, but cannot reliably detect the \emph{absence} of ancestral relationships.
-We even allow our oracles to contradict themselves by giving responses that would lead to a 
-cyclic graph when combined. If we use such oracles for DAG construction, we will
-introduce superfluous edges into our graph.
+Note that a $G$-compatible oracle can contradict itself. Consider 
+$V=(X,Y,Z)$, $G=(V,\{X \to Y\})$ and $H=(V,\{Y \to Z, Z \to X\})$.
+This gives $\mathcal{A}_{G \mid H}(Y,Z) = Y \to Z$  
+ and $\mathcal{A}_{G \mid H}(X,Z) = Z \to X$ which imply that $Y$ causes $X$, 
+in contradiction to
+ $\mathcal{A}_{G \mid H}(X,Y) = X \to Y$. Still, it will turn out that we can recover
+from such errors.
 
+Generally, using ancestral oracles for DAG construction will introduce superfluous edges.
 Our approach uses the data to decide where to add edges and which edges 
 are superfluous and can be removed.
 As a useful abstraction, let us assume that we
@@ -395,17 +406,17 @@ graph.
 \SetKwFunction{Expand}{Expand}
 \SetKw{KwGoTo}{go to}
 \SetKwProg{Fn}{Function}{:}{}
-\Fn{{\sc Expand}($V,E,\mathcal{D}_G,\mathcal{A}_G$,$B$,$k$)}{
+\Fn{{\sc Expand}($V,E,\mathcal{D},\mathcal{A}$,$B$,$k$)}{
     let $L \gets \{\}$\;
     \ForEach{$X, Y$ where $X \to Y \notin E \cup B $ and $Y \to X \notin E \cup B$}{
         let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
-        \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
-	    $L \gets L \cup \mathcal{A}_G(X, Y) $ \;
+        \If{$\mathcal{D}(X, Y, \mathbf{Z}) = 0$}{
+	    $L \gets L \cup \mathcal{A}(X, Y) $ \;
         }
 	\If{$|L|\geq k$}{\KwGoTo 12\;}
     }
-    $ R \gets \textsc{FixCycles}(V, E \cup L, \mathcal{D}_G) $ \; 
-    $ B \gets B \cup R \; ; \; L \gets L \setminus R \; ; \;  E \gets (E \cup L) \setminus B$ \;
+    $ R \gets \textsc{FixCycles}(V, E \cup L, \mathcal{D}) $ \; 
+    $ B \gets B \cup R \; ; \;  E \gets (E \cup L) \setminus R$ \;
     \Return{$(V,E,B)$}\;
 }
 \caption{Adding edges based on data and domain knowledge.}
@@ -418,10 +429,10 @@ graph.
 \SetKwFunction{FixCycles}{FixCycles}
 \SetKw{KwGoTo}{go to}
 \SetKwProg{Fn}{Function}{:}{}
-\Fn{{\sc FixCycles}($V, E, \mathcal{D}_G $)}{
+\Fn{{\sc FixCycles}($V, E, \mathcal{D} $)}{
 		$R \gets \emptyset$ \; 
 		\ForEach {$ X \rightarrow Y $ on a cycle in $ (V,E) $}{
-		\If {there exists a set $\mathbf{Z}\subseteq\mathbf{X}$ where $\mathcal{D}_G(X, Y, \mathbf{Z})=1$
+		\If {there exists a set $\mathbf{Z}\subseteq\mathbf{X}$ where $\mathcal{D}(X, Y, \mathbf{Z})=1$
 }{
 			$ R \gets R \cup \{ X \to Y \} \cup \{ Y \to X \} $ \;
 
@@ -473,8 +484,8 @@ if this leads to the occurrence of cycles that need to be broken.
 For a conditional independence oracle
  $\mathcal{D}_G$ and a $G$-compatible ancestral oracle $\mathcal{A}_H$, 
 let $\tilde{G}=\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_H, \emptyset, \infty)$
-Then $H^+ \subseteq \tilde{G} \supseteq G$. If $H$ contains at least one cycle, then
-$H^+ \subsetneq \tilde{G}$.
+Then $G \subseteq \tilde{G} \subseteq H^+$. If $H$ contains at least one cycle, then
+$\tilde{G} \subsetneq H^+$.
 \label{prop:weakexpand:cyclic}
 \end{proposition}
 
@@ -484,8 +495,8 @@ correct orientation and cannot be removed by $\textsc{FixCycles}$. Therefore, th
 is a supergraph of $G$. If cycles are created during $\textsc{Expand}$, then every 
 cycle contains at least one edge that is not in the skeleton of $G$, otherwise $G$ itself
 would be cyclic. At least one edge of every cycle is therefore removed by
- $\textsc{FixCycles}$, making the result acyclic again. Since the removed edges need
-to be in $H^+$, the first inclusion is strict for cyclic $H$.
+ $\textsc{FixCycles}$, making the result acyclic again. Since any edges removed from cycles need
+to be in $H^+$, the result must be a proper subgraph of $H^+$.
 \end{proof}
 
 \begin{algorithm}[h]
@@ -493,16 +504,16 @@ to be in $H^+$, the first inclusion is strict for cyclic $H$.
 \SetAlgoLined
 
 \SetKwProg{Fn}{Function}{:}{}
-\Fn{{\sc Prune}($V$,$E$,$\mathcal{D}_G$)}{
-    let $L \gets \{\}$\;
+\Fn{{\sc Prune}($V$,$E$,$\mathcal{D}$)}{
+    let $R \gets \{\}$\;
     \ForEach{$X \to Y \in E$}{
-        remove $X \to Y$ from $E$\;
-        let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
-        \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 1$}{
+        let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ 
+		in $(V,E \setminus \{ X \to Y \} )$\;
+        \If{$\mathcal{D}(X, Y, \mathbf{Z}) = 1$}{
             $L \gets L \cup  \{X \to Y\}$ \;
         }
     }
-    remove all edges in $L$ from $G$\;
+    remove all edges in $R$ from $G$\;
     \Return{$(V, E)$}\;
 }
 \caption{Pruning superfluous edges}
@@ -535,14 +546,14 @@ Therefore, all edges not in the skeleton of $G$ are
 removed.
 \end{proof}
 
-By combining Propositions~\ref{prop:strongexpand}, \ref{prop:weakexpand}, 
+By combining Propositions~\ref{prop:strongexpand}, 
 \ref{prop:weakexpand:cyclic} and 
 \ref{prop:prune}, we immediately obtain the following:
 
 \begin{theorem}
-Given a d-separation oracle $\mathcal{D}_G$ and a $G$-consistent 
-ancestral oracle $\mathcal{A}_H$, 
-let $(V',E',B)=\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_H,\emptyset,\infty)$.
+Given a d-separation oracle $\mathcal{D}_G$ and a $G$-compatible 
+ancestral oracle $\mathcal{A}_{G\mid H}$, 
+let $(V',E',B)=\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_{G\mid H},\emptyset,\infty)$.
 Then $\textsc{Prune}(V',E',\mathcal{D}_G)=G.$
 \end{theorem}
 
@@ -557,13 +568,13 @@ DAG construction algorithm.
 \SetAlgoLined
 \SetKwProg{Fn}{Function}{:}{}
 
-\Fn{{\sc ExpertInLoop}($V,\mathcal{D}_G,\mathcal{A}_G$)}{
+\Fn{{\sc ExpertInLoop}($V,E,\mathcal{D},\mathcal{A}$)}{
 $E_p \gets \emptyset$ \tcc{Current edges} 
 $B \gets \emptyset$ \tcc{Edges that were pruned or removed from cycle} 
 \Repeat{ $E=E_p$ }{
 	$E \gets E_p$ \;
-	$(V,E,B) \gets \textsc{Expand}(V,E,\mathcal{D}_G,\mathcal{A}_G,B,1)$ \;
-	$(V,E_p) \gets \textsc{Prune}(V,E,\mathcal{D}_G)$ \;
+	$(V,E,B) \gets \textsc{Expand}(V,E,\mathcal{D},\mathcal{A},B,1)$ \;
+	$(V,E_p) \gets \textsc{Prune}(V,E,\mathcal{D})$ \;
 	$B \gets B \cup \{ E_p \setminus E \} $
 }
 \Return{(V,E)}
@@ -652,28 +663,23 @@ arbitrary mistakes. This is crucial when using the algorithm in practice.
 \SetKwFunction{RankedExpand}{RankedExpand}
 \SetKw{KwGoTo}{go to}
 \SetKwProg{Fn}{Function}{:}{}
-\Fn{{\sc RankedExpand}($V,E,\mathcal{D}_G,\mathcal{A}_G$,$\phi$,$B=\emptyset$)}{
+\Fn{{\sc RankedExpand}($V,E,\mathcal{D},\mathcal{A}$,$\phi$,$B$)}{
     let $\phi_{\max} \gets 0 $\;
-    \ForEach{$X, Y$ where $X \to Y \notin E \setminus B$ and $Y \to X \notin E \setminus B$}{
+    \ForEach{$X, Y$ where $X \to Y \notin E \cup B$ and $Y \to X \notin E \cup B$}{
         let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
-        \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
+        \If{$\mathcal{D}(X, Y, \mathbf{Z}) = 0$}{
 		\If{$\lvert \phi(X, Y, \mathbf{Z}) \rvert > \phi_{\max}$}{
 			$ \phi_{\max} \gets \lvert \phi(X, Y, \mathbf{Z}) \rvert $ \;
-			$ e_{\max} \gets \mathcal{A}_G(X, Y)$ \;
+			$ e_{\max} \gets \mathcal{A}(X, Y)$ \;
 		}
         }
     }
-    $L' \gets \textsc{FixCycles}(V, E \cup L, \mathcal{D}_G)$ \;
-
-    \uIf{ $(V,E \cup e_{\max})$ is acyclic }{
-	add $ e_{\max}$ to $E$ \;
-    } \Else {
-	add $ \textrm{reverse}(e_{\max})$ to $E$ \;
-    }
-    \Return{$(V,E)$}\;
+    $ R \gets \textsc{FixCycles}(V, E \cup \{e_{\max}\}, \mathcal{D}) $ \; 
+    $ B \gets B \cup R \; ; \;  E \gets (E \cup  \{e_{\max}\}) \setminus R$ \;
+    \Return{$(V,E,B)$}\;
 }
 \caption{Adding an edge between variables with the highest correlation}
-\label{algo:ranked_expand}
+\label{algo:rankedexpand}
 \end{algorithm}
 
 \textsc{ExpertInLoop} adds a new edge in each iteration. The edge
@@ -694,7 +700,7 @@ Specifically, for a d-separation query $D_G(X, Y, \mathbf{Z}) $, we quantify
 the residual association, $ \phi(X, Y, \bm{Z}) $, as the effect size of the CI
 test $X \ci Y \rvert \bm{Z} $. 
 
-Algorithm~\ref{algo:ranked_expand} shows a 
+Algorithm~\ref{algo:rankedexpand} shows a 
 version of {\sc Expand} where we use the largest unexplained association to
 determine where to next add an edge. 
 To implement this, we need an effect size
