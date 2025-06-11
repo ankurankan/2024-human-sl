@@ -92,7 +92,7 @@ behind observed phenomena and guide effective interventions or policy
 decisions. Causal discovery methods aim to discover such relationships among
 random variables using observational data. These
 include constraint-based methods like PC algorithm \citep{Spirtes2001,KalischB07} 
-and Fast Causal Inference \citep{Spirtes2000}), score-based methods such as Hill-Climb
+and Fast Causal Inference \citep{Spirtes2000}, score-based methods such as Hill-Climb
 Search and Greedy Equivalence Search \citep{Chickering2002}, and continuous
 optimization-based methods like NOTEARS \citep{Zheng2018} and DAGMA
 \citep{Bello2022}. Despite this significant body of work,
@@ -217,7 +217,7 @@ entry corresponding to the covariance between $ X $ and $ Y $ as $ \Sigma_{XY}
 $. A DAG $ G =
 (V, E) $ is an acyclic directed graph whose nodes $ V $ corresponding to random
 variables and whose edges $ E $ represent direct causal relationships
-\cite{Pearl2009}. For an edge $e=X \to Y$, $\textrm{reverse}(e)=Y \to X$. The
+\citep{Pearl2009}.  The
 set of parents of $ X $ in $ G $ is denoted as $ \textrm{Pa}_G(X) $, and its
 ancestors and descendants as $ \textrm{An}_G(X) $ and $ \textrm{De}_G(X) $,
 respectively; we use the convention that $X \notin \textrm{An}_G(X)$ and $X
@@ -397,26 +397,15 @@ graph.
 \SetKwProg{Fn}{Function}{:}{}
 \Fn{{\sc Expand}($V,E,\mathcal{D}_G,\mathcal{A}_G$,$B$,$k$)}{
     let $L \gets \{\}$\;
-    \ForEach{$X, Y$ where $X \to Y \notin E$ and $Y \to X \notin E$ and 
-	$\{X,Y\} \notin B$}{
+    \ForEach{$X, Y$ where $X \to Y \notin E \cup B $ and $Y \to X \notin E \cup B$}{
         let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
         \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
-	    $e \gets \mathcal{A}_G(X, Y)$ \;
-	    $L \gets L \cup \{ e \} $ \;
-	    \If{ $ (V, E \cup L) $ is cyclic }{
-		    $ L' \gets \textsc{FixCycles}(V, E \cup L, \mathcal{D}_G) $ \;
-		    $ B \gets B \cup (L \setminus L') $ \;
-		    $ L \gets L'$
-	    }
-	    % \If{ $(V,E \cup L \cup e)$ is acyclic }{
-            % 	$L \gets L \cup  \{ e \} $\;
-	    % } \Else {
-            % 	$L \gets L \cup  \{ \textrm{reverse}(e) \} $\;
-	    % }
+	    $L \gets L \cup \mathcal{A}_G(X, Y) $ \;
         }
-	\If{$|L|\geq k$}{\KwGoTo 18\;}
+	\If{$|L|\geq k$}{\KwGoTo 12\;}
     }
-    add all edges in $L$ to $E$\;
+    $ R \gets \textsc{FixCycles}(V, E \cup L, \mathcal{D}_G) $ \; 
+    $ B \gets B \cup R \; ; \; L \gets L \setminus R \; ; \;  E \gets (E \cup L) \setminus B$ \;
     \Return{$(V,E,B)$}\;
 }
 \caption{Adding edges based on data and domain knowledge.}
@@ -426,7 +415,7 @@ graph.
 \begin{algorithm}[h]
 \DontPrintSemicolon
 \SetAlgoLined
-\SetKwFunction{FixCycle}{FixCycle}
+\SetKwFunction{FixCycles}{FixCycles}
 \SetKw{KwGoTo}{go to}
 \SetKwProg{Fn}{Function}{:}{}
 \Fn{{\sc FixCycles}($V, E, \mathcal{D}_G $)}{
@@ -434,11 +423,11 @@ graph.
 		\ForEach {$ X \rightarrow Y $ on a cycle in $ (V,E) $}{
 		\If {there exists a set $\mathbf{Z}\subseteq\mathbf{X}$ where $\mathcal{D}_G(X, Y, \mathbf{Z})=1$
 }{
-			$ R \gets R \cup \{ X \rightarrow Y \} $ \;
+			$ R \gets R \cup \{ X \to Y \} \cup \{ Y \to X \} $ \;
 
 		}
 	}
-	\Return $ L \setminus R $ \;
+	\Return $ R $ \;
 }
 \caption{Fixing cycles by removing incorrect edges.}
 \label{algo:fix_cycles}
@@ -673,8 +662,7 @@ arbitrary mistakes. This is crucial when using the algorithm in practice.
 \SetKwProg{Fn}{Function}{:}{}
 \Fn{{\sc RankedExpand}($V,E,\mathcal{D}_G,\mathcal{A}_G$,$\phi$,$B=\emptyset$)}{
     let $\phi_{\max} \gets 0 $\;
-    \ForEach{$X, Y$ where $X \to Y \notin E$ and $Y \to X \notin E$ and 
-	$\{X,Y\} \notin B$}{
+    \ForEach{$X, Y$ where $X \to Y \notin E \setminus B$ and $Y \to X \notin E \setminus B$}{
         let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
         \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
 		\If{$\lvert \phi(X, Y, \mathbf{Z}) \rvert > \phi_{\max}$}{
@@ -683,6 +671,7 @@ arbitrary mistakes. This is crucial when using the algorithm in practice.
 		}
         }
     }
+    $L' \gets \textsc{FixCycles}(V, E \cup L, \mathcal{D}_G)$ \;
 
     \uIf{ $(V,E \cup e_{\max})$ is acyclic }{
 	add $ e_{\max}$ to $E$ \;
