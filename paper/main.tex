@@ -465,25 +465,16 @@ Since we start from an empty graph, every pair of vertices $X, Y$ where
 the result is $G^+$. 
 \end{proof}
 
-The following is immediately obtained as a corollary. 
+When using experts that do not always correctly detect the absence of 
+causal relationships, the resulting graph can get larger but also smaller,
+if this leads to the occurrence of cycles that need to be broken.
 
 \begin{proposition}
 For a conditional independence oracle
- $\mathcal{D}_G$ and an acyclic $G$-compatible ancestral oracle $\mathcal{A}_H$, 
-$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_H, \emptyset, \infty)
-=H^+ \supseteq G^+$.
-\label{prop:weakexpand}
-\end{proposition}
-
-When using experts that generate cyclic graphs, edges are pruned to 
-break these cycles, which can lead to a more sparse result.
-
-\begin{proposition}
-For a conditional independence oracle
- $\mathcal{D}_G$ and a $G$-compatible ancestral oracle $\mathcal{A}_H$ where
-$H$ contains at least one cycle,
+ $\mathcal{D}_G$ and a $G$-compatible ancestral oracle $\mathcal{A}_H$, 
 let $\tilde{G}=\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_H, \emptyset, \infty)$
-Then $H^+ \supsetneq \tilde{G} \supseteq G$. 
+Then $H^+ \subseteq \tilde{G} \supseteq G$. If $H$ contains at least one cycle, then
+$H^+ \subsetneq \tilde{G}$.
 \label{prop:weakexpand:cyclic}
 \end{proposition}
 
@@ -491,9 +482,10 @@ Then $H^+ \supsetneq \tilde{G} \supseteq G$.
 All edges in the skeleton of $G$ are added during $\textsc{Expand}$ with the 
 correct orientation and cannot be removed by $\textsc{FixCycles}$. Therefore, the result
 is a supergraph of $G$. If cycles are created during $\textsc{Expand}$, then every 
-cycle contains at least one edge that is not the skeleton of $G$, otherwise $G$ itself
+cycle contains at least one edge that is not in the skeleton of $G$, otherwise $G$ itself
 would be cyclic. At least one edge of every cycle is therefore removed by
- $\textsc{FixCycles}$, making the result acyclic again.
+ $\textsc{FixCycles}$, making the result acyclic again. Since the removed edges need
+to be in $H^+$, the first inclusion is strict for cyclic $H$.
 \end{proof}
 
 \begin{algorithm}[h]
