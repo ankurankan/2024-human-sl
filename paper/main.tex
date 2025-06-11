@@ -407,7 +407,7 @@ graph.
 \SetKw{KwGoTo}{go to}
 \SetKwProg{Fn}{Function}{:}{}
 \Fn{{\sc Expand}($V,E,\mathcal{D},\mathcal{A}$,$B$,$k$)}{
-    let $L \gets \{\}$\;
+    $L \gets \{\}$\;
     \ForEach{$X, Y$ where $X \to Y \notin E \cup B $ and $Y \to X \notin E \cup B$}{
         let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
         \If{$\mathcal{D}(X, Y, \mathbf{Z}) = 0$}{
@@ -537,7 +537,7 @@ of $\mathbf{Z}$, so all edges in the skeleton are
 retained after {\sc Prune}. Conversely, if 
  $X \to Y$ is not in the skeleton of $G$, let 
 $\mathbf{Z}$ be the $d$-separating set chosen 
-in line~5 of {\sc Prune} (there is at least one 
+in line~4 of {\sc Prune} (there is at least one 
 such $\mathbf{Z}$, the union of the parents of 
 $X$ and $Y$). Since  $\mathbf{Z}$ $d$-separates 
 all paths from $X$ to $Y$ in $G'$, it does the same 
