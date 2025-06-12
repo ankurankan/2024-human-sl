@@ -2,11 +2,15 @@
 
 
 import sys
+import logging
 
 import pandas as pd
 import networkx as nx
 
 from pgmpy.estimators import GES
+from pgmpy.global_vars import logger
+
+logger.setLevel(logging.WARNING)
 
 filename = sys.argv[1]
 df = pd.read_csv(filename)
