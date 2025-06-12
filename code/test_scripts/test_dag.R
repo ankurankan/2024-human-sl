@@ -110,21 +110,21 @@ compute_effects_v2 <- function(dag, d){
 			tst <- ciTest( X=n1, Y=n2, Z=otherparents, d,
 				type="cis.pillai" )
 			u <- n2; v <- n1 ; a <- "->"
-			p.value <- ci.test(n1, n2, otherparents, d, test='glm_q3')
+			# p.value <- ci.test(n1, n2, otherparents, d, test='glm_q3')
 		} else if( n1 %in% p2 ) {
 			otherparents <- setdiff( p2, n1 )
 			tst <- ciTest( X=n1, Y=n2, Z=otherparents, d,
 				type="cis.pillai" )
 			u <- n1 ; v <- n2 ; a <- "->"
-			p.value <- ci.test(n1, n2, otherparents, d, test='glm_q3')
+			# p.value <- ci.test(n1, n2, otherparents, d, test='glm_q3')
 		} else {
 			tst <- ciTest( X=n1, Y=n2, Z=union( p1, p2 ), d,
 				type="cis.pillai" )
-					u <- n1 ; v <- n2 ; a <- "--"
-			p.value <- ci.test(n1, n2, union(p1, p2), d, test='glm_q3')
+			u <- n1 ; v <- n2 ; a <- "--"
+			# p.value <- ci.test(n1, n2, union(p1, p2), d, test='glm_q3')
 			}
 		r <- rbind( r, data.frame(list(X=u,A=a,Y=v,
-				cor=tst[,"estimate"],p=p.value)) )
+				cor=tst[,"estimate"],p=tst[,"p.value"])) )
 	}
 	return(r)
 }

@@ -122,34 +122,13 @@ run_single_exp_hc <- function(n_nodes, edge_prob){
 	d <- gen_mixed_data(n_nodes=n_nodes, edge_prob=edge_prob)
 	true_adj <- d$true_adj
 	sim_data <- d$sim_data
-	var_types <- d$var_types
-	# All continuous
-	if (all(unlist(var_types) == 'cont')){
-		scoring_method <- 'bic-g'
-	}
-	# All discrete 
-	else if (all(unlist(var_types) != 'cont')){
-		scoring_method <- 'bic'
-	}
-	# Mixture
-	else{
-		scoring_method <- 'bic-cg'
-	}
 
-	hc_dag <- bnlearn::hc(sim_data, score=scoring_method)
+	hc_dag <- bnlearn::hc(sim_data, score='bic-g')
 	hc_adj <- bnlearn::amat(hc_dag)
-
-	### Temp code block #################################################
-	# shd <- causalDisco::shd(hc_adj, true_adj)
-	# sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=hc_adj)
-	# return(c(shd, shd, sid$sidLowerBound, sid$sidUpperBound))
-
-	#####################################################################
 
 	hc_pdag <- pcalg::dag2cpdag(hc_adj)
 	hc_alldags <- pcalg::pdag2allDags(hc_pdag)$dags
 
-	# TODO: Understand this better.
 	if (is.null(nrow(hc_alldags))){
 		print("No orientation found from PDAG. Using original DAG.")
 		shd <- causalDisco::shd(hc_adj, true_adj)
@@ -166,38 +145,22 @@ run_single_exp_pc <- function(n_nodes, edge_prob){
 	true_adj <- d$true_adj
 	sim_data <- d$sim_data
 
-    	suffStat <- list(dm = sim_data, adaptDF = FALSE, test = 'glm_q3')
-    	alpha <- 0.05
+	pc_dag <- bnlearn::pc.stable(sim_data, test='cor')
+	pc_adj <- bnlearn::amat(pc_dag)
 
-	pc.cpdag <- pcalg::pc(
-		suffStat,
-		indepTest = sl.test,
-		alpha = alpha,
-		u2pd='relaxed',
-		labels = colnames(sim_data),
-	    	skel.method = "stable",
-	    	verbose = FALSE
-	)
-	pc_adj <- as(pc.cpdag, 'amat')
+	pc_pdag <- pcalg::dag2cpdag(pc_adj)
+	pc_alldags <- pcalg::pdag2allDags(pc_pdag)$dags
 
-	### Temp code block #################################################
-	# shd <- causalDisco::shd(pc_adj, true_adj)
-	# sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_adj)
-	# return(c(shd, shd, sid$sidLowerBound, sid$sidUpperBound))
-
-	#####################################################################
-
-	pc_alldags <- pcalg::pdag2allDags(pc_adj)$dags
-
-	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_adj)	
 	if (is.null(nrow(pc_alldags))){
-		print("No orientation found from PDAG. Skipping computing SHD.")
-		return(c(NA, NA, sid$sidLowerBound, sid$sidUpperBound))
+		print("No orientation found from PDAG. Using original DAG.")
+		shd <- causalDisco::shd(pc_adj, true_adj)
 	}
 	else{
 		shd <- apply(pc_alldags, function(x) causalDisco::shd(matrix(x, n_nodes, n_nodes), true_adj), MARGIN=1)
-		return(c(min(shd), max(shd), sid$sidLowerBound, sid$sidUpperBound))
 	}
+	sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=pc_pdag)
+
+	return(c(min(shd), max(shd), sid$sidLowerBound, sid$sidUpperBound))
 }
 
 run_single_exp_ges <- function(n_nodes, edge_prob){
@@ -211,16 +174,9 @@ run_single_exp_ges <- function(n_nodes, edge_prob){
 	
 	ges_adj <- as.matrix(read.csv(paste0("temp/adj_", rand_str, ".csv"), row.names=1))
 
-	### Temp code block #################################################
-	# shd <- causalDisco::shd(ges_adj, true_adj)
-	# sid <- SID::structIntervDist(trueGraph=true_adj, estGraph=ges_adj)
-	# return(c(shd, shd, sid$sidLowerBound, sid$sidUpperBound))
-
-	#####################################################################
 	ges_pdag <- pcalg::dag2cpdag(ges_adj)
 	ges_alldags <- pcalg::pdag2allDags(ges_pdag)$dags
 	
-	# TODO: Understand this better.
 	if (is.null(nrow(ges_alldags))){
 		print("No orientation found from PDAG. Using original DAG.")
 		shd <- causalDisco::shd(ges_adj, true_adj)
@@ -234,6 +190,7 @@ run_single_exp_ges <- function(n_nodes, edge_prob){
 }
 
 run_single_exp_human <- function(n_nodes, edge_prob, oracle_acc){
+	# This generates linear data now
 	d <- gen_mixed_data(n_nodes=n_nodes, edge_prob=edge_prob)
 	true_dag <- d$true_dag
 	true_adj <- d$true_adj
@@ -288,30 +245,30 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 		'ges_lower_shd_mean', 'ges_upper_shd_mean', 'ges_lower_sid_mean', 'ges_upper_sid_mean', 
 		'ges_lower_shd_sd', 'ges_upper_shd_sd', 'ges_lower_sid_sd', 'ges_upper_sid_sd',
 		'human_shd_mean', 'human_sid_mean', 'human_shd_sd', 'human_sid_sd')
-	write.csv(results, 'results/sl_results_mixed.csv')
+	write.csv(results, 'results/sl_results_linear.csv')
 }
 
 
-run_sim_only_expert <- function(R, n_nodes, edge_probs, oracle_accs){
-	results <- data.frame()
-	
-	pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
-	for (edge_prob in edge_probs){
-		for (oracle_acc in oracle_accs){
-			human_dist <- t(future_replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
-
-			human_mean <- apply(human_dist, mean, MARGIN=2)
-			human_sd <- apply(human_dist, sd, MARGIN=2)/sqrt(R)
-			
-			results <- rbind(results, c(oracle_acc, edge_prob, human_mean, human_sd))
-			pb$tick()
-		}
-	}
-	colnames(results) <- c(
-		'oracle_acc', 'edge_prob', 
-		'human_shd_mean', 'human_sid_mean', 'human_shd_sd', 'human_sid_sd')
-	write.csv(results, 'results/sl_results_mixed_only_expert.csv')
-}
+# run_sim_only_expert <- function(R, n_nodes, edge_probs, oracle_accs){
+# 	results <- data.frame()
+# 	
+# 	pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
+# 	for (edge_prob in edge_probs){
+# 		for (oracle_acc in oracle_accs){
+# 			human_dist <- t(replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
+# 
+# 			human_mean <- apply(human_dist, mean, MARGIN=2)
+# 			human_sd <- apply(human_dist, sd, MARGIN=2)/sqrt(R)
+# 			
+# 			results <- rbind(results, c(oracle_acc, edge_prob, human_mean, human_sd))
+# 			pb$tick()
+# 		}
+# 	}
+# 	colnames(results) <- c(
+# 		'oracle_acc', 'edge_prob', 
+# 		'human_shd_mean', 'human_sid_mean', 'human_shd_sd', 'human_sid_sd')
+# 	write.csv(results, 'results/sl_results_mixed_only_expert.csv')
+# }
 
 
 edge_probs <- seq(0.1, 0.9, 0.1)
@@ -319,4 +276,4 @@ oracle_accs <- seq(0, 0.9, 0.2)
 n_nodes <- 10
 R <- 30
 
-run_sim_only_expert(R, n_nodes, edge_probs, oracle_accs)
+run_sim(R, n_nodes, edge_probs, oracle_accs)
