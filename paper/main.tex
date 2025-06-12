@@ -62,16 +62,15 @@
 \maketitle
 
 \begin{abstract}
-	Numerous causal discovery algorithms were developed to automatically learn
-	directed acyclic graphs (DAGs) and other causal models from data. However,
-	their adoption in applied domains remains limited, as researchers often
-	prefer to construct DAGs manually based on domain knowledge. This
-	preference arises due to several practical challenges with automated
-	algorithms, such as their tendency to produce results that contradict
-	obvious domain knowledge and their inability to distinguish Markov equivalent
-	models. To assist researchers in constructing DAGs manually, we propose an iterative
-	structure learning approach that combines domain knowledge with
-	data-driven insights. Our method leverages conditional independence
+	Many researchers construct directed acyclic graph (DAG) models manually
+	based on domain knowledge. 
+	Although numerous causal discovery algorithms were developed to automatically learn
+	DAGs and other causal models from data, these remain challenging to 
+	use due to their tendency to produce results that contradict
+	domain knowledge, among other issues. Here we propose a hybrid, 
+	iterative structure learning approach that combines domain knowledge with
+	data-driven insights to assist researches in constructing DAGs.
+	Our method leverages conditional independence
 	testing to iteratively identify variable pairs where an edge is
 	either missing or superfluous. Based on this information, we can choose
 	to add missing edges with appropriate orientation based on domain
@@ -91,15 +90,14 @@ Understanding cause-and-effect relationships between variables is a fundamental
 objective in many scientific fields. These relationships reveal the mechanisms
 behind observed phenomena and guide effective interventions or policy
 decisions. Causal discovery methods aim to discover such relationships among
-random variables using observational data. In the DAG literature, the primary
-focus has been on developing automated algorithms to learn causal structures
-from datasets. These efforts have led to numerous causal discovery algorithms,
-such as constraint-based methods like PC algorithm \citep{Spirtes2001,KalischB07} 
-and Fast Causal Inference \citep{Spirtes2000}), score-based methods such as Hill-Climb
+random variables using observational data. These
+include constraint-based methods like PC algorithm \citep{Spirtes2001,KalischB07} 
+and Fast Causal Inference \citep{Spirtes2000}, score-based methods such as Hill-Climb
 Search and Greedy Equivalence Search \citep{Chickering2002}, and continuous
 optimization-based methods like NOTEARS \citep{Zheng2018} and DAGMA
-\citep{Bello2022}. Despite significant progress in automated causal discovery,
-their adoption in applied research has been limited. Challenges encountered with existing
+\citep{Bello2022}. Despite this significant body of work,
+the adoption of causal discovery methods in observational research has so far 
+been limited. Challenges encountered with existing
 causal discovery algorithms in practice include but are not limited to:
 
 \begin{enumerate}
@@ -113,7 +111,7 @@ causal discovery algorithms in practice include but are not limited to:
 		difficult to assess reliability. Additionally, the absence of
 		robust performance evaluation methods for any given dataset
 		further reduce the confidence in their outputs. A recent paper
-		therefore advised Epidemiologists to not attempt using structure
+		 advised Epidemiologists to not attempt using structure
 		learning algorithms without help of an expert \citep{Gururaghavendran_2024}.
 	\item \textbf{Outputs Markov Equivalence Class (MEC):} As multiple
 		DAGs can be faithful to a given observational dataset, automated 
@@ -216,10 +214,10 @@ random variables by $ \bm{X} = \{X_1, \cdots, X_k\} $, where $ \rvert \bm{X}
 deviation of $ X $ as $ \sigma_X $, the covariance between variables $ X $ and
 $ Y $ as $ \mathrm{cov}(X, Y) $, a covariance matrix as $ \Sigma $, and the
 entry corresponding to the covariance between $ X $ and $ Y $ as $ \Sigma_{XY}
-$. We consider causal DAGs that contain only observed variables. A DAG $ G =
+$. A DAG $ G =
 (V, E) $ is an acyclic directed graph whose nodes $ V $ corresponding to random
 variables and whose edges $ E $ represent direct causal relationships
-\cite{Pearl2009}. For an edge $e=X \to Y$, $\textrm{reverse}(e)=Y \to X$. The
+\citep{Pearl2009}.  The
 set of parents of $ X $ in $ G $ is denoted as $ \textrm{Pa}_G(X) $, and its
 ancestors and descendants as $ \textrm{An}_G(X) $ and $ \textrm{De}_G(X) $,
 respectively; we use the convention that $X \notin \textrm{An}_G(X)$ and $X
@@ -233,6 +231,16 @@ $, if for a path $ \pi(X, Y) $ (i) for every collider structure ($ V_1
 structure ($ V_1 \rightarrow V_2 \rightarrow V_3 $, $ V_1 \leftarrow V_2
 \rightarrow V_3 $), $ V_2 \not \in \bm{Z} $. $ X $ and $ Y $ are d-separated
 given $ \bm{Z} $ if no d-connecting path exist between them.
+
+\subsection{Assumptions} 
+In this paper, we consider the structure learning problem under the widely
+known \emph{causal Markov}, \emph{causal sufficiency} and \emph{faithfulness}
+assumptions \citep{Spirtes1993}. These entail that there exists a 
+DAG $G$ on the variables $\bm{X}$ whose implied $d$-separation statements coincide
+exactly with the conditional independence relationships among the variables 
+in $\bm{X}$, and for which all direct common causes of variables in $\bm{X}$ are 
+also included in $\bm{X}$. These are the same assumptions made by the structure
+learning algorithms we consider in this paper, such as the PC algorithm \citep{Spirtes1993}.
 
 \subsection{Conditional Independence Tests}
 \label{sec:ci_tests}
@@ -335,44 +343,58 @@ be prioritized.
 
 \label{sec:modification}
 
-We consider two models of a domain experts. Given two variables
-$ X $ and $ Y $ that are part of an unknown causal DAG $G$, an \emph{strong ancestral oracle} 
-$\mathcal{A}_G$ is defined as:
+We model domain experts as procedures that take two variables $X$ and $Y$ that are assumed 
+to be part of a DAG $G$ and 
+provide information on the ancestral relationship between them. First, 
+a \emph{strong ancestral oracle} $\mathcal{A}_G$ is defined as:
 $$\mathcal{A}_G(X,Y)=\begin{cases}
  X \to Y & \textrm{if } X \in \textrm{An}_G(Y) \\
  X \gets Y & \textrm{if } Y \in \textrm{An}_G(X) \\
  \textrm{None} & \textrm{otherwise} \\
 \end{cases}$$
+Note that the ancestral oracle does not consider differences between direct and 
+indirect relationships: for any $G, H$ where $G^+=H^+$, we have $\mathcal{A}_G=\mathcal{A}_H$.
 
-whereas a \emph{weak ancestral oracle} is defined as:
-$$
-\mathcal{A}_G(X,Y)=\begin{cases}
+Experts can make mistakes. In our analysis, we will consider experts that
+essentially ``make up'' non-existing causal relationships, but do provide 
+correct answers on the directionality of existing ones. 
+
+\begin{definition}
+Let $G=(V,E_G)$ and $H=(V,E_H)$ be two DAGs. 
+The \emph{$G$-compatible ancestral oracle} $\mathcal{A}_{G\mid H}$ is defined by
+$$\mathcal{A}_{G\mid H}(X,Y)=\begin{cases}
  X \to Y & \textrm{if } X \in \textrm{An}_G(Y) \\
  X \gets Y & \textrm{if } Y \in \textrm{An}_G(X) \\
- \textrm{rand}(\{X \gets Y, X \to Y\}) & \textrm{otherwise} \\
-\end{cases}
-$$
-where $\textrm{rand}(S)$ denotes a uniformly chosen element of $S$.
-That is, our ancestral oracles only provide information on the direction of cause-effect
-relationships, and do not distinguish between direct and indirect effects. 
-The weak ancestral oracle is even unable to detect the absence of cause-effect
-relationships between two variables. Using such oracles for DAG construction  
-inherently risks that superfluous edges are created. 
+ \mathcal{A}_{H}(X,Y) & \textrm{otherwise} \\
+\end{cases}$$
+Consider the graph $G\mid H$ containing the edges $ \mathcal{A}_{G\mid H}(X,Y)$ for all 
+pairs $(X, Y) \in V \times V$.   
+If $G\mid H$ is acyclic, then 
+$\mathcal{A}_H$ is called an \emph{acyclic $G$-compatible ancestral oracle}.
+\end{definition}
 
+Note that a $G$-compatible oracle can contradict itself. Consider 
+$V=(X,Y,Z)$, $G=(V,\{X \to Y\})$ and $H=(V,\{Y \to Z, Z \to X\})$.
+This gives $\mathcal{A}_{G \mid H}(Y,Z) = Y \to Z$  
+ and $\mathcal{A}_{G \mid H}(X,Z) = Z \to X$ which imply that $Y$ causes $X$, 
+in contradiction to
+ $\mathcal{A}_{G \mid H}(X,Y) = X \to Y$. Still, it will turn out that we can recover
+from such errors.
+
+Generally, using ancestral oracles for DAG construction will introduce superfluous edges.
 Our approach uses the data to decide where to add edges and which edges 
 are superfluous and can be removed.
 As a useful abstraction, let us assume that we
 have access to a second oracle $\mathcal{D}_G$ than can answer d-separation
 queries with respect to the unknown target graph:
 $\mathcal{D}_G(X,Y,\mathbf{Z})=1$ iff $X$ and $Y$ are $d$-separated by $\mathbf{Z}$ in 
-$G$. These are the standard oracles considered in constraint-based structure
-learning algorithms, such as the PC algorithm \cite{Spirtes2001}. 
+$G$, and $0$ otherwise. These are the standard oracles considered in constraint-based structure
+learning algorithms, such as the PC algorithm \citep{Spirtes2001}. 
 
-Based on these two oracles, we now define two core procedures that
-iteratively change a current DAG structure. The procedure 
+We now define two core procedures that use ancestral and $d$-separation queries
+to iteratively change a current DAG structure. The procedure 
 \textsc{Expand} (Algorithm~\ref{algo:expand}) uses CI  
-information (supplied in this case by the d-separation oracle) 
-to search for unexplained associations in the graph and 
+information to search for unexplained associations in the graph and 
 then uses domain knowledge to determine ancestry. The 
 procedure \textsc{Prune} (Algorithm~\ref{algo:prune}) uses
 CI information to remove superfluous edges from the
@@ -384,27 +406,18 @@ graph.
 \SetKwFunction{Expand}{Expand}
 \SetKw{KwGoTo}{go to}
 \SetKwProg{Fn}{Function}{:}{}
-\Fn{{\sc Expand}($V,E,\mathcal{D}_G,\mathcal{A}_G$,$B$,$k$)}{
-    let $L \gets \{\}$\;
-    \ForEach{$X, Y$ where $X \to Y \notin E$ and $Y \to X \notin E$ and 
-	$\{X,Y\} \notin B$}{
+\Fn{{\sc Expand}($V,E,\mathcal{D},\mathcal{A}$,$B$,$k$)}{
+    $L \gets \{\}$\;
+    \ForEach{$X, Y$ where $X \to Y \notin E \cup B $ and $Y \to X \notin E \cup B$}{
         let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
-        \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
-	    $e \gets \mathcal{A}_G(X, Y)$ \;
-	    $L \gets L \cup \{ e \} $ \;
-	    \If{ $ (V, E \cup L) $ is cyclic }{
-		    $ L \gets \textsc{FixCycles}(V, E, L, e, \mathcal{D}_G) $ \;
-	    }
-	    % \If{ $(V,E \cup L \cup e)$ is acyclic }{
-            % 	$L \gets L \cup  \{ e \} $\;
-	    % } \Else {
-            % 	$L \gets L \cup  \{ \textrm{reverse}(e) \} $\;
-	    % }
+        \If{$\mathcal{D}(X, Y, \mathbf{Z}) = 0$}{
+	    $L \gets L \cup \mathcal{A}(X, Y) $ \;
         }
-	\If{$|L|\geq k$}{\KwGoTo 16\;}
+	\If{$|L|\geq k$}{\KwGoTo 12\;}
     }
-    add all edges in $L$ to $E$\;
-    \Return{$(V,E)$}\;
+    $ R \gets \textsc{FixCycles}(V, E \cup L, \mathcal{D}) $ \; 
+    $ B \gets B \cup R \; ; \;  E \gets (E \cup L) \setminus R$ \;
+    \Return{$(V,E,B)$}\;
 }
 \caption{Adding edges based on data and domain knowledge.}
 \label{algo:expand}
@@ -413,21 +426,19 @@ graph.
 \begin{algorithm}[h]
 \DontPrintSemicolon
 \SetAlgoLined
-\SetKwFunction{FixCycle}{FixCycle}
+\SetKwFunction{FixCycles}{FixCycles}
 \SetKw{KwGoTo}{go to}
 \SetKwProg{Fn}{Function}{:}{}
-\Fn{{\sc FixCycles}($V, E, L, e, \mathcal{D}_G $)}{
-	$ u, v \gets e $ \;
-	\ForEach {$ P = \{ v \rightarrow x_1, x_1 \rightarrow x_2, \cdots,  x_{k-1} \rightarrow x_k, x_k \rightarrow u \} $ in ($V, E \cup L$) }{
-		\ForEach {$ x_i \rightarrow x_j $ in $ P $}{
-        	let $\mathbf{Z}$ be a set that $d$-separates $x_i$ and $x_j$ in $(V, E \cup L)$\;
-		\If {$ \mathcal{D}_G(X, Y, \mathbf{Z}) = 0 $}{
-			$ L \gets L - \{ x_i \rightarrow x_j \} $ \;
+\Fn{{\sc FixCycles}($V, E, \mathcal{D} $)}{
+		$R \gets \emptyset$ \; 
+		\ForEach {$ X \rightarrow Y $ on a cycle in $ (V,E) $}{
+		\If {there exists a set $\mathbf{Z}\subseteq\mathbf{X}$ where $\mathcal{D}(X, Y, \mathbf{Z})=1$
+}{
+			$ R \gets R \cup \{ X \to Y \} \cup \{ Y \to X \} $ \;
 
 		}
 	}
-	}
-	\Return $ L $ \;
+	\Return $ R $ \;
 }
 \caption{Fixing cycles by removing incorrect edges.}
 \label{algo:fix_cycles}
@@ -438,11 +449,13 @@ any unconnected vertex pairs that are not connected but where the
 d-separation oracle indicates a residual association not explained 
 by other paths.
 The parameter $B$ specifies a ``black list''
-of vertex pairs that must not be connected, 
-whereas $k$
+of vertex pairs that must not be connected, which is important
+to prevent edges that were removed from cycles to be added again 
+and will have another important role in the overall algorithm.
+In addition, $k$
 can be used to limit the maximum amount of edges 
-to be added by this procedure; the usefulness of the $B$ and $k$
-parameters will become clear soon.
+to be added by this procedure; it will become clear soon why
+this is useful.
 
 Let $G^+$ denote the transitive closure of $G$ (the graph in which 
 there is a direct edge $X \to Y$ whenever $X \in \textrm{An}_G(Y)$). 
@@ -463,43 +476,44 @@ Since we start from an empty graph, every pair of vertices $X, Y$ where
 the result is $G^+$. 
 \end{proof}
 
+When using experts that do not always correctly detect the absence of 
+causal relationships, the resulting graph can get larger but also smaller,
+if this leads to the occurrence of cycles that need to be broken.
+
 \begin{proposition}
 For a conditional independence oracle
- $\mathcal{D}_G$ and a weak ancestral oracle $\mathcal{A}_G$, 
-$\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_G, \emptyset, \infty)
-\supseteq G^+$.
-\label{prop:weakexpand}
+ $\mathcal{D}_G$ and a $G$-compatible ancestral oracle $\mathcal{A}_H$, 
+let $\tilde{G}=\textsc{Expand}(V,\emptyset,\mathcal{D}_G,\mathcal{A}_H, \emptyset, \infty)$
+Then $G \subseteq \tilde{G} \subseteq H^+$. If $H$ contains at least one cycle, then
+$\tilde{G} \subsetneq H^+$.
+\label{prop:weakexpand:cyclic}
 \end{proposition}
 
 \begin{proof}
-Every pair of vertices $X, Y$ that are $d$-connected 
-in $G$ are now connected by an edge 
-during $\textsc{Expand}$. For $X \in \textrm{An}_G(Y)$, the edge is 
-$X \to Y$ like when using a strong ancestral oracle; 
-since only correctly oriented
-edges are added between ancestor-descendant pairs, 
-such additions never create cycles.
-For $X, Y$ that are only $d$-connected through common ancestors, 
-an arbitrary edge is added in a manner that preserves acyclicity.
-The result is a supergraph of $G^+$.
+All edges in the skeleton of $G$ are added during $\textsc{Expand}$ with the 
+correct orientation and cannot be removed by $\textsc{FixCycles}$. Therefore, the result
+is a supergraph of $G$. If cycles are created during $\textsc{Expand}$, then every 
+cycle contains at least one edge that is not in the skeleton of $G$, otherwise $G$ itself
+would be cyclic. At least one edge of every cycle is therefore removed by
+ $\textsc{FixCycles}$, making the result acyclic again. Since any edges removed from cycles need
+to be in $H^+$, the result must be a proper subgraph of $H^+$.
 \end{proof}
-
 
 \begin{algorithm}[h]
 \DontPrintSemicolon
 \SetAlgoLined
 
 \SetKwProg{Fn}{Function}{:}{}
-\Fn{{\sc Prune}($V$,$E$,$\mathcal{D}_G$)}{
-    let $L \gets \{\}$\;
+\Fn{{\sc Prune}($V$,$E$,$\mathcal{D}$)}{
+    let $R \gets \{\}$\;
     \ForEach{$X \to Y \in E$}{
-        remove $X \to Y$ from $E$\;
-        let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
-        \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 1$}{
+        let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ 
+		in $(V,E \setminus \{ X \to Y \} )$\;
+        \If{$\mathcal{D}(X, Y, \mathbf{Z}) = 1$}{
             $L \gets L \cup  \{X \to Y\}$ \;
         }
     }
-    remove all edges in $L$ from $G$\;
+    remove all edges in $R$ from $G$\;
     \Return{$(V, E)$}\;
 }
 \caption{Pruning superfluous edges}
@@ -523,7 +537,7 @@ of $\mathbf{Z}$, so all edges in the skeleton are
 retained after {\sc Prune}. Conversely, if 
  $X \to Y$ is not in the skeleton of $G$, let 
 $\mathbf{Z}$ be the $d$-separating set chosen 
-in line~5 of {\sc Prune} (there is at least one 
+in line~4 of {\sc Prune} (there is at least one 
 such $\mathbf{Z}$, the union of the parents of 
 $X$ and $Y$). Since  $\mathbf{Z}$ $d$-separates 
 all paths from $X$ to $Y$ in $G'$, it does the same 
@@ -532,13 +546,15 @@ Therefore, all edges not in the skeleton of $G$ are
 removed.
 \end{proof}
 
-By combining Propositions~\ref{prop:strongexpand}, \ref{prop:weakexpand} and 
+By combining Propositions~\ref{prop:strongexpand}, 
+\ref{prop:weakexpand:cyclic} and 
 \ref{prop:prune}, we immediately obtain the following:
 
 \begin{theorem}
-Given a d-separation oracle $\mathcal{D}_G$ and a strong or weak 
-ancestral oracle $\mathcal{A}_G$, 
-$\textsc{Prune}(\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_G,\emptyset,\infty),\mathcal{D}_G)=G.$
+Given a d-separation oracle $\mathcal{D}_G$ and a $G$-compatible 
+ancestral oracle $\mathcal{A}_{G\mid H}$, 
+let $(V',E',B)=\textsc{Expand}((V,\emptyset),\mathcal{D}_G,\mathcal{A}_{G\mid H},\emptyset,\infty)$.
+Then $\textsc{Prune}(V',E',\mathcal{D}_G)=G.$
 \end{theorem}
 
 Since we require expert knowledge only in the $\textsc{Expand}$ 
@@ -552,13 +568,13 @@ DAG construction algorithm.
 \SetAlgoLined
 \SetKwProg{Fn}{Function}{:}{}
 
-\Fn{{\sc ExpertInLoop}($V,\mathcal{D}_G,\mathcal{A}_G$)}{
+\Fn{{\sc ExpertInLoop}($V,E,\mathcal{D},\mathcal{A}$)}{
 $E_p \gets \emptyset$ \tcc{Current edges} 
-$B \gets \emptyset$ \tcc{Edges that were pruned} 
+$B \gets \emptyset$ \tcc{Edges that were pruned or removed from cycle} 
 \Repeat{ $E=E_p$ }{
 	$E \gets E_p$ \;
-	$(V,E) \gets \textsc{Expand}(V,E,\mathcal{D}_G,\mathcal{A}_G,B,1)$ \;
-	$(V,E_p) \gets \textsc{Prune}(V,E,\mathcal{D}_G)$ \;
+	$(V,E,B) \gets \textsc{Expand}(V,E,\mathcal{D},\mathcal{A},B,1)$ \;
+	$(V,E_p) \gets \textsc{Prune}(V,E,\mathcal{D})$ \;
 	$B \gets B \cup \{ E_p \setminus E \} $
 }
 \Return{(V,E)}
@@ -593,6 +609,10 @@ no further changes are made, and the loop terminates.
 \label{thm:itworks}
 \end{proof} 
 
+We note that the general property of Algorithm~\ref{algo:expert} that 
+each possible edge can be added and removed at most once, which guarantees
+that the algorithm eventually terminates, remains valid even if the oracles make
+arbitrary mistakes. This is crucial when using the algorithm in practice.
 
 \begin{figure}[t!]
 	\begin{subfigure}{0.125 \textwidth}
@@ -688,28 +708,23 @@ no further changes are made, and the loop terminates.
 \SetKwFunction{RankedExpand}{RankedExpand}
 \SetKw{KwGoTo}{go to}
 \SetKwProg{Fn}{Function}{:}{}
-\Fn{{\sc RankedExpand}($V,E,\mathcal{D}_G,\mathcal{A}_G$,$\phi$,$B=\emptyset$)}{
+\Fn{{\sc RankedExpand}($V,E,\mathcal{D},\mathcal{A}$,$\phi$,$B$)}{
     let $\phi_{\max} \gets 0 $\;
-    \ForEach{$X, Y$ where $X \to Y \notin E$ and $Y \to X \notin E$ and 
-	$\{X,Y\} \notin B$}{
+    \ForEach{$X, Y$ where $X \to Y \notin E \cup B$ and $Y \to X \notin E \cup B$}{
         let $\mathbf{Z}$ be a set that $d$-separates $X$ and $Y$ in $(V,E)$\;
-        \If{$\mathcal{D}_G(X, Y, \mathbf{Z}) = 0$}{
+        \If{$\mathcal{D}(X, Y, \mathbf{Z}) = 0$}{
 		\If{$\lvert \phi(X, Y, \mathbf{Z}) \rvert > \phi_{\max}$}{
 			$ \phi_{\max} \gets \lvert \phi(X, Y, \mathbf{Z}) \rvert $ \;
-			$ e_{\max} \gets \mathcal{A}_G(X, Y)$ \;
+			$ e_{\max} \gets \mathcal{A}(X, Y)$ \;
 		}
         }
     }
-
-    \uIf{ $(V,E \cup e_{\max})$ is acyclic }{
-	add $ e_{\max}$ to $E$ \;
-    } \Else {
-	add $ \textrm{reverse}(e_{\max})$ to $E$ \;
-    }
-    \Return{$(V,E)$}\;
+    $ R \gets \textsc{FixCycles}(V, E \cup \{e_{\max}\}, \mathcal{D}) $ \; 
+    $ B \gets B \cup R \; ; \;  E \gets (E \cup  \{e_{\max}\}) \setminus R$ \;
+    \Return{$(V,E,B)$}\;
 }
 \caption{Adding an edge between variables with the highest correlation}
-\label{algo:ranked_expand}
+\label{algo:rankedexpand}
 \end{algorithm}
 
 \textsc{ExpertInLoop} adds a new edge in each iteration. The edge
@@ -730,7 +745,7 @@ Specifically, for a d-separation query $D_G(X, Y, \mathbf{Z}) $, we quantify
 the residual association, $ \phi(X, Y, \bm{Z}) $, as the effect size of the CI
 test $X \ci Y \rvert \bm{Z} $. 
 
-Algorithm~\ref{algo:ranked_expand} shows a 
+Algorithm~\ref{algo:rankedexpand} shows a 
 version of {\sc Expand} where we use the largest unexplained association to
 determine where to next add an edge. 
 To implement this, we need an effect size
@@ -739,6 +754,12 @@ we can use the effect sizes shown in Section~\ref{sec:ci_tests}.
 The algorithm selects the edge that has the highest absolute residual 
 association, resulting
 in prioritization of edges that contribute the most to improving the model.
+
+In addition to prioritizing edges to add or remove, the ranking could also
+be used to break cycles when CI tests fail to identify the edges that are not
+in the skeleton during the procedure  $\textsc{FixCycle}$, which could happen
+due to finite sample effects. In that case, removing edges that correspond to 
+weak associations may be preferable to keeping the cycles in the model.
 
 \subsection{Comparison to Score-Based Methods}
 
@@ -771,6 +792,15 @@ That is, they indicate which model is better for a given dataset but do not
 quantify how well the model explains the data. In
 contrast, $ \tau $ could be seen as an absolute measure of model fit -- 
 its value approaches $ 0 $ as the model perfectly explains the observed data.
+
+It is possible to integrate domain knowledge into score-based methods
+in a similar way as we do here for constraint-based structure learning.
+\citet{Kitson_2025} recently extended the Tabu search algorithm by a procedure
+that asks a domain expert for advice before making changes that are classified as 
+``uncertain'' such as in cases of tied score improvement or low-confidence modifications. 
+In contrast, our approach places greater emphasis on expert input as no edges are oriented
+without consulting the expert. Further, the approach by \citet{Kitson_2025} 
+requires experts that are able to distinguish between direct and indirect effects.
 
 \section{Empirical Analysis}
 \label{sec:empirical}
@@ -969,21 +999,40 @@ export the model for further analysis.
 \section{Conclusions}
 
 Researchers often prefer to construct DAGs manually rather than using automated
-algorithms due to practical challenges in applying automated methods. To assist
-this process, we developed an iterative structure learning method that
+algorithms, which could be partly due to practical challenges in applying automated methods.
+To assist this process, we developed an iterative structure learning method that
 integrates manual construction with data-driven feedback, bridging
 the gap between fully manual and fully automated methods.
 The idea of augmenting structure learning by domain knowledge is of course not 
 new. Common ways to provide such background knowledge are ``whitelists'' or 
 ``blacklists'' of edges 
-\citep{scutari2010}, or specification
-of a ``tiered'' (e.g., temporal) structure between the variables \citep{Bang2023}.
+\citep{scutari2010}, or specification of a ``tiered'' (e.g., temporal) 
+structure between the variables \citep{Bang2023}.
 Compared to such approaches, where domain knowledge 
 is specified and supplied beforehand, the novelty 
 of our method lies in the interactive
 back-and-forth between domain knowledge and data, 
 which provably leads to the correct
 result in a polynomial amount of steps in the oracle settings we considered.
+
+Nevertheless, the algorithm presented in this paper has 
+significant limitations. First of all, the causal Markov and causal sufficiency assumptions are
+widely seen as too restrictive, since they do not allow for latent confounders.
+It would therefore be interesting to extend our approach to a more general 
+algorithm such as FCI \cite{Spirtes1995}. Further, while it is theoretically possible
+to recover from some expert mistakes that introduce cycles, this requires searching for a 
+separating set for each edge on each cycle, which in the worst case can take exponential time 
+and would then essentially amount to running significant parts of the PC algorithm. 
+In practice, we may be better off breaking cycles by other means -- such as the heuristics
+implemented in our experiments -- even if the theoretical correctness guarantee is lost. 
+Lastly, any iterative model improvement procedure runs the risk of overfitting to the 
+given dataset. While this is also the case for purely data-driven structure learning
+(which may even require a vastly larger amount of model improvement steps), the 
+inclusion of human judgement in this process means that it will be seen as less reliable.
+Models generated by this approach should certainly be seen as preliminary and in need
+of further validation using independent data, and ideally a full log of all human decisions 
+made during the process should be kept. In this respect, it will be interesting to see how
+the research community will feel about the use of LLMs instead of humans for model refinement.
 
 Avenues for future work include extending this approach to latent variables 
 as encoded by acyclic directed mixed graphs (ADMGs). Further, if experts make 
