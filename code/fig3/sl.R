@@ -83,35 +83,35 @@ simulate_human_sl <- function(sim_data, true_dag, oracle_acc, max_iter=1e4){
 			}
 			else{
 				temp_dag <- add_edge(new_dag, oracle_edge)
-				while ( length(dagitty::findCycle(temp_dag)) > 0 ){
-					cycle = dagitty::findCycle(temp_dag)
-					for (i in 1:(length(cycle)-1)){
-						edge = c(cycle[i], cycle[i+1])
-						if ((edge[1] == oracle_edge[1]) & (edge[2] == oracle_edge[2])){
-							invisible()
-						}
-						else{
-							adj_set <- setdiff(parents(temp_dag, edge[2]), edge[1])
-							Z = setdiff(cycle, c(edge[1], edge[2]))[1] # Take any variable on the cycle
-							p.value <- dagitty::ciTest(X=edge[1], Y=edge[2], Z=union(adj_set, Z), sim_data, type='cis.pillai')
-							if (p.value["p.value"] > PVALUE_THRESHOLD){
-								temp_dag <- remove_edges(temp_dag, as.data.frame(list(X=edge[1], A='->', Y=edge[2])))
-								new_dag <- temp_dag
-							}
-							else{
-								print("Couldn't remove edge from the cycle.")
-								blacklist_edges <- rbind(blacklist_edges, oracle_edge)
-							}
-						}
-					}
+				# while ( length(dagitty::findCycle(temp_dag)) > 0 ){
+				# 	cycle = dagitty::findCycle(temp_dag)
+				# 	for (i in 1:(length(cycle)-1)){
+				# 		edge = c(cycle[i], cycle[i+1])
+				# 		if ((edge[1] == oracle_edge[1]) & (edge[2] == oracle_edge[2])){
+				# 			invisible()
+				# 		}
+				# 		else{
+				# 			adj_set <- setdiff(parents(temp_dag, edge[2]), edge[1])
+				# 			Z = setdiff(cycle, c(edge[1], edge[2]))[1] # Take any variable on the cycle
+				# 			p.value <- dagitty::ciTest(X=edge[1], Y=edge[2], Z=union(adj_set, Z), sim_data, type='cis.pillai')
+				# 			if (p.value["p.value"] > PVALUE_THRESHOLD){
+				# 				temp_dag <- remove_edges(temp_dag, as.data.frame(list(X=edge[1], A='->', Y=edge[2])))
+				# 				new_dag <- temp_dag
+				# 			}
+				# 			else{
+				# 				print("Couldn't remove edge from the cycle.")
+				# 				blacklist_edges <- rbind(blacklist_edges, oracle_edge)
+				# 			}
+				# 		}
+				# 	}
+				# }
+				if (dagitty::isAcyclic(temp_dag)){
+					new_dag <- temp_dag
 				}
-				# if (dagitty::isAcyclic(temp_dag)){
-				# 	new_dag <- temp_dag
-				# }
-				# else{
-				# 	print("Not adding edge to avoid cycle.")
-				# 	blacklist_edges <- rbind(blacklist_edges, oracle_edge)
-				# }
+				else{
+					print("Not adding edge to avoid cycle.")
+					blacklist_edges <- rbind(blacklist_edges, oracle_edge)
+				}
 			}
 		}
 	}
@@ -271,9 +271,9 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 # }
 
 
-edge_probs <- seq(0.1, 0.9, 0.1)
+edge_probs <- seq(0.1, 0.9, 0.2)
 oracle_accs <- seq(0, 0.9, 0.2)
 n_nodes <- 10
-R <- 30
+R <- 10
 
 run_sim(R, n_nodes, edge_probs, oracle_accs)
