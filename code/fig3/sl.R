@@ -292,9 +292,31 @@ run_sim <- function(R, n_nodes, edge_probs, oracle_accs){
 }
 
 
+run_sim_only_expert <- function(R, n_nodes, edge_probs, oracle_accs){
+	results <- data.frame()
+	
+	pb <- progress_bar$new(total=length(oracle_accs) * length(edge_probs))
+	for (edge_prob in edge_probs){
+		for (oracle_acc in oracle_accs){
+			human_dist <- t(future_replicate(R, run_single_exp_human(n_nodes=n_nodes, edge_prob=edge_prob, oracle_acc=oracle_acc)))
+
+			human_mean <- apply(human_dist, mean, MARGIN=2)
+			human_sd <- apply(human_dist, sd, MARGIN=2)/sqrt(R)
+			
+			results <- rbind(results, c(oracle_acc, edge_prob, human_mean, human_sd))
+			pb$tick()
+		}
+	}
+	colnames(results) <- c(
+		'oracle_acc', 'edge_prob', 
+		'human_shd_mean', 'human_sid_mean', 'human_shd_sd', 'human_sid_sd')
+	write.csv(results, 'results/sl_results_mixed_only_expert.csv')
+}
+
+
 edge_probs <- seq(0.1, 0.9, 0.1)
 oracle_accs <- seq(0, 0.9, 0.2)
 n_nodes <- 10
 R <- 30
 
-run_sim(R, n_nodes, edge_probs, oracle_accs)
+run_sim_only_expert(R, n_nodes, edge_probs, oracle_accs)
