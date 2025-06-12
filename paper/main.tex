@@ -48,7 +48,7 @@
 % information below.
 %
 % Add authors
-\author[1]{\href{mailto:<ankur.ankan@ru.nl>?Subject=Your UAI 2025 paper}{Ankur~Ankan}{}}
+\author[1]{Ankur~Ankan}{}
 \author[1]{Johannes~Textor}
 
 % Add affiliations after the authors
@@ -83,6 +83,7 @@
 	We present a proof-of-concept implementation using a large language 
 	model as a domain expert and a graphical user interface designed to 
 	assist human experts with DAG construction.
+\todo[inline]{Should we add links here to the implementations? Is the two out of three cases still correct?}
 \end{abstract}
 
 \section{Introduction}
@@ -630,6 +631,51 @@ no further changes are made, and the loop terminates.
 		\caption{$ X_3 \rightarrow X_4 $. $ X_1 \not \rightarrow X_4 $.}
 	\end{subfigure}
 	\caption{An example showing each iteration of \textsc{ExpertInLoop}. The dashed edges show all the potential edges that \textsc{Expand} could add in each iteration.}
+\end{figure}
+
+\begin{figure}[t!]
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
+		\includegraphics[page=1]{example_cycle.pdf}
+		\caption{True DAG}
+	\end{subfigure}%
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
+		\includegraphics[page=2]{example_cycle.pdf}
+		\caption{No edges.}
+	\end{subfigure}%
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
+		\includegraphics[page=3]{example_cycle.pdf}
+		\caption{$ X_1 \rightarrow X_4 $}
+	\end{subfigure}%
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
+		\includegraphics[page=4]{example_cycle.pdf}
+		\caption{$ X_1 \rightarrow X_2 $}
+	\end{subfigure}
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
+		\includegraphics[page=5]{example_cycle.pdf}
+		\caption{$ X_1 \rightarrow X_3 $}
+	\end{subfigure}%
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
+		\includegraphics[page=6]{example_cycle.pdf}
+		\caption{$ X_2 \rightarrow X_4 $}
+	\end{subfigure}%
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
+		\includegraphics[page=7]{example_cycle.pdf}
+		\caption{$ X_3 \rightarrow X_4 $. $ X_1 \not \rightarrow X_4 $.}
+	\end{subfigure}%
+	\begin{subfigure}{0.125 \textwidth}
+		\centering
+		\includegraphics[page=8]{example_cycle.pdf}
+		\caption{$ X_3 \rightarrow X_4 $. $ X_1 \not \rightarrow X_4 $.}
+	\end{subfigure}
+
+	\caption{An example showing each iteration of \textsc{ExpertInLoop} when a cycle gets formed. The dashed edges show all the potential edges that \textsc{Expand} could add in each iteration.}
 \end{figure}
 
 

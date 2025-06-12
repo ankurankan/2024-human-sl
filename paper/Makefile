@@ -2,7 +2,7 @@ all : fig3 fig4 fig5.pdf figures.pdf figures_v2.pdf example.pdf main.pdf
 
 ms : main.pdf
 
-figures : fig3 fig4 fig5.pdf figures.pdf example.pdf
+figures : fig3 fig4 fig5.pdf figures.pdf example.pdf example_cycle.pdf
 
 fig5.pdf : fig5.tex
 	latexmk -use-make -pdf $<
@@ -14,6 +14,9 @@ figures_v2.pdf : figures_v2.tex
 	latexmk -use-make -pdf $<
 
 example.pdf : example.tex
+	latexmk -use-make -pdf $<
+
+example_cycle.pdf : example_cycle.tex
 	latexmk -use-make -pdf $<
 
 main.pdf : main.tex
